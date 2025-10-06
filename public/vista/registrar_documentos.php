@@ -1222,6 +1222,7 @@
                         <option value="2">Renovación</option>
                         <option value="3">Cambio de datos del cliente</option>
                         <option value="3">Actualización de condiciones del cliente</option>
+                        <option value="4">Devolución</option>
                     </select>
                 </div>
             </div>

@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require("express");
 const odbc = require("odbc");
 const cors = require("cors");
@@ -6,7 +8,8 @@ const path = require("path");
 const fs = require("fs");
 const app = express();
 const port = 3000;
-const { IP_LOCAL, IP_ODBC_BD } = require("./public/vars.js");
+const IP_LOCAL = process.env.IP_LOCAL;
+const IP_ODBC_BD = process.env.IP_ODBC_BD;
 
 require("dotenv").config(); // Esto carga las variables del archivo .env
 

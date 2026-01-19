@@ -1,4 +1,5 @@
-import { IP_LOCAL } from "./../vars.js";
+require('dotenv').config();
+const IP_LOCAL = process.env.IP_LOCAL;
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarContContrato();
@@ -138,9 +139,8 @@ async function cargarTablaconVehiculo() {
       row.innerHTML = `
                     <td>${index + 1}</td> <!-- Número de ítem -->
                     <td>${tablaVehiculo.MODELO}</td> <!-- Número de contrato -->
-                    <td>${
-                      "$ " + tablaVehiculo.PRECIO_VEH || "Sin periodo"
-                    }</td> <!-- Periodo -->
+                    <td>${"$ " + tablaVehiculo.PRECIO_VEH || "Sin periodo"
+        }</td> <!-- Periodo -->
                 `;
       tbody.appendChild(row);
     });

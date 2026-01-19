@@ -1,4 +1,5 @@
-import { IP_LOCAL } from "./../vars.js";
+require('dotenv').config();
+const IP_LOCAL = process.env.IP_LOCAL;
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarClientes();
@@ -126,16 +127,13 @@ async function cargarTablacliente() {
           const row = document.createElement("tr");
           row.innerHTML = `
                     <td>${index + 1}</td> <!-- Número de ítem -->
-                    <td>${
-                      tablaCliente.DESCRIPCION
-                    }</td> <!-- Número de contrato -->
+                    <td>${tablaCliente.DESCRIPCION
+            }</td> <!-- Número de contrato -->
                     <td>${fechita || "Sin fecha"}</td> <!-- Fecha de firma -->
-                    <td>${
-                      tablaCliente.DURACION + " MESES" || "Sin periodo"
-                    }</td> <!-- Periodo -->
-                    <td>${
-                      tablaCliente.TOTVEH || "0"
-                    }</td> <!-- Cantidad total -->
+                    <td>${tablaCliente.DURACION + " MESES" || "Sin periodo"
+            }</td> <!-- Periodo -->
+                    <td>${tablaCliente.TOTVEH || "0"
+            }</td> <!-- Cantidad total -->
                 `;
           tbody.appendChild(row);
         });
@@ -203,12 +201,10 @@ async function cargarTablacontrato() {
                     <td>${index + 1}</td> <!-- Número de ítem -->
                     <td>${tablaContrato.DESCRIPCION}</td> <!-- Descripción -->
                     <td>${fechito || "Sin fecha"}</td> <!-- Fecha -->
-                    <td>${
-                      tablaContrato.DURACION + " MESES" || "Sin periodo"
-                    }</td> <!-- Periodo -->
-                    <td>${
-                      tablaContrato.TOTVEH || "0"
-                    }</td> <!-- Total vehículos -->
+                    <td>${tablaContrato.DURACION + " MESES" || "Sin periodo"
+            }</td> <!-- Periodo -->
+                    <td>${tablaContrato.TOTVEH || "0"
+            }</td> <!-- Total vehículos -->
                 `;
           tbody.appendChild(row);
         });

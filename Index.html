@@ -71,7 +71,8 @@
             </div>
         </div>
         <script type="module">
-            import { IP_LOCAL } from "./public/vars.js";
+            require('dotenv').config();
+            const IP_LOCAL = process.env.IP_LOCAL;
             const emailField = document.querySelector("[name=email]");
             const setErrors = (message, field, isError = true) => {
                 if (isError) {

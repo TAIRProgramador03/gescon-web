@@ -1,4 +1,5 @@
-import { IP_LOCAL } from "./../vars.js";
+require('dotenv').config();
+const IP_LOCAL = process.env.IP_LOCAL;
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
@@ -82,9 +83,8 @@ async function cargartablaClienteLeas() {
         contratos.forEach((cliente, index) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-                    <td class="icono-seleccion" data-id="${
-                      cliente.IDCLI
-                    }" data-nombre="${cliente.CLINOM}">
+                    <td class="icono-seleccion" data-id="${cliente.IDCLI
+            }" data-nombre="${cliente.CLINOM}">
                         <i class="fas fa-check-circle" style="color: green; font-size: 22px;"></i>
                     </td>
                     <td>${cliente.CLIRUC}</td>
@@ -240,25 +240,20 @@ async function cargartablaVehiculo() {
         contratos.forEach((tablaVehiculo, index) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-                    <td class="icono-seleccion" data-id="${
-                      tablaVehiculo.ID
-                    }" data-nombre="${tablaVehiculo.PLACA}">
+                    <td class="icono-seleccion" data-id="${tablaVehiculo.ID
+            }" data-nombre="${tablaVehiculo.PLACA}">
                         <i class="fas fa-check-circle" style="color: green; font-size: 22px;"></i>
                     </td>
                     <td>${tablaVehiculo.CODINI}</td> <!-- Número de contrato -->
                     <td>${tablaVehiculo.PLACA}</td> <!-- Número de contrato -->
-                    <td>${
-                      tablaVehiculo.MARCA || "Sin marca"
-                    }</td> <!-- Fecha de firma -->
-                    <td>${
-                      tablaVehiculo.MODELO || "Sin modelo"
-                    }</td> <!-- Periodo -->
-                    <td>${
-                      tablaVehiculo.GENERICO || "Sin generico"
-                    }</td> <!-- Cantidad total -->
-                    <td>${
-                      tablaVehiculo.TERRENO || "Sin terreno"
-                    }</td> <!-- Cantidad total -->
+                    <td>${tablaVehiculo.MARCA || "Sin marca"
+            }</td> <!-- Fecha de firma -->
+                    <td>${tablaVehiculo.MODELO || "Sin modelo"
+            }</td> <!-- Periodo -->
+                    <td>${tablaVehiculo.GENERICO || "Sin generico"
+            }</td> <!-- Cantidad total -->
+                    <td>${tablaVehiculo.TERRENO || "Sin terreno"
+            }</td> <!-- Cantidad total -->
                 `;
           tbody.appendChild(row);
         });
@@ -331,9 +326,8 @@ function agregarEventosSeleccionVehi() {
           const contador = 0;
 
           nuevaFila.innerHTML = `
-                        <td><input type="text" name="item[]" value="${
-                          contador + 1
-                        }" disabled></td>
+                        <td><input type="text" name="item[]" value="${contador + 1
+            }" disabled></td>
                         <td><input type="text" name="id[]" value="${placaID}" disabled></td>
                         <td><input type="text" name="modelo[]" value="${modelo}" disabled></td>
                         <td><input type="text" name="tipo_terreno[]" value="${terreno}" disabled></td>
@@ -377,24 +371,18 @@ function cargarSeleccionados() {
     nuevaFila.dataset.id = vehiculo.id;
 
     nuevaFila.innerHTML = `
-            <td><input type="text" name="item[]" value="${
-              index + 1
-            }" disabled></td>
-            <td><input type="text" name="id[]" value="${
-              vehiculo.id
-            }" disabled></td>
-            <td><input type="text" name="modelo[]" value="${
-              vehiculo.modelo
-            }" disabled></td>
-            <td><input type="text" name="tipo_terreno[]" value="${
-              vehiculo.terreno
-            }" disabled></td>
-            <td><input type="text" name="placa[]" value="${
-              vehiculo.placa
-            }" disabled></td>
-            <td><input type="text" name="codini[]" value="${
-              vehiculo.codini
-            }" disabled></td>
+            <td><input type="text" name="item[]" value="${index + 1
+      }" disabled></td>
+            <td><input type="text" name="id[]" value="${vehiculo.id
+      }" disabled></td>
+            <td><input type="text" name="modelo[]" value="${vehiculo.modelo
+      }" disabled></td>
+            <td><input type="text" name="tipo_terreno[]" value="${vehiculo.terreno
+      }" disabled></td>
+            <td><input type="text" name="placa[]" value="${vehiculo.placa
+      }" disabled></td>
+            <td><input type="text" name="codini[]" value="${vehiculo.codini
+      }" disabled></td>
             <td><input type="number" name="cantidad[]" value="1" disabled></td>
         `;
 
@@ -538,14 +526,14 @@ async function guardaLeasing() {
       conta = conta + 1;
       return modelo && numpla && cantidad
         ? {
-            secCon: index + 1,
-            modelo,
-            tipoTerreno,
-            numpla,
-            codini,
-            cantidad,
-            idpla,
-          }
+          secCon: index + 1,
+          modelo,
+          tipoTerreno,
+          numpla,
+          codini,
+          cantidad,
+          idpla,
+        }
         : null;
     })
     .filter(Boolean);

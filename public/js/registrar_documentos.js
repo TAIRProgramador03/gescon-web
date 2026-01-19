@@ -1,5 +1,5 @@
-// const { IP_LOCAL } = require("./../vars.js");
-import { IP_LOCAL } from "./../vars.js";
+require('dotenv').config();
+const IP_LOCAL = process.env.IP_LOCAL;
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarClientes();

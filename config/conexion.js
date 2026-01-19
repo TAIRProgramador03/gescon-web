@@ -1,9 +1,12 @@
+require('dotenv').config();
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const odbc = require("odbc"); // Usar el paquete odbc para conectar a la base de datos
 const app = express();
 const port = 3000;
-const { IP_ODBC } = require("./../public/vars.js");
+const IP_ODBC = process.env.IP_ODBC;
+
 
 // Middleware para parsear los datos JSON
 app.use(bodyParser.json());
@@ -16,10 +19,10 @@ app.post("./config/conexion.js", async (req, res) => {
     // Establecer conexión con la base de datos usando ODBC
     const connection = await odbc.connect(
       `DSN=QDSN_${IP_ODBC};UID=` +
-        dbUser +
-        ";PWD=" +
-        password +
-        `;System=${IP_ODBC}`
+      dbUser +
+      ";PWD=" +
+      password +
+      `;System=${IP_ODBC}`
     );
     console.log("Conexión exitosa.");
 

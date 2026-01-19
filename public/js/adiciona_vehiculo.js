@@ -1,5 +1,6 @@
 // Ejecución de funciones al cargar la página
-import { IP_LOCAL } from "./../vars.js";
+require('dotenv').config();
+const IP_LOCAL = process.env.IP_LOCAL;
 
 document.addEventListener("DOMContentLoaded", () => {
   document
@@ -195,23 +196,18 @@ async function listaVehiculosAsignables() {
       const row = document.createElement("tr");
       row.innerHTML = `
                 <td>${(contador =
-                  contador +
-                  1)} &nbsp;&nbsp;<input type="checkbox" name="item[]" value=""></td>
-                <td><input type="text" name="codini[]" value="${
-                  vehi.codini
-                }" disabled></td>
-                <td><input type="text" name="placa[]" value="${
-                  vehi.placa
-                }" disabled></td>
-                <td><input type="text" name="marca[]" value="${
-                  vehi.marca
-                }" disabled></td>
-                <td><input type="text" name="modelo[]" value="${
-                  vehi.modelo
-                }" disabled></td>
-                <td><input type="text" name="leasing[]" value="${
-                  vehi.nro_leasing
-                }" disabled></td>
+          contador +
+          1)} &nbsp;&nbsp;<input type="checkbox" name="item[]" value=""></td>
+                <td><input type="text" name="codini[]" value="${vehi.codini
+        }" disabled></td>
+                <td><input type="text" name="placa[]" value="${vehi.placa
+        }" disabled></td>
+                <td><input type="text" name="marca[]" value="${vehi.marca
+        }" disabled></td>
+                <td><input type="text" name="modelo[]" value="${vehi.modelo
+        }" disabled></td>
+                <td><input type="text" name="leasing[]" value="${vehi.nro_leasing
+        }" disabled></td>
                 <td><input type="text" name="tarifa[]" value=""></td>
                 <td><input type="date" name="fechaIni[]" value=""></td>
                 <td><input type="date" name="fechaFin[]" value=""></td>

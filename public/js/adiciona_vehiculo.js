@@ -1,6 +1,4 @@
-// Ejecución de funciones al cargar la página
-require('dotenv').config();
-const IP_LOCAL = process.env.IP_LOCAL;
+const IP_LOCAL = 'localhost';
 
 document.addEventListener("DOMContentLoaded", () => {
   document

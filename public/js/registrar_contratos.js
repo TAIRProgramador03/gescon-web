@@ -1,5 +1,4 @@
-require('dotenv').config();
-const IP_LOCAL = process.env.IP_LOCAL;
+const IP_LOCAL = 'localhost';
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarClientes();
@@ -48,9 +47,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const nuevaFila = document.createElement("tr");
     nuevaFila.innerHTML = `
-            <td><input type="text" name="item[]" value="${
-              lastRowIndex + 2
-            }" disabled></td>
+            <td><input type="text" name="item[]" value="${lastRowIndex + 2
+      }" disabled></td>
             <td>
                 <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
                     <option value="">Seleccione un modelo</option>
@@ -69,9 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
             <td><input type="text" name="cpk[]" class="tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
             <td><input type="number" name="rm[]" class="tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
             <td><input type="number" name="cantidad[]" class="tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
-            <td><input type="text" name="duracion[]" class="tooltip-input"  value="0" ${
-              checkbox.checked ? "" : "disabled"
-            } data-tooltip="Duracion contrato"></td>
+            <td><input type="text" name="duracion[]" class="tooltip-input"  value="0" ${checkbox.checked ? "" : "disabled"
+      } data-tooltip="Duracion contrato"></td>
             <td><input type="text" name="compra_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
             <td><input type="text" name="precio_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
         `;
@@ -314,9 +311,9 @@ async function guardarContrato() {
   if (
     Number(formData.cantVehiculos) ===
     Number(formData.vehCiu) +
-      Number(formData.vehSev) +
-      Number(formData.vehSoc) +
-      Number(formData.vehSup)
+    Number(formData.vehSev) +
+    Number(formData.vehSoc) +
+    Number(formData.vehSup)
   ) {
     console.log("Conforme Dr. Fili");
   } else {
@@ -405,17 +402,17 @@ async function guardarContrato() {
 
         return modelo && tarifa && cantidad
           ? {
-              secCon: index + 1,
-              modelo,
-              tipoTerreno,
-              tarifa,
-              cpk,
-              rm,
-              cantidad,
-              duracion,
-              compraVeh,
-              precioVeh,
-            }
+            secCon: index + 1,
+            modelo,
+            tipoTerreno,
+            tarifa,
+            cpk,
+            rm,
+            cantidad,
+            duracion,
+            compraVeh,
+            precioVeh,
+          }
           : null;
       })
       .filter(Boolean);

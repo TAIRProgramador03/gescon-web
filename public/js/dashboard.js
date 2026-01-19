@@ -1,5 +1,4 @@
-require('dotenv').config();
-const IP_LOCAL = process.env.IP_LOCAL;
+const IP_LOCAL = 'localhost';
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarContContrato();

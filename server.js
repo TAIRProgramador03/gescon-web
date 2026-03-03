@@ -6,6 +6,9 @@ const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+const authenticateToken = require("./server/middleware/jwt-valid.js");
 const app = express();
 const port = 3000;
 const IP_LOCAL = process.env.IP_LOCAL;
@@ -26,8 +29,8 @@ const dbConfig = {
   system: IP_ODBC_BD,
 };
 
-let globalDbUser = "";
-let globalPassword = "";
+// let globalDbUser = "";
+// let globalPassword = "";
 
 const iconv = require("iconv-lite");
 
@@ -36,9 +39,13 @@ const decodeString = (str) => {
   return iconv.decode(Buffer.from(str, "binary"), "latin1"); // Decodifica desde latin1
 };
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost", // Permite solicitudes solo desde esta URL
+  credentials: true, // Permite el envío de cookies con las solicitudes
+}));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(cookieParser());
 
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -73,15 +80,19 @@ const upload = multer({ storage }).single("archivoPdf");
 // Ruta para manejar el inicio de sesión
 app.post("/login", async (req, res) => {
   const { dbUser, password } = req.body;
-  globalDbUser = dbUser;
-  globalPassword = password;
+  // globalDbUser = dbUser;
+  // globalPassword = password;
   try {
     // Conexión a DB2 con los valores del login
     const connection = await odbc.connect(
       `DSN=${dbConfig.DSN};UID=${dbUser};PWD=${password};System=${dbConfig.system};charset=utf8`
     );
 
+    const payload = { globalDbUser: dbUser, globalPassword: password }; // Puedes incluir más información en el payload si lo deseas
+    const token = jwt.sign(payload, process.env.SECRET_KEY || "3c0FNs1Md90ueIaYmaAZAC75TM1MD77l2JeffvxQY6w", { expiresIn: "3h", algorithm: "HS256" });
+
     console.log("Conexión exitosa"); // Mensaje de éxito
+    res.cookie("access_token", token, { httpOnly: true, secure: false, sameSite: "lax", path: "/", maxAge: 3 * 60 * 60 * 1000 }); // Configura la cookie con el token JWT
     res.json({ success: true, message: "Conexión exitosa" });
 
     await connection.close();
@@ -91,7 +102,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/validarArchivo", (req, res) => {
+app.get("/validarArchivo", authenticateToken, (req, res) => {
   const nombreArchivo = req.query.nombre;
 
   if (!nombreArchivo) {
@@ -137,7 +148,13 @@ app.get("/get-openai-response", async (req, res) => {
 });
 
 // Ruta para obtener clientes
-app.get("/clientes", async (req, res) => {
+app.get("/clientes", authenticateToken, async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   try {
     // Conexión a DB2 con los valores globales de dbUser y password
     const connection = await odbc.connect(
@@ -165,7 +182,13 @@ app.get("/clientes", async (req, res) => {
   }
 });
 
-app.get("/modelos", async (req, res) => {
+app.get("/modelos", authenticateToken, async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   try {
     // Conexión a DB2 con los valores globales de dbUser y password
     const connection = await odbc.connect(
@@ -193,7 +216,13 @@ app.get("/modelos", async (req, res) => {
   }
 });
 
-app.get("/leasing", async (req, res) => {
+app.get("/leasing", authenticateToken, async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   try {
     // Conexión a DB2 con los valores globales de dbUser y password
     const connection = await odbc.connect(
@@ -222,22 +251,50 @@ app.get("/leasing", async (req, res) => {
 });
 
 // recibe: idCli
-app.get("/leasingOfClient", async (req, res) => {
+app.get("/leasingOfClient", authenticateToken, async (req, res) => {
   const { idCli } = req.query;
+
+  // Validación de parametros query
+  if(!idCli) {
+    return res.status(400).json({
+      success: false,
+      message: "Los parámetros idCli son obligatorios."
+    })
+  }
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   try {
     // Conexión a DB2 con los valores globales de dbUser y password
     const connection = await odbc.connect(
       `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`
     );
-    const result = await connection.query(
-      `SELECT ID, NRO_LEASING FROM SPEED400AT.TBL_LEASING_CAB WHERE ID_CLIENTE='${idCli}' ORDER BY NRO_LEASING ASC`
-    );
+    // const result = await connection.query(
+    //   `SELECT ID, NRO_LEASING FROM SPEED400AT.TBL_LEASING_CAB WHERE ID_CLIENTE='${idCli}' ORDER BY NRO_LEASING ASC`
+    // );
+
+    const query = `
+      SELECT ID, NRO_LEASING 
+      FROM SPEED400AT.TBL_LEASING_CAB 
+      WHERE ID_CLIENTE = ? ORDER BY NRO_LEASING ASC
+    `;
+
+    const result = await connection.query(query, [idCli]);
 
     // Decodificar los resultados desde latin1
     const cleanedResult = result.map((row) => {
       return {
-        ID: String(row.ID).trim(),
-        NRO_LEASING: decodeString(row.NRO_LEASING.trim()),
+        ID: row.ID !== null && row.ID !== undefined 
+          ? String(row.ID).trim() 
+          : null,
+        NRO_LEASING: row.NRO_LEASING !== null && row.NRO_LEASING !== undefined 
+          ? decodeString(row.NRO_LEASING.trim()) 
+          : null,
       };
     });
 
@@ -289,13 +346,20 @@ app.listen(port, () => {
     }
 });*/
 
-app.get("/contratosNro", async (req, res) => {
+app.get("/contratosNro", authenticateToken, async (req, res) => {
   const { idCli } = req.query; // Obtiene el idCli de los parámetros de consulta
 
   if (!idCli) {
     return res
       .status(400)
       .json({ success: false, message: "El idCli es obligatorio" });
+  }
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
   }
 
   try {
@@ -332,13 +396,20 @@ app.get("/contratosNro", async (req, res) => {
   }
 });
 
-app.get("/contratosNroAdi", async (req, res) => {
+app.get("/contratosNroAdi", authenticateToken, async (req, res) => {
   const { idCli } = req.query; // Obtiene el idCli de los parámetros de consulta
 
   if (!idCli) {
     return res
       .status(400)
       .json({ success: false, message: "El idCli es obligatorio" });
+  }
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
   }
 
   try {
@@ -378,13 +449,20 @@ app.get("/contratosNroAdi", async (req, res) => {
   }
 });
 
-app.get("/tablaCliente", async (req, res) => {
+app.get("/tablaCliente", authenticateToken, async (req, res) => {
   const { idCli } = req.query; // Obtiene el idCli de los parámetros de consulta
 
   if (!idCli) {
     return res
       .status(400)
       .json({ success: false, message: "El idCli es obligatorio" });
+  }
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
   }
 
   try {
@@ -429,7 +507,7 @@ app.get("/tablaCliente", async (req, res) => {
   }
 });
 
-app.get("/tablaContrato", async (req, res) => {
+app.get("/tablaContrato", authenticateToken, async (req, res) => {
   const { idCli, id } = req.query; // Obtiene los parámetros de consulta
 
   // Validación inicial
@@ -438,6 +516,13 @@ app.get("/tablaContrato", async (req, res) => {
       success: false,
       message: "Los parámetros idCli e id son obligatorios.",
     });
+  }
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
   }
 
   try {
@@ -489,7 +574,14 @@ app.get("/tablaContrato", async (req, res) => {
 
 // PRUEBA*
 
-app.get("/todosLosVehiculos", async (req, res) => {
+app.get("/todosLosVehiculos", authenticateToken, async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   try {
     const connection = await odbc.connect(
       `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`
@@ -514,7 +606,15 @@ app.get("/todosLosVehiculos", async (req, res) => {
 
 // END PRUEBA
 
-app.get("/tablaClienteLeas", async (req, res) => {
+app.get("/tablaClienteLeas", authenticateToken, async (req, res) => {
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   try {
     const connection = await odbc.connect(
       `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`
@@ -561,7 +661,15 @@ app.get("/tablaClienteLeas", async (req, res) => {
   }
 });
 
-app.get("/tablaVehiculo", async (req, res) => {
+app.get("/tablaVehiculo", authenticateToken, async (req, res) => {
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   try {
     const connection = await odbc.connect(
       `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`
@@ -617,7 +725,7 @@ app.get("/tablaVehiculo", async (req, res) => {
   }
 });
 
-app.post("/insertarContrato", async (req, res) => {
+app.post("/insertarContrato", authenticateToken, async (req, res) => {
   const {
     idCliente,
     nroContrato,
@@ -647,6 +755,14 @@ app.post("/insertarContrato", async (req, res) => {
   let nombreArchivo = `http://${IP_LOCAL}/tair-web/public/pdf/contracts/${archivoPdf}`;
 
   let connection;
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+  
   try {
     connection = await odbc.connect(
       `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`
@@ -769,7 +885,7 @@ app.post("/insertarContrato", async (req, res) => {
 //   });
 // });
 
-app.post("/subirArchivo", (req, res) => {
+app.post("/subirArchivo", authenticateToken, (req, res) => {
   upload(req, res, function (err) {
     if (err) {
       return res
@@ -805,7 +921,7 @@ async function obtenerUltimoId(connection) {
   return result.length > 0 ? result[0].ID : null;
 }
 
-app.post("/insertarDocumento", async (req, res) => {
+app.post("/insertarDocumento", authenticateToken, async (req, res) => {
   const {
     idCliente,
     idContrato,
@@ -837,6 +953,13 @@ app.post("/insertarDocumento", async (req, res) => {
   const fechaFormatoDB = convertirFecha(fechaFirma);
 
   let connection;
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
   try {
     connection = await odbc.connect(
       `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`
@@ -968,7 +1091,7 @@ async function obtenerUltimoIdDoc(connection) {
   return result.length > 0 ? result[0].ID : null;
 }
 
-app.get("/contratoDetalle", async (req, res) => {
+app.get("/contratoDetalle", authenticateToken, async (req, res) => {
   const { contratoId } = req.query; // Obtiene el contratoId de los parámetros de consulta
 
   if (!contratoId) {
@@ -977,6 +1100,13 @@ app.get("/contratoDetalle", async (req, res) => {
       .json({ success: false, message: "El contratoId es obligatorio" });
   }
 
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+  
   try {
     const connection = await odbc.connect(
       `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`
@@ -985,9 +1115,9 @@ app.get("/contratoDetalle", async (req, res) => {
     // Consulta los detalles del contrato
     const query = `
             SELECT A.DESCRIPCION, A.FECHA_FIRMA, A.DURACION, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, (A.CANT_VEHI + COALESCE(SUM(B.CANT_VEHI), 0)) AS TOTAL_VEHICULOS, COUNT(B.ID) AS CANT_DOC 
-            FROM SPEED400AT.TBLCONTRATO_CAB A LEFT JOIN SPEED400AT.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE WHERE NRO_CONTRATO='${contratoId}' 
+            FROM SPEED400AT.TBLCONTRATO_CAB A LEFT JOIN SPEED400AT.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE WHERE NRO_CONTRATO = ? 
             GROUP BY A.DESCRIPCION, A.FECHA_FIRMA, A.DURACION, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, A.CANT_VEHI, A.ID`;
-    const result = await connection.query(query);
+    const result = await connection.query(query, [contratoId]);
 
     if (result.length === 0) {
       return res
@@ -1024,7 +1154,15 @@ app.get("/contratoDetalle", async (req, res) => {
   }
 });
 
-app.get("/contContrato", async (req, res) => {
+app.get("/contContrato", authenticateToken, async (req, res) => {
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   try {
     // Conexión a DB2 con los valores globales de dbUser y password
     const connection = await odbc.connect(
@@ -1057,7 +1195,15 @@ app.get("/contContrato", async (req, res) => {
   }
 });
 
-app.get("/contCliente", async (req, res) => {
+app.get("/contCliente", authenticateToken, async (req, res) => {
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   try {
     const connection = await odbc.connect(
       `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`
@@ -1085,7 +1231,15 @@ app.get("/contCliente", async (req, res) => {
   }
 });
 
-app.get("/tablaconVehiculo", async (req, res) => {
+app.get("/tablaconVehiculo", authenticateToken, async (req, res) => {
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   try {
     const connection = await odbc.connect(
       `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`
@@ -1120,7 +1274,14 @@ app.get("/tablaconVehiculo", async (req, res) => {
   }
 });
 
-app.post("/insertaLeasing", async (req, res) => {
+app.post("/insertaLeasing", authenticateToken, async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   const {
     idCliente,
     nroLeasing,
@@ -1156,6 +1317,7 @@ app.post("/insertaLeasing", async (req, res) => {
 
   let nombreArchivo = `http://${IP_LOCAL}/tair-web/public/pdf/leasings/${archivoPdf}`;
   let connection;
+  
   try {
     connection = await odbc.connect(
       `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`
@@ -1232,9 +1394,17 @@ async function obtenerUltimoIdLea(connection) {
   return result.length > 0 ? result[0].ID : null;
 }
 
-app.get("/consultaVehiculoLeasing", async (req, res) => {
+app.get("/consultaVehiculoLeasing", authenticateToken, async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   const { idCli, nroLeasing } = req.query;
   let query = "";
+  let params = [];
 
   try {
     const connection = await odbc.connect(
@@ -1243,10 +1413,14 @@ app.get("/consultaVehiculoLeasing", async (req, res) => {
 
     if (nroLeasing === "all") {
       query = `SELECT DISTINCT A.CODINI, A.PLACA, TRIM(D.DESCRIPCION) AS MARCA, TRIM(A.MODELO) AS MODELO, A.NRO_LEASING  FROM (SELECT A.ID, A.ID_CLIENTE, TRIM(B.ID_VEH) AS CODINI, TRIM(B.PLACA) AS PLACA, A.NRO_LEASING, B.ID_VEH, B.MODELO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID = B.ID_LEA_CAB) A LEFT JOIN SPEED400AT.PO_VEHICULO C ON A.ID_VEH = C.ID LEFT JOIN SPEED400AT.PO_MARCA D ON C.IDMAR = D.ID LEFT JOIN (SELECT * FROM (SELECT A.ID, A.ID_CLIENTE, A.NRO_LEASING, A.CANT_VEH, B.PLACA, B.ID_VEH AS VEHICULO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID=B.ID_LEA_CAB) A LEFT JOIN (SELECT ID_CLIENTE, ID_ASIGNACION, LEASING, ID_VEH FROM SPEED400AT.TBL_ASIGNACION_CAB A INNER JOIN SPEED400AT.TBL_ASIGNACION_DET B ON A.ID=B.ID_ASIGNACION) B ON TRIM(A.NRO_LEASING)=TRIM(B.LEASING) AND A.VEHICULO=B.ID_VEH) E ON A.NRO_LEASING=E.LEASING AND A.ID_VEH=E.VEHICULO
-            WHERE (A.ID_CLIENTE = '${idCli}') AND E.VEHICULO IS NULL GROUP BY A.CODINI, A.PLACA, TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.NRO_LEASING ORDER BY TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.PLACA`;
+            WHERE (A.ID_CLIENTE = ?) AND E.VEHICULO IS NULL GROUP BY A.CODINI, A.PLACA, TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.NRO_LEASING ORDER BY TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.PLACA`;
+      
+      params = [idCli];
     } else if (nroLeasing) {
       query = `SELECT DISTINCT A.CODINI, A.PLACA, TRIM(D.DESCRIPCION) AS MARCA, TRIM(A.MODELO) AS MODELO, A.NRO_LEASING  FROM (SELECT A.ID, A.ID_CLIENTE, TRIM(B.ID_VEH) AS CODINI, TRIM(B.PLACA) AS PLACA, A.NRO_LEASING, B.ID_VEH, B.MODELO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID = B.ID_LEA_CAB) A LEFT JOIN SPEED400AT.PO_VEHICULO C ON A.ID_VEH = C.ID LEFT JOIN SPEED400AT.PO_MARCA D ON C.IDMAR = D.ID LEFT JOIN (SELECT * FROM (SELECT A.ID, A.ID_CLIENTE, A.NRO_LEASING, A.CANT_VEH, B.PLACA, B.ID_VEH AS VEHICULO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID=B.ID_LEA_CAB) A LEFT JOIN (SELECT ID_CLIENTE, ID_ASIGNACION, LEASING, ID_VEH FROM SPEED400AT.TBL_ASIGNACION_CAB A INNER JOIN SPEED400AT.TBL_ASIGNACION_DET B ON A.ID=B.ID_ASIGNACION) B ON TRIM(A.NRO_LEASING)=TRIM(B.LEASING) AND A.VEHICULO=B.ID_VEH) E ON A.NRO_LEASING=E.LEASING AND A.ID_VEH=E.VEHICULO
-            WHERE (A.NRO_LEASING = '${nroLeasing}' AND A.ID_CLIENTE = '${idCli}') AND E.VEHICULO IS NULL GROUP BY A.CODINI, A.PLACA, TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.NRO_LEASING ORDER BY TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.PLACA`;
+            WHERE (A.NRO_LEASING = ? AND A.ID_CLIENTE = ?) AND E.VEHICULO IS NULL GROUP BY A.CODINI, A.PLACA, TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.NRO_LEASING ORDER BY TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.PLACA`;
+
+      params = [nroLeasing, idCli];
     }
 
     // Consulta los detalles del contrato
@@ -1254,7 +1428,7 @@ app.get("/consultaVehiculoLeasing", async (req, res) => {
     //         SELECT DISTINCT A.CODINI, A.PLACA, TRIM(D.DESCRIPCION) AS MARCA, TRIM(A.MODELO) AS MODELO, A.NRO_LEASING  FROM (SELECT A.ID, A.ID_CLIENTE, TRIM(B.ID_VEH) AS CODINI, TRIM(B.PLACA) AS PLACA, A.NRO_LEASING, B.ID_VEH, B.MODELO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID = B.ID_LEA_CAB) A LEFT JOIN SPEED400AT.PO_VEHICULO C ON A.ID_VEH = C.ID LEFT JOIN SPEED400AT.PO_MARCA D ON C.IDMAR = D.ID LEFT JOIN (SELECT * FROM (SELECT A.ID, A.ID_CLIENTE, A.NRO_LEASING, A.CANT_VEH, B.PLACA, B.ID_VEH AS VEHICULO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID=B.ID_LEA_CAB) A LEFT JOIN (SELECT ID_CLIENTE, ID_ASIGNACION, LEASING, ID_VEH FROM SPEED400AT.TBL_ASIGNACION_CAB A INNER JOIN SPEED400AT.TBL_ASIGNACION_DET B ON A.ID=B.ID_ASIGNACION) B ON TRIM(A.NRO_LEASING)=TRIM(B.LEASING) AND A.VEHICULO=B.ID_VEH) E ON A.NRO_LEASING=E.LEASING AND A.ID_VEH=E.VEHICULO
     //         WHERE (A.NRO_LEASING = '${nroLeasing}' AND A.ID_CLIENTE = '${idCli}') AND E.VEHICULO IS NULL GROUP BY A.CODINI, A.PLACA, TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.NRO_LEASING ORDER BY TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.PLACA`;
 
-    const result = await connection.query(query);
+    const result = await connection.query(query, params);
 
     if (result.length === 0) {
       return res
@@ -1283,7 +1457,15 @@ app.get("/consultaVehiculoLeasing", async (req, res) => {
   }
 });
 
-app.get("/operacionesAsig", async (req, res) => {
+app.get("/operacionesAsig", authenticateToken, async (req, res) => {
+
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   const { idCli } = req.query; // Obtiene el idCli de los parámetros de consulta
 
   if (!idCli) {
@@ -1298,8 +1480,8 @@ app.get("/operacionesAsig", async (req, res) => {
     );
 
     // Consulta los contratos asociados al cliente
-    const query = ` SELECT ID, DESCRIPCION FROM SPEED400AT.PO_OPERACIONES WHERE SITUACION='S' AND IDCLI='${idCli}'`;
-    const result = await connection.query(query);
+    const query = ` SELECT ID, DESCRIPCION FROM SPEED400AT.PO_OPERACIONES WHERE SITUACION='S' AND IDCLI = ?`;
+    const result = await connection.query(query, [idCli]);
 
     const cleanedResult = result.map((row) => {
       return {
@@ -1326,7 +1508,7 @@ app.get("/operacionesAsig", async (req, res) => {
   }
 });
 
-app.post("/insertaAsignacion", async (req, res) => {
+app.post("/insertaAsignacion", authenticateToken, async (req, res) => {
   const { idCliente, valorRepe, detalles } = req.body;
 
   function convertirFecha(fecha) {
@@ -1470,7 +1652,14 @@ async function obtenerUltimoIdAsigna(connection) {
   return result.length > 0 ? result[0].ID : null;
 }
 
-app.post("/validaContratoCantidad", async (req, res) => {
+app.post("/validaContratoCantidad", authenticateToken, async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if(!globalDbUser || !globalPassword) {
+    return res.status(401).json({success: false, message: "Token inválido o no proporcionado"});
+  }
+
   const { detalles } = req.body;
 
   if (!Array.isArray(detalles) || detalles.length === 0) {
@@ -1535,7 +1724,7 @@ app.post("/validaContratoCantidad", async (req, res) => {
                         (SELECT COUNT(TP_TERRENO) FROM SPEED400AT.TBL_ASIGNACION_DET WHERE ID_CONTRATO=A.ID AND TRIM(CLASE_CONTRATO)=TRIM(A.CLASE) AND TP_TERRENO='2') AS CIUDAD,
                         (SELECT COUNT(TP_TERRENO) FROM SPEED400AT.TBL_ASIGNACION_DET WHERE ID_CONTRATO=A.ID AND TRIM(CLASE_CONTRATO)=TRIM(A.CLASE) AND TP_TERRENO='3') AS SEVERO,
                         (SELECT COUNT(*) FROM SPEED400AT.TBL_ASIGNACION_DET WHERE ID_CONTRATO=A.ID AND CLASE_CONTRATO=A.CLASE) AS CANTIDAD 
-                        FROM SPEED400AT.TBLDOCUMENTO_CAB A WHERE A.ID='${idContrato}' AND CLASE='H'`;
+                        FROM SPEED400AT.TBLDOCUMENTO_CAB A WHERE A.ID = ? AND CLASE='H'`;
       } else {
         squery = `SELECT A.ID, A.CANT_VEHI, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, TRIM(A.CLASE) AS CLASE,
                         (SELECT COUNT(TP_TERRENO) FROM SPEED400AT.TBL_ASIGNACION_DET WHERE ID_CONTRATO=A.ID AND TRIM(CLASE_CONTRATO)=TRIM(A.CLASE) AND TP_TERRENO='0') AS SUPERFICIE,
@@ -1543,10 +1732,10 @@ app.post("/validaContratoCantidad", async (req, res) => {
                         (SELECT COUNT(TP_TERRENO) FROM SPEED400AT.TBL_ASIGNACION_DET WHERE ID_CONTRATO=A.ID AND TRIM(CLASE_CONTRATO)=TRIM(A.CLASE) AND TP_TERRENO='2') AS CIUDAD,
                         (SELECT COUNT(TP_TERRENO) FROM SPEED400AT.TBL_ASIGNACION_DET WHERE ID_CONTRATO=A.ID AND TRIM(CLASE_CONTRATO)=TRIM(A.CLASE) AND TP_TERRENO='3') AS SEVERO,
                         (SELECT COUNT(*) FROM SPEED400AT.TBL_ASIGNACION_DET WHERE ID_CONTRATO=A.ID AND CLASE_CONTRATO=A.CLASE) AS CANTIDAD 
-                        FROM SPEED400AT.TBLCONTRATO_CAB A WHERE A.ID='${idContrato}' AND CLASE='P'`;
+                        FROM SPEED400AT.TBLCONTRATO_CAB A WHERE A.ID = ? AND CLASE='P'`;
       }
 
-      let result = await connection.query(squery);
+      let result = await connection.query(squery, [idContrato]);
 
       if (!result || result.length === 0) {
         await connection.close();
@@ -1603,6 +1792,7 @@ app.post("/validaContratoCantidad", async (req, res) => {
       }
     }
     await connection.close();
+
     return res.json({ success: true });
   } catch (error) {
     console.error("Error en validación de contratos:", error);

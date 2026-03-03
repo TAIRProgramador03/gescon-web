@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+#preloader-mini {
+  position: fixed;
+  top: 0;
+  left: 250px;
+  width: calc(100% - 250px);
+  height: 100%;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.gif-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.gif-container img {
+  width: 60px;
+  animation: fadein 1.5s ease-in-out infinite;
+}
+
+.welcome-message {
+  font-size: 20px;
+  margin-top: 20px;
+  font-weight: bold;
+  color: #019fff;
+}
+
+@keyframes fadein {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  #preloader-mini {
+    left: 0;
+    width: 100%;
+    height: calc(100% - 60px);
+  }
+}

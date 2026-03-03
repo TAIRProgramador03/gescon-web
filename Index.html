@@ -119,7 +119,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ dbUser, password })
+                        body: JSON.stringify({ dbUser, password }),
                     });
                     const data = await response.json();
                     if (data.success) {

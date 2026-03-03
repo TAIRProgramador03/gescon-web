@@ -110,7 +110,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function cargarClientes() {
   try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`); // Ruta relativa al servidor
+    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+      method: "GET",
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    }); // Ruta relativa al servidor
     if (!response.ok) {
       throw new Error("Error en la solicitud");
     }
@@ -142,7 +145,10 @@ async function cargarClientes() {
 
 async function cargarModelos() {
   try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`); // Ruta del servidor
+    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
+      method: "GET",
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    }); // Ruta del servidor
     if (!response.ok) {
       throw new Error("Error en la solicitud");
     }
@@ -173,7 +179,10 @@ async function cargarModelos() {
 
 async function cargarModelosFila(selectElement) {
   try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`); // Ruta del servidor
+    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
+      method: "GET",
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    }); // Ruta del servidor
     if (!response.ok) {
       throw new Error("Error en la solicitud");
     }
@@ -216,7 +225,11 @@ async function cargarContrato() {
       try {
         // Realiza una solicitud al servidor para obtener los contratos del cliente
         const response = await fetch(
-          `http://${IP_LOCAL}:3000/contratosNro?idCli=${idCli}`
+          `http://${IP_LOCAL}:3000/contratosNro?idCli=${idCli}`,
+          {
+            method: "GET",
+            credentials: "include", // Asegura que las cookies se envíen con la solicitud
+          }
         );
         const contratos = await response.json();
 
@@ -513,6 +526,7 @@ async function guardarDocumento() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(contratoData),
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
     });
 
     const result = await response.json();
@@ -541,6 +555,7 @@ async function subirArchivo(archivo) {
       method: "POST",
       enctype: "multipart/form-data",
       body: formData,
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
     });
 
     const result = await response.json();
@@ -556,7 +571,11 @@ async function subirArchivo(archivo) {
 async function validarArchivo(nombreArchivo) {
   try {
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`
+      `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`,
+      {
+        method: "GET",
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
+      }
     );
     const result = await response.json();
 

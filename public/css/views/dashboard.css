@@ -1,0 +1,379 @@
+@import url("https://fonts.cdnfonts.com/css/ica-rubrik-black");
+@import url("https://fonts.cdnfonts.com/css/poppins");
+
+/* Estilos para la pantalla de presentación 
+  #preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  }*/
+
+/*.banner .slider{
+    position: absolute;
+    width: 200px;
+    height: 250px;
+    top: 10%;
+    left: calc(50% - 100px);
+    transform-style: preserve-3d;
+    transform: perspective(1000px);
+    animation: autoRun 20s linear infinite;
+    z-index: 2;
+}*/
+
+/*.banner .slider .item{
+    position: absolute;
+    inset: 0 0 0 0;
+    transform: 
+        rotateY(calc( (var(--position) - 1) * (360 / var(--quantity)) * 1deg))
+        translateZ(530px);
+}
+.banner .slider .item img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}*/
+
+/* Contenedor de logo y rueda */
+
+/* Fondo blanco pequeño debajo del logo, por encima de la rueda */
+
+/* Logo en el frente */
+
+/* Rueda giratoria detrás */
+
+/* Animación para la rueda */
+
+/*h2{
+    font-family: 'ICA Rubrik';
+    font-size: 3em;
+    line-height: 1em;
+    color: #25283B;
+    position: relative;
+    width: 80%;
+    font-family: monospace;
+    text-wrap: nowrap;
+    overflow: hidden;
+    animation: typing 2s steps(20) infinite alternate-reverse;
+}
+
+h2::after{
+    position: absolute;
+    inset: 0 0 0 0;
+    content: attr(data-content);
+    z-index: 2;
+    -webkit-text-stroke: 1px #d2d2d2;
+    color: #081121;
+}*/
+
+h3 {
+  color: #081121;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+b {
+  font-size: 15px;
+}
+
+/*
+.banner .content .author{
+    font-family: Poppins;
+    text-align: right;
+    max-width: 200px;
+}
+.banner .content h2{
+    font-size: 3em;
+}
+*/
+
+body {
+  font-family: sans-serif;
+  background-color: #1e293b;
+  color: #cbd5e1;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+body::before {
+  position: absolute;
+  width: min(1400px, 90vw);
+  top: 10%;
+  left: 50%;
+  height: 90%;
+  transform: translateX(-50%);
+  content: "";
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: top center;
+  pointer-events: none;
+}
+
+.dashboard-container {
+  width: calc(100% - 40px);
+  margin: 20px;
+  background-color: #334155;
+  /* Darker panel background */
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.dashboard-header {
+  background-color: #475569;
+  color: #fff;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-bar {
+  display: flex;
+}
+
+.search-bar input {
+  padding: 8px;
+  border: none;
+  border-radius: 5px 0 0 5px;
+  background-color: #64748b;
+  color: #fff;
+}
+
+.search-bar button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  background-color: #8ea2c2;
+  color: #fff;
+  cursor: pointer;
+}
+
+.header-icons span {
+  margin-left: 10px;
+}
+
+.dashboard-main {
+  padding: 20px;
+}
+
+.dashboard-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.dashboard-item {
+  background-color: #475569;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  /* Ensures padding doesn't affect overall size */
+}
+
+.dashboard-item h3 {
+  margin-top: 0;
+  color: #fff;
+}
+
+.data-value {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #a5b4fc;
+}
+
+.data-change {
+  color: #6ee7b7;
+  font-size: 0.9em;
+}
+
+.item-small {
+  text-align: center;
+}
+
+.item-large {
+  grid-column: span 2;
+}
+
+.item-medium {
+  grid-column: span 1;
+}
+
+/* Basic table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  color: #cbd5e1;
+  max-height: 200px;
+  /* Ajusta según sea necesario */
+  overflow-y: auto;
+  display: block;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #64748b;
+}
+
+th {
+  background-color: #64748b;
+  color: #fff;
+}
+
+tbody tr:hover {
+  background-color: #64748b;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+  width: 7%;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  width: 30%;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+  width: 15%;
+}
+
+.tabla-formu table::-webkit-scrollbar {
+  width: 15px;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+  text-align: center;
+}
+
+.tabla-formu table::-webkit-scrollbar-track {
+  background: rgb(123, 152, 196);
+  border-radius: 50px;
+}
+
+.tabla-formu table::-webkit-scrollbar-thumb {
+  background: rgb(76, 93, 117);
+  border-radius: 50px;
+}
+
+/* Placeholder for world map */
+.world-map {
+  width: 100%;
+  height: 200px;
+  background-color: #64748b;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+.world-map img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+#salesChart {
+  width: 100%;
+  /* Make the canvas responsive */
+}
+
+i {
+  font-size: 18px;
+}
+
+.can-barra {
+  width: 100%;
+  position: relative;
+  top: 20px;
+  height: 100%;
+  max-height: 180px;
+}
+
+@media screen and (max-width: 1200px) {
+  .carousel-container {
+    width: 70%;
+  }
+}
+
+@media (max-width: 800px) {
+  .dashboard-container {
+    width: calc(100% - 40px);
+    padding-bottom: 60px;
+  }
+
+  .dashboard-main {
+    padding: 5px;
+  }
+
+  .dashboard-section {
+    grid-template-columns: 1fr;
+    /* Single column layout */
+    top: 15px;
+    position: relative;
+  }
+
+  .item-large {
+    grid-column: span 1;
+    /* Make large items take up the full width */
+  }
+
+  .item-medium {
+    grid-column: span 1;
+    /* Make medium items take up the full width */
+  }
+
+  .revenueChart {
+    width: 100%;
+  }
+
+  .can-barra {
+    top: 10px;
+  }
+
+  .image {
+    display: none;
+  }
+
+  .carousel-container {
+    width: 90%;
+  }
+
+  .rotating-wheel {
+    width: 200px;
+    height: 200px;
+    top: -123px;
+    left: 123px;
+  }
+
+  .small-white-bg {
+    width: 148px;
+    height: 148px;
+    top: -92px;
+    left: 35px;
+  }
+
+  .logo-ta {
+    width: 308px;
+    height: 326px;
+    top: -205px;
+    left: -36px;
+  }
+}

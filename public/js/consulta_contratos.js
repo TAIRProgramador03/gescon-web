@@ -7,7 +7,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarClientes() {
   try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`); // Ruta relativa al servidor
+    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+      method: "GET",
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    }); // Ruta relativa al servidor
     if (!response.ok) throw new Error("Error en la solicitud");
 
     const clientes = await response.json();
@@ -53,7 +56,11 @@ async function cargarContrato() {
       try {
         // Realiza una solicitud al servidor para obtener los contratos del cliente
         const response = await fetch(
-          `http://${IP_LOCAL}:3000/contratosNro?idCli=${idCli}`
+          `http://${IP_LOCAL}:3000/contratosNro?idCli=${idCli}`,
+          {
+            method: "GET",
+            credentials: "include", // Asegura que las cookies se envíen con la solicitud
+          }
         );
         const contratos = await response.json();
 
@@ -104,7 +111,11 @@ async function cargarTablacliente() {
       try {
         // Realiza una solicitud al servidor para obtener los contratos del cliente
         const response = await fetch(
-          `http://${IP_LOCAL}:3000/tablaCliente?idCli=${idCli}`
+          `http://${IP_LOCAL}:3000/tablaCliente?idCli=${idCli}`,
+          {
+            method: "GET",
+            credentials: "include", // Asegura que las cookies se envíen con la solicitud
+          }
         );
         const contratos = await response.json();
 
@@ -170,7 +181,11 @@ async function cargarTablacontrato() {
       try {
         // Llamada al servidor
         const response = await fetch(
-          `http://${IP_LOCAL}:3000/tablaContrato?idCli=${idCli}&id=${id}`
+          `http://${IP_LOCAL}:3000/tablaContrato?idCli=${idCli}&id=${id}`,
+          {
+            method: "GET",
+            credentials: "include", // Asegura que las cookies se envíen con la solicitud
+          }
         );
         // Verifica si la respuesta es exitosa
         if (!response.ok) {
@@ -249,7 +264,11 @@ document
       // Realizar la solicitud AJAX al backend para obtener los detalles del contrato
       try {
         const response = await fetch(
-          `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}`
+          `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}`,
+          {
+            method: "GET",
+            credentials: "include", // Asegura que las cookies se envíen con la solicitud
+          }
         );
         const data = await response.json();
 

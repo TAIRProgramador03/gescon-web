@@ -5,19 +5,38 @@
         // Mostrar el usuario en el dashboard
         //document.getElementById('welcomeMessage').textContent = `${loggedUser}`;
         } else {
-            window.location.href = '/tair-web/index.html';
+            window.location.href = '../../Index.html';
         }
 
         const logoutIcon = document.getElementById('log_out');
 
-        // Agrega un evento de clic
-        document.getElementById('log_out').addEventListener('click', () => {
-        // Limpiar el almacenamiento
-        localStorage.clear();
-        sessionStorage.clear();
-
-        // Redirigir al login
-        window.location.href = '/tair-web/index.html';
+        document.getElementById("log_out").addEventListener("click", async () => {
+            try {
+                const response = await fetch("/api/logout", {
+                method: "POST",
+                credentials: "include",
+                });
+                const data = await response.json();
+                if (data.success) {
+                localStorage.removeItem("dbUser");
+                window.location.href = "../../Index.html";
+                } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "No se pudo cerrar sesión",
+                    confirmButtonColor: "#004f83",
+                });
+                }
+            } catch (error) {
+                console.error("Error al hacer la solicitud:", error);
+                Swal.fire({
+                icon: "error",
+                title: "Error de conexión",
+                text: "No se pudo conectar con el servidor",
+                confirmButtonColor: "#004f83",
+                });
+            }
         });
     </script>
     <script type="text/javascript" src="../js/app.js" defer></script>

@@ -20,13 +20,12 @@ function closeAllSubMenus() {
   });
 }*/
 
-
-const toggleButton = document.getElementById('toggle-btn');
-const sidebar = document.getElementById('sidebar');
+const toggleButton = document.getElementById("toggle-btn");
+const sidebar = document.getElementById("sidebar");
 
 function toggleSidebar() {
-  sidebar.classList.toggle('close');
-  toggleButton.classList.toggle('rotate');
+  sidebar.classList.toggle("close");
+  toggleButton.classList.toggle("rotate");
   closeAllSubMenus(); // Cierra todos los submenús al cerrar el sidebar
 }
 
@@ -34,27 +33,26 @@ function toggleSubMenu(button) {
   let subMenu = button.nextElementSibling;
 
   // Si el submenú ya está abierto, simplemente lo oculta
-  if (subMenu.classList.contains('show')) {
-    subMenu.classList.remove('show');
-    button.classList.remove('rotate');
+  if (subMenu.classList.contains("show")) {
+    subMenu.classList.remove("show");
+    button.classList.remove("rotate");
     closeAllSubMenusSec();
   } else {
     closeAllSubMenus(); // Cierra todos los submenús principales y secundarios
-    subMenu.classList.add('show');
-    button.classList.add('rotate');
+    subMenu.classList.add("show");
+    button.classList.add("rotate");
   }
 
-  if (sidebar.classList.contains('close')) {
-    sidebar.classList.toggle('close')
-    toggleButton.classList.toggle('rotate')
+  if (sidebar.classList.contains("close")) {
+    sidebar.classList.toggle("close");
+    toggleButton.classList.toggle("rotate");
   }
-
 }
 
 function closeAllSubMenus() {
-  document.querySelectorAll('.sub-menu.show').forEach(ul => {
-    ul.classList.remove('show');
-    ul.previousElementSibling.classList.remove('rotate');
+  document.querySelectorAll(".sub-menu.show").forEach((ul) => {
+    ul.classList.remove("show");
+    ul.previousElementSibling.classList.remove("rotate");
   });
 
   closeAllSubMenusSec(); // También cierra los submenús secundarios
@@ -63,19 +61,19 @@ function closeAllSubMenus() {
 function toggleSubMenuSec(button) {
   let subMenuSec = button.nextElementSibling;
 
-  if (subMenuSec.classList.contains('show')) {
-    subMenuSec.classList.remove('show');
-    button.classList.remove('rotate');
+  if (subMenuSec.classList.contains("show")) {
+    subMenuSec.classList.remove("show");
+    button.classList.remove("rotate");
   } else {
     closeAllSubMenusSec(); // Cierra los otros submenús secundarios
-    subMenuSec.classList.add('show');
-    button.classList.add('rotate');
+    subMenuSec.classList.add("show");
+    button.classList.add("rotate");
   }
 }
 
 function closeAllSubMenusSec() {
-  document.querySelectorAll('.sub-menu-sec.show').forEach(ul => {
-    ul.classList.remove('show');
-    ul.previousElementSibling.classList.remove('rotate');
+  document.querySelectorAll(".sub-menu-sec.show").forEach((ul) => {
+    ul.classList.remove("show");
+    ul.previousElementSibling.classList.remove("rotate");
   });
 }

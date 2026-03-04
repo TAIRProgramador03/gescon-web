@@ -4,7 +4,7 @@ const secret =
 
 const authenticateToken = (req, res, next) => {
   // Extrae el token del encabezado de autorización
-  const token = req.cookies.token;
+  const token = req.cookies.access_token;
   if (!token) {
     return res
       .status(401)

@@ -114,13 +114,14 @@
                 const password = document.getElementById('password').value;
     
                 try {
-                    const response = await fetch(`http://${IP_LOCAL}:3000/login`, {
+                    const response = await fetch(`/api/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({ dbUser, password }),
                     });
+
                     const data = await response.json();
                     if (data.success) {
                         localStorage.setItem('dbUser', dbUser);

@@ -54,6 +54,7 @@
                         <option value="2">Carta</option>
                         <option value="3">Orden de Compra</option>
                         <option value="4">Orden de Servicio</option>
+                        <option value="5">Orden de Cambio</option>
                     </select>
                 </div>
                 <div class="form-cliente">

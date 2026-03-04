@@ -1,0 +1,240 @@
+const odbc = require("odbc");
+const { dbConfig } = require("../../shared/conf.js");
+const { decodeString } = require("../../shared/utils.js");
+
+const listVehicles = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  let connection;
+
+  try {
+    connection = await odbc.connect(
+      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
+    );
+
+    // Consulta los contratos asociados al cliente
+    // A.INIVAL1='0' AND
+    const query = `SELECT A.ID, A.CODINI AS CODINI, A.NUMPLA AS PLACA, C.DESCRIPCION AS MARCA, B.DESCRIPCION AS MODELO, B.DESMODGEN AS GENERICO, D.DESCRIP AS TERRENO FROM SPEED400AT.PO_VEHICULO A LEFT JOIN SPEED400AT.PO_MODELO B ON A.IDMOD=B.ID AND A.IDMODGEN=B.IDMODGEN LEFT JOIN SPEED400AT.PO_MARCA C ON A.IDMAR=C.ID LEFT JOIN SPEED400AT.PO_TERRENO D ON A.TP_TRABAJO=D.TPTRA LEFT JOIN SPEED400AT.TBL_LEASING_DET E ON A.ID=E.ID_VEH WHERE E.ID_VEH IS NULL ORDER BY A.ID DESC`;
+    const result = await connection.query(query);
+
+    // Devuelve los contratos como respuesta
+    res.json(result);
+  } catch (error) {
+    console.error("Error al obtener los datos:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error al obtener los datos" });
+  } finally {
+    if (connection) {
+      await connection.close();
+    }
+  }
+};
+
+const tableVehicles = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  let connection;
+
+  try {
+    connection = await odbc.connect(
+      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
+    );
+
+    // Consulta los contratos asociados al cliente
+    // A.INIVAL1='0' AND
+    const query = `
+      SELECT A.ID, A.CODINI AS CODINI, A.NUMPLA AS PLACA, C.DESCRIPCION AS MARCA, B.DESCRIPCION AS MODELO, B.DESMODGEN AS GENERICO, D.DESCRIP AS TERRENO 
+      FROM SPEED400AT.PO_VEHICULO A 
+      LEFT JOIN SPEED400AT.PO_MODELO B ON A.IDMOD=B.ID AND A.IDMODGEN=B.IDMODGEN 
+      LEFT JOIN SPEED400AT.PO_MARCA C ON A.IDMAR=C.ID 
+      LEFT JOIN SPEED400AT.PO_TERRENO D ON A.TP_TRABAJO=D.TPTRA 
+      LEFT JOIN SPEED400AT.TBL_LEASING_DET E ON A.ID=E.ID_VEH 
+      WHERE E.ID_VEH IS NULL ORDER BY A.ID DESC
+    `;
+    const result = await connection.query(query);
+
+    const cleanedResult = result.map((row) => {
+      return {
+        ID:
+          row.ID !== null && row.ID !== undefined
+            ? row.ID.toString().trim()
+            : null,
+        CODINI:
+          row.CODINI !== null && row.CODINI !== undefined
+            ? decodeString(row.CODINI.toString().trim())
+            : null,
+        PLACA:
+          row.PLACA !== null && row.PLACA !== undefined
+            ? decodeString(row.PLACA.toString().trim())
+            : null,
+        MARCA:
+          row.MARCA !== null && row.MARCA !== undefined
+            ? decodeString(row.MARCA.toString().trim())
+            : null,
+        MODELO:
+          row.MODELO !== null && row.MODELO !== undefined
+            ? row.MODELO.toString().trim()
+            : null,
+        GENERICO:
+          row.GENERICO !== null && row.GENERICO !== undefined
+            ? decodeString(row.GENERICO.toString().trim())
+            : null,
+        TERRENO:
+          row.TERRENO !== null && row.TERRENO !== undefined
+            ? decodeString(row.TERRENO.toString().trim())
+            : null,
+      };
+    });
+
+    // Devuelve los contratos como respuesta
+    res.json(cleanedResult);
+  } catch (error) {
+    console.error("Error al obtener los datos:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error al obtener los datos" });
+  } finally {
+    if (connection) {
+      await connection.close();
+    }
+  }
+};
+
+const contVehicles = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  let connection;
+
+  try {
+    connection = await odbc.connect(
+      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
+    );
+
+    // Consulta los contratos asociados al cliente
+    const query = `SELECT*FROM (SELECT MODELO, PRECIO_VEH FROM SPEED400AT.TBLCONTRATO_DET) UNION (SELECT MODELO, PRECIO_VEH FROM SPEED400AT.TBLDOCUMENTO_CAB A LEFT JOIN SPEED400AT.TBLDOCUMENTO_DET B ON A.ID=B.ID_CON_CAB) ORDER BY PRECIO_VEH ASC`;
+    const result = await connection.query(query);
+
+    const cleanedResult = result.map((row) => {
+      return {
+        MODELO:
+          row.MODELO !== null && row.MODELO !== undefined
+            ? decodeString(row.MODELO.toString().trim())
+            : null,
+        PRECIO_VEH:
+          row.PRECIO_VEH !== null && row.PRECIO_VEH !== undefined
+            ? row.PRECIO_VEH.toString().trim()
+            : null,
+      };
+    });
+
+    // Devuelve los contratos como respuesta
+    res.json(cleanedResult);
+  } catch (error) {
+    console.error("Error al obtener los datos:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error al obtener los datos" });
+  } finally {
+    if (connection) {
+      await connection.close();
+    }
+  }
+};
+
+const vehicleLeasing = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { idCli, nroLeasing } = req.query;
+  let query = "";
+  let params = [];
+
+  let connection;
+
+  try {
+    connection = await odbc.connect(
+      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
+    );
+
+    if (nroLeasing === "all") {
+      query = `SELECT DISTINCT A.CODINI, A.PLACA, TRIM(D.DESCRIPCION) AS MARCA, TRIM(A.MODELO) AS MODELO, A.NRO_LEASING  FROM (SELECT A.ID, A.ID_CLIENTE, TRIM(B.ID_VEH) AS CODINI, TRIM(B.PLACA) AS PLACA, A.NRO_LEASING, B.ID_VEH, B.MODELO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID = B.ID_LEA_CAB) A LEFT JOIN SPEED400AT.PO_VEHICULO C ON A.ID_VEH = C.ID LEFT JOIN SPEED400AT.PO_MARCA D ON C.IDMAR = D.ID LEFT JOIN (SELECT * FROM (SELECT A.ID, A.ID_CLIENTE, A.NRO_LEASING, A.CANT_VEH, B.PLACA, B.ID_VEH AS VEHICULO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID=B.ID_LEA_CAB) A LEFT JOIN (SELECT ID_CLIENTE, ID_ASIGNACION, LEASING, ID_VEH FROM SPEED400AT.TBL_ASIGNACION_CAB A INNER JOIN SPEED400AT.TBL_ASIGNACION_DET B ON A.ID=B.ID_ASIGNACION) B ON TRIM(A.NRO_LEASING)=TRIM(B.LEASING) AND A.VEHICULO=B.ID_VEH) E ON A.NRO_LEASING=E.LEASING AND A.ID_VEH=E.VEHICULO
+              WHERE (A.ID_CLIENTE = ?) AND E.VEHICULO IS NULL GROUP BY A.CODINI, A.PLACA, TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.NRO_LEASING ORDER BY TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.PLACA`;
+
+      params = [idCli];
+    } else if (nroLeasing) {
+      query = `SELECT DISTINCT A.CODINI, A.PLACA, TRIM(D.DESCRIPCION) AS MARCA, TRIM(A.MODELO) AS MODELO, A.NRO_LEASING  FROM (SELECT A.ID, A.ID_CLIENTE, TRIM(B.ID_VEH) AS CODINI, TRIM(B.PLACA) AS PLACA, A.NRO_LEASING, B.ID_VEH, B.MODELO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID = B.ID_LEA_CAB) A LEFT JOIN SPEED400AT.PO_VEHICULO C ON A.ID_VEH = C.ID LEFT JOIN SPEED400AT.PO_MARCA D ON C.IDMAR = D.ID LEFT JOIN (SELECT * FROM (SELECT A.ID, A.ID_CLIENTE, A.NRO_LEASING, A.CANT_VEH, B.PLACA, B.ID_VEH AS VEHICULO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID=B.ID_LEA_CAB) A LEFT JOIN (SELECT ID_CLIENTE, ID_ASIGNACION, LEASING, ID_VEH FROM SPEED400AT.TBL_ASIGNACION_CAB A INNER JOIN SPEED400AT.TBL_ASIGNACION_DET B ON A.ID=B.ID_ASIGNACION) B ON TRIM(A.NRO_LEASING)=TRIM(B.LEASING) AND A.VEHICULO=B.ID_VEH) E ON A.NRO_LEASING=E.LEASING AND A.ID_VEH=E.VEHICULO
+              WHERE (A.NRO_LEASING = ? AND A.ID_CLIENTE = ?) AND E.VEHICULO IS NULL GROUP BY A.CODINI, A.PLACA, TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.NRO_LEASING ORDER BY TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.PLACA`;
+
+      params = [nroLeasing, idCli];
+    }
+
+    // Consulta los detalles del contrato
+    // const query = `
+    //         SELECT DISTINCT A.CODINI, A.PLACA, TRIM(D.DESCRIPCION) AS MARCA, TRIM(A.MODELO) AS MODELO, A.NRO_LEASING  FROM (SELECT A.ID, A.ID_CLIENTE, TRIM(B.ID_VEH) AS CODINI, TRIM(B.PLACA) AS PLACA, A.NRO_LEASING, B.ID_VEH, B.MODELO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID = B.ID_LEA_CAB) A LEFT JOIN SPEED400AT.PO_VEHICULO C ON A.ID_VEH = C.ID LEFT JOIN SPEED400AT.PO_MARCA D ON C.IDMAR = D.ID LEFT JOIN (SELECT * FROM (SELECT A.ID, A.ID_CLIENTE, A.NRO_LEASING, A.CANT_VEH, B.PLACA, B.ID_VEH AS VEHICULO FROM SPEED400AT.TBL_LEASING_CAB A INNER JOIN SPEED400AT.TBL_LEASING_DET B ON A.ID=B.ID_LEA_CAB) A LEFT JOIN (SELECT ID_CLIENTE, ID_ASIGNACION, LEASING, ID_VEH FROM SPEED400AT.TBL_ASIGNACION_CAB A INNER JOIN SPEED400AT.TBL_ASIGNACION_DET B ON A.ID=B.ID_ASIGNACION) B ON TRIM(A.NRO_LEASING)=TRIM(B.LEASING) AND A.VEHICULO=B.ID_VEH) E ON A.NRO_LEASING=E.LEASING AND A.ID_VEH=E.VEHICULO
+    //         WHERE (A.NRO_LEASING = '${nroLeasing}' AND A.ID_CLIENTE = '${idCli}') AND E.VEHICULO IS NULL GROUP BY A.CODINI, A.PLACA, TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.NRO_LEASING ORDER BY TRIM(D.DESCRIPCION), TRIM(A.MODELO), A.PLACA`;
+
+    const result = await connection.query(query, params);
+
+    if (result.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Contrato no encontrado" });
+    }
+
+    res.json({
+      success: true,
+      data: result.map((row) => ({
+        codini: row.CODINI,
+        placa: row.PLACA,
+        marca: row.MARCA,
+        modelo: row.MODELO,
+        nro_leasing: row.NRO_LEASING,
+      })),
+    });
+  } catch (error) {
+    console.error("Error al obtener los detalles del contrato:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener los detalles del contrato",
+    });
+  } finally {
+    if (connection) {
+      await connection.close();
+    }
+  }
+};
+
+module.exports = {
+  listVehicles,
+  tableVehicles,
+  contVehicles,
+  vehicleLeasing,
+};

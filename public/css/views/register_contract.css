@@ -1,4 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@font-face {
+  font-family: 'Fredoka Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 400 500 600 700;
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wght-normal.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
 
 body.loaded .sidebar,
 body.loaded .home-section {
@@ -26,7 +33,7 @@ main {
   background: white;
   color: black;
   width: 100%;
-  font-family: "Montserrat", serif;
+  font-family: "Fredoka Variable", sans-serif;
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -83,16 +90,18 @@ main {
 }
 
 .cbo-form-cliente {
-  height: 30px;
-  border-radius: 5px;
-  text-align: center;
-  position: relative;
+  font-family: "Fredoka Variable", sans-serif;
+  font-weight: 700;
 
-  font-family: "Montserrat", serif;
-  font-optical-sizing: auto;
-  font-size: 13px;
+  /* height: 30px; */
+  /* border-radius: 5px; */
+  /* text-align: center; */
+  /* position: relative; */
+
+  /* font-optical-sizing: auto; */
+  /* font-size: 13px; */
   /* font-weight: <weight>; */
-  font-style: normal;
+  /* font-style: normal; */
 }
 
 /*#tooltip {
@@ -111,7 +120,7 @@ main {
 
 .cbo-registrar .cbo-form-cliente {
   width: 78%;
-  right: 7px;
+  /* right: 7px; */
 }
 
 .form-cliente .cbo-form-cliente {
@@ -164,7 +173,7 @@ main {
   justify-content: space-evenly;
   align-content: space-around;
   align-items: center;
-  font-family: "Montserrat", serif;
+  font-family: "Fredoka Variable", sans-serif;
   font-optical-sizing: auto;
   font-size: 13px;
   font-style: normal;
@@ -181,6 +190,8 @@ main {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   font-size: 16px;
+  font-weight: 500;
+  font-family: 'Fredoka Variable', sans-serif;
 }
 
 .tabla-form {
@@ -1008,3 +1019,6 @@ td select {
   border: none;
   font-size: 27px;
 }
+
+/* NUEVO CSS PARA LOS SELECTS */
+

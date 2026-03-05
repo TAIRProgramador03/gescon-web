@@ -8,6 +8,11 @@ require './templates/header.html';
 <!-- JS de Select2 -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
+<!-- CSS de Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- JS de Flatpickr -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <!-- ESTILOS -->
 <style>
     <?php include '../css/views/register_contract.css'; ?>
@@ -33,7 +38,7 @@ require './templates/header.html';
             </div>
             <div class="form-cliente-cbo">
                 <div class="cbo-registrar">
-                    <label for="combo-box">Razon Social(*):</label>
+                    <label for="combo-cliente">Razon Social(*):</label>
                     <select id="combo-cliente" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente">
                         <option value="">Seleccione un cliente</option>
                     </select>
@@ -160,14 +165,13 @@ require './templates/header.html';
                             <tr>
                                 <td><input type="text" name="item[]" value="1" disabled></td>
                                 <td>
-                                    <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select " id="tipoModelo" style="width: 100%;" data-tooltip="Selecciona el modelo">
+                                    <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select" id="tipoModelo" style="width: 100%;" data-tooltip="Selecciona el modelo">
                                         <option value="">Seleccione un modelo</option>
                                     </select>
                                     <!--<input type="text" name="modelo[]" value="" title="Modelo del vehiculo">-->
                                 </td>
                                 <td>
-
-                                    <select name="tipo_terreno[]" class="cbo-form-cliente tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
+                                    <select name="tipo_terreno[]" class="cbo-form-cliente tooltip-input" id="tipoTerreno" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
                                         <option value="4">Seleccione el tipo</option>
                                         <option value="0">Superficie</option>
                                         <option value="1">Socavon</option>
@@ -410,10 +414,34 @@ require './templates/header.html';
     });*/
 
     $(document).ready(function() {
-        $("#tipoModelo").select2({
-            placeholder: "Seleccione el tipo",
+        $("#combo-cliente").select2({
+            placeholder: "Seleccione un cliente",
             allowClear: false // Desactiva la "X"
         });
+
+        $("#combo-moneda").select2({
+            placeholder: "Seleccione una moneda",
+            allowClear: false // Desactiva la "X"
+        });
+
+        $("#combo-tipo").select2({
+            placeholder: "Seleccione un tipo",
+            allowClear: false // Desactiva la "X"
+        });
+
+        $("#tipoModelo").select2({
+            placeholder: "Seleccione el modelo",
+            allowClear: false // Desactiva la "X"
+        });
+
+        $("#tipoTerreno").select2({
+            placeholder: "Seleccione el terreno",
+            allowClear: false // Desactiva la "X"
+        });
+    });
+
+    flatpickr("#firma", {
+        dateFormat: "Y-m-d"
     });
 </script>
 <script type="module" src="../js/registrar_contratos.js"></script>

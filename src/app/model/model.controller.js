@@ -1,24 +1,20 @@
-const odbc = require("odbc");
-const { dbConfig } = require("../../shared/conf.js");
 const { decodeString } = require("../../shared/utils.js");
+const connection = require("../../shared/connect.js");
 
 const listModels = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
 
+  // Validación de token y sus datos
   if (!globalDbUser || !globalPassword) {
     return res
       .status(401)
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    // Conexión a DB2 con los valores globales de dbUser y password
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-    const result = await connection.query(
+    const result = await cn.query(
       "SELECT ID, TRIM(DESCRIPCION) AS MODELO FROM SPEED400AT.PO_MODELO GROUP BY ID, DESCRIPCION ORDER BY TRIM(DESCRIPCION) ASC",
     );
 
@@ -37,8 +33,8 @@ const listModels = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al obtener los modelos" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };

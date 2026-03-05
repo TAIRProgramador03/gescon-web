@@ -1,8 +1,16 @@
-const odbc = require("odbc");
-const { dbConfig } = require("../../shared/conf.js");
 const {convertirFecha, obtenerUltimoIdDoc} = require("../../shared/utils.js");
+const connection = require("../../shared/connect.js");
 
 const insertDocument = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
   const {
     idCliente,
     idContrato,
@@ -29,21 +37,9 @@ const insertDocument = async (req, res) => {
   const claseDocu = "H";
   const fechaFormatoDB = convertirFecha(fechaFirma);
 
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
 
-  const { globalDbUser, globalPassword } = req.user;
-
-  // Validación de token y sus datos
-  if (!globalDbUser || !globalPassword) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Token inválido o no proporcionado" });
-  }
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     console.log("Valores para queryCabecera:", [
       idCliente,
       idContrato,
@@ -89,7 +85,7 @@ const insertDocument = async (req, res) => {
       claseDocu,
       motivo,
     ]);
-    const result = await connection.query(queryCabecera, [
+    const result = await cn.query(queryCabecera, [
       idCliente,
       idContrato,
       tipoContrato,
@@ -111,7 +107,7 @@ const insertDocument = async (req, res) => {
     ]);
 
     const idDocumentoCab =
-      result.insertId || (await obtenerUltimoIdDoc(connection));
+      result.insertId || (await obtenerUltimoIdDoc(cn));
 
     const queryDetalle = `
               INSERT INTO SPEED400AT.TBLDOCUMENTO_DET
@@ -134,7 +130,7 @@ const insertDocument = async (req, res) => {
           detalle.compraVeh,
           detalle.precioVeh,
         ]);
-        await connection.query(queryDetalle, [
+        await cn.query(queryDetalle, [
           idDocumentoCab,
           detalle.secCon,
           detalle.modelo,
@@ -157,8 +153,8 @@ const insertDocument = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al insertar documento" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };

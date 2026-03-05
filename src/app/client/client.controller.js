@@ -1,25 +1,19 @@
-const odbc = require("odbc");
-const { dbConfig } = require("../../shared/conf.js");
 const { decodeString } = require("../../shared/utils.js");
+const connection = require("../../shared/connect.js");
 
 const listClient = async (req, res) => {
-  // Verificar que el token JWT esté presente y decodificarlo para obtener los valores globales de dbUser y password
   const { globalDbUser, globalPassword } = req.user;
 
+  // Validación de token y sus datos
   if (!globalDbUser || !globalPassword) {
     return res
       .status(401)
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    // Conexión a DB2 con los valores globales de dbUser y password
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     const sql = `
       SELECT DISTINCT A.IDCLI, B.CLINOM 
       FROM SPEED400AT.PO_OPERACIONES A 
@@ -28,7 +22,7 @@ const listClient = async (req, res) => {
       ORDER BY CLINOM ASC
     `;
 
-    const result = await connection.query(sql);
+    const result = await cn.query(sql);
 
     // Decodificar los resultados desde latin1
     const cleanedResult = result.map((row) => {
@@ -45,14 +39,13 @@ const listClient = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al obtener clientes" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
 
 const tableClient = async (req, res) => {
-  // Verificar que el token JWT esté presente y decodificarlo para obtener los valores globales de dbUser y password
   const { globalDbUser, globalPassword } = req.user;
 
   // Validación de token y sus datos
@@ -61,7 +54,7 @@ const tableClient = async (req, res) => {
       .status(401)
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
-
+  
   const { idCli } = req.query; // Obtiene el idCli de los parámetros de consulta
 
   if (!idCli) {
@@ -70,20 +63,16 @@ const tableClient = async (req, res) => {
       .json({ success: false, message: "El idCli es obligatorio" });
   }
 
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     // Consulta los contratos asociados al cliente
     const query = `
       SELECT NRO_CONTRATO AS DESCRIPCION, FECHA_FIRMA AS FECHACREA, CANT_VEHI AS TOTVEH, DURACION 
       FROM SPEED400AT.TBLCONTRATO_CAB 
       WHERE ID_CLIENTE = ?
     `;
-    const result = await connection.query(query, [idCli]);
+    const result = await cn.query(query, [idCli]);
 
     const cleanedResult = result.map((row) => {
       return {
@@ -114,14 +103,13 @@ const tableClient = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al obtener los datos" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
 
 const tableClientLea = async (req, res) => {
-  // Verificar que el token JWT esté presente y decodificarlo para obtener los valores globales de dbUser y password
   const { globalDbUser, globalPassword } = req.user;
 
   // Validación de token y sus datos
@@ -131,16 +119,12 @@ const tableClientLea = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     // Consulta los contratos asociados al cliente
     const query = `SELECT DISTINCT A.IDCLI, B.CLINOM, B.CLIRUC, B.CLIABR, B.CLIDIR FROM SPEED400AT.PO_OPERACIONES A INNER JOIN SPEED400AT.TCLIE B ON A.IDCLI=B.CLICVE WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' ORDER BY CLINOM ASC`;
-    const result = await connection.query(query);
+    const result = await cn.query(query);
 
     const cleanedResult = result.map((row) => {
       return {
@@ -175,8 +159,8 @@ const tableClientLea = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al obtener los datos" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };

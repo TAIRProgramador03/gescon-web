@@ -1,18 +1,22 @@
-const odbc = require("odbc");
 const jwt = require("jsonwebtoken");
-const {dbConfig} = require("../../shared/conf.js");
+const connection = require("../../shared/connect.js");
 
 const login = async (req, res) => {
   // Obtenemos los valores del login desde el cuerpo de la solicitud
   const { dbUser, password } = req.body;
 
-  let connection;
+  const isSup = dbUser.slice(0, 3);
+
+  if (dbUser.trim().toLowerCase() !== "gescon" && isSup.trim().toLowerCase() !== "sup") {
+    return res
+      .status(401)
+      .json({ success: false, message: "Usuario no permitido" });
+  }
+
+  let cn;
 
   try {
-    // Conexión a DB2 con los valores del login
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${dbUser};PWD=${password};System=${dbConfig.system};charset=utf8`,
-    );
+    cn = await connection(dbUser, password);
 
     // Si la conexión es exitosa, generamos un token JWT con los datos del usuario
     const payload = { globalDbUser: dbUser, globalPassword: password };
@@ -32,11 +36,11 @@ const login = async (req, res) => {
     });
     res.json({ success: true, message: "Conexión exitosa" });
   } catch (error) {
-    console.error("Error de conexión:", error);
-    res.json({ success: false, message: "Error de conexión" });
+    console.error("Error al iniciar sesión:", error);
+    res.json({ success: false, message: "Error al iniciar sesión" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
@@ -62,7 +66,11 @@ const verify = async (req, res) => {
     process.env.SECRET_KEY || "3c0FNs1Md90ueIaYmaAZAC75TM1MD77l2JeffvxQY6w",
     (err, user) => {
       if (err) return res.status(403).send("Token inválido");
-      res.status(200).json({ success: true, message: "Token válido", globalDbUser: user.globalDbUser });
+      res.status(200).json({
+        success: true,
+        message: "Token válido",
+        globalDbUser: user.globalDbUser,
+      });
     },
   );
 };

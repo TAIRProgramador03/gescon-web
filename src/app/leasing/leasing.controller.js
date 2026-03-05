@@ -1,5 +1,3 @@
-const odbc = require("odbc");
-const { dbConfig } = require("../../shared/conf.js");
 const {
   decodeString,
   convertirFecha,
@@ -7,24 +5,22 @@ const {
   funcionParteVar,
   obtenerUltimoIdLea,
 } = require("../../shared/utils.js");
+const connection = require("../../shared/connect.js");
 
 const listLeasing = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
 
+  // Validación de token y sus datos
   if (!globalDbUser || !globalPassword) {
     return res
       .status(401)
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
-
-  let connection;
+  
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    // Conexión a DB2 con los valores globales de dbUser y password
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-    const result = await connection.query(
+    const result = await cn.query(
       "SELECT ID, NRO_LEASING FROM SPEED400AT.TBL_LEASING_CAB ORDER BY NRO_LEASING ASC",
     );
 
@@ -43,13 +39,22 @@ const listLeasing = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al obtener leasing" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
 
 const listLeasingOfClient = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
   const { idCli } = req.query;
 
   // Validación de parametros query
@@ -60,33 +65,16 @@ const listLeasingOfClient = async (req, res) => {
     });
   }
 
-  const { globalDbUser, globalPassword } = req.user;
-
-  // Validación de token y sus datos
-  if (!globalDbUser || !globalPassword) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Token inválido o no proporcionado" });
-  }
-
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    // Conexión a DB2 con los valores globales de dbUser y password
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-    // const result = await connection.query(
-    //   `SELECT ID, NRO_LEASING FROM SPEED400AT.TBL_LEASING_CAB WHERE ID_CLIENTE='${idCli}' ORDER BY NRO_LEASING ASC`
-    // );
-
     const query = `
         SELECT ID, NRO_LEASING 
         FROM SPEED400AT.TBL_LEASING_CAB 
         WHERE ID_CLIENTE = ? ORDER BY NRO_LEASING ASC
       `;
 
-    const result = await connection.query(query, [idCli]);
+    const result = await cn.query(query, [idCli]);
 
     // Decodificar los resultados desde latin1
     const cleanedResult = result.map((row) => {
@@ -109,8 +97,8 @@ const listLeasingOfClient = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al obtener leasing" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
@@ -143,20 +131,17 @@ const insertLeasing = async (req, res) => {
   const fechaFinDB = convertirFecha(fechaFin);
 
   let nombreArchivo = `http://${IP_LOCAL}/tair-web/public/pdf/leasings/${archivoPdf}`;
-  let connection;
+  
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     const queryCabecera = `
               INSERT INTO SPEED400AT.TBL_LEASING_CAB 
               (ID_CLIENTE, NRO_LEASING, BANCO, CANT_VEH, FECHA_INI, FECHA_FIN, PERIODO_GRACIA, PDF, ID_CONTRATO, TIPCON)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `;
 
-    const result = await connection.query(queryCabecera, [
+    const result = await cn.query(queryCabecera, [
       idCliente,
       nroLeasing,
       banco,
@@ -186,7 +171,7 @@ const insertLeasing = async (req, res) => {
 
     if (detalles && detalles.length > 0) {
       for (const detalle of detalles) {
-        await connection.query(queryDetalle, [
+        await cn.query(queryDetalle, [
           idLeasingCab,
           detalle.idpla,
           detalle.secCon,
@@ -197,7 +182,7 @@ const insertLeasing = async (req, res) => {
           detalle.cantidad,
         ]);
 
-        await connection.query(queryUpdateVehiculo, [detalle.idpla]);
+        await cn.query(queryUpdateVehiculo, [detalle.idpla]);
       }
     }
 
@@ -208,8 +193,8 @@ const insertLeasing = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al insertar Leasing" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };

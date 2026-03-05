@@ -1,5 +1,3 @@
-const odbc = require("odbc");
-const { dbConfig } = require("../../shared/conf.js");
 const {
   decodeString,
   obtenerUltimoIdAsigna,
@@ -7,6 +5,7 @@ const {
   funcionNumerica,
   funcionParteVar,
 } = require("../../shared/utils.js");
+const connection = require("../../shared/connect.js");
 
 const listOperations = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
@@ -26,20 +25,16 @@ const listOperations = async (req, res) => {
       .json({ success: false, message: "El idCli es obligatorio" });
   }
 
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     // Consulta los contratos asociados al cliente
     const query = `
       SELECT ID, DESCRIPCION 
       FROM SPEED400AT.PO_OPERACIONES 
       WHERE SITUACION='S' AND IDCLI = ?
     `;
-    const result = await connection.query(query, [idCli]);
+    const result = await cn.query(query, [idCli]);
 
     const cleanedResult = result.map((row) => {
       return {
@@ -62,38 +57,44 @@ const listOperations = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al obtener las operaciones" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
 
 const insertOperation = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
   const { idCliente, valorRepe, detalles } = req.body;
 
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
+
   let fechita = new Date().toISOString().split("T")[0];
   let converFecha = convertirFecha(fechita);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     const queryCabecera = `
               INSERT INTO SPEED400AT.TBL_ASIGNACION_CAB 
               (ID_CLIENTE, FECHA, USUARIO)
               VALUES (?, ?, ?)
           `;
 
-    const result = await connection.query(queryCabecera, [
+    const result = await cn.query(queryCabecera, [
       idCliente,
       converFecha,
       globalDbUser,
     ]);
 
     const idAsignaCab =
-      result.insertId || (await obtenerUltimoIdAsigna(connection));
+      result.insertId || (await obtenerUltimoIdAsigna(cn));
 
     const queryDetalle = `
               INSERT INTO SPEED400AT.TBL_ASIGNACION_DET 

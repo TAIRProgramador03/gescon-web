@@ -1,20 +1,12 @@
-const odbc = require("odbc");
-const { dbConfig, IP_LOCAL } = require("../../shared/conf.js");
+const { IP_LOCAL } = require("../../shared/conf.js");
 const {
   decodeString,
   convertirFecha,
   obtenerUltimoId,
 } = require("../../shared/utils.js");
+const connection = require("../../shared/connect.js");
 
 const contractNro = async (req, res) => {
-  const { idCli } = req.query; // Obtiene el idCli de los parámetros de consulta
-
-  if (!idCli) {
-    return res
-      .status(400)
-      .json({ success: false, message: "El idCli es obligatorio" });
-  }
-
   const { globalDbUser, globalPassword } = req.user;
 
   // Validación de token y sus datos
@@ -24,20 +16,24 @@ const contractNro = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  let connection;
+  const { idCli } = req.query; // Obtiene el idCli de los parámetros de consulta
+
+  if (!idCli) {
+    return res
+      .status(400)
+      .json({ success: false, message: "El idCli es obligatorio" });
+  }
+
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     // Consulta los contratos asociados al cliente
     const query = `
     SELECT ID, NRO_CONTRATO AS DESCRIPCION 
     FROM SPEED400AT.TBLCONTRATO_CAB 
     WHERE ID_CLIENTE = ?
     `;
-    const result = await connection.query(query, [idCli]);
+    const result = await cn.query(query, [idCli]);
 
     const cleanedResult = result.map((row) => {
       return {
@@ -60,21 +56,13 @@ const contractNro = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al obtener contratos" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
 
 const contractNroAdi = async (req, res) => {
-  const { idCli } = req.query; // Obtiene el idCli de los parámetros de consulta
-
-  if (!idCli) {
-    return res
-      .status(400)
-      .json({ success: false, message: "El idCli es obligatorio" });
-  }
-
   const { globalDbUser, globalPassword } = req.user;
 
   // Validación de token y sus datos
@@ -84,21 +72,24 @@ const contractNroAdi = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  let connection;
+  const { idCli } = req.query; // Obtiene el idCli de los parámetros de consulta
+
+  if (!idCli) {
+    return res
+      .status(400)
+      .json({ success: false, message: "El idCli es obligatorio" });
+  }
+
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     // Consulta los contratos asociados al cliente
-    //const query = ` SELECT ID, NRO_CONTRATO AS DESCRIPCION FROM SPEED400AT.TBLCONTRATO_CAB WHERE ID_CLIENTE='${idCli}'`;
     const query = `
       SELECT * FROM ((SELECT CONCAT('P_', ID) AS ID, NRO_CONTRATO AS DESCRIPCION FROM SPEED400AT.TBLCONTRATO_CAB WHERE ID_CLIENTE= ? ) 
       UNION ALL (SELECT CONCAT('H_', ID) AS ID, NRO_DOC AS DESCRIPCION FROM SPEED400AT.TBLDOCUMENTO_CAB WHERE ID_CLIENTE= ? )) AS CONTRATOS 
       ORDER BY DESCRIPCION ASC
     `;
-    const result = await connection.query(query, [idCli, idCli]);
+    const result = await cn.query(query, [idCli, idCli]);
 
     const cleanedResult = result.map((row) => {
       return {
@@ -121,13 +112,22 @@ const contractNroAdi = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al obtener contratos" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
 
 const tableContract = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
   const { idCli, id } = req.query; // Obtiene los parámetros de consulta
 
   // Validación inicial
@@ -138,29 +138,16 @@ const tableContract = async (req, res) => {
     });
   }
 
-  const { globalDbUser, globalPassword } = req.user;
-
-  // Validación de token y sus datos
-  if (!globalDbUser || !globalPassword) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Token inválido o no proporcionado" });
-  }
-
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     // Usa parámetros preparados para prevenir inyección SQL
     const query = `
               SELECT NRO_CONTRATO AS DESCRIPCION, FECHA_FIRMA AS FECHACREA, CANT_VEHI AS TOTVEH, DURACION
               FROM SPEED400AT.TBLCONTRATO_CAB
               WHERE ID_CLIENTE = ? AND ID = ?
           `;
-    const result = await connection.query(query, [idCli, id]);
+    const result = await cn.query(query, [idCli, id]);
 
     const cleanedResult = result.map((row) => {
       return {
@@ -192,21 +179,13 @@ const tableContract = async (req, res) => {
       message: "Error al obtener los datos. Por favor intente más tarde.",
     });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
 
 const detailContract = async (req, res) => {
-  const { contratoId } = req.query; // Obtiene el contratoId de los parámetros de consulta
-
-  if (!contratoId) {
-    return res
-      .status(400)
-      .json({ success: false, message: "El contratoId es obligatorio" });
-  }
-
   const { globalDbUser, globalPassword } = req.user;
 
   // Validación de token y sus datos
@@ -216,19 +195,23 @@ const detailContract = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  let connection;
+  const { contratoId } = req.query; // Obtiene el contratoId de los parámetros de consulta
+
+  if (!contratoId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "El contratoId es obligatorio" });
+  }
+
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     // Consulta los detalles del contrato
     const query = `
               SELECT A.DESCRIPCION, A.FECHA_FIRMA, A.DURACION, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, (A.CANT_VEHI + COALESCE(SUM(B.CANT_VEHI), 0)) AS TOTAL_VEHICULOS, COUNT(B.ID) AS CANT_DOC 
               FROM SPEED400AT.TBLCONTRATO_CAB A LEFT JOIN SPEED400AT.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE WHERE NRO_CONTRATO = ? 
               GROUP BY A.DESCRIPCION, A.FECHA_FIRMA, A.DURACION, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, A.CANT_VEHI, A.ID`;
-    const result = await connection.query(query, [contratoId]);
+    const result = await cn.query(query, [contratoId]);
 
     if (result.length === 0) {
       return res
@@ -261,8 +244,8 @@ const detailContract = async (req, res) => {
       message: "Error al obtener los detalles del contrato",
     });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
@@ -277,14 +260,10 @@ const contContract = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    // Conexión a DB2 con los valores globales de dbUser y password
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-    const result = await connection.query(
+    const result = await cn.query(
       "SELECT COUNT(DISTINCT A.ID) AS PADRE, SUM(CASE WHEN B.TIPO_DOC = 1 THEN 1 ELSE 0 END) AS TIPO_1, SUM(CASE WHEN B.TIPO_DOC = 2 THEN 1 ELSE 0 END) AS TIPO_2, SUM(CASE WHEN B.TIPO_DOC = 3 THEN 1 ELSE 0 END) AS TIPO_3 FROM SPEED400AT.TBLCONTRATO_CAB A FULL OUTER JOIN SPEED400AT.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE",
     );
 
@@ -307,8 +286,8 @@ const contContract = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al obtener los contadores" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
@@ -323,13 +302,10 @@ const contClient = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-    const result = await connection.query(`
+    const result = await cn.query(`
               SELECT C.CLINOM, C.CLIABR, A.ID_CLIENTE, 
                   SUM(COALESCE(A.CANT_VEHI, 0) + COALESCE(B.CANT_VEHI, 0)) AS TOTAL_VEHICULOS 
               FROM SPEED400AT.TBLCONTRATO_CAB A
@@ -348,13 +324,22 @@ const contClient = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al obtener los contadores" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
 
 const insertContract = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
   const {
     idCliente,
     nroContrato,
@@ -379,29 +364,16 @@ const insertContract = async (req, res) => {
   const fechaFormatoDB = convertirFecha(fechaFirma);
   let nombreArchivo = `http://${IP_LOCAL}/tair-web/public/pdf/contracts/${archivoPdf}`;
 
-  let connection;
-
-  const { globalDbUser, globalPassword } = req.user;
-
-  // Validación de token y sus datos
-  if (!globalDbUser || !globalPassword) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Token inválido o no proporcionado" });
-  }
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     const queryCabecera = `
               INSERT INTO SPEED400AT.TBLCONTRATO_CAB 
               (ID_CLIENTE, NRO_CONTRATO, CANT_VEHI, FECHA_FIRMA, DURACION, KM_ADI, KM_TOTAL, VEH_SUP, VEH_SEV, VEH_SOC, VEH_CIU, TIPO_CONT, TIPO_CLI, MONEDA, DESCRIPCION, ARCHIVO_PDF, CLASE)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `;
 
-    const result = await connection.query(queryCabecera, [
+    const result = await cn.query(queryCabecera, [
       idCliente,
       nroContrato,
       cantVehiculos,
@@ -422,7 +394,7 @@ const insertContract = async (req, res) => {
     ]);
 
     const idContratoCab =
-      result.insertId || (await obtenerUltimoId(connection));
+      result.insertId || (await obtenerUltimoId(cn));
 
     const queryDetalle = `
               INSERT INTO SPEED400AT.TBLCONTRATO_DET 
@@ -432,7 +404,7 @@ const insertContract = async (req, res) => {
 
     if (detalles && detalles.length > 0) {
       for (const detalle of detalles) {
-        await connection.query(queryDetalle, [
+        await cn.query(queryDetalle, [
           idContratoCab,
           detalle.secCon,
           detalle.modelo,
@@ -455,8 +427,8 @@ const insertContract = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al insertar contrato" });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };
@@ -506,13 +478,9 @@ const valideContractQuantity = async (req, res) => {
     console.log(d.idTerreno);
   }
 
-  let connection;
+  const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    connection = await odbc.connect(
-      `DSN=${dbConfig.DSN};UID=${globalDbUser};PWD=${globalPassword};CCSID=1208`,
-    );
-
     for (let key in agrupados) {
       let { clase, idContrato, terrenos } = agrupados[key];
       let squery = "";
@@ -536,10 +504,9 @@ const valideContractQuantity = async (req, res) => {
                           FROM SPEED400AT.TBLCONTRATO_CAB A WHERE A.ID = ? AND CLASE='P'`;
       }
 
-      let result = await connection.query(squery, [idContrato]);
+      let result = await cn.query(squery, [idContrato]);
 
       if (!result || result.length === 0) {
-        await connection.close();
         return res.status(404).json({
           success: false,
           mensaje: `Contrato no encontrado: ${clase}_${idContrato}`,
@@ -576,7 +543,6 @@ const valideContractQuantity = async (req, res) => {
         );
         if (v.actual + nuevos > v.maximo) {
           console.log("Límite excedido para terreno tipo: " + v.tipo);
-          await connection.close();
           return res.json({
             success: false,
             mensaje: `Límite excedido para terreno tipo ${v.tipo} en contrato ${clase}_${idContrato}. Permitido: ${v.maximo}, asignados: ${v.actual}, nuevos: ${nuevos}.`,
@@ -585,7 +551,6 @@ const valideContractQuantity = async (req, res) => {
       }
       // Validación de límite de vehículos
       if (row.CANTIDAD + terrenos.length > row.CANT_VEHI) {
-        await connection.close();
         return res.json({
           success: false,
           mensaje: `Límite total de vehículos excedido para contrato ${clase}_${idContrato}. Máximo: ${row.CANT_VEHI}, asignados: ${row.CANTIDAD}, nuevos: ${terrenos.length}.`,
@@ -601,8 +566,8 @@ const valideContractQuantity = async (req, res) => {
       mensaje: "Error interno del servidor durante la validación",
     });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };

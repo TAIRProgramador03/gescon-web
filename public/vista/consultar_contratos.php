@@ -1,5 +1,5 @@
 <?php
-    require './templates/header.html';
+require './templates/header.html';
 ?>
 
 <!-- CSS DE LA VISTA CONSULTAR CONTRATOS -->
@@ -50,7 +50,7 @@
             </div>
             <div class="cbo-form-col">
                 <label for="combo-box area-text">Descripcion:</label>
-                <textarea id="story" name="story" rows="2" cols="70" style="resize: none;" placeholder="" disabled ></textarea>
+                <textarea id="story" name="story" rows="2" cols="70" style="resize: none;" placeholder="" disabled></textarea>
             </div>
             <div class="salio-form"> <!--text-form-col-->
                 <button class="add-action" onclick="registrarContrato()">
@@ -103,15 +103,15 @@
             </div>
             <div class="text-form-col">
                 <label for="combo-box">Estado:</label>
-                <input id="text-estado" name="estado" type="text" class="resumen-form-contrato" disabled >
+                <input id="text-estado" name="estado" type="text" class="resumen-form-contrato" disabled>
             </div>
             <div class="text-form-col">
                 <label for="combo-box">Fecha Ini:</label>
-                <input id="text-inicio" name="inicio" type="text" class="resumen-form-contrato" disabled >
+                <input id="text-inicio" name="inicio" type="text" class="resumen-form-contrato" disabled>
             </div>
             <div class="text-form-col">
                 <label for="combo-box">Fecha Fin:</label>
-                <input id="text-fin" name="fin" type="text" class="resumen-form-contrato" disabled >
+                <input id="text-fin" name="fin" type="text" class="resumen-form-contrato" disabled>
             </div>
             <div class="text-form-col">
                 <label for="combo-box tp-form">Tipo Terreno:</label>
@@ -140,7 +140,7 @@
             </div>
             <div class="text-form-col">
                 <div class="cuadradro-form">
-                    <div class="card terreno-form doc-form">
+                    <div class="card terreno-form doc-form" id="href-query-doc" onclick="queryDocument()">
                         <div class="tda tti-form nom-tp">N° Documentos</div>
                         <hr>
                         <div class="tda can-form"><i class="fa fa fa-sheet-plastic" style="color: #0e2e67;"></i><span id="txt-aso">0</span></div>
@@ -180,12 +180,11 @@
 <!-- SCRIPTS DE LA VISTA -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-
     window.onload = function() {
         setTimeout(() => {
             document.body.classList.add('loaded');
             document.getElementById('preloader-mini').style.display = 'none';
-        }, 2000); 
+        }, 2000);
     };
 
 
@@ -196,31 +195,18 @@
     function registrarDocumento() {
         window.location = 'registrar_documentos.php';
     };
-    /*document.getElementById('contratos-tbody').addEventListener('click', function (e) {
-        // Verificar si se hace clic en una fila <tr>
-        if (e.target.tagName.toLowerCase() === 'td') {
-            const fila = e.target.closest('tr'); // Obtener la fila
-            const estado = fila.querySelectorAll('td')[1].textContent.trim(); // Obtener el N° contrato
-            document.getElementById('text-estado').value = estado; // Asignar valor al input
-            const inicio = fila.querySelectorAll('td')[2].textContent.trim(); // Obtener el N° contrato
-            document.getElementById('text-inicio').value = inicio; // Asignar valor al input
-            const fin = fila.querySelectorAll('td')[3].textContent.trim(); // Obtener el N° contrato
-            document.getElementById('text-fin').value = fin; // Asignar valor al input
-            const comenta = fila.querySelectorAll('td')[1].textContent.trim(); // Obtener el N° contrato
-            document.getElementById('story').value = comenta; // Asignar valor al input
 
-            document.getElementById('txt-sev').textContent = "10"; // Asignar texto al div
-            document.getElementById('txt-soc').textContent = "10"; // Asignar texto al div
-            document.getElementById('txt-sup').textContent = "10"; // Asignar texto al div
-            document.getElementById('txt-ciu').textContent = "10";
-            document.getElementById('txt-aso').textContent = "10"; // Asignar texto al div
-            document.getElementById('txt-leas').textContent = "10"; // Asignar texto al div
-            document.getElementById('txt-vehic').textContent = "10";
-        }
-    });*/
+    function queryDocument() {
+        const params = new URLSearchParams(window.location.search);
+        const contratoId = params.get("contratoId")
+
+        if(!contratoId) return alert("No se selecciono ningun contrato")
+
+        window.location.href = `consultar_documento_por_contrato.php?contratoId=${contratoId}`;
+    }
 </script>
 <script type="module" src="../js/consulta_contratos.js"></script>
 
 <?php
-    require './templates/footer.html';
+require './templates/footer.html';
 ?>

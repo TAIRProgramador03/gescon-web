@@ -1,0 +1,58 @@
+const IP_LOCAL = "localhost";
+
+/**
+ * Método para traer la lista de documentos de un contrato especifico
+ * @param contratoId Nro de contrato
+ */
+const getDocuments = async (contratoId) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/documentoPorContrato?contratoId=${contratoId.toString()}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const documents = await response.json();
+
+  // INTEGRAMOS LA LIBRERIA DATATABLE
+  const table = $("#listDocuments").DataTable({
+    data: documents,
+    columns: [
+      {
+        data: "item",
+        render: function (data, type, row, meta) {
+          return meta.row + 1;
+        },
+        width: "5%",
+      },
+      {
+        data: "nroDocumento",
+      },
+      {
+        data: "fechaFirma",
+        render: function (data) {
+          return convertirFecha(data);
+        },
+        width: "20%",
+      },
+      {
+        data: "duracion",
+        render: function (data) {
+          return data && data != "0" ? data + " meses" : "Sin periodo";
+        },
+        width: "20%",
+      },
+      { data: "cantVehi", width: "5%" },
+    ],
+  });
+
+  return table;
+};
+
+function convertirFecha(fecha) {
+  const anio = fecha.substring(0, 4);
+  const mes = fecha.substring(4, 6);
+  const dia = fecha.substring(6, 8);
+  return `${anio}-${mes}-${dia}`;
+}

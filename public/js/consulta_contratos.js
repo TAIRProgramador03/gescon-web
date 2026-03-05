@@ -1,4 +1,4 @@
-const IP_LOCAL = 'localhost';
+const IP_LOCAL = "localhost";
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarClientes();
@@ -60,7 +60,7 @@ async function cargarContrato() {
           {
             method: "GET",
             credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          }
+          },
         );
         const contratos = await response.json();
 
@@ -115,7 +115,7 @@ async function cargarTablacliente() {
           {
             method: "GET",
             credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          }
+          },
         );
         const contratos = await response.json();
 
@@ -137,13 +137,16 @@ async function cargarTablacliente() {
           const row = document.createElement("tr");
           row.innerHTML = `
                     <td>${index + 1}</td> <!-- Número de ítem -->
-                    <td>${tablaCliente.DESCRIPCION
-            }</td> <!-- Número de contrato -->
+                    <td>${
+                      tablaCliente.DESCRIPCION
+                    }</td> <!-- Número de contrato -->
                     <td>${fechita || "Sin fecha"}</td> <!-- Fecha de firma -->
-                    <td>${tablaCliente.DURACION + " MESES" || "Sin periodo"
-            }</td> <!-- Periodo -->
-                    <td>${tablaCliente.TOTVEH || "0"
-            }</td> <!-- Cantidad total -->
+                    <td>${
+                      tablaCliente.DURACION + " MESES" || "Sin periodo"
+                    }</td> <!-- Periodo -->
+                    <td>${
+                      tablaCliente.TOTVEH || "0"
+                    }</td> <!-- Cantidad total -->
                 `;
           tbody.appendChild(row);
         });
@@ -185,7 +188,7 @@ async function cargarTablacontrato() {
           {
             method: "GET",
             credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          }
+          },
         );
         // Verifica si la respuesta es exitosa
         if (!response.ok) {
@@ -215,10 +218,12 @@ async function cargarTablacontrato() {
                     <td>${index + 1}</td> <!-- Número de ítem -->
                     <td>${tablaContrato.DESCRIPCION}</td> <!-- Descripción -->
                     <td>${fechito || "Sin fecha"}</td> <!-- Fecha -->
-                    <td>${tablaContrato.DURACION + " MESES" || "Sin periodo"
-            }</td> <!-- Periodo -->
-                    <td>${tablaContrato.TOTVEH || "0"
-            }</td> <!-- Total vehículos -->
+                    <td>${
+                      tablaContrato.DURACION + " MESES" || "Sin periodo"
+                    }</td> <!-- Periodo -->
+                    <td>${
+                      tablaContrato.TOTVEH || "0"
+                    }</td> <!-- Total vehículos -->
                 `;
           tbody.appendChild(row);
         });
@@ -261,6 +266,13 @@ document
       const fila = e.target.closest("tr"); // Obtener la fila
       const contratoId = fila.querySelectorAll("td")[1].textContent.trim(); // Obtener el ID de contrato (ajusta según tu estructura de tabla)
 
+      // MOSTRAMOS EL PARAMETRO EN LA URL
+      const params = new URLSearchParams(window.location.search);
+      params.set("contratoId", contratoId);
+
+      const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, "", nuevaURL);
+
       // Realizar la solicitud AJAX al backend para obtener los detalles del contrato
       try {
         const response = await fetch(
@@ -268,7 +280,7 @@ document
           {
             method: "GET",
             credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          }
+          },
         );
         const data = await response.json();
 

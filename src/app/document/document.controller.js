@@ -1,4 +1,9 @@
-const { convertirFecha, obtenerUltimoIdDoc } = require("../../shared/utils.js");
+const {
+  convertirFecha,
+  obtenerUltimoIdDoc,
+  transformType,
+  decodeString,
+} = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
 
 const listDocumentByNroContract = async (req, res) => {
@@ -60,24 +65,67 @@ const detailDocument = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  const { contratoId } = req.query;
+  const { documentoId } = req.query;
 
-  if (!contratoId)
+  if (!documentoId)
     return res.status(400).json({
       success: false,
-      message: "El parametro contratoId es obligatorio",
+      message: "El parametro documentoId es obligatorio",
     });
 
   const cn = await connection(globalDbUser, globalPassword);
 
   try {
     const sql = `
-      SELECT TIPO_DOC, CANT_VEHI, FECHA-FIRMA, DURACION, KM_ADI, KM_TOTAL, VEH_SUP, VEH_SEV, VEH_SOC, VEH_CIU, TIPO_ESPE, ARCHIVO_PDF, DESCRIPCION, MOTIVO 
+      SELECT NRO_DOC, TIPO_DOC, CANT_VEHI, FECHA_FIRMA, DURACION, KM_ADI, KM_TOTAL, VEH_SUP, VEH_SEV, VEH_SOC, VEH_CIU, ARCHIVO_PDF, DESCRIPCION 
       FROM SPEED400AT.TBLDOCUMENTO_CAB 
       WHERE NRO_DOC = ?
     `;
+
+    const result = await cn.query(sql, [documentoId]);
+
+    if (result.length == 0 || !result[0])
+      return res
+        .status(404)
+        .json({ success: false, message: "No se encontro el documento" });
+
+    const findDocument = result[0];
+
+    return res.status(200).json({
+      nroDocumento: findDocument.NRO_DOC ? findDocument.NRO_DOC.trim() : "",
+      fechaFirma: findDocument.FECHA_FIRMA
+        ? findDocument.FECHA_FIRMA.trim()
+        : "",
+      cantVehi: findDocument.CANT_VEHI,
+      duracion: findDocument.DURACION ? findDocument.DURACION.trim() : "",
+      tipoDocumento: transformType(findDocument.TIPO_DOC, {
+        1: "Adendas",
+        2: "Carta",
+        3: "Orden de Compra",
+        4: "Orden de Servicio",
+        5: "Orden de Cambio",
+      }),
+      kmAdi: findDocument.KM_ADI,
+      kmTotal: findDocument.KM_TOTAL,
+      vehSup: findDocument.VEH_SUP,
+      vehSev: findDocument.VEH_SEV,
+      vehSoc: findDocument.VEH_SOC,
+      vehCiu: findDocument.VEH_CIU,
+      archivoPdf: findDocument.ARCHIVO_PDF
+        ? findDocument.ARCHIVO_PDF.trim()
+        : "",
+      descripcion: findDocument.DESCRIPCION
+        ? findDocument.DESCRIPCION.trim()
+        : "",
+    });
   } catch (error) {
     console.error("Error al obtener detalle de documento", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener detalle de documento",
+    });
+  } finally {
+    if (cn) await cn.close();
   }
 };
 
@@ -241,4 +289,5 @@ const insertDocument = async (req, res) => {
 module.exports = {
   insertDocument,
   listDocumentByNroContract,
+  detailDocument,
 };

@@ -1,12 +1,3 @@
-@font-face {
-  font-family: 'Fredoka Variable';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 300 700;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wght-normal.woff2) format('woff2-variations');
-  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
-}
-
 .main-query-doc h1, 
 .main-query-doc h2, 
 .main-query-doc h3, 
@@ -19,9 +10,71 @@
 }
 
 .main-query-doc {
-  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   color: black;
 }
+
+.main-query-doc .header-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: #fff;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.main-query-doc .header-title h1 {
+  font-weight: 600;
+  color: #002141;
+}
+
+.main-query-doc .header-title p, .main-query-doc .header-title p span {
+  margin: 0;
+  color: #7c7c7c;
+}
+
+.main-query-doc .container-data {
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 12px;
+}
+
+.main-query-doc .container-data table {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.main-query-doc .container-data table thead {
+  border: 0;
+}
+
+.main-query-doc .container-data table thead tr {
+  background: #002141;
+}
+
+.main-query-doc .container-data table thead th {
+  font-weight: 500;
+}
+
+.main-query-doc .container-data table thead th .dt-column-title {
+  color: #fff !important;
+}
+
+.main-query-doc .container-data table tfoot tr {
+  background: #002141;
+  border: 0;
+}
+
+.main-query-doc .container-data table tfoot th {
+  font-weight: 500;
+}
+
+.main-query-doc .container-data table tfoot th .dt-column-title {
+  color: #fff !important;
+}
+
 
 /* MODAL DE INFORMACION DE DOCUMENTO */
 #modal-documents {
@@ -43,7 +96,7 @@
   background-color: #fff;
   border-radius: 12px;
   width: 50%;
-  height: 300px;
+  min-height: 300px;
   max-height: 90%;
   overflow: hidden !important;
   z-index: 9999;
@@ -61,14 +114,88 @@
 }
 
 #modal-documents .modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   padding: 12px;
   list-style: none;
   color: black;
   height: 100%;
+  overflow: auto;
+  font-family: 'Fredoka Variable', sans-serif;
+}
+
+#modal-documents .modal-body .info-document {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+
+#modal-documents .modal-body .info-document .info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#modal-documents .modal-body .info-document .row-data {
+  display: flex;
+  justify-content: space-between;
+}
+
+#modal-documents .modal-body .info-document ul {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px;
+  list-style: none;
+}
+
+#modal-documents .modal-body .info-document ul li {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #005AD9;
+  border-radius: 4px;
+  overflow: hidden !important;
+}
+
+#modal-documents .modal-body .info-document ul li span {
+  width: 100%;
+  padding: 2px 4px;
+  background-color: #005AD9;
+  color: #fff;
+  text-align: center;
+}
+
+#modal-documents .modal-body .info-description {
+  border-top: 1px solid #005ad941;
+  padding-top: 12px;
+
+}
+
+#modal-documents .modal-footer .btn-success {
+  display: flex;
+  gap: 4px;
+  background-color: #33ff0049;
+  color: #33ff00;
+  font-size: 16px;
+  padding: 4px 12px;
+  border: 1px solid #33ff0086;
+  font-family: 'Fredoka Variable', sans-serif;
+  border-radius: 4px;
+  width: fit-content;
+  transition: linear 100ms;
+  cursor: pointer;
+}
+
+#modal-documents .modal-footer .btn-success:hover {
+  background-color: #33ff0086;
+  color: #fff;
 }
 
 #modal-documents .modal-footer {
   display: flex;
+  gap: 8px;
   justify-content: end;
   align-items: center;
   border-top: 1px solid #005ad941;
@@ -83,11 +210,11 @@
   color: #005ad9be;
   font-family: 'Fredoka Variable', sans-serif;
   font-size: 16px;
+  transition: linear 100ms;
   cursor: pointer;
 }
 
 #modal-documents .modal-footer .btn-error:hover {
   background-color: #005ad988;
-  transition: linear 100ms;
   color: #fff;
 }

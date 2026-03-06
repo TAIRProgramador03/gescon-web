@@ -50,6 +50,20 @@ const getDocuments = async (contratoId) => {
   return table;
 };
 
+const getDetailDocument = async (documentoId) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/detalleDocumento?documentoId=${documentoId.toString()}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  return data;
+}
+
 function convertirFecha(fecha) {
   const anio = fecha.substring(0, 4);
   const mes = fecha.substring(4, 6);

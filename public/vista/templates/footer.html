@@ -12,7 +12,7 @@
 
         document.getElementById("log_out").addEventListener("click", async () => {
             try {
-                const response = await fetch("/api/logout", {
+                const response = await fetch(`http://${IP_LOCAL}:3000/logout`, {
                 method: "POST",
                 credentials: "include",
                 });

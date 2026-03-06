@@ -20,6 +20,10 @@ function funcionParteVar(valor) {
   return valor.charAt(0);
 }
 
+function transformType(value, object) {
+  return object[value];
+}
+
 async function obtenerUltimoId(connection) {
   const result = await connection.query(
     `SELECT MAX(ID) AS ID FROM SPEED400AT.TBLCONTRATO_CAB`,
@@ -57,4 +61,5 @@ module.exports = {
   obtenerUltimoIdDoc,
   obtenerUltimoIdLea,
   obtenerUltimoIdAsigna,
+  transformType
 };

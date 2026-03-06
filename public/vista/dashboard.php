@@ -2,6 +2,9 @@
 require './templates/header.html';
 ?>
 
+<!--BOOTSTRAP CSS-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
 <!-- CSS DE LA VISTA DASHBOARD -->
 <style>
     <?php include '../css/views/dashboard.css'; ?>
@@ -71,7 +74,7 @@ require './templates/header.html';
     <header class="dashboard-header">
         <div class="search-bar">
             <input type="text" placeholder="Search">
-            <button>Q</button>
+            <button><i class="bi bi-search"></i></button>
         </div>
         <div class="header-icons">
             <span>...</span>

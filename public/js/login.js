@@ -14,7 +14,7 @@ const IP_LOCAL = "localhost";
 
 async function authenticateValid() {
   try {
-    const response = await fetch(`/api/verify`, {
+    const response = await fetch(`http://${IP_LOCAL}:3000/verify`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     });

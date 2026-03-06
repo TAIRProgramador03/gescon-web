@@ -97,7 +97,7 @@ b {
 
 body {
   font-family: sans-serif;
-  background-color: #1e293b;
+  background-color: #e7e7e7;
   color: #cbd5e1;
   margin: 0;
   padding: 0;
@@ -123,16 +123,15 @@ body::before {
 .dashboard-container {
   width: calc(100% - 40px);
   margin: 20px;
-  background-color: #334155;
   /* Darker panel background */
-  border-radius: 10px;
   overflow: hidden;
 }
 
 .dashboard-header {
-  background-color: #475569;
-  color: #fff;
-  padding: 15px;
+  background-color: #fff;
+  border-radius: 12px;
+  color: #000 !important;
+  padding: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -140,21 +139,22 @@ body::before {
 
 .search-bar {
   display: flex;
+  border-radius: 5px;
 }
 
 .search-bar input {
   padding: 8px;
-  border: none;
+  border: 1px solid #bbbbbb;
+  background-color: #fff;
   border-radius: 5px 0 0 5px;
-  background-color: #64748b;
-  color: #fff;
+  outline: none;
 }
 
 .search-bar button {
   padding: 8px 12px;
   border: none;
-  border-radius: 0 5px 5px 0;
   background-color: #8ea2c2;
+  border-radius: 0 5px 5px 0;
   color: #fff;
   cursor: pointer;
 }
@@ -164,7 +164,7 @@ body::before {
 }
 
 .dashboard-main {
-  padding: 20px;
+  padding: 16px 0px 0px 0px !important;
 }
 
 .dashboard-section {
@@ -174,31 +174,38 @@ body::before {
 }
 
 .dashboard-item {
-  background-color: #475569;
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
-  /* Ensures padding doesn't affect overall size */
+  border: 1px solid #d6d6d6
 }
 
 .dashboard-item h3 {
+  font-size: 14px;
   margin-top: 0;
-  color: #fff;
+  color: #494949;
+  font-weight: 500;
 }
 
 .data-value {
   font-size: 1.5em;
   font-weight: bold;
-  color: #a5b4fc;
+  color: #3d3d3d;
 }
 
 .data-change {
-  color: #6ee7b7;
+  color: #00569c;
   font-size: 0.9em;
 }
 
 .item-small {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
   text-align: center;
 }
 

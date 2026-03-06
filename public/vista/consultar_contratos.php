@@ -2,6 +2,13 @@
 require './templates/header.html';
 ?>
 
+<!-- CSS de Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
+<!-- jQuery (Necesario) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- JS de Select2 -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
 <!-- CSS DE LA VISTA CONSULTAR CONTRATOS -->
 <style>
     <?php include '../css/views/query_contract.css'; ?>
@@ -27,7 +34,7 @@ require './templates/header.html';
                 <select id="combo-box" name="opciones" class="cbo-form-cliente"></select>
             </div>
             <div class="cbo-form-col">
-                <label for="combo-box">Seleccione el Contrato:</label>
+                <label for="combo-contrato">Seleccione el Contrato:</label>
                 <select id="combo-contrato" name="opciones" class="cbo-form-cliente"></select>
             </div>
             <div class="tabla-form">
@@ -140,12 +147,12 @@ require './templates/header.html';
             </div>
             <div class="text-form-col">
                 <div class="cuadradro-form">
-                    <div class="card terreno-form doc-form" id="href-query-doc" onclick="queryDocument()">
+                    <div class="card terreno-form doc-form" id="href-query-doc">
                         <div class="tda tti-form nom-tp">N° Documentos</div>
                         <hr>
                         <div class="tda can-form"><i class="fa fa fa-sheet-plastic" style="color: #0e2e67;"></i><span id="txt-aso">0</span></div>
                     </div>
-                    <div class="card terreno-form doc-form">
+                    <div class="card terreno-form doc-form" id="href-query-lea">
                         <div class="tda tti-form nom-tp">N° leasing</div>
                         <hr>
                         <div class="tda can-form"><i class="fa fa fa-book" style="color: #0e2e67;"></i><span id="txt-leas">0</span></div>
@@ -177,9 +184,8 @@ require './templates/header.html';
     </div>
 </main>
 
-<!-- SCRIPTS DE LA VISTA -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
+<script type="module" src="../js/consulta_contratos.js"></script>
+<script type="module">
     window.onload = function() {
         setTimeout(() => {
             document.body.classList.add('loaded');
@@ -200,12 +206,28 @@ require './templates/header.html';
         const params = new URLSearchParams(window.location.search);
         const contratoId = params.get("contratoId")
 
-        if(!contratoId) return alert("No se selecciono ningun contrato")
+        if (!contratoId) return alert("No se selecciono ningun contrato")
 
         window.location.href = `consultar_documento_por_contrato.php?contratoId=${contratoId}`;
     }
+
+    function queryLeasing() {
+        const params = new URLSearchParams(window.location.search);
+        const contratoId = params.get("contratoId")
+
+        if (!contratoId) return alert("No se selecciono ningun contrato")
+
+        window.location.href = `consultar_leasing_por_contrato.php?contratoId=${contratoId}`;
+    }
+
+    $("#href-query-doc").on("click", () => {
+        queryDocument()
+    })
+
+    $("#href-query-lea").on("click", () => {
+        queryLeasing()
+    })
 </script>
-<script type="module" src="../js/consulta_contratos.js"></script>
 
 <?php
 require './templates/footer.html';

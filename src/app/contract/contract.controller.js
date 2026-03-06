@@ -207,10 +207,30 @@ const detailContract = async (req, res) => {
 
   try {
     // Consulta los detalles del contrato
+    // const query = `
+    //           SELECT A.DESCRIPCION, A.FECHA_FIRMA, A.DURACION, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, (A.CANT_VEHI + COALESCE(SUM(B.CANT_VEHI), 0)) AS TOTAL_VEHICULOS, COUNT(B.ID) AS CANT_DOC 
+    //           FROM SPEED400AT.TBLCONTRATO_CAB A LEFT JOIN SPEED400AT.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE WHERE NRO_CONTRATO = ? 
+    //           GROUP BY A.DESCRIPCION, A.FECHA_FIRMA, A.DURACION, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, A.CANT_VEHI, A.ID`;
+
     const query = `
-              SELECT A.DESCRIPCION, A.FECHA_FIRMA, A.DURACION, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, (A.CANT_VEHI + COALESCE(SUM(B.CANT_VEHI), 0)) AS TOTAL_VEHICULOS, COUNT(B.ID) AS CANT_DOC 
-              FROM SPEED400AT.TBLCONTRATO_CAB A LEFT JOIN SPEED400AT.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE WHERE NRO_CONTRATO = ? 
-              GROUP BY A.DESCRIPCION, A.FECHA_FIRMA, A.DURACION, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, A.CANT_VEHI, A.ID`;
+      SELECT 
+        A.DESCRIPCION, 
+        A.FECHA_FIRMA, 
+        A.DURACION, 
+        A.VEH_SUP, 
+        A.VEH_SEV, 
+        A.VEH_SOC, 
+        A.VEH_CIU, 
+        (A.CANT_VEHI + COALESCE(SUM(B.CANT_VEHI), 0)) AS TOTAL_VEHICULOS, 
+        COUNT(DISTINCT B.ID) AS CANT_DOC, 
+        COUNT(DISTINCT C.ID) AS CANT_LEA
+      FROM SPEED400AT.TBLCONTRATO_CAB A 
+      LEFT JOIN SPEED400AT.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE 
+      LEFT JOIN SPEED400AT.TBL_LEASING_CAB C ON A.ID=C.ID_CONTRATO
+      WHERE NRO_CONTRATO = ? 
+      GROUP BY A.DESCRIPCION, A.FECHA_FIRMA, A.DURACION, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, A.CANT_VEHI, A.ID
+    `;
+
     const result = await cn.query(query, [contratoId]);
 
     if (result.length === 0) {
@@ -226,15 +246,16 @@ const detailContract = async (req, res) => {
     res.json({
       success: true,
       data: {
-        descripcion: contrato.DESCRIPCION,
+        descripcion: contrato.DESCRIPCION.trim(),
         fechaFirma: contrato.FECHA_FIRMA,
-        duracion: contrato.DURACION,
+        duracion: contrato.DURACION.trim(),
         vehiculoSup: contrato.VEH_SUP,
         vehiculoSev: contrato.VEH_SEV,
         vehiculoSoc: contrato.VEH_SOC,
         vehiculoCiu: contrato.VEH_CIU,
         cantidadVehiculos: contrato.TOTAL_VEHICULOS,
         cantidadDocumentos: contrato.CANT_DOC,
+        cantidadLeasing: contrato.CANT_LEA
       },
     });
   } catch (error) {

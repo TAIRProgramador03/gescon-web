@@ -16,7 +16,7 @@ const listLeasing = async (req, res) => {
       .status(401)
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
-  
+
   const cn = await connection(globalDbUser, globalPassword);
 
   try {
@@ -103,6 +103,113 @@ const listLeasingOfClient = async (req, res) => {
   }
 };
 
+const listLeasingByContract = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { contratoId } = req.query;
+
+  if (!contratoId)
+    return res.status(400).json({
+      success: false,
+      message: "El parametro contratoId es obligatorio",
+    });
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    const sql = `
+      SELECT A.NRO_LEASING, A.CANT_VEH, A.FECHA_INI, A.FECHA_FIN
+      FROM SPEED400AT.TBL_LEASING_CAB A 
+      INNER JOIN SPEED400AT.TBLCONTRATO_CAB B ON B.ID=A.ID_CONTRATO 
+      WHERE B.NRO_CONTRATO = ?
+    `;
+
+    const result = await cn.query(sql, [contratoId]);
+
+    const cleanedResult = result.map((row) => ({
+      nroLeasing: row.NRO_LEASING ? row.NRO_LEASING.trim() : "",
+      fechaInicio: row.FECHA_INI ? row.FECHA_INI.toString().trim() : "",
+      fechaFin: row.FECHA_FIN ? row.FECHA_FIN.toString().trim() : "",
+      cantVehi: row.CANT_VEH,
+    }));
+
+    return res.status(200).json(cleanedResult);
+  } catch (error) {
+    console.error("Error al listar leasings por contrato: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al listar leasings por contrato",
+    });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
+const detailLeasing = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { leasingId } = req.query;
+
+  if (!leasingId)
+    return res.status(400).json({
+      success: false,
+      message: "El parametro leasingId es obligatorio",
+    });
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    const sql = `
+      SELECT NRO_LEASING, BANCO, CANT_VEH, FECHA_INI, FECHA_FIN, PERIODO_GRACIA, PDF, DESCRIPCION, TIPCON FROM SPEED400AT.TBL_LEASING_CAB
+      WHERE NRO_LEASING = ?
+    `;
+
+    const result = await cn.query(sql, [leasingId]);
+
+    if (result.length == 0 || !result[0])
+      return res
+        .status(404)
+        .json({ success: false, message: "No se encontro el leasing" });
+
+    const findLeasing = result[0];
+
+    return res.status(200).json({
+      nroLeasing: findLeasing.NRO_LEASING.trim(),
+      banco: findLeasing.BANCO.trim(),
+      cantVehi: findLeasing.CANT_VEH,
+      fechaInicio: findLeasing.FECHA_INI.toString(),
+      fechaFin: findLeasing.FECHA_FIN.toString(),
+      periGracia: findLeasing.PERIODO_GRACIA,
+      archivoPdf: findLeasing.PDF.trim(),
+      descripcion: findLeasing.DESCRIPCION
+        ? findLeasing.DESCRIPCION.trim()
+        : "",
+      tipo: findLeasing.TIPCON.trim(),
+    });
+  } catch (error) {
+    console.error("Error al obtener detalle de leasing: ", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Error al obtener detalle de leasing" });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
 const insertLeasing = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
 
@@ -131,7 +238,7 @@ const insertLeasing = async (req, res) => {
   const fechaFinDB = convertirFecha(fechaFin);
 
   let nombreArchivo = `http://${IP_LOCAL}/tair-web/public/pdf/leasings/${archivoPdf}`;
-  
+
   const cn = await connection(globalDbUser, globalPassword);
 
   try {
@@ -202,5 +309,7 @@ const insertLeasing = async (req, res) => {
 module.exports = {
   listLeasing,
   listLeasingOfClient,
+  listLeasingByContract,
+  detailLeasing,
   insertLeasing,
 };

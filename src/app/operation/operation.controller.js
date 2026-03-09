@@ -6,6 +6,7 @@ const {
   funcionParteVar,
 } = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
+const { SCHEMA_BD } = require("../../shared/conf.js");
 
 const listOperations = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
@@ -31,7 +32,7 @@ const listOperations = async (req, res) => {
     // Consulta los contratos asociados al cliente
     const query = `
       SELECT ID, DESCRIPCION 
-      FROM SPEED400AT.PO_OPERACIONES 
+      FROM ${SCHEMA_BD}.PO_OPERACIONES 
       WHERE SITUACION='S' AND IDCLI = ?
     `;
     const result = await cn.query(query, [idCli]);
@@ -63,6 +64,80 @@ const listOperations = async (req, res) => {
   }
 };
 
+const listAssingByContract = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { idContrato, idLeasing, tipoTerr } = req.query;
+
+  if (!idContrato)
+    return res.status(400).json({
+      success: false,
+      message: "El parametro idContrato es obligatorio",
+    });
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    let sql = `
+      SELECT  B.PLACA, B.TARIFA, B.TP_TERRENO AS TERRENO, B.FECHA_INI, B.FECHA_FIN, B.LEASING, V.COLOR AS COLOR, V.ANO AS ANO, MA.DESCRIPCION AS MARCA, MO.DESCRIPCION AS MODELO
+      FROM ${SCHEMA_BD}.TBL_ASIGNACION_CAB A
+      LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_DET B
+      ON A.ID = B.ID_ASIGNACION
+      LEFT JOIN ${SCHEMA_BD}.PO_VEHICULO V
+      ON B.ID_VEH = V.ID
+      LEFT JOIN ${SCHEMA_BD}.PO_MARCA MA
+      ON MA.ID = V.IDMAR
+      LEFT JOIN ${SCHEMA_BD}.PO_MODELO MO
+      ON MO.ID = V.IDMOD
+      WHERE B.ID_CONTRATO = ?
+    `;
+
+    const params = [idContrato];
+
+    if (idLeasing) {
+      sql += " AND LEASING = ?";
+      params.push(idLeasing);
+    }
+
+    if (tipoTerr) {
+      sql += " AND TP_TERRENO = ?";
+      params.push(tipoTerr);
+    }
+
+    const result = await cn.query(sql, params);
+
+    const convertResult = result.map((row) => ({
+      placa: row.PLACA.trim(),
+      tarifa: row.TARIFA,
+      terreno: row.TERRENO,
+      fechaIni: convertirFecha(row.FECHA_INI.trim()),
+      fechaFin: convertirFecha(row.FECHA_FIN.trim()),
+      leasing: row.LEASING.trim(),
+      año: row.ANO,
+      color: row.COLOR.trim(),
+      marca: row.MARCA.trim(),
+      modelo: row.MODELO.trim(),
+    }));
+
+    return res.status(200).json(convertResult);
+  } catch (error) {
+    console.error("Error al listar asignaciones de un contrato", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al listar asignaciones de un contrato",
+    });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
 const insertOperation = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
 
@@ -82,7 +157,7 @@ const insertOperation = async (req, res) => {
 
   try {
     const queryCabecera = `
-              INSERT INTO SPEED400AT.TBL_ASIGNACION_CAB 
+              INSERT INTO ${SCHEMA_BD}.TBL_ASIGNACION_CAB 
               (ID_CLIENTE, FECHA, USUARIO)
               VALUES (?, ?, ?)
           `;
@@ -93,17 +168,16 @@ const insertOperation = async (req, res) => {
       globalDbUser,
     ]);
 
-    const idAsignaCab =
-      result.insertId || (await obtenerUltimoIdAsigna(cn));
+    const idAsignaCab = result.insertId || (await obtenerUltimoIdAsigna(cn));
 
     const queryDetalle = `
-              INSERT INTO SPEED400AT.TBL_ASIGNACION_DET 
+              INSERT INTO ${SCHEMA_BD}.TBL_ASIGNACION_DET 
               (ID_ASIGNACION, ID_VEH, SEC_CON, PLACA, TARIFA, ID_OPE, ID_CONTRATO, TP_TERRENO, FECHA_INI, FECHA_FIN, LEASING, CLASE_CONTRATO)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `;
 
     /*const queryTarifa = `
-              INSERT INTO SPEED400AT.PO_TARIFAS 
+              INSERT INTO ${SCHEMA_BD}.PO_TARIFAS 
               (PLACA, REGISTRO, INIVAL, TARIFA, MONEDA, CPK, RECMEN, FECHADEVOLUCION, IDOPE, USUARIO)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `;*/
@@ -192,5 +266,6 @@ const insertOperation = async (req, res) => {
 
 module.exports = {
   listOperations,
+  listAssingByContract,
   insertOperation,
 };

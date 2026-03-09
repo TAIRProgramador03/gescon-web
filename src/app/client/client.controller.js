@@ -1,5 +1,6 @@
 const { decodeString } = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
+const { SCHEMA_BD } = require("../../shared/conf.js");
 
 const listClient = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
@@ -16,8 +17,8 @@ const listClient = async (req, res) => {
   try {
     const sql = `
       SELECT DISTINCT A.IDCLI, B.CLINOM 
-      FROM SPEED400AT.PO_OPERACIONES A 
-      INNER JOIN SPEED400AT.TCLIE B ON A.IDCLI=B.CLICVE 
+      FROM ${SCHEMA_BD}.PO_OPERACIONES A 
+      INNER JOIN ${SCHEMA_BD}.TCLIE B ON A.IDCLI=B.CLICVE 
       WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' 
       ORDER BY CLINOM ASC
     `;
@@ -54,7 +55,7 @@ const tableClient = async (req, res) => {
       .status(401)
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
-  
+
   const { idCli } = req.query; // Obtiene el idCli de los parámetros de consulta
 
   if (!idCli) {
@@ -68,14 +69,15 @@ const tableClient = async (req, res) => {
   try {
     // Consulta los contratos asociados al cliente
     const query = `
-      SELECT NRO_CONTRATO AS DESCRIPCION, FECHA_FIRMA AS FECHACREA, CANT_VEHI AS TOTVEH, DURACION 
-      FROM SPEED400AT.TBLCONTRATO_CAB 
+      SELECT ID, NRO_CONTRATO AS DESCRIPCION, FECHA_FIRMA AS FECHACREA, CANT_VEHI AS TOTVEH, DURACION 
+      FROM ${SCHEMA_BD}.TBLCONTRATO_CAB 
       WHERE ID_CLIENTE = ?
     `;
     const result = await cn.query(query, [idCli]);
 
     const cleanedResult = result.map((row) => {
       return {
+        ID: row.ID,
         DESCRIPCION:
           row.DESCRIPCION !== null && row.DESCRIPCION !== undefined
             ? decodeString(row.DESCRIPCION.toString().trim())
@@ -123,7 +125,7 @@ const tableClientLea = async (req, res) => {
 
   try {
     // Consulta los contratos asociados al cliente
-    const query = `SELECT DISTINCT A.IDCLI, B.CLINOM, B.CLIRUC, B.CLIABR, B.CLIDIR FROM SPEED400AT.PO_OPERACIONES A INNER JOIN SPEED400AT.TCLIE B ON A.IDCLI=B.CLICVE WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' ORDER BY CLINOM ASC`;
+    const query = `SELECT DISTINCT A.IDCLI, B.CLINOM, B.CLIRUC, B.CLIABR, B.CLIDIR FROM ${SCHEMA_BD}.PO_OPERACIONES A INNER JOIN ${SCHEMA_BD}.TCLIE B ON A.IDCLI=B.CLICVE WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' ORDER BY CLINOM ASC`;
     const result = await cn.query(query);
 
     const cleanedResult = result.map((row) => {

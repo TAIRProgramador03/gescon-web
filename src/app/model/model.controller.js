@@ -1,5 +1,6 @@
 const { decodeString } = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
+const { SCHEMA_BD } = require("../../shared/conf.js");
 
 const listModels = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
@@ -15,7 +16,7 @@ const listModels = async (req, res) => {
 
   try {
     const result = await cn.query(
-      "SELECT ID, TRIM(DESCRIPCION) AS MODELO FROM SPEED400AT.PO_MODELO GROUP BY ID, DESCRIPCION ORDER BY TRIM(DESCRIPCION) ASC",
+      `SELECT ID, TRIM(DESCRIPCION) AS MODELO FROM ${SCHEMA_BD}.PO_MODELO GROUP BY ID, DESCRIPCION ORDER BY TRIM(DESCRIPCION) ASC`,
     );
 
     // Decodificar los resultados desde latin1

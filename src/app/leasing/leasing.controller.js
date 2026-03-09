@@ -6,6 +6,7 @@ const {
   obtenerUltimoIdLea,
 } = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
+const { SCHEMA_BD } = require("../../shared/conf.js");
 
 const listLeasing = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
@@ -21,7 +22,7 @@ const listLeasing = async (req, res) => {
 
   try {
     const result = await cn.query(
-      "SELECT ID, NRO_LEASING FROM SPEED400AT.TBL_LEASING_CAB ORDER BY NRO_LEASING ASC",
+      `SELECT ID, NRO_LEASING FROM ${SCHEMA_BD}.TBL_LEASING_CAB ORDER BY NRO_LEASING ASC`,
     );
 
     // Decodificar los resultados desde latin1
@@ -70,7 +71,7 @@ const listLeasingOfClient = async (req, res) => {
   try {
     const query = `
         SELECT ID, NRO_LEASING 
-        FROM SPEED400AT.TBL_LEASING_CAB 
+        FROM ${SCHEMA_BD}.TBL_LEASING_CAB 
         WHERE ID_CLIENTE = ? ORDER BY NRO_LEASING ASC
       `;
 
@@ -126,9 +127,9 @@ const listLeasingByContract = async (req, res) => {
   try {
     const sql = `
       SELECT A.NRO_LEASING, A.CANT_VEH, A.FECHA_INI, A.FECHA_FIN
-      FROM SPEED400AT.TBL_LEASING_CAB A 
-      INNER JOIN SPEED400AT.TBLCONTRATO_CAB B ON B.ID=A.ID_CONTRATO 
-      WHERE B.NRO_CONTRATO = ?
+      FROM ${SCHEMA_BD}.TBL_LEASING_CAB A 
+      INNER JOIN ${SCHEMA_BD}.TBLCONTRATO_CAB B ON B.ID=A.ID_CONTRATO 
+      WHERE B.ID = ?
     `;
 
     const result = await cn.query(sql, [contratoId]);
@@ -174,7 +175,7 @@ const detailLeasing = async (req, res) => {
 
   try {
     const sql = `
-      SELECT NRO_LEASING, BANCO, CANT_VEH, FECHA_INI, FECHA_FIN, PERIODO_GRACIA, PDF, DESCRIPCION, TIPCON FROM SPEED400AT.TBL_LEASING_CAB
+      SELECT NRO_LEASING, BANCO, CANT_VEH, FECHA_INI, FECHA_FIN, PERIODO_GRACIA, PDF, DESCRIPCION, TIPCON FROM ${SCHEMA_BD}.TBL_LEASING_CAB
       WHERE NRO_LEASING = ?
     `;
 
@@ -243,7 +244,7 @@ const insertLeasing = async (req, res) => {
 
   try {
     const queryCabecera = `
-              INSERT INTO SPEED400AT.TBL_LEASING_CAB 
+              INSERT INTO ${SCHEMA_BD}.TBL_LEASING_CAB 
               (ID_CLIENTE, NRO_LEASING, BANCO, CANT_VEH, FECHA_INI, FECHA_FIN, PERIODO_GRACIA, PDF, ID_CONTRATO, TIPCON)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `;
@@ -265,13 +266,13 @@ const insertLeasing = async (req, res) => {
       result.insertId || (await obtenerUltimoIdLea(connection));
 
     const queryDetalle = `
-              INSERT INTO SPEED400AT.TBL_LEASING_DET 
+              INSERT INTO ${SCHEMA_BD}.TBL_LEASING_DET 
               (ID_LEA_CAB, ID_VEH, SEC_CON, MODELO, TIPO_TERRENO, PLACA, CODINI, CANTIDAD)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           `;
 
     const queryUpdateVehiculo = `
-              UPDATE SPEED400AT.PO_VEHICULO 
+              UPDATE ${SCHEMA_BD}.PO_VEHICULO 
               SET INIVAL1 = '1' 
               WHERE ID = ?
           `;

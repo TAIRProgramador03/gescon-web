@@ -2,9 +2,9 @@ const {
   convertirFecha,
   obtenerUltimoIdDoc,
   transformType,
-  decodeString,
 } = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
+const { SCHEMA_BD } = require("../../shared/conf.js");
 
 const listDocumentByNroContract = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
@@ -29,9 +29,9 @@ const listDocumentByNroContract = async (req, res) => {
   try {
     const sql = `
       SELECT A.NRO_DOC, A.CANT_VEHI, A.FECHA_FIRMA, A.DURACION
-      FROM SPEED400AT.TBLDOCUMENTO_CAB A 
-      INNER JOIN SPEED400AT.TBLCONTRATO_CAB B ON B.ID=A.ID_PADRE 
-      WHERE B.NRO_CONTRATO = ?
+      FROM ${SCHEMA_BD}.TBLDOCUMENTO_CAB A 
+      INNER JOIN ${SCHEMA_BD}.TBLCONTRATO_CAB B ON B.ID=A.ID_PADRE 
+      WHERE B.ID = ?
     `;
 
     const result = await cn.query(sql, [contratoId]);
@@ -78,7 +78,7 @@ const detailDocument = async (req, res) => {
   try {
     const sql = `
       SELECT NRO_DOC, TIPO_DOC, CANT_VEHI, FECHA_FIRMA, DURACION, KM_ADI, KM_TOTAL, VEH_SUP, VEH_SEV, VEH_SOC, VEH_CIU, ARCHIVO_PDF, DESCRIPCION 
-      FROM SPEED400AT.TBLDOCUMENTO_CAB 
+      FROM ${SCHEMA_BD}.TBLDOCUMENTO_CAB 
       WHERE NRO_DOC = ?
     `;
 
@@ -188,7 +188,7 @@ const insertDocument = async (req, res) => {
     ]);
 
     const queryCabecera = `
-              INSERT INTO SPEED400AT.TBLDOCUMENTO_CAB 
+              INSERT INTO ${SCHEMA_BD}.TBLDOCUMENTO_CAB 
               (ID_CLIENTE, ID_PADRE, TIPO_DOC, NRO_DOC, CANT_VEHI, FECHA_FIRMA, DURACION, KM_ADI, KM_TOTAL, VEH_SUP, VEH_SEV, VEH_SOC, VEH_CIU, TIPO_ESPE, DESCRIPCION, ARCHIVO_PDF, CLASE, MOTIVO)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `;
@@ -237,7 +237,7 @@ const insertDocument = async (req, res) => {
     const idDocumentoCab = result.insertId || (await obtenerUltimoIdDoc(cn));
 
     const queryDetalle = `
-              INSERT INTO SPEED400AT.TBLDOCUMENTO_DET
+              INSERT INTO ${SCHEMA_BD}.TBLDOCUMENTO_DET
               (ID_CON_CAB, SEC_CON, MODELO, TIPO_TERRENO, TARIFA, CPK, RM, CANTIDAD, DURACION, PRECIO_VEH, PRECIO_VENTA)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `;

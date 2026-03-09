@@ -1,4 +1,5 @@
 const iconv = require("iconv-lite");
+const { SCHEMA_BD } = require("./conf.js");
 
 const decodeString = (str) => {
   return iconv.decode(Buffer.from(str, "binary"), "latin1"); // Decodifica desde latin1
@@ -26,28 +27,28 @@ function transformType(value, object) {
 
 async function obtenerUltimoId(connection) {
   const result = await connection.query(
-    `SELECT MAX(ID) AS ID FROM SPEED400AT.TBLCONTRATO_CAB`,
+    `SELECT MAX(ID) AS ID FROM ${SCHEMA_BD}.TBLCONTRATO_CAB`,
   );
   return result.length > 0 ? result[0].ID : null;
 }
 
 async function obtenerUltimoIdDoc(connection) {
   const result = await connection.query(
-    `SELECT MAX(ID) AS ID FROM SPEED400AT.TBLDOCUMENTO_CAB`,
+    `SELECT MAX(ID) AS ID FROM ${SCHEMA_BD}.TBLDOCUMENTO_CAB`,
   );
   return result.length > 0 ? result[0].ID : null;
 }
 
 async function obtenerUltimoIdLea(connection) {
   const result = await connection.query(
-    `SELECT MAX(ID) AS ID FROM SPEED400AT.TBL_LEASING_CAB`
+    `SELECT MAX(ID) AS ID FROM ${SCHEMA_BD}.TBL_LEASING_CAB`
   );
   return result.length > 0 ? result[0].ID : null;
 }
 
 async function obtenerUltimoIdAsigna(connection) {
   const result = await connection.query(
-    `SELECT MAX(ID) AS ID FROM SPEED400AT.TBL_ASIGNACION_CAB`
+    `SELECT MAX(ID) AS ID FROM ${SCHEMA_BD}.TBL_ASIGNACION_CAB`
   );
   return result.length > 0 ? result[0].ID : null;
 }

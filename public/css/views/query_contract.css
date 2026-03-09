@@ -91,6 +91,15 @@ main {
   gap: 20px;
 }
 
+/* SELECT 2 ESTILOS */
+.select2-results__option {
+  color: #000;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+  color: #000;
+}
+
 .text-form-col {
   padding: 20px 20px;
   display: flex;
@@ -161,6 +170,7 @@ td {
   text-align: center;
   border: 1px solid;
   border-radius: 7px;
+  cursor: pointer;
 }
 
 .cuadradro {
@@ -177,7 +187,7 @@ td {
 
 .cuadradro-form {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   width: 100%;
   color: #000;
@@ -226,8 +236,8 @@ td:nth-child(5) {
 }
 
 tr:hover {
-  background-color: #e7edf7;
-  color: #fff;
+  background-color: #accbfc;
+  color: #002141;
   cursor: pointer;
 }
 

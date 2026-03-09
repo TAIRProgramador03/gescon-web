@@ -17,6 +17,9 @@ const getLeasings = async (contratoId) => {
 
   // INTEGRAMOS LA LIBRERIA DATATABLE
   const table = $("#listLeasing").DataTable({
+    language: {
+      url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+    },
     data: lesaings,
     columns: [
       {

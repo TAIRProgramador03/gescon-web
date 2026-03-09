@@ -173,6 +173,7 @@ async function cargarTablacliente(idCli) {
       const row = document.createElement("tr");
       row.innerHTML = `
                     <td>${index + 1}</td> <!-- Número de ítem -->
+                    <td style="display: none;">${tablaCliente.ID}</td> <!-- Número de ítem -->
                     <td>${
                       tablaCliente.DESCRIPCION
                     }</td> <!-- Número de contrato -->
@@ -314,6 +315,8 @@ async function cargarDatosContrato(contratoId) {
       data.data.cantidadLeasing || "0"; // Asignar texto al div
     document.getElementById("txt-vehic").textContent =
       data.data.cantidadVehiculos || "0";
+    document.getElementById("txt-assign").textContent =
+      data.data.cantidadAsignados || "0";
   } catch (error) {
     console.error("Error al obtener los datos del contrato:", error);
   }
@@ -399,6 +402,8 @@ document
           data.data.cantidadLeasing || "0"; // Asignar texto al div
         document.getElementById("txt-vehic").textContent =
           data.data.cantidadVehiculos || "0";
+        document.getElementById("txt-assign").textContent =
+          data.data.cantidadAsignados || "0";
       } catch (error) {
         console.error("Error al obtener los datos del contrato:", error);
       }

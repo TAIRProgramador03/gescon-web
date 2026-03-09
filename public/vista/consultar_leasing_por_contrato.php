@@ -127,13 +127,14 @@ require './templates/header.html';
             <div class="row-data">
               <h3>Banco</h3>
               <p>${transformType(detaiLeasing.banco, {
-                1: "BBVA",
-                2: "BCP",
-                3: "HSBC",
-                4: "INTERBANK",
-                5: "SCOTIABANK",
-                6: "TAIR",
-                7: "SANTANDER"
+                1: "BANBIF",
+                2: "BBVA",
+                3: "BCP",
+                4: "HSBC",
+                5: "INTERBANK",
+                6: "SCOTIABANK",
+                7: "TAIR",
+                8: "SANTANDER"
               })}</p>
             </div>
             

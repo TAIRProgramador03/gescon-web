@@ -157,10 +157,15 @@ require './templates/header.html';
                         <hr>
                         <div class="tda can-form"><i class="fa fa fa-book" style="color: #0e2e67;"></i><span id="txt-leas">0</span></div>
                     </div>
-                    <div class="card terreno-form doc-form">
+                    <div class="card terreno-form doc-form" id="href-query-veh">
                         <div class="tda tti-form nom-tp">N° Vehiculos</div>
                         <hr>
                         <div class="tda can-form"><i class="fa fa-cars" style="color: #0e2e67;"></i><span id="txt-vehic">0</span></div>
+                    </div>
+                    <div class="card terreno-form doc-form" id="href-query-assign">
+                        <div class="tda tti-form nom-tp">Veh. Asignados</div>
+                        <hr>
+                        <div class="tda can-form"><i class="fa-solid fa-check" style="color: #0e2e67;"></i><span id="txt-assign">0</span></div>
                     </div>
                 </div>
             </div>
@@ -220,12 +225,25 @@ require './templates/header.html';
         window.location.href = `consultar_leasing_por_contrato.php?contratoId=${contratoId}`;
     }
 
+    function queryAssign() {
+        const params = new URLSearchParams(window.location.search);
+        const contratoId = params.get("contratoId")
+
+        if (!contratoId) return alert("No se selecciono ningun contrato")
+
+        window.location.href = `consultar_asignaciones_por_contrato.php?contratoId=${contratoId}`;
+    }
+
     $("#href-query-doc").on("click", () => {
         queryDocument()
     })
 
     $("#href-query-lea").on("click", () => {
         queryLeasing()
+    })
+
+    $("#href-query-assign").on("click", () => {
+        queryAssign()
     })
 </script>
 

@@ -120,6 +120,7 @@
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({ dbUser, password }),
+                        credentials: 'include'
                     });
 
                     const data = await response.json();
@@ -145,6 +146,6 @@
                 }
             });
         </script>
-        <script src="./public/js/login.js">Click</script>
+        <script src="./public/js/login.js"></script>
     </body>
 </html>

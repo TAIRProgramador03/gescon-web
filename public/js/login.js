@@ -27,6 +27,6 @@ async function authenticateValid() {
       window.location.href = "./public/vista/dashboard.php"; // replace no guarda la página en el historial
     }
   } catch (error) {
-    window.location.replace("/Ges360/Index.html");
+    // window.location.replace("/Ges360/Index.html");
   }
 }

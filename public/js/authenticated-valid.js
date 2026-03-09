@@ -8,10 +8,10 @@ async function authenticateValid() {
     });
 
     if (!response.ok) {
-      window.location.replace("../../Index.html"); // replace no guarda la página en el historial
+      window.location.replace("/Ges360/Index.html"); // replace no guarda la página en el historial
     }
   } catch (error) {
-    window.location.replace("../../Index.html");
+    // window.location.replace("../../Index.html");
   }
 }
 

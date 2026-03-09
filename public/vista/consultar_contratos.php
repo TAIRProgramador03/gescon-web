@@ -211,7 +211,7 @@ require './templates/header.html';
         const params = new URLSearchParams(window.location.search);
         const contratoId = params.get("contratoId")
 
-        if (!contratoId) return alert("No se selecciono ningun contrato")
+        if (!contratoId) return;
 
         window.location.href = `consultar_documento_por_contrato.php?contratoId=${contratoId}`;
     }
@@ -220,7 +220,7 @@ require './templates/header.html';
         const params = new URLSearchParams(window.location.search);
         const contratoId = params.get("contratoId")
 
-        if (!contratoId) return alert("No se selecciono ningun contrato")
+        if (!contratoId) return;
 
         window.location.href = `consultar_leasing_por_contrato.php?contratoId=${contratoId}`;
     }
@@ -229,7 +229,7 @@ require './templates/header.html';
         const params = new URLSearchParams(window.location.search);
         const contratoId = params.get("contratoId")
 
-        if (!contratoId) return alert("No se selecciono ningun contrato")
+        if (!contratoId) return;
 
         window.location.href = `consultar_asignaciones_por_contrato.php?contratoId=${contratoId}`;
     }

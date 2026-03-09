@@ -144,7 +144,7 @@ const tableContract = async (req, res) => {
   try {
     // Usa parámetros preparados para prevenir inyección SQL
     const query = `
-              SELECT NRO_CONTRATO AS DESCRIPCION, FECHA_FIRMA AS FECHACREA, CANT_VEHI AS TOTVEH, DURACION
+              SELECT ID, NRO_CONTRATO AS DESCRIPCION, FECHA_FIRMA AS FECHACREA, CANT_VEHI AS TOTVEH, DURACION
               FROM ${SCHEMA_BD}.TBLCONTRATO_CAB
               WHERE ID_CLIENTE = ? AND ID = ?
           `;
@@ -152,6 +152,7 @@ const tableContract = async (req, res) => {
 
     const cleanedResult = result.map((row) => {
       return {
+        ID: row.ID,
         DESCRIPCION:
           row.DESCRIPCION !== null && row.DESCRIPCION !== undefined
             ? decodeString(row.DESCRIPCION.toString().trim())

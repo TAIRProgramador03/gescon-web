@@ -217,6 +217,40 @@ const vehicleLeasing = async (req, res) => {
   }
 };
 
+const listVehiclesByContract = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { contratoId } = req.query;
+
+  if (!contratoId)
+    return res.status(400).json({
+      success: false,
+      message: "El parametro contratoId es obligatorio",
+    });
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+  } catch (error) {
+    console.error("Error al obtener lista de vehiculos por contrato", error);
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Error al obtener lista de vehiculos por contrato",
+      });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
 module.exports = {
   listVehicles,
   tableVehicles,

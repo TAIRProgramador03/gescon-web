@@ -1,12 +1,12 @@
     <script>
-        const loggedUser = localStorage.getItem('dbUser');
+        // const loggedUser = localStorage.getItem('dbUser');
 
-        if (loggedUser) {
-        // Mostrar el usuario en el dashboard
-        //document.getElementById('welcomeMessage').textContent = `${loggedUser}`;
-        } else {
-            window.location.href = '../../Index.html';
-        }
+        // if (loggedUser) {
+        // // Mostrar el usuario en el dashboard
+        // //document.getElementById('welcomeMessage').textContent = `${loggedUser}`;
+        // } else {
+        //     window.location.href = '../../Index.html';
+        // }
 
         const logoutIcon = document.getElementById('log_out');
 
@@ -19,7 +19,7 @@
                 const data = await response.json();
                 if (data.success) {
                 localStorage.removeItem("dbUser");
-                window.location.href = "../../Index.html";
+                window.location.href = "/Ges360/Index.html";
                 } else {
                 Swal.fire({
                     icon: "error",

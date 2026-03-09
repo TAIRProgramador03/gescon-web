@@ -245,6 +245,7 @@ async function cargarTablacontrato(id) {
       const fechito = convertirFecha(tablaContrato.FECHACREA);
       row.innerHTML = `
                     <td>${index + 1}</td> <!-- Número de ítem -->
+                    <td style="display: none;">${tablaContrato.ID}</td>
                     <td>${tablaContrato.DESCRIPCION}</td> <!-- Descripción -->
                     <td>${fechito || "Sin fecha"}</td> <!-- Fecha -->
                     <td>${
@@ -337,6 +338,7 @@ function limpia() {
   document.getElementById("txt-aso").textContent = "0"; // Asignar texto al div
   document.getElementById("txt-leas").textContent = "0"; // Asignar texto al div
   document.getElementById("txt-vehic").textContent = "0";
+  document.getElementById("txt-assign").textContent = "0";
 }
 
 document

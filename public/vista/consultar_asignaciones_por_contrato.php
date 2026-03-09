@@ -112,7 +112,7 @@ require './templates/header.html';
 
 <script src="../js/consulta_asignacion_por_contrato.js"></script>
 <script type="module">
-  const IP_LOCAL = "localhost";
+  // const IP_LOCAL = "localhost";
   let table;
 
   window.onload = function() {

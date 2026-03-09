@@ -1,4 +1,4 @@
-const IP_LOCAL = 'localhost';
+// const IP_LOCAL = 'localhost';
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnClear").addEventListener("click", limpiarCampos);

@@ -1,4 +1,4 @@
-const IP_LOCAL = "localhost";
+// const IP_LOCAL = "localhost";
 
 /**
  * Inicializa la página cargando clientes, modelos y configurando los eventos de los botones

@@ -10,7 +10,11 @@ loginBtn.addEventListener("click", () => {
   container.classList.remove("active");
 });
 
-const IP_LOCAL = "localhost";
+document.addEventListener("DOMContentLoaded", async () => {
+  await authenticateValid();
+});
+
+// const IP_LOCAL = "localhost";
 
 async function authenticateValid() {
   try {
@@ -20,11 +24,9 @@ async function authenticateValid() {
     });
 
     if (response.ok) {
-      window.location.href = './public/vista/dashboard.php'; // replace no guarda la página en el historial
+      window.location.href = "./public/vista/dashboard.php"; // replace no guarda la página en el historial
     }
   } catch (error) {
-    window.location.replace("../../Index.html");
+    window.location.replace("/Ges360/Index.html");
   }
 }
-
-authenticateValid();

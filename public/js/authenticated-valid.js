@@ -1,4 +1,4 @@
-const IP_LOCAL = "localhost";
+// const IP_LOCAL = "localhost";
 
 async function authenticateValid() {
   try {

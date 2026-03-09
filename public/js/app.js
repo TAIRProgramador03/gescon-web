@@ -20,6 +20,8 @@ function closeAllSubMenus() {
   });
 }*/
 
+const IP_LOCAL = "192.168.5.95"
+
 const toggleButton = document.getElementById("toggle-btn");
 const sidebar = document.getElementById("sidebar");
 

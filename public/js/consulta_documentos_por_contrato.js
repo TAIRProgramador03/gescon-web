@@ -1,4 +1,4 @@
-const IP_LOCAL = "localhost";
+// const IP_LOCAL = "localhost";
 
 /**
  * Método para traer la lista de documentos de un contrato especifico

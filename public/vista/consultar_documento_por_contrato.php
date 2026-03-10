@@ -91,14 +91,15 @@ require './templates/header.html';
 
   document.addEventListener("DOMContentLoaded", async () => {
     const param = new URLSearchParams(window.location.search);
+    const clienteId = param.get("clienteId");
     const contratoId = param.get("contratoId");
 
-    if (!contratoId) alert("No se encontro ningun parametro")
+    if (!contratoId || !clienteId) alert("No se encontraron los parametros necesarios")
 
     const textSpan = document.getElementById("parametroPintado");
     textSpan.innerHTML = contratoId;
 
-    const table = await getDocuments(contratoId);
+    const table = await getDocuments(contratoId, clienteId);
 
     $("#listDocuments tbody").on("click", "tr", async function() {
 

@@ -28,10 +28,10 @@ $(document).ready(async function () {
 
     await cargarContrato(idClient);
     await cargarTablacliente(idClient);
-  }
 
-  if(idContract) {
-    await cargarDatosContrato(idContract)
+    if(idContract) {
+    await cargarDatosContrato(idContract, idClient)
+  }
   }
 });
 
@@ -267,11 +267,11 @@ async function cargarTablacontrato(id) {
   }
 }
 
-async function cargarDatosContrato(contratoId) {
+async function cargarDatosContrato(contratoId, clienteId) {
   // Realizar la solicitud AJAX al backend para obtener los detalles del contrato
   try {
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}`,
+      `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}&clienteId=${clienteId}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -351,7 +351,10 @@ document
 
       // MOSTRAMOS EL PARAMETRO EN LA URL
       const params = new URLSearchParams(window.location.search);
+      const clienteId = params.get("clienteId")
       params.set("contratoId", contratoId);
+
+      if(!clienteId) return;
 
       const nuevaURL = `${window.location.pathname}?${params.toString()}`;
       window.history.replaceState({}, "", nuevaURL);
@@ -359,7 +362,7 @@ document
       // Realizar la solicitud AJAX al backend para obtener los detalles del contrato
       try {
         const response = await fetch(
-          `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}`,
+          `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}&clienteId=${clienteId}`,
           {
             method: "GET",
             credentials: "include", // Asegura que las cookies se envíen con la solicitud

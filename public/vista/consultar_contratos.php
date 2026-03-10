@@ -209,29 +209,41 @@ require './templates/header.html';
 
     function queryDocument() {
         const params = new URLSearchParams(window.location.search);
+        const clienteId = params.get("clienteId")
         const contratoId = params.get("contratoId")
 
-        if (!contratoId) return;
+        if (!contratoId || !clienteId) return;
 
-        window.location.href = `consultar_documento_por_contrato.php?contratoId=${contratoId}`;
+        window.location.href = `consultar_documento_por_contrato.php?contratoId=${contratoId}&clienteId=${clienteId}`;
     }
 
     function queryLeasing() {
         const params = new URLSearchParams(window.location.search);
+        const clienteId = params.get("clienteId")
         const contratoId = params.get("contratoId")
 
-        if (!contratoId) return;
+        if (!contratoId || !clienteId) return;
 
-        window.location.href = `consultar_leasing_por_contrato.php?contratoId=${contratoId}`;
+        window.location.href = `consultar_leasing_por_contrato.php?contratoId=${contratoId}&clienteId=${clienteId}`;
     }
 
-    function queryAssign() {
+    function queryVehicles() {
         const params = new URLSearchParams(window.location.search);
         const contratoId = params.get("contratoId")
 
         if (!contratoId) return;
 
-        window.location.href = `consultar_asignaciones_por_contrato.php?contratoId=${contratoId}`;
+        window.location.href = `consultar_total_vehiculos.php?contratoId=${contratoId}`;
+    }
+
+    function queryAssign() {
+        const params = new URLSearchParams(window.location.search);
+        const clienteId = params.get("clienteId")
+        const contratoId = params.get("contratoId")
+
+        if (!contratoId || !clienteId) return;
+
+        window.location.href = `consultar_asignaciones_por_contrato.php?contratoId=${contratoId}&clienteId=${clienteId}`;
     }
 
     $("#href-query-doc").on("click", () => {
@@ -240,6 +252,10 @@ require './templates/header.html';
 
     $("#href-query-lea").on("click", () => {
         queryLeasing()
+    })
+
+    $("#href-query-veh").on("click", () => {
+        queryVehicles()
     })
 
     $("#href-query-assign").on("click", () => {

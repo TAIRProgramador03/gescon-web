@@ -128,16 +128,17 @@ require './templates/header.html';
 
   document.addEventListener("DOMContentLoaded", async () => {
     const param = new URLSearchParams(window.location.search);
+    const clienteId = param.get("clienteId");
     const contratoId = param.get("contratoId");
     const leasingId = param.get("leasingId")
     const tipoTerr = param.get("tipoTerr")
 
-    if (!contratoId) alert("No se encontro ningun parametro")
+    if (!contratoId || !clienteId) alert("No se encontraron los parametros necesarios")
 
     const textSpan = document.getElementById("parametroPintado");
     textSpan.innerHTML = contratoId;
 
-    const assigns = await getAssigns(contratoId, leasingId, tipoTerr);
+    const assigns = await getAssigns(contratoId, clienteId, leasingId, tipoTerr);
 
     // INTEGRAMOS LA LIBRERIA DATATABLE
     table = $("#listAssign").DataTable({
@@ -208,7 +209,7 @@ require './templates/header.html';
       ],
     });
 
-    const listLeasing = await getLeasings(contratoId)
+    const listLeasing = await getLeasings(contratoId, clienteId)
 
     const dataCleaned = listLeasing.map((lea) => ({
       id: lea.nroLeasing,

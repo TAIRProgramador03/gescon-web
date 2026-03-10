@@ -74,19 +74,19 @@ const listAssingByContract = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  const { idContrato, idLeasing, tipoTerr } = req.query;
+  const { idContrato, idCliente, idLeasing, tipoTerr } = req.query;
 
-  if (!idContrato)
+  if (!idContrato || !idCliente)
     return res.status(400).json({
       success: false,
-      message: "El parametro idContrato es obligatorio",
+      message: "Los parametros idContrato e idCliente son obligatorio",
     });
 
   const cn = await connection(globalDbUser, globalPassword);
 
   try {
     let sql = `
-      SELECT  B.PLACA, B.TARIFA, B.TP_TERRENO AS TERRENO, B.FECHA_INI, B.FECHA_FIN, B.LEASING, V.COLOR AS COLOR, V.ANO AS ANO, MA.DESCRIPCION AS MARCA, MO.DESCRIPCION AS MODELO
+      SELECT  B.PLACA, B.TARIFA, B.TP_TERRENO AS TERRENO, B.FECHA_INI, B.FECHA_FIN, B.LEASING, V.COLOR AS COLOR, V.ANO AS ANO, MA.DESCRIPCION AS MARCA, MO.DESCRIPCION AS MODELO, A.ID_CLIENTE
       FROM ${SCHEMA_BD}.TBL_ASIGNACION_CAB A
       LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_DET B
       ON A.ID = B.ID_ASIGNACION
@@ -96,10 +96,10 @@ const listAssingByContract = async (req, res) => {
       ON MA.ID = V.IDMAR
       LEFT JOIN ${SCHEMA_BD}.PO_MODELO MO
       ON MO.ID = V.IDMOD
-      WHERE B.ID_CONTRATO = ?
+      WHERE B.ID_CONTRATO = ? AND A.ID_CLIENTE = ?
     `;
 
-    const params = [idContrato];
+    const params = [idContrato, idCliente];
 
     if (idLeasing) {
       sql += " AND LEASING = ?";

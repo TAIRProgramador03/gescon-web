@@ -4,9 +4,9 @@
  * Método para traer la lista de documentos de un contrato especifico
  * @param contratoId Nro de contrato
  */
-const getDocuments = async (contratoId) => {
+const getDocuments = async (contratoId, clienteId) => {
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/documentoPorContrato?contratoId=${contratoId.toString()}`,
+    `http://${IP_LOCAL}:3000/documentoPorContrato?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
     {
       method: "GET",
       credentials: "include",

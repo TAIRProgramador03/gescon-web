@@ -114,25 +114,24 @@ const listLeasingByContract = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  const { contratoId } = req.query;
+  const { contratoId, clienteId } = req.query;
 
-  if (!contratoId)
+  if (!contratoId || !clienteId)
     return res.status(400).json({
       success: false,
-      message: "El parametro contratoId es obligatorio",
+      message: "El parametro contratoId y clienteId son obligatorio",
     });
 
   const cn = await connection(globalDbUser, globalPassword);
 
   try {
     const sql = `
-      SELECT A.NRO_LEASING, A.CANT_VEH, A.FECHA_INI, A.FECHA_FIN
+      SELECT A.NRO_LEASING, A.CANT_VEH, A.FECHA_INI, A.FECHA_FIN, A.ID_CONTRATO, A.ID_CLIENTE
       FROM ${SCHEMA_BD}.TBL_LEASING_CAB A 
-      INNER JOIN ${SCHEMA_BD}.TBLCONTRATO_CAB B ON B.ID=A.ID_CONTRATO 
-      WHERE B.ID = ?
+      WHERE A.ID_CONTRATO = ? AND A.ID_CLIENTE = ?
     `;
 
-    const result = await cn.query(sql, [contratoId]);
+    const result = await cn.query(sql, [contratoId, clienteId]);
 
     const cleanedResult = result.map((row) => ({
       nroLeasing: row.NRO_LEASING ? row.NRO_LEASING.trim() : "",

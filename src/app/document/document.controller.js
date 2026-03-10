@@ -16,12 +16,12 @@ const listDocumentByNroContract = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  const { contratoId } = req.query;
+  const { contratoId, clienteId } = req.query;
 
-  if (!contratoId)
+  if (!contratoId || !clienteId)
     return res.status(400).json({
       success: false,
-      message: "El parametro contratoId es obligatorio",
+      message: "Los parametros contratoId y clienteId son obligatorio",
     });
 
   const cn = await connection(globalDbUser, globalPassword);
@@ -30,11 +30,11 @@ const listDocumentByNroContract = async (req, res) => {
     const sql = `
       SELECT A.NRO_DOC, A.CANT_VEHI, A.FECHA_FIRMA, A.DURACION
       FROM ${SCHEMA_BD}.TBLDOCUMENTO_CAB A 
-      INNER JOIN ${SCHEMA_BD}.TBLCONTRATO_CAB B ON B.ID=A.ID_PADRE 
-      WHERE B.ID = ?
+      INNER JOIN ${SCHEMA_BD}.TBLCONTRATO_CAB B ON B.ID=A.ID_PADRE AND B.ID_CLIENTE=A.ID_CLIENTE 
+      WHERE B.ID = ? AND B.ID_CLIENTE = ?
     `;
 
-    const result = await cn.query(sql, [contratoId]);
+    const result = await cn.query(sql, [contratoId, clienteId]);
 
     const cleanedResult = result.map((row) => ({
       nroDocumento: row.NRO_DOC ? row.NRO_DOC.trim() : "",

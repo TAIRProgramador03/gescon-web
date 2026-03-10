@@ -197,12 +197,12 @@ const detailContract = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  const { contratoId } = req.query; // Obtiene el contratoId de los parámetros de consulta
+  const { contratoId, clienteId } = req.query; // Obtiene el contratoId de los parámetros de consulta
 
-  if (!contratoId) {
+  if (!contratoId || !clienteId) {
     return res
       .status(400)
-      .json({ success: false, message: "El contratoId es obligatorio" });
+      .json({ success: false, message: "Los parametros contratoId y clienteId son obligatorio" });
   }
 
   const cn = await connection(globalDbUser, globalPassword);
@@ -229,14 +229,19 @@ const detailContract = async (req, res) => {
         COUNT(DISTINCT D.ID) AS CANT_ASSIGN
       FROM ${SCHEMA_BD}.TBLCONTRATO_CAB A 
       LEFT JOIN ${SCHEMA_BD}.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE 
-      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB C ON A.ID=C.ID_CONTRATO
-      LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_DET D
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB C ON A.ID=C.ID_CONTRATO AND A.ID_CLIENTE = C.ID_CLIENTE
+      LEFT JOIN (
+        SELECT B.ID AS ID, B.ID_CONTRATO AS ID_CONTRATO FROM SPEED400AT.TBL_ASIGNACION_CAB A
+        LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_DET B
+        ON A.ID = B.ID_ASIGNACION
+        WHERE A.ID_CLIENTE = ?
+      ) D
       ON A.ID = D.ID_CONTRATO
       WHERE A.ID = ? 
       GROUP BY A.DESCRIPCION, A.FECHA_FIRMA, A.DURACION, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, A.CANT_VEHI, A.ID
     `;
 
-    const result = await cn.query(query, [contratoId]);
+    const result = await cn.query(query, [clienteId, contratoId]);
 
     if (result.length === 0) {
       return res

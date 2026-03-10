@@ -1,5 +1,6 @@
 const iconv = require("iconv-lite");
 const { SCHEMA_BD } = require("./conf.js");
+// const connection = require("../shared/connect.js")
 
 const decodeString = (str) => {
   return iconv.decode(Buffer.from(str, "binary"), "latin1"); // Decodifica desde latin1

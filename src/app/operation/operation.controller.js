@@ -6,7 +6,7 @@ const {
   funcionParteVar,
 } = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
-const { SCHEMA_BD } = require("../../shared/conf.js");
+const { SCHEMA_BD, IP_LOCAL } = require("../../shared/conf.js");
 
 const listOperations = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
@@ -216,7 +216,7 @@ const insertOperation = async (req, res) => {
           }
         }
 
-        await connection.query(queryDetalle, [
+        await cn.query(queryDetalle, [
           idAsignaCab,
           detalle.idveh,
           detalle.secCon,
@@ -258,8 +258,8 @@ const insertOperation = async (req, res) => {
       message: "Error al insertar la asignacion vehicular",
     });
   } finally {
-    if (connection) {
-      await connection.close();
+    if (cn) {
+      await cn.close();
     }
   }
 };

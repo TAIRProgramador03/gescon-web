@@ -460,7 +460,7 @@ async function guardarDocumento() {
           sevVe = sevVe + cantidad;
         }
 
-        return modelo && tarifa && cantidad
+        return modelo && tarifa != null && cantidad
           ? {
               secCon: index + 1,
               modelo,
@@ -520,6 +520,8 @@ async function guardarDocumento() {
 
   // Construcción del objeto final de datos
   const contratoData = { ...formData, detalles, archivoPdf: nombreArchivo };
+
+  // console.log("DOCUMENTOS=====>", contratoData);
 
   try {
     const response = await fetch(`http://${IP_LOCAL}:3000/insertarDocumento`, {

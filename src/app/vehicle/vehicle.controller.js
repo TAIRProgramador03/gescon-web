@@ -227,17 +227,53 @@ const listVehiclesByContract = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  const { contratoId } = req.query;
+  const { contratoId, clienteId } = req.query;
 
-  if (!contratoId)
+  if (!contratoId || !clienteId)
     return res.status(400).json({
       success: false,
-      message: "El parametro contratoId es obligatorio",
+      message: "Los parametros contratoId y clienteId son obligatorio",
     });
 
   const cn = await connection(globalDbUser, globalPassword);
 
   try {
+    const sql = `
+      SELECT A.ID AS CONTRATO, A.ID_CLIENTE AS CLIENTE, CAST(NULL AS INT) AS DOCUMENTO, A.CANT_VEHI AS CANTIDAD, A.CLASE AS CLASE, B.ID AS ID_DET, B.TIPO_TERRENO AS TERRENO, B.CANTIDAD AS CANT_DET, C.DESCRIPCION AS MODELO, B.TARIFA AS TARIFA
+      FROM SPEED400AT.TBLCONTRATO_CAB A
+      LEFT JOIN SPEED400AT.TBLCONTRATO_DET B
+      ON A.ID = B.ID_CON_CAB
+      LEFT JOIN SPEED400AT.PO_MODELO C
+      ON B.MODELO = C.ID
+      WHERE A.ID_CLIENTE =? AND A.ID = ?
+
+      UNION ALL
+
+      SELECT A.ID_PADRE AS CONTRATO, A.ID_CLIENTE AS CLIENTE, A.ID AS DOCUMENTO, A.CANT_VEHI AS CANTIDAD, A.CLASE AS CLASE, B.ID AS ID_DET, B.TIPO_TERRENO AS TERRENO, B.CANTIDAD AS CANT_DET, C.DESCRIPCION AS MODELO, B.TARIFA AS TARIFA
+      FROM SPEED400AT.TBLDOCUMENTO_CAB A
+      LEFT JOIN SPEED400AT.TBLDOCUMENTO_DET B
+      ON A.ID = B.ID_CON_CAB
+      LEFT JOIN SPEED400AT.PO_MODELO C
+      ON B.MODELO = C.ID
+      WHERE A.ID_CLIENTE = ? AND A.ID_PADRE = ?
+    `
+
+    const result = await cn.query(sql, [clienteId, contratoId, clienteId, contratoId])
+
+    const cleanedResult = result.map((row) => ({
+      idContrato: row.CONTRATO,
+      idCliente: row.CLIENTE,
+      idDocumento: row.DOCUMENTO,
+      cantidadVeh: row.CANTIDAD,
+      clase: row.CLASE.trim(),
+      idDetalle: row.ID_DET,
+      terreno: row.TERRENO,
+      cantVehDet: row.CANT_DET,
+      modelo: row.MODELO.trim(),
+      tarifa: row.TARIFA
+    }))
+
+    return res.status(200).json(cleanedResult)
   } catch (error) {
     console.error("Error al obtener lista de vehiculos por contrato", error);
     return res
@@ -256,4 +292,5 @@ module.exports = {
   tableVehicles,
   contVehicles,
   vehicleLeasing,
+  listVehiclesByContract
 };

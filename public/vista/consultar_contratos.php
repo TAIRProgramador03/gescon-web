@@ -229,11 +229,12 @@ require './templates/header.html';
 
     function queryVehicles() {
         const params = new URLSearchParams(window.location.search);
+        const clienteId = params.get("clienteId")
         const contratoId = params.get("contratoId")
 
-        if (!contratoId) return;
+        if (!contratoId || !clienteId) return;
 
-        window.location.href = `consultar_total_vehiculos.php?contratoId=${contratoId}`;
+        window.location.href = `consultar_total_vehiculos.php?contratoId=${contratoId}&clienteId=${clienteId}`;
     }
 
     function queryAssign() {

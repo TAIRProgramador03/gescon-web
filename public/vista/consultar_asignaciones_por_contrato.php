@@ -270,12 +270,13 @@ require './templates/header.html';
     }
 
     const contratoId = params.get("contratoId");
+    const clienteId = params.get("clienteId");
     const terrId = params.get("tipoTerr");
 
     const nuevaURL = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", nuevaURL);
 
-    const assings = await getAssigns(contratoId, leasingId != 0 ? leasingId : null, terrId);
+    const assings = await getAssigns(contratoId, clienteId, leasingId != 0 ? leasingId : null, terrId);
 
     table.clear();
     table.rows.add(assings);
@@ -294,12 +295,13 @@ require './templates/header.html';
     }
 
     const contratoId = params.get("contratoId");
+    const clienteId = params.get("clienteId")
     const leasingId = params.get("leasingId")
 
     const nuevaURL = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", nuevaURL);
 
-    const assings = await getAssigns(contratoId, leasingId, terrId >= 4 ? null : terrId);
+    const assings = await getAssigns(contratoId, clienteId, leasingId, terrId >= 4 ? null : terrId);
 
     table.clear();
     table.rows.add(assings);

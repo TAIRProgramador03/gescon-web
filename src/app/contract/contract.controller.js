@@ -3,6 +3,8 @@ const {
   decodeString,
   convertirFecha,
   obtenerUltimoId,
+  funcionNumerica,
+  funcionParteVar
 } = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
 
@@ -223,7 +225,14 @@ const detailContract = async (req, res) => {
         A.VEH_SEV, 
         A.VEH_SOC, 
         A.VEH_CIU, 
-        (A.CANT_VEHI + COALESCE(SUM(B.CANT_VEHI), 0)) AS TOTAL_VEHICULOS, 
+        (
+        	SELECT (A.CANT_VEHI + COALESCE(SUM(B.CANT_VEHI), 0)) AS TOTAL_VEHICULOS
+          FROM SPEED400AT.TBLCONTRATO_CAB A
+          LEFT JOIN SPEED400AT.TBLDOCUMENTO_CAB B 
+          ON A.ID=B.ID_PADRE
+          WHERE A.ID_CLIENTE = ? AND A.ID = ?
+          GROUP BY A.CANT_VEHI
+        ) AS TOTAL_VEHICULOS, 
         COUNT(DISTINCT B.ID) AS CANT_DOC, 
         COUNT(DISTINCT C.ID) AS CANT_LEA,
         COUNT(DISTINCT D.ID) AS CANT_ASSIGN
@@ -241,7 +250,7 @@ const detailContract = async (req, res) => {
       GROUP BY A.DESCRIPCION, A.FECHA_FIRMA, A.DURACION, A.VEH_SUP, A.VEH_SEV, A.VEH_SOC, A.VEH_CIU, A.CANT_VEHI, A.ID
     `;
 
-    const result = await cn.query(query, [clienteId, contratoId]);
+    const result = await cn.query(query, [clienteId, contratoId, clienteId, contratoId]);
 
     if (result.length === 0) {
       return res
@@ -296,7 +305,7 @@ const contContract = async (req, res) => {
 
   try {
     const result = await cn.query(
-      "SELECT COUNT(DISTINCT A.ID) AS PADRE, SUM(CASE WHEN B.TIPO_DOC = 1 THEN 1 ELSE 0 END) AS TIPO_1, SUM(CASE WHEN B.TIPO_DOC = 2 THEN 1 ELSE 0 END) AS TIPO_2, SUM(CASE WHEN B.TIPO_DOC = 3 THEN 1 ELSE 0 END) AS TIPO_3 FROM ${SCHEMA_BD}.TBLCONTRATO_CAB A FULL OUTER JOIN ${SCHEMA_BD}.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE",
+      `SELECT COUNT(DISTINCT A.ID) AS PADRE, SUM(CASE WHEN B.TIPO_DOC = 1 THEN 1 ELSE 0 END) AS TIPO_1, SUM(CASE WHEN B.TIPO_DOC = 2 THEN 1 ELSE 0 END) AS TIPO_2, SUM(CASE WHEN B.TIPO_DOC = 3 THEN 1 ELSE 0 END) AS TIPO_3 FROM ${SCHEMA_BD}.TBLCONTRATO_CAB A FULL OUTER JOIN ${SCHEMA_BD}.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE`,
     );
 
     // Decodificar los resultados desde latin1

@@ -427,7 +427,7 @@ async function guardarContrato() {
           console.log("valido carnal");
         }
 
-        return modelo && tarifa && cantidad
+        return modelo && tarifa != null && cantidad
           ? {
               secCon: index + 1,
               modelo,
@@ -488,30 +488,30 @@ async function guardarContrato() {
   // Construcción del objeto final de datos
   const contratoData = { ...formData, detalles, archivoPdf: nombreArchivo };
 
-  console.log("CONTRATO ===> ", contratoData);
+  // console.log("CONTRATO ===> ", contratoData);
 
-  // try {
-  //   const response = await fetch(`http://${IP_LOCAL}:3000/insertarContrato`, {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(contratoData),
-  //     credentials: "include", // Asegura que las cookies se envíen con la solicitud
-  //   });
+  try {
+    const response = await fetch(`http://${IP_LOCAL}:3000/insertarContrato`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(contratoData),
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    });
 
-  //   const result = await response.json();
-  //   if (result.success) {
-  //     mostrarNotificacion("Contrato guardado exitosamente", "#01b204");
-  //     await subirArchivo(fileInput.files[0]);
-  //     limpiarCampos();
-  //   } else {
-  //     mostrarNotificacion("Hubo un error al guardar el contrato", "#C70039");
-  //   }
-  // } catch (error) {
-  //   const mensaje =
-  //     error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
-  //   console.error("Error al enviar los datos:", error);
-  //   mostrarNotificacion(`Error al guardar: ${mensaje}`, "#C70039");
-  // }
+    const result = await response.json();
+    if (result.success) {
+      mostrarNotificacion("Contrato guardado exitosamente", "#01b204");
+      await subirArchivo(fileInput.files[0]);
+      limpiarCampos();
+    } else {
+      mostrarNotificacion("Hubo un error al guardar el contrato", "#C70039");
+    }
+  } catch (error) {
+    const mensaje =
+      error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
+    console.error("Error al enviar los datos:", error);
+    mostrarNotificacion(`Error al guardar: ${mensaje}`, "#C70039");
+  }
 }
 
 async function subirArchivo(archivo) {

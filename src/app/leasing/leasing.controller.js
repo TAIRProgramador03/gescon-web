@@ -6,7 +6,7 @@ const {
   obtenerUltimoIdLea,
 } = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
-const { SCHEMA_BD } = require("../../shared/conf.js");
+const { SCHEMA_BD, IP_LOCAL } = require("../../shared/conf.js");
 
 const listLeasing = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
@@ -262,7 +262,7 @@ const insertLeasing = async (req, res) => {
     ]);
 
     const idLeasingCab =
-      result.insertId || (await obtenerUltimoIdLea(connection));
+      result.insertId || (await obtenerUltimoIdLea(cn));
 
     const queryDetalle = `
               INSERT INTO ${SCHEMA_BD}.TBL_LEASING_DET 

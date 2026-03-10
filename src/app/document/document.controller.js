@@ -4,7 +4,7 @@ const {
   transformType,
 } = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
-const { SCHEMA_BD } = require("../../shared/conf.js");
+const { SCHEMA_BD, IP_LOCAL } = require("../../shared/conf.js");
 
 const listDocumentByNroContract = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;

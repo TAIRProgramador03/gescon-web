@@ -28,7 +28,7 @@ const listDocumentByNroContract = async (req, res) => {
 
   try {
     const sql = `
-      SELECT A.NRO_DOC, A.CANT_VEHI, A.FECHA_FIRMA, A.DURACION
+      SELECT A.ID, A.NRO_DOC, A.CANT_VEHI, A.FECHA_FIRMA, A.DURACION
       FROM ${SCHEMA_BD}.TBLDOCUMENTO_CAB A 
       INNER JOIN ${SCHEMA_BD}.TBLCONTRATO_CAB B ON B.ID=A.ID_PADRE AND B.ID_CLIENTE=A.ID_CLIENTE 
       WHERE B.ID = ? AND B.ID_CLIENTE = ?
@@ -37,6 +37,7 @@ const listDocumentByNroContract = async (req, res) => {
     const result = await cn.query(sql, [contratoId, clienteId]);
 
     const cleanedResult = result.map((row) => ({
+      id: row.ID,
       nroDocumento: row.NRO_DOC ? row.NRO_DOC.trim() : "",
       fechaFirma: row.FECHA_FIRMA ? row.FECHA_FIRMA.trim() : "",
       cantVehi: row.CANT_VEHI,
@@ -77,9 +78,9 @@ const detailDocument = async (req, res) => {
 
   try {
     const sql = `
-      SELECT NRO_DOC, TIPO_DOC, CANT_VEHI, FECHA_FIRMA, DURACION, KM_ADI, KM_TOTAL, VEH_SUP, VEH_SEV, VEH_SOC, VEH_CIU, ARCHIVO_PDF, DESCRIPCION 
+      SELECT ID, TIPO_DOC, KM_ADI, KM_TOTAL, VEH_SUP, VEH_SEV, VEH_SOC, VEH_CIU, ARCHIVO_PDF, DESCRIPCION, MOTIVO   
       FROM ${SCHEMA_BD}.TBLDOCUMENTO_CAB 
-      WHERE NRO_DOC = ?
+      WHERE ID = ?
     `;
 
     const result = await cn.query(sql, [documentoId]);
@@ -92,12 +93,7 @@ const detailDocument = async (req, res) => {
     const findDocument = result[0];
 
     return res.status(200).json({
-      nroDocumento: findDocument.NRO_DOC ? findDocument.NRO_DOC.trim() : "",
-      fechaFirma: findDocument.FECHA_FIRMA
-        ? findDocument.FECHA_FIRMA.trim()
-        : "",
-      cantVehi: findDocument.CANT_VEHI,
-      duracion: findDocument.DURACION ? findDocument.DURACION.trim() : "",
+      id: findDocument.ID,
       tipoDocumento: transformType(findDocument.TIPO_DOC, {
         1: "Adendas",
         2: "Carta",
@@ -111,6 +107,12 @@ const detailDocument = async (req, res) => {
       vehSev: findDocument.VEH_SEV,
       vehSoc: findDocument.VEH_SOC,
       vehCiu: findDocument.VEH_CIU,
+      motivoDoc: transformType(findDocument.MOTIVO.trim(), {
+        1: "Ampliación",
+        2: "Renovación",
+        3: "Actualización de datos del cliente",
+        4: "Devolución",
+      }),
       archivoPdf: findDocument.ARCHIVO_PDF
         ? findDocument.ARCHIVO_PDF.trim()
         : "",
@@ -126,6 +128,72 @@ const detailDocument = async (req, res) => {
     });
   } finally {
     if (cn) await cn.close();
+  }
+};
+
+const detailVehByDocu = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { documentoId, tipoTerr } = req.query;
+
+  if (!documentoId || !tipoTerr)
+    return res.status(400).json({
+      success: false,
+      message: "Los parametros documentoId y tipoTerr son obligatorios",
+    });
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    const sqlLeasing = `
+      SELECT ID FROM ${SCHEMA_BD}.TBL_LEASING_CAB WHERE ID_CONTRATO = ? AND TIPCON = 'H'
+    `;
+
+    const resultLea = await cn.query(sqlLeasing, [documentoId])
+
+    if(resultLea.length == 0) return res.status(404).json({success: false, message: "No se encontraron leasings al documento"});
+
+    const cleanLea = resultLea.map((row) => row.ID)
+
+    const placeHolders = resultLea.map(() => '?').join(",")
+
+    const sqlDetLea = `
+      SELECT L.MODELO, L.PLACA, L.CANTIDAD, V.ANO, V.COLOR, M.DESCRIPCION AS MARCA, O.DESCRIPCION AS OPERACION
+      FROM SPEED400AT.TBL_LEASING_DET L
+      LEFT JOIN SPEED400AT.PO_VEHICULO V
+      ON L.ID_VEH = V.ID
+      LEFT JOIN SPEED400AT.PO_MARCA M
+      ON V.IDMAR = M.ID
+      LEFT JOIN SPEED400AT.PO_OPERACIONES O
+      ON V.IDOPE = O.ID
+      WHERE ID_LEA_CAB IN (${placeHolders}) AND TIPO_TERRENO = ?
+    `;
+
+    const resultDet = await cn.query(sqlDetLea, [...cleanLea, tipoTerr.toUpperCase()])
+    
+    const cleanedResult = resultDet.map((row) => ({
+      modelo: row.MODELO.trim() ?? "",
+      placa: row.PLACA.trim() ?? "",
+      cantidad: row.CANTIDAD,
+      año: row.ANO,
+      color: row.COLOR.trim() ?? "",
+      marca: row.MARCA.trim() ?? "",
+      operacion: row.OPERACION.trim() ?? ""
+    }))
+
+    return res.status(200).json(cleanedResult)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({success: false, message: "Error al obtener placas por documento"})
+  } finally {
+    if(cn) await cn.close();
   }
 };
 
@@ -289,5 +357,6 @@ const insertDocument = async (req, res) => {
 module.exports = {
   insertDocument,
   listDocumentByNroContract,
+  detailVehByDocu,
   detailDocument,
 };

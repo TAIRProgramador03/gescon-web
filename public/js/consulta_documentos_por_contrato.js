@@ -1,9 +1,5 @@
 // const IP_LOCAL = "localhost";
 
-/**
- * Método para traer la lista de documentos de un contrato especifico
- * @param contratoId Nro de contrato
- */
 const getDocuments = async (contratoId, clienteId) => {
   const response = await fetch(
     `http://${IP_LOCAL}:3000/documentoPorContrato?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
@@ -15,42 +11,7 @@ const getDocuments = async (contratoId, clienteId) => {
 
   const documents = await response.json();
 
-  // INTEGRAMOS LA LIBRERIA DATATABLE
-  const table = $("#listDocuments").DataTable({
-    language: {
-      url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
-    },
-    data: documents,
-    columns: [
-      {
-        data: "item",
-        render: function (data, type, row, meta) {
-          return meta.row + 1;
-        },
-        width: "5%",
-      },
-      {
-        data: "nroDocumento",
-      },
-      {
-        data: "fechaFirma",
-        render: function (data) {
-          return convertirFecha(data);
-        },
-        width: "20%",
-      },
-      {
-        data: "duracion",
-        render: function (data) {
-          return data && data != "0" ? data + " meses" : "Sin periodo";
-        },
-        width: "20%",
-      },
-      { data: "cantVehi", width: "5%" },
-    ],
-  });
-
-  return table;
+  return documents;
 };
 
 const getDetailDocument = async (documentoId) => {
@@ -65,7 +26,25 @@ const getDetailDocument = async (documentoId) => {
   const data = await response.json();
 
   return data;
-}
+};
+
+const getVehByDocument = async (documentoId, tipoTerr) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/placasPorDocumento?documentoId=${documentoId.toString()}&tipoTerr=${tipoTerr}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+  
+  if(!response.ok) {
+    toastr.error(data.message);
+  }
+
+  return data;
+};
 
 function convertirFecha(fecha) {
   const anio = fecha.substring(0, 4);

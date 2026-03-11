@@ -18,6 +18,12 @@ require './templates/header.html';
 <!--BOOTSTRAP CSS-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
+<!-- TOASTR CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+<!-- TOASTR JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 <div id="preloader-mini">
   <div class="gif-container">
     <img src="../img/carpeta.gif" alt="Cargando...">
@@ -34,30 +40,81 @@ require './templates/header.html';
   </div>
 
   <div class="container-data">
-    <table id="listDocuments" class="display">
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>N° Documento</th>
-          <th>Fecha Firma</th>
-          <th>Duracion</th>
-          <th>Cantidad</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <th>Item</th>
-          <th>N° Documento</th>
-          <th>Fecha Firma</th>
-          <th>Duracion</th>
-          <th>Cantidad</th>
-        </tr>
-      </tfoot>
-    </table>
+    <div class="column-table">
+      <table id="listDocuments" class="display">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>N° Documento</th>
+            <th>Fecha Firma</th>
+            <th>Duracion</th>
+            <th>Cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Item</th>
+            <th>N° Documento</th>
+            <th>Fecha Firma</th>
+            <th>Duracion</th>
+            <th>Cantidad</th>
+          </tr>
+        </tfoot>
+      </table>
+      <div class="item-result">
+        <label for="descripcion-result">Descripción</label>
+        <textarea id="descripcion-result" readonly></textarea>
+      </div>
+    </div>
+
+    <div class="result-search">
+      <h3>Resumen</h3>
+      <hr />
+      <div class="item-result">
+        <label for="tipo-result">Tipo de Doc.</label>
+        <input id="tipo-result" readonly>
+      </div>
+      <div class="item-result">
+        <label for="motivo-result">Motivo</label>
+        <input id="motivo-result" readonly>
+      </div>
+      <div class="item-result">
+        <label for="km-total-result">Km Total</label>
+        <input id="km-total-result" readonly>
+      </div>
+      <div class="item-result">
+        <label for="km-adi-result">Km Adicional</label>
+        <input id="km-adi-result" readonly>
+      </div>
+      <div>
+        <ul>
+          <li id="sup-modal">
+            <span>Sup</span>
+            <p id="sup-result">0</p>
+          </li>
+          <li id="sev-modal">
+            <span>Sev</span>
+            <p id="sev-result">0</p>
+          </li>
+          <li id="soc-modal">
+            <span>Soc</span>
+            <p id="soc-result">0</p>
+          </li>
+          <li id="ciu-modal">
+            <span>Ciu</span>
+            <p id="ciu-result">0</p>
+          </li>
+        </ul>
+      </div>
+      <button class="btn-success" id="btn-document">
+        Ver documento
+        <i class="bi bi-file-earmark-arrow-down-fill"></i>
+      </button>
+    </div>
   </div>
 </main>
 
@@ -71,10 +128,6 @@ require './templates/header.html';
 
     </div>
     <div class="modal-footer">
-      <button class="btn-success" id="btn-document">
-        <span>Ver documento</span>
-        <i class="bi bi-file-earmark-arrow-down-fill"></i>
-      </button>
       <button class="btn-error" id="btn-close">Cerrar</button>
     </div>
   </div>
@@ -93,66 +146,439 @@ require './templates/header.html';
     const param = new URLSearchParams(window.location.search);
     const clienteId = param.get("clienteId");
     const contratoId = param.get("contratoId");
+    const documentoId = param.get("documentoId")
 
     if (!contratoId || !clienteId) alert("No se encontraron los parametros necesarios")
 
     const textSpan = document.getElementById("parametroPintado");
     textSpan.innerHTML = contratoId;
 
-    const table = await getDocuments(contratoId, clienteId);
+    const documents = await getDocuments(contratoId, clienteId);
+
+    const table = $("#listDocuments").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      select: true,
+      data: documents,
+      columns: [{
+          data: "item",
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "5%",
+        },
+        {
+          data: "nroDocumento",
+        },
+        {
+          data: "fechaFirma",
+          render: function(data) {
+            return convertirFecha(data);
+          },
+          width: "20%",
+        },
+        {
+          data: "duracion",
+          render: function(data) {
+            return data && data != "0" ? data + " meses" : "Sin periodo";
+          },
+          width: "20%",
+        },
+        {
+          data: "cantVehi",
+          width: "5%"
+        },
+      ],
+    });
+
+    if (documentoId && !isNaN(documentoId)) {
+      const detailDocument = await getDetailDocument(Number(documentoId));
+
+      // INPUTS DE DATOS
+      $("#tipo-result").val(detailDocument.tipoDocumento);
+      $("#motivo-result").val(detailDocument.motivoDoc);
+      $("#km-total-result").val(detailDocument.kmTotal);
+      $("#km-adi-result").val(detailDocument.kmAdi);
+      $("#descripcion-result").val(detailDocument.descripcion);
+
+      // VEHICULOS POR TERRENOS
+      $("#sup-result").text(detailDocument.vehSup);
+      $("#sev-result").text(detailDocument.vehSev);
+      $("#soc-result").text(detailDocument.vehSoc);
+      $("#ciu-result").text(detailDocument.vehCiu);
+
+      // ABRIR EL PDF
+      $("#btn-document").off("click").on("click", () => {
+        window.open(detailDocument.archivoPdf, '_blank');
+      })
+    }
 
     $("#listDocuments tbody").on("click", "tr", async function() {
 
       const data = table.row(this).data();
 
-      const detailDocument = await getDetailDocument(data.nroDocumento);
+      param.set("documentoId", data.id)
 
-      $("#modal-body-info").append(`
-        <div class="info-document">
-          <div class="info-col">
-            <p>N° <b>${detailDocument.nroDocumento}</b></p>
-            <p>Firmado el <b>${convertirFecha(detailDocument.fechaFirma)}</b></p>
-            <p>Duración de <b>${detailDocument.duracion.toString()}</b> meses</p>
-            <p>Tipo <b>${detailDocument.tipoDocumento.toString()}</b></p>
-          </div>
-          <div class="info-col">
-            <div class="row-data">
-              <h3>Cantidad</h3>
-              <p>${detailDocument.cantVehi.toString()} veh.</p>
-            </div>
-            <div class="row-data">
-              <h3>Km Total</h3>
-              <p>${detailDocument.kmTotal.toString()}</p>
-            </div>
-            <div class="row-data">
-              <h3>Km Adicional</h3>
-              <p>${detailDocument.kmAdi.toString()}</p>
-            </div>
-            <div>
-              <ul>
-                <li>
-                  <span>Sup</span>
-                  ${detailDocument.vehSup.toString()}
-                </li>
-                <li><span>Sev</span>${detailDocument.vehSev.toString()}</li>
-                <li><span>Soc</span>${detailDocument.vehSoc.toString()}</li>
-                <li><span>Ciu</span>${detailDocument.vehCiu.toString()}</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="info-description">
-          <h3>Descripcion</h3>
-          <p>${detailDocument.descripcion != "" ? detailDocument.descripcion.toString() : "Sin descripción"}</p>
-        </div>
-      `);
-      const modal = document.getElementById("modal-documents");
-      modal.style.display = "flex";
+      const nuevaURL = `${window.location.pathname}?${param.toString()}`;
+      window.history.replaceState({}, "", nuevaURL);
 
+      const detailDocument = await getDetailDocument(data.id);
+
+      // INPUTS DE DATOS
+      $("#tipo-result").val(detailDocument.tipoDocumento);
+      $("#motivo-result").val(detailDocument.motivoDoc);
+      $("#km-total-result").val(detailDocument.kmTotal);
+      $("#km-adi-result").val(detailDocument.kmAdi);
+      $("#descripcion-result").val(detailDocument.descripcion);
+
+      // VEHICULOS POR TERRENOS
+      $("#sup-result").text(detailDocument.vehSup);
+      $("#sev-result").text(detailDocument.vehSev);
+      $("#soc-result").text(detailDocument.vehSoc);
+      $("#ciu-result").text(detailDocument.vehCiu);
+
+      // ABRIR EL PDF
       $("#btn-document").off("click").on("click", () => {
         window.open(detailDocument.archivoPdf, '_blank');
       })
     })
+  })
+
+  $("#sup-modal").on("click", async () => {
+    const param = new URLSearchParams(window.location.search)
+    const documentoId = param.get("documentoId")
+
+    if(!documentoId) return;
+
+    const vehicles = await getVehByDocument(documentoId, "SUPERFICIE");
+
+    if (!Array.isArray(vehicles)) return;
+
+    $("#modal-body-info").append(`
+      <table id="listVehSup" class="display">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+          </tr>
+        </tfoot>
+      </table>
+    `);
+
+    $("#listVehSup").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      select: true,
+      data: vehicles,
+      columns: [
+        {
+          data: "item",
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "5%",
+        },
+        {
+          data: "placa",
+        },
+        {
+          data: "modelo",
+        },
+        {
+          data: "marca",
+        },
+        {
+          data: "cantidad",
+        },
+        {
+          data: "año",
+        },
+        {
+          data: "color",
+        },
+        {
+          data: "operacion",
+        },
+      ],
+    })
+    const modal = document.getElementById("modal-documents");
+    modal.style.display = "flex";
+  })
+
+  $("#sev-modal").on("click", async () => {
+    const param = new URLSearchParams(window.location.search)
+    const documentoId = param.get("documentoId")
+
+    if(!documentoId) return;
+
+    const vehicles = await getVehByDocument(documentoId, "SEVERO");
+
+    if (!Array.isArray(vehicles)) return;
+
+    $("#modal-body-info").append(`
+      <table id="listVehSev" class="display">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+          </tr>
+        </tfoot>
+      </table>
+    `);
+
+    $("#listVehSev").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      select: true,
+      data: vehicles,
+      columns: [
+        {
+          data: "item",
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "5%",
+        },
+        {
+          data: "placa",
+        },
+        {
+          data: "modelo",
+        },
+        {
+          data: "marca",
+        },
+        {
+          data: "cantidad",
+        },
+        {
+          data: "año",
+        },
+        {
+          data: "color",
+        },
+        {
+          data: "operacion",
+        },
+      ],
+    })
+    const modal = document.getElementById("modal-documents");
+    modal.style.display = "flex";
+  })
+
+  $("#soc-modal").on("click", async () => {
+    const param = new URLSearchParams(window.location.search)
+    const documentoId = param.get("documentoId")
+
+    if(!documentoId) return;
+
+    const vehicles = await getVehByDocument(documentoId, "SOCAVON");
+
+    if (!Array.isArray(vehicles)) return;
+
+    $("#modal-body-info").append(`
+      <table id="listVehSoc" class="display">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+          </tr>
+        </tfoot>
+      </table>
+    `);
+
+    $("#listVehSoc").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      select: true,
+      data: vehicles,
+      columns: [
+        {
+          data: "item",
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "5%",
+        },
+        {
+          data: "placa",
+        },
+        {
+          data: "modelo",
+        },
+        {
+          data: "marca",
+        },
+        {
+          data: "cantidad",
+        },
+        {
+          data: "año",
+        },
+        {
+          data: "color",
+        },
+        {
+          data: "operacion",
+        },
+      ],
+    })
+    const modal = document.getElementById("modal-documents");
+    modal.style.display = "flex";
+  })
+
+  $("#ciu-modal").on("click", async () => {
+    const param = new URLSearchParams(window.location.search)
+    const documentoId = param.get("documentoId")
+
+    if(!documentoId) return;
+
+    const vehicles = await getVehByDocument(documentoId, "CIUDAD");
+
+    if (!Array.isArray(vehicles)) return;
+
+    $("#modal-body-info").append(`
+      <table id="listVehCiu" class="display">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+          </tr>
+        </tfoot>
+      </table>
+    `);
+
+    $("#listVehCiu").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      select: true,
+      data: vehicles,
+      columns: [
+        {
+          data: "item",
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "5%",
+        },
+        {
+          data: "placa",
+        },
+        {
+          data: "modelo",
+        },
+        {
+          data: "marca",
+        },
+        {
+          data: "cantidad",
+        },
+        {
+          data: "año",
+        },
+        {
+          data: "color",
+        },
+        {
+          data: "operacion",
+        },
+      ],
+    })
+    const modal = document.getElementById("modal-documents");
+    modal.style.display = "flex";
   })
 
   $("#btn-close").on("click", function() {

@@ -128,12 +128,61 @@ const listLeasingByContract = async (req, res) => {
     const sql = `
       SELECT A.NRO_LEASING, A.CANT_VEH, A.FECHA_INI, A.FECHA_FIN, A.ID_CONTRATO, A.ID_CLIENTE
       FROM ${SCHEMA_BD}.TBL_LEASING_CAB A 
-      WHERE A.ID_CONTRATO = ? AND A.ID_CLIENTE = ?
+      WHERE A.ID_CONTRATO = ? AND A.ID_CLIENTE = ? AND TIPCON = 'P'
     `;
 
     const result = await cn.query(sql, [contratoId, clienteId]);
 
     const cleanedResult = result.map((row) => ({
+      nroLeasing: row.NRO_LEASING ? row.NRO_LEASING.trim() : "",
+      fechaInicio: row.FECHA_INI ? row.FECHA_INI.toString().trim() : "",
+      fechaFin: row.FECHA_FIN ? row.FECHA_FIN.toString().trim() : "",
+      cantVehi: row.CANT_VEH,
+    }));
+
+    return res.status(200).json(cleanedResult);
+  } catch (error) {
+    console.error("Error al listar leasings por contrato: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al listar leasings por contrato",
+    });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
+const listLeasingByDocument = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { documentoId } = req.query;
+
+  if (!documentoId)
+    return res.status(400).json({
+      success: false,
+      message: "El parametro documentoId son obligatorio",
+    });
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    const sql = `
+      SELECT A.ID, A.NRO_LEASING, A.CANT_VEH, A.FECHA_INI, A.FECHA_FIN, A.ID_CONTRATO, A.ID_CLIENTE
+      FROM ${SCHEMA_BD}.TBL_LEASING_CAB A 
+      WHERE A.ID_CONTRATO = ? AND TIPCON = 'H'
+    `;
+
+    const result = await cn.query(sql, [documentoId]);
+
+    const cleanedResult = result.map((row) => ({
+      id: row.ID,
       nroLeasing: row.NRO_LEASING ? row.NRO_LEASING.trim() : "",
       fechaInicio: row.FECHA_INI ? row.FECHA_INI.toString().trim() : "",
       fechaFin: row.FECHA_FIN ? row.FECHA_FIN.toString().trim() : "",
@@ -174,8 +223,9 @@ const detailLeasing = async (req, res) => {
 
   try {
     const sql = `
-      SELECT NRO_LEASING, BANCO, CANT_VEH, FECHA_INI, FECHA_FIN, PERIODO_GRACIA, PDF, DESCRIPCION, TIPCON FROM ${SCHEMA_BD}.TBL_LEASING_CAB
-      WHERE NRO_LEASING = ?
+      SELECT ID, NRO_LEASING, BANCO, CANT_VEH, FECHA_INI, FECHA_FIN, PERIODO_GRACIA, PDF, DESCRIPCION, TIPCON 
+      FROM ${SCHEMA_BD}.TBL_LEASING_CAB
+      WHERE ID = ?
     `;
 
     const result = await cn.query(sql, [leasingId]);
@@ -188,6 +238,7 @@ const detailLeasing = async (req, res) => {
     const findLeasing = result[0];
 
     return res.status(200).json({
+      id: findLeasing.ID,
       nroLeasing: findLeasing.NRO_LEASING.trim(),
       banco: findLeasing.BANCO.trim(),
       cantVehi: findLeasing.CANT_VEH,
@@ -261,8 +312,7 @@ const insertLeasing = async (req, res) => {
       funcionParteVar(idContrato),
     ]);
 
-    const idLeasingCab =
-      result.insertId || (await obtenerUltimoIdLea(cn));
+    const idLeasingCab = result.insertId || (await obtenerUltimoIdLea(cn));
 
     const queryDetalle = `
               INSERT INTO ${SCHEMA_BD}.TBL_LEASING_DET 
@@ -310,6 +360,7 @@ module.exports = {
   listLeasing,
   listLeasingOfClient,
   listLeasingByContract,
+  listLeasingByDocument,
   detailLeasing,
   insertLeasing,
 };

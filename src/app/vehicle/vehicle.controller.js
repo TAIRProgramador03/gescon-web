@@ -240,48 +240,55 @@ const listVehiclesByContract = async (req, res) => {
   try {
     const sql = `
       SELECT A.ID AS CONTRATO, A.ID_CLIENTE AS CLIENTE, CAST(NULL AS INT) AS DOCUMENTO, A.CANT_VEHI AS CANTIDAD, A.CLASE AS CLASE, B.ID AS ID_DET, B.TIPO_TERRENO AS TERRENO, B.CANTIDAD AS CANT_DET, C.DESCRIPCION AS MODELO, B.TARIFA AS TARIFA
-      FROM SPEED400AT.TBLCONTRATO_CAB A
-      LEFT JOIN SPEED400AT.TBLCONTRATO_DET B
+      FROM ${SCHEMA_BD}.TBLCONTRATO_CAB A
+      LEFT JOIN ${SCHEMA_BD}.TBLCONTRATO_DET B
       ON A.ID = B.ID_CON_CAB
-      LEFT JOIN SPEED400AT.PO_MODELO C
+      LEFT JOIN ${SCHEMA_BD}.PO_MODELO C
       ON B.MODELO = C.ID
       WHERE A.ID_CLIENTE =? AND A.ID = ?
 
       UNION ALL
 
       SELECT A.ID_PADRE AS CONTRATO, A.ID_CLIENTE AS CLIENTE, A.ID AS DOCUMENTO, A.CANT_VEHI AS CANTIDAD, A.CLASE AS CLASE, B.ID AS ID_DET, B.TIPO_TERRENO AS TERRENO, B.CANTIDAD AS CANT_DET, C.DESCRIPCION AS MODELO, B.TARIFA AS TARIFA
-      FROM SPEED400AT.TBLDOCUMENTO_CAB A
-      LEFT JOIN SPEED400AT.TBLDOCUMENTO_DET B
+      FROM ${SCHEMA_BD}.TBLDOCUMENTO_CAB A
+      LEFT JOIN ${SCHEMA_BD}.TBLDOCUMENTO_DET B
       ON A.ID = B.ID_CON_CAB
-      LEFT JOIN SPEED400AT.PO_MODELO C
+      LEFT JOIN ${SCHEMA_BD}.PO_MODELO C
       ON B.MODELO = C.ID
       WHERE A.ID_CLIENTE = ? AND A.ID_PADRE = ?
-    `
+    `;
 
-    const result = await cn.query(sql, [clienteId, contratoId, clienteId, contratoId])
+    const result = await cn.query(sql, [
+      clienteId,
+      contratoId,
+      clienteId,
+      contratoId,
+    ]);
 
-    const cleanedResult = result.map((row) => ({
-      idContrato: row.CONTRATO,
-      idCliente: row.CLIENTE,
-      idDocumento: row.DOCUMENTO,
-      cantidadVeh: row.CANTIDAD,
-      clase: row.CLASE.trim(),
-      idDetalle: row.ID_DET,
-      terreno: row.TERRENO,
-      cantVehDet: row.CANT_DET,
-      modelo: row.MODELO.trim(),
-      tarifa: row.TARIFA
-    }))
+    const cleanedResult = result.map((row) => {
+      
 
-    return res.status(200).json(cleanedResult)
+      return {
+        idContrato: row.CONTRATO,
+        idCliente: row.CLIENTE,
+        idDocumento: row.DOCUMENTO,
+        cantidadVeh: row.CANTIDAD,
+        clase: row.CLASE.trim(),
+        idDetalle: row.ID_DET,
+        terreno: row.TERRENO,
+        cantVehDet: row.CANT_DET,
+        modelo: row.MODELO.trim(),
+        tarifa: row.TARIFA,
+      };
+    });
+
+    return res.status(200).json(cleanedResult);
   } catch (error) {
     console.error("Error al obtener lista de vehiculos por contrato", error);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Error al obtener lista de vehiculos por contrato",
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener lista de vehiculos por contrato",
+    });
   } finally {
     if (cn) await cn.close();
   }
@@ -292,5 +299,5 @@ module.exports = {
   tableVehicles,
   contVehicles,
   vehicleLeasing,
-  listVehiclesByContract
+  listVehiclesByContract,
 };

@@ -36,6 +36,5 @@ function convertirFecha(fecha) {
 }
 
 function transformType(value, object) {
-  console.log(object[value]);
   return object[value];
 }

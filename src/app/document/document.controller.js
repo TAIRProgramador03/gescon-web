@@ -78,9 +78,12 @@ const detailDocument = async (req, res) => {
 
   try {
     const sql = `
-      SELECT ID, TIPO_DOC, KM_ADI, KM_TOTAL, VEH_SUP, VEH_SEV, VEH_SOC, VEH_CIU, ARCHIVO_PDF, DESCRIPCION, MOTIVO   
-      FROM ${SCHEMA_BD}.TBLDOCUMENTO_CAB 
-      WHERE ID = ?
+      SELECT D.ID, D.NRO_DOC, D.TIPO_DOC, D.CANT_VEHI, D.FECHA_FIRMA, D.DURACION, D.KM_ADI, D.KM_TOTAL, D.VEH_SUP, D.VEH_SEV, D.VEH_SOC, D.VEH_CIU, D.ARCHIVO_PDF, D.DESCRIPCION, D.MOTIVO, COUNT(L.ID) AS CANT_LEA  
+      FROM ${SCHEMA_BD}.TBLDOCUMENTO_CAB D
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB L
+      ON D.ID = L.ID_CONTRATO AND L.TIPCON='H'
+      WHERE D.ID = ?
+      GROUP BY D.ID, D.NRO_DOC, D.TIPO_DOC, D.CANT_VEHI, D.FECHA_FIRMA, D.DURACION, D.KM_ADI, D.KM_TOTAL, D.VEH_SUP, D.VEH_SEV, D.VEH_SOC, D.VEH_CIU, D.ARCHIVO_PDF, D.DESCRIPCION, D.MOTIVO
     `;
 
     const result = await cn.query(sql, [documentoId]);
@@ -94,6 +97,8 @@ const detailDocument = async (req, res) => {
 
     return res.status(200).json({
       id: findDocument.ID,
+      firma: findDocument.FECHA_FIRMA.trim(),
+      duracion: findDocument.DURACION,
       tipoDocumento: transformType(findDocument.TIPO_DOC, {
         1: "Adendas",
         2: "Carta",
@@ -119,6 +124,7 @@ const detailDocument = async (req, res) => {
       descripcion: findDocument.DESCRIPCION
         ? findDocument.DESCRIPCION.trim()
         : "",
+      cantLea: findDocument.CANT_LEA
     });
   } catch (error) {
     console.error("Error al obtener detalle de documento", error);
@@ -153,30 +159,38 @@ const detailVehByDocu = async (req, res) => {
 
   try {
     const sqlLeasing = `
-      SELECT ID FROM ${SCHEMA_BD}.TBL_LEASING_CAB WHERE ID_CONTRATO = ? AND TIPCON = 'H'
+      SELECT ID 
+      FROM ${SCHEMA_BD}.TBL_LEASING_CAB 
+      WHERE ID_CONTRATO = ? AND TIPCON = 'H'
     `;
 
     const resultLea = await cn.query(sqlLeasing, [documentoId])
 
-    if(resultLea.length == 0) return res.status(404).json({success: false, message: "No se encontraron leasings al documento"});
+    if(resultLea.length == 0) return res.status(404).json({success: false, message: "Sin placas contratadas"});
 
     const cleanLea = resultLea.map((row) => row.ID)
 
     const placeHolders = resultLea.map(() => '?').join(",")
 
     const sqlDetLea = `
-      SELECT L.MODELO, L.PLACA, L.CANTIDAD, V.ANO, V.COLOR, M.DESCRIPCION AS MARCA, O.DESCRIPCION AS OPERACION
-      FROM SPEED400AT.TBL_LEASING_DET L
-      LEFT JOIN SPEED400AT.PO_VEHICULO V
+      SELECT L.MODELO, L.PLACA, L.CANTIDAD, V.ANO, V.COLOR, M.DESCRIPCION AS MARCA, O.DESCRIPCION AS OPERACION, A.FECHA_FIN, LC.NRO_LEASING
+      FROM ${SCHEMA_BD}.TBL_LEASING_DET L
+      LEFT JOIN ${SCHEMA_BD}.PO_VEHICULO V
       ON L.ID_VEH = V.ID
-      LEFT JOIN SPEED400AT.PO_MARCA M
+      LEFT JOIN ${SCHEMA_BD}.PO_MARCA M
       ON V.IDMAR = M.ID
-      LEFT JOIN SPEED400AT.PO_OPERACIONES O
+      LEFT JOIN ${SCHEMA_BD}.PO_OPERACIONES O
       ON V.IDOPE = O.ID
+      LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_DET A
+      ON L.PLACA = A.PLACA
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
+      ON LC.ID = L.ID_LEA_CAB
       WHERE ID_LEA_CAB IN (${placeHolders}) AND TIPO_TERRENO = ?
     `;
 
     const resultDet = await cn.query(sqlDetLea, [...cleanLea, tipoTerr.toUpperCase()])
+
+    if(resultDet.length == 0) return res.status(404).json({success: false, message: "Sin placas encontradas"});
     
     const cleanedResult = resultDet.map((row) => ({
       modelo: row.MODELO.trim() ?? "",
@@ -185,7 +199,9 @@ const detailVehByDocu = async (req, res) => {
       año: row.ANO,
       color: row.COLOR.trim() ?? "",
       marca: row.MARCA.trim() ?? "",
-      operacion: row.OPERACION.trim() ?? ""
+      operacion: row.OPERACION.trim() ?? "",
+      fechaFin: row.FECHA_FIN.trim() ?? "",
+      nroLeasing: row.NRO_LEASING.trim() ?? ""
     }))
 
     return res.status(200).json(cleanedResult)

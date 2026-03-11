@@ -320,3 +320,106 @@ main p{
     /*aquii*/
   }
 }
+
+/* TOASTR ESTILOS PERSONALIZADOS */
+
+#toast-container > div {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  transition: linear 200ms;
+  padding: 8px 12px !important;
+}
+
+#toast-container > div:hover {
+  -webkit-box-shadow: 0 0 12px #999 !important;
+  box-shadow: 0 0 12px #999 !important;
+}
+
+#toast-container#toast-container > .toast {
+  background-image: none !important;
+}
+
+/* SUCCESS  */
+
+.toast-success {
+  background-color: #ECFDF3 !important;
+  border-radius: 8px !important;
+  border: 1px solid #00ff6a !important;
+  background-image: none !important;
+}
+
+.toast-success .toast-message {
+  color: #00ff6a !important;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.toast-success .toast-title {
+  color: #00ff6a !important;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* INFO  */
+
+.toast-info {
+  background-color: #eefaff !important;
+  border-radius: 8px !important;
+  border: 1px solid #00aeff !important;
+  background-image: none !important;
+}
+
+.toast-info .toast-message {
+  color: #00aeff !important;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.toast-info .toast-title {
+  color: #00aeff !important;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* WARNING  */
+
+.toast-warning {
+  background-color: #FFFCF0 !important;
+  border-radius: 8px !important;
+  border: 1px solid #ffc400 !important;
+  background-image: none !important;
+}
+
+.toast-warning .toast-message {
+  color: #ffc400 !important;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.toast-warning .toast-title {
+  color: #ffc400 !important;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* ERROR  */
+
+.toast-error {
+  background-color: #FFF0F0 !important;
+  border-radius: 8px !important;
+  border: 1px solid #ff0000 !important;
+  background-image: none !important;
+}
+
+.toast-error .toast-message {
+  color: #ff0000 !important;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.toast-error .toast-title {
+  color: #ff0000 !important;
+  font-weight: 500;
+  font-size: 13px;
+}

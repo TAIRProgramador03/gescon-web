@@ -1,10 +1,10 @@
-.main-query-doc h1, 
-.main-query-doc h2, 
-.main-query-doc h3, 
-.main-query-doc h4, 
-.main-query-doc h5, 
-.main-query-doc h6, 
-.main-query-doc p, 
+.main-query-doc h1,
+.main-query-doc h2,
+.main-query-doc h3,
+.main-query-doc h4,
+.main-query-doc h5,
+.main-query-doc h6,
+.main-query-doc p,
 .main-query-doc span {
   color: #000;
 }
@@ -30,7 +30,8 @@
   color: #002141;
 }
 
-.main-query-doc .header-title p, .main-query-doc .header-title p span {
+.main-query-doc .header-title p,
+.main-query-doc .header-title p span {
   margin: 0;
   color: #7c7c7c;
 }
@@ -82,7 +83,7 @@
 .main-query-doc .container-data .result-search ul {
   margin-top: 12px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   list-style: none;
 }
@@ -106,6 +107,43 @@
   text-align: center;
 }
 
+.main-query-doc .container-data .result-search .leasing-result {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #002141;
+  border-radius: 4px;
+  overflow: hidden !important;
+  cursor: pointer;
+}
+
+.main-query-doc .container-data .result-search .leasing-result span {
+  width: 100%;
+  padding: 2px 4px;
+  background-color: #002141;
+  color: #fff;
+  text-align: center;
+}
+
+.main-query-doc .container-data .result-search .leasing-result .card-lea {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 4px;
+}
+
+.main-query-doc .container-data .result-search .leasing-result .card-lea i{
+  font-size: 28px;
+}
+
+.main-query-doc .container-data .result-search .leasing-result .card-lea p{
+  margin: 0;
+}
+
 .main-query-doc .container-data .result-search .btn-success {
   margin-top: 12px;
   display: flex;
@@ -115,7 +153,7 @@
   font-size: 16px;
   padding: 8px 12px;
   border: 1px solid #33ff0086;
-  font-family: 'Fredoka Variable', sans-serif;
+  font-family: "Fredoka Variable", sans-serif;
   border-radius: 4px;
   width: fit-content;
   transition: linear 100ms;
@@ -195,10 +233,9 @@
 }
 
 .main-query-doc .container-data table.dataTable tbody tr.selected {
-    background-color: #032f86; /* Color de fondo deseado */
-    color: black; /* Color de texto si es necesario */
+  background-color: #032f86; /* Color de fondo deseado */
+  color: black; /* Color de texto si es necesario */
 }
-
 
 /* MODAL DE INFORMACION DE DOCUMENTO */
 #modal-documents {
@@ -219,7 +256,7 @@
   flex-direction: column;
   background-color: #fff;
   border-radius: 12px;
-  width: 75%;
+  width: 90%;
   min-height: 300px;
   max-height: 90%;
   overflow: hidden !important;
@@ -230,9 +267,9 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  background-color: #005AD9;
+  background-color: #005ad9;
   padding: 12px 16px;
-  font-family: 'Fredoka Variable', sans-serif;
+  font-family: "Fredoka Variable", sans-serif;
   font-size: 20px;
   font-weight: 300;
 }
@@ -246,7 +283,8 @@
   color: black;
   height: 100%;
   overflow: auto;
-  font-family: 'Fredoka Variable', sans-serif;
+  font-family: "Fredoka Variable", sans-serif;
+  overflow: auto;
 }
 
 #modal-documents .modal-body .info-document {
@@ -278,7 +316,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #005AD9;
+  border: 1px solid #005ad9;
   border-radius: 4px;
   overflow: hidden !important;
 }
@@ -286,7 +324,7 @@
 #modal-documents .modal-body .info-document ul li span {
   width: 100%;
   padding: 2px 4px;
-  background-color: #005AD9;
+  background-color: #005ad9;
   color: #fff;
   text-align: center;
 }
@@ -294,7 +332,6 @@
 #modal-documents .modal-body .info-description {
   border-top: 1px solid #005ad941;
   padding-top: 12px;
-
 }
 
 #modal-documents .modal-footer .btn-success {
@@ -305,7 +342,7 @@
   font-size: 16px;
   padding: 4px 12px;
   border: 1px solid #33ff0086;
-  font-family: 'Fredoka Variable', sans-serif;
+  font-family: "Fredoka Variable", sans-serif;
   border-radius: 4px;
   width: fit-content;
   transition: linear 100ms;
@@ -332,7 +369,7 @@
   border: 1px solid #005ad96b;
   border-radius: 4px;
   color: #005ad9be;
-  font-family: 'Fredoka Variable', sans-serif;
+  font-family: "Fredoka Variable", sans-serif;
   font-size: 16px;
   transition: linear 100ms;
   cursor: pointer;

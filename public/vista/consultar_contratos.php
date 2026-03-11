@@ -158,7 +158,7 @@ require './templates/header.html';
                         <div class="tda can-form"><i class="fa fa fa-book" style="color: #0e2e67;"></i><span id="txt-leas">0</span></div>
                     </div>
                     <div class="card terreno-form doc-form" id="href-query-veh">
-                        <div class="tda tti-form nom-tp">N° Vehiculos</div>
+                        <div class="tda tti-form nom-tp">Veh. Detallados</div>
                         <hr>
                         <div class="tda can-form"><i class="fa fa-cars" style="color: #0e2e67;"></i><span id="txt-vehic">0</span></div>
                     </div>

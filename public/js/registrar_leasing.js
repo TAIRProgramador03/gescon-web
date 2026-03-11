@@ -1,4 +1,4 @@
-const IP_LOCAL = 'localhost';
+// const IP_LOCAL = 'localhost';
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
@@ -68,7 +68,11 @@ async function cargartablaClienteLeas() {
     .addEventListener("click", async function () {
       try {
         const response = await fetch(
-          `http://${IP_LOCAL}:3000/tablaClienteLeas`
+          `http://${IP_LOCAL}:3000/tablaClienteLeas`,
+          {
+            method: "GET",
+            credentials: "include", // Asegura que las cookies se envíen con la solicitud
+          }
         );
         const contratos = await response.json();
         const tbody = document.querySelector(".tabla-form-cli table tbody");
@@ -219,7 +223,10 @@ async function cargartablaVehiculo() {
     .addEventListener("click", async function () {
       try {
         // Realiza una solicitud al servidor para obtener los contratos del cliente
-        const response = await fetch(`http://${IP_LOCAL}:3000/tablaVehiculo`);
+        const response = await fetch(`http://${IP_LOCAL}:3000/tablaVehiculo`, {
+          method: "GET",
+          credentials: "include", // Asegura que las cookies se envíen con la solicitud
+        });
         const contratos = await response.json();
 
         // Verifica si hay contratos disponibles
@@ -574,6 +581,7 @@ async function guardaLeasing() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(contratoData),
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
     });
 
     const result = await response.json();
@@ -602,6 +610,7 @@ async function subirArchivo(archivo) {
       method: "POST",
       enctype: "multipart/form-data",
       body: formData,
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
     });
 
     const result = await response.json();
@@ -617,7 +626,11 @@ async function subirArchivo(archivo) {
 async function validarArchivo(nombreArchivo) {
   try {
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`
+      `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`,
+      {
+        method: "GET",
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
+      }
     );
     const result = await response.json();
 
@@ -699,7 +712,11 @@ async function cargarContratosPorCliente(idCli) {
 
   try {
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/contratosNroAdi?idCli=${idCli}`
+      `http://${IP_LOCAL}:3000/contratosNroAdi?idCli=${idCli}`,
+      {
+        method: "GET",
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
+      }
     );
     const contratos = await response.json();
 

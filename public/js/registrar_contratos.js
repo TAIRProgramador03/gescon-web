@@ -1,5 +1,8 @@
-const IP_LOCAL = 'localhost';
+// const IP_LOCAL = "localhost";
 
+/**
+ * Inicializa la página cargando clientes, modelos y configurando los eventos de los botones
+ */
 document.addEventListener("DOMContentLoaded", () => {
   cargarClientes();
   cargarModelos();
@@ -10,6 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", guardarContrato);
 });
 
+/**
+ * Habilita o deshabilita el campo de duración según el estado del checkbox "especial"
+ */
 document.addEventListener("DOMContentLoaded", function () {
   const checkbox = document.getElementById("especial");
   const tabla = document.getElementById("tabla-dinamica");
@@ -18,16 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
     actualizarDuracionEstado();
   });
 
-  /*function actualizarDuracionEstado() {
-        const duracionCeldas = document.querySelectorAll('input[name="duracion[]"]');
-        duracionCeldas.forEach(function(celda) {
-            celda.disabled = !checkbox.checked;
-        });
-    }*/
-
   function actualizarDuracionEstado() {
     const duracionCeldas = document.querySelectorAll(
-      'input[name="duracion[]"]'
+      'input[name="duracion[]"]',
     );
     const checkbox = document.getElementById("especial"); // Reemplaza con el ID real del checkbox
 
@@ -39,23 +38,27 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  /**
+   * AGREGA UNA NUEVA FILA A LA TABLA DE VEHICULOS
+   */
   function agregarFila() {
     const lastRow = tabla.querySelector("tbody tr:last-child");
     const lastRowIndex = Array.from(tabla.querySelectorAll("tbody tr")).indexOf(
-      lastRow
+      lastRow,
     );
 
     const nuevaFila = document.createElement("tr");
     nuevaFila.innerHTML = `
-            <td><input type="text" name="item[]" value="${lastRowIndex + 2
-      }" disabled></td>
+            <td><input type="text" name="item[]" value="${
+              lastRowIndex + 2
+            }" disabled></td>
             <td>
                 <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
                     <option value="">Seleccione un modelo</option>
                 </select>
             </td>
             <td>
-                <select name="tipo_terreno[]" class="cbo-form-cliente tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
+                <select name="tipo_terreno[]" class="cbo-form-cliente terreno-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
                     <option value="4">Seleccione el tipo</option>
                     <option value="0">Superficie</option>
                     <option value="1">Socavon</option>
@@ -67,8 +70,9 @@ document.addEventListener("DOMContentLoaded", function () {
             <td><input type="text" name="cpk[]" class="tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
             <td><input type="number" name="rm[]" class="tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
             <td><input type="number" name="cantidad[]" class="tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
-            <td><input type="text" name="duracion[]" class="tooltip-input"  value="0" ${checkbox.checked ? "" : "disabled"
-      } data-tooltip="Duracion contrato"></td>
+            <td><input type="text" name="duracion[]" class="tooltip-input"  value="0" ${
+              checkbox.checked ? "" : "disabled"
+            } data-tooltip="Duracion contrato"></td>
             <td><input type="text" name="compra_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
             <td><input type="text" name="precio_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
         `;
@@ -82,16 +86,30 @@ document.addEventListener("DOMContentLoaded", function () {
     $(nuevaFila)
       .find(".modelo-select")
       .select2({
-        placeholder: "Seleccione el tipo",
+        placeholder: "Seleccione el modelo",
         allowClear: false,
       })
       .next(".select2-container")
       .css({
-        "font-family": "Montserrat, serif",
+        "font-family": "Fredoka Variable, sans-serif",
         "font-size": "13px",
         "font-optical-sizing": "auto",
         "font-style": "normal",
-        color: "black",
+        "font-weight": "400",
+      });
+
+    $(nuevaFila)
+      .find(".terreno-select")
+      .select2({
+        placeholder: "Seleccione el terreno",
+        allowClear: false,
+      })
+      .next(".select2-container")
+      .css({
+        "font-family": "Fredoka Variable, sans-serif",
+        "font-size": "13px",
+        "font-optical-sizing": "auto",
+        "font-style": "normal",
       });
   }
 
@@ -108,7 +126,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function cargarClientes() {
   try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`); // Ruta relativa al servidor
+    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+      method: "GET",
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    }); // Ruta relativa al servidor
     if (!response.ok) {
       throw new Error("Error en la solicitud");
     }
@@ -139,7 +160,10 @@ async function cargarClientes() {
 
 async function cargarModelos() {
   try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`); // Ruta del servidor
+    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
+      method: "GET",
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    }); // Ruta del servidor
     if (!response.ok) {
       throw new Error("Error en la solicitud");
     }
@@ -170,7 +194,10 @@ async function cargarModelos() {
 
 async function cargarModelosFila(selectElement) {
   try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`); // Ruta del servidor
+    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
+      method: "GET",
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    }); // Ruta del servidor
     if (!response.ok) {
       throw new Error("Error en la solicitud");
     }
@@ -230,7 +257,7 @@ async function guardarContrato() {
     } else {
       mostrarNotificacion(
         "La cantidad es inválido, solo debe contener números",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -242,7 +269,7 @@ async function guardarContrato() {
     } else {
       mostrarNotificacion(
         "La duración es inválido, solo debe contener números",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -254,7 +281,7 @@ async function guardarContrato() {
     } else {
       mostrarNotificacion(
         "El km total es inválido, solo debe contener números",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -266,7 +293,7 @@ async function guardarContrato() {
     } else {
       mostrarNotificacion(
         "valor inválido, solo debe contener números enteros",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -278,7 +305,7 @@ async function guardarContrato() {
     } else {
       mostrarNotificacion(
         "valor inválido, solo debe contener números enteros",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -290,7 +317,7 @@ async function guardarContrato() {
     } else {
       mostrarNotificacion(
         "valor inválido, solo debe contener números enteros",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -302,7 +329,7 @@ async function guardarContrato() {
     } else {
       mostrarNotificacion(
         "valor inválido, solo debe contener números enteros",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -311,15 +338,15 @@ async function guardarContrato() {
   if (
     Number(formData.cantVehiculos) ===
     Number(formData.vehCiu) +
-    Number(formData.vehSev) +
-    Number(formData.vehSoc) +
-    Number(formData.vehSup)
+      Number(formData.vehSev) +
+      Number(formData.vehSoc) +
+      Number(formData.vehSup)
   ) {
     console.log("Conforme Dr. Fili");
   } else {
     mostrarNotificacion(
       "Total de vehiculos no coincide con la cantidad de vehiculos",
-      "#C70039"
+      "#C70039",
     );
     return;
   }
@@ -338,7 +365,7 @@ async function guardarContrato() {
   ) {
     mostrarNotificacion(
       "Por favor, completa todos los campos obligatorios.",
-      "#C70039"
+      "#C70039",
     );
     return;
   }
@@ -354,7 +381,7 @@ async function guardarContrato() {
       .map((fila, index) => {
         let modelo = fila.querySelector('select[name="tipo_modelo[]"]').value;
         let tipoTerreno = fila.querySelector(
-          'select[name="tipo_terreno[]"]'
+          'select[name="tipo_terreno[]"]',
         ).value;
         let tarifa =
           Number(fila.querySelector('input[name="tarifa[]"]').value) || 0;
@@ -375,12 +402,12 @@ async function guardarContrato() {
         }
         if (!Number.isInteger(cantidad) || cantidad < 0) {
           throw new Error(
-            "Cantidad inválida, solo debe contener números enteros"
+            "Cantidad inválida, solo debe contener números enteros",
           );
         }
         if (!Number.isInteger(duracion) || duracion < 0) {
           throw new Error(
-            "Duración inválida, solo debe contener números enteros"
+            "Duración inválida, solo debe contener números enteros",
           );
         }
 
@@ -400,19 +427,19 @@ async function guardarContrato() {
           console.log("valido carnal");
         }
 
-        return modelo && tarifa && cantidad
+        return modelo && tarifa != null && cantidad
           ? {
-            secCon: index + 1,
-            modelo,
-            tipoTerreno,
-            tarifa,
-            cpk,
-            rm,
-            cantidad,
-            duracion,
-            compraVeh,
-            precioVeh,
-          }
+              secCon: index + 1,
+              modelo,
+              tipoTerreno,
+              tarifa,
+              cpk,
+              rm,
+              cantidad,
+              duracion,
+              compraVeh,
+              precioVeh,
+            }
           : null;
       })
       .filter(Boolean);
@@ -461,11 +488,14 @@ async function guardarContrato() {
   // Construcción del objeto final de datos
   const contratoData = { ...formData, detalles, archivoPdf: nombreArchivo };
 
+  // console.log("CONTRATO ===> ", contratoData);
+
   try {
     const response = await fetch(`http://${IP_LOCAL}:3000/insertarContrato`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(contratoData),
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
     });
 
     const result = await response.json();
@@ -494,6 +524,7 @@ async function subirArchivo(archivo) {
       enctype: "multipart/form-data",
       method: "POST",
       body: formData,
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
     });
 
     const result = await response.json();
@@ -509,7 +540,11 @@ async function subirArchivo(archivo) {
 async function validarArchivo(nombreArchivo) {
   try {
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`
+      `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`,
+      {
+        method: "GET",
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
+      },
     );
     const result = await response.json();
 
@@ -582,7 +617,7 @@ function limpiarCampos() {
                                 </select>
                             </td>
                             <td>
-                                <select name="tipo_terreno[]" class="cbo-form-cliente tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
+                                <select name="tipo_terreno[]" class="cbo-form-cliente terreno-select tooltip-input" id="tipoTerreno" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
                                     <option value="4">Seleccione el tipo</option>
                                     <option value="0">Superficie</option>
                                     <option value="1">Socavon</option>
@@ -605,6 +640,11 @@ function limpiarCampos() {
   $(document).ready(function () {
     $("#tipoModelo").select2({
       placeholder: "Seleccione el tipo",
+      allowClear: false, // Desactiva la "X"
+    });
+
+    $("#tipoTerreno").select2({
+      placeholder: "Seleccione el terreno",
       allowClear: false, // Desactiva la "X"
     });
   });

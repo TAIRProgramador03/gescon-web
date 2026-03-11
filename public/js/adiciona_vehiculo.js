@@ -1,4 +1,4 @@
-const IP_LOCAL = 'localhost';
+// const IP_LOCAL = 'localhost';
 
 document.addEventListener("DOMContentLoaded", () => {
   document
@@ -46,7 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function cargarClientes() {
   try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`); // Ruta relativa al servidor
+    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+      method: "GET",
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    }); // Ruta relativa al servidor
     if (!response.ok) throw new Error("Error en la solicitud");
 
     const clientes = await response.json();
@@ -77,7 +80,11 @@ async function cargarLeasingOfClient(idCli) {
   try {
     const btnSelectLeasing = document.getElementById("combo-box-leasing");
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/leasingOfClient?idCli=${idCli}`
+      `http://${IP_LOCAL}:3000/leasingOfClient?idCli=${idCli}`,
+      {
+        method: "GET",
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
+      }
     ); // Ruta relativa al servidor
     if (!response.ok) throw new Error("Error en la solicitud");
 
@@ -121,7 +128,10 @@ async function cargarLeasingOfClient(idCli) {
 
 async function cargarLeasing() {
   try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/leasing`); // Ruta relativa al servidor
+    const response = await fetch(`http://${IP_LOCAL}:3000/leasing`, {
+      method: "GET",
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    }); // Ruta relativa al servidor
     if (!response.ok) throw new Error("Error en la solicitud");
 
     const leasing = await response.json();
@@ -174,7 +184,11 @@ async function listaVehiculosAsignables() {
 
   try {
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/consultaVehiculoLeasing?idCli=${idCli}&nroLeasing=${idLea}`
+      `http://${IP_LOCAL}:3000/consultaVehiculoLeasing?idCli=${idCli}&nroLeasing=${idLea}`,
+      {
+        method: "GET",
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
+      }
     );
     const vehiLeasing = await response.json();
 
@@ -235,7 +249,10 @@ async function listaVehiculosAsignables() {
 
 async function cargarClientesAsig() {
   try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`); // Ruta relativa al servidor
+    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+      method: "GET",
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    }); // Ruta relativa al servidor
     if (!response.ok) throw new Error("Error en la solicitud");
 
     const clientes = await response.json();
@@ -314,7 +331,10 @@ async function cargarOperaciones() {
       try {
         // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
         const response = await fetch(
-          `http://${IP_LOCAL}:3000/operacionesAsig?idCli=${idCli}`
+          `http://${IP_LOCAL}:3000/operacionesAsig?idCli=${idCli}`, {
+            method: "GET",
+            credentials: "include", // Asegura que las cookies se envíen con la solicitud
+          }
         );
         const operaciones = await response.json();
 
@@ -363,7 +383,11 @@ async function cargarContrato() {
       try {
         // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
         const response = await fetch(
-          `http://${IP_LOCAL}:3000/contratosNroAdi?idCli=${idCli}`
+          `http://${IP_LOCAL}:3000/contratosNroAdi?idCli=${idCli}`,
+          {
+            method: "GET",
+            credentials: "include", // Asegura que las cookies se envíen con la solicitud
+          }
         );
         const contratos = await response.json();
 
@@ -486,6 +510,7 @@ async function guardaAsignacion() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(asignacionData),
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
     });
 
     const result = await response.json();
@@ -526,6 +551,7 @@ const validarAsignacion = async (detalles) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ detalles }),
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
     }
   );
 

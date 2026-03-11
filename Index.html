@@ -71,7 +71,7 @@
             </div>
         </div>
         <script type="module">
-            const IP_LOCAL = 'localhost';
+            const IP_LOCAL = '192.168.5.95';
             const emailField = document.querySelector("[name=email]");
             const setErrors = (message, field, isError = true) => {
                 if (isError) {
@@ -119,8 +119,10 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ dbUser, password })
+                        body: JSON.stringify({ dbUser, password }),
+                        credentials: 'include'
                     });
+
                     const data = await response.json();
                     if (data.success) {
                         localStorage.setItem('dbUser', dbUser);
@@ -144,6 +146,6 @@
                 }
             });
         </script>
-        <script src="./public/js/login.js">Click</script>
+        <script src="./public/js/login.js"></script>
     </body>
 </html>

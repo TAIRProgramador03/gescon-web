@@ -1,0 +1,40 @@
+#notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #d4edda;
+  color: #fff;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(-20px);
+  visibility: hidden; /* Aseguramos que esté oculto inicialmente */
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease,
+    visibility 0s 0.5s;
+  font-family: "Montserrat", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+#notification.show {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease,
+    visibility 0s 0s;
+}
+
+@media screen and (max-width: 800px) {
+  #notification {
+    right: 10px;
+    left: 10px;
+  }
+}

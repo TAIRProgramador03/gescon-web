@@ -47,6 +47,81 @@ const listLeasing = async (req, res) => {
   }
 };
 
+const listAllLeasing = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { bank, clientId, contractId, typeContract } = req.query;
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    let sql = `
+      SELECT L.ID, L.BANCO, L.CANT_VEH AS CANTIDAD, L.FECHA_INI, L.FECHA_FIN, L.PERIODO_GRACIA, L.PDF, L.DESCRIPCION
+      FROM SPEED400AT.TBL_LEASING_CAB L
+    `;
+
+    const params = [];
+
+    if (bank) {
+      sql += " WHERE L.BANCO = ?";
+      params.push(bank);
+
+      if (clientId) {
+        sql += " AND L.ID_CLIENTE = ?";
+        params.push(clientId);
+
+        if (contractId) {
+          if (typeContract == "P") {
+            sql += ` AND L.ID_CONTRATO = ? AND L.TIPCON = 'P'`;
+          } else if (typeContract == "H") {
+            sql += ` AND L.ID_CONTRATO = ? AND L.TIPCON = 'H'`;
+          }
+          params.push(contractId)
+        }
+      }
+    }
+
+    const result = await cn.query(sql, params);
+
+    const cleanedResult = result.map((row) => ({
+      id: row.ID,
+      banco: transformType(row.BANCO.trim(), {
+        1: "BANBIF",
+        2: "BBVA",
+        3: "BCP",
+        4: "HSBC",
+        5: "INTERBANK",
+        6: "SCOTIABANK",
+        7: "TAIR",
+        8: "SANTANDER",
+      }),
+      cantidad: row.CANTIDAD,
+      fechaIni: row.FECHA_INI,
+      fechaFin: row.FECHA_FIN,
+      perGracia: row.PERIODO_GRACIA,
+      archivoPdf: row.PDF.trim(),
+      descripcion: row.DESCRIPCION ? row.DESCRIPCION.trim() : "",
+    }));
+
+    return res.status(200).json(cleanedResult);
+  } catch (error) {
+    console.error("Error al obtener la lista de leasings", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener la lista de leasings",
+    });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
 const listLeasingOfClient = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
 
@@ -524,6 +599,7 @@ const insertLeasing = async (req, res) => {
 
 module.exports = {
   listLeasing,
+  listAllLeasing,
   listLeasingOfClient,
   listLeasingByContract,
   listLeasingByDocument,

@@ -1,8 +1,9 @@
 const Router = require("express").Router();
 const authenticateToken = require("../../shared/middleware/jwt-valid.js");
-const {listLeasing, listLeasingOfClient, listLeasingByContract, detailLeasing, insertLeasing, listLeasingByDocument, detailVehByLeasing, detailAssignByLeasing} = require("./leasing.controller.js");
+const {listLeasing, listLeasingOfClient, listLeasingByContract, detailLeasing, insertLeasing, listLeasingByDocument, detailVehByLeasing, detailAssignByLeasing, listAllLeasing} = require("./leasing.controller.js");
 
 Router.get("/leasing", authenticateToken, listLeasing);
+Router.get("/leasingAll", authenticateToken, listAllLeasing);
 Router.get("/leasingOfClient", authenticateToken, listLeasingOfClient)
 Router.get("/leasingByContract", authenticateToken, listLeasingByContract)
 Router.get("/leasingByDocument", authenticateToken, listLeasingByDocument)

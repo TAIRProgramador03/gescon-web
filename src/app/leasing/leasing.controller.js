@@ -4,6 +4,7 @@ const {
   funcionNumerica,
   funcionParteVar,
   obtenerUltimoIdLea,
+  transformType,
 } = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
 const { SCHEMA_BD, IP_LOCAL } = require("../../shared/conf.js");
@@ -211,24 +212,35 @@ const detailLeasing = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  const { leasingId } = req.query;
+  const { leasingId, nroLeasing, clienteId, documentoId } = req.query;
 
-  if (!leasingId)
+  if (!leasingId || !nroLeasing || !clienteId || !documentoId)
     return res.status(400).json({
       success: false,
-      message: "El parametro leasingId es obligatorio",
+      message:
+        "Los parametros leasingId, nroLeasing, clienteId y documentoId son obligatorios",
     });
 
   const cn = await connection(globalDbUser, globalPassword);
 
   try {
     const sql = `
-      SELECT ID, NRO_LEASING, BANCO, CANT_VEH, FECHA_INI, FECHA_FIN, PERIODO_GRACIA, PDF, DESCRIPCION, TIPCON 
-      FROM ${SCHEMA_BD}.TBL_LEASING_CAB
-      WHERE ID = ?
+      SELECT L.ID, L.NRO_LEASING, L.BANCO, L.CANT_VEH, COUNT(A.ID) AS CANT_ASIGN , L.FECHA_INI, L.FECHA_FIN, L.PERIODO_GRACIA, L.PDF, L.DESCRIPCION, L.TIPCON
+      FROM ${SCHEMA_BD}.TBL_LEASING_CAB L
+      LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_DET A
+      ON L.NRO_LEASING = A.LEASING
+      LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_CAB AC
+      ON AC.ID = A.ID_ASIGNACION
+      WHERE L.ID = ? AND A.LEASING = ? AND AC.ID_CLIENTE = ? AND A.ID_CONTRATO = ? AND A.CLASE_CONTRATO = 'H'
+      GROUP BY L.ID, L.NRO_LEASING, L.BANCO, L.CANT_VEH, L.FECHA_INI, L.FECHA_FIN, L.PERIODO_GRACIA, L.PDF, L.DESCRIPCION, L.TIPCON
     `;
 
-    const result = await cn.query(sql, [leasingId]);
+    const result = await cn.query(sql, [
+      leasingId,
+      nroLeasing,
+      clienteId,
+      documentoId,
+    ]);
 
     if (result.length == 0 || !result[0])
       return res
@@ -242,6 +254,7 @@ const detailLeasing = async (req, res) => {
       nroLeasing: findLeasing.NRO_LEASING.trim(),
       banco: findLeasing.BANCO.trim(),
       cantVehi: findLeasing.CANT_VEH,
+      cantAsign: findLeasing.CANT_ASIGN,
       fechaInicio: findLeasing.FECHA_INI.toString(),
       fechaFin: findLeasing.FECHA_FIN.toString(),
       periGracia: findLeasing.PERIODO_GRACIA,
@@ -258,6 +271,138 @@ const detailLeasing = async (req, res) => {
       .json({ success: false, message: "Error al obtener detalle de leasing" });
   } finally {
     if (cn) await cn.close();
+  }
+};
+
+const detailVehByLeasing = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { leasingId } = req.query;
+
+  if (!leasingId)
+    return res.status(400).json({
+      success: false,
+      message: "El parametro leasingId es obligatorio",
+    });
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    const sql = `
+      SELECT L.MODELO, L.PLACA, L.CANTIDAD, L.TIPO_TERRENO, V.ANO, V.COLOR, M.DESCRIPCION AS MARCA, O.DESCRIPCION AS OPERACION, A.FECHA_FIN, LC.NRO_LEASING
+      FROM ${SCHEMA_BD}.TBL_LEASING_DET L
+      LEFT JOIN ${SCHEMA_BD}.PO_VEHICULO V
+      ON L.ID_VEH = V.ID
+      LEFT JOIN ${SCHEMA_BD}.PO_MARCA M
+      ON V.IDMAR = M.ID
+      LEFT JOIN ${SCHEMA_BD}.PO_OPERACIONES O
+      ON V.IDOPE = O.ID
+      LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_DET A
+      ON L.PLACA = A.PLACA
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
+      ON LC.ID = L.ID_LEA_CAB
+      WHERE ID_LEA_CAB = ?
+    `;
+
+    const result = await cn.query(sql, [leasingId]);
+
+    const cleanedResult = result.map((row) => ({
+      modelo: row.MODELO.trim() ?? "",
+      placa: row.PLACA.trim() ?? "",
+      cantidad: row.CANTIDAD,
+      terreno: row.TIPO_TERRENO.trim() ?? "",
+      año: row.ANO,
+      color: row.COLOR.trim() ?? "",
+      marca: row.MARCA.trim() ?? "",
+      operacion: row.OPERACION.trim() ?? "",
+      fechaFin: row.FECHA_FIN.trim() ?? "",
+      nroLeasing: row.NRO_LEASING.trim() ?? "",
+    }));
+
+    return res.status(200).json(cleanedResult);
+  } catch (error) {
+    console.error("Error al obtener vehiculos por leasing", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener vehiculos por leasing",
+    });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
+const detailAssignByLeasing = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { nroLeasing, clienteId, contratoId, tipoCont } = req.query;
+
+  if (!nroLeasing || !clienteId || !contratoId || !tipoCont)
+    return res.status(400).json({
+      success: false,
+      message: "Los parametros nroLeasing, clienteId, contratoId y tipoCont son obligatorios",
+    });
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    const sql = `
+      SELECT AD.PLACA, MO.DESCRIPCION AS MODELO, M.DESCRIPCION AS MARCA, AD.TP_TERRENO AS TERRENO, V.ANO, V.COLOR, O.DESCRIPCION AS OPERACION, AD.LEASING
+      FROM ${SCHEMA_BD}.TBL_ASIGNACION_DET AD 
+      LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_CAB AC
+      ON AC.ID = AD.ID_ASIGNACION
+      LEFT JOIN ${SCHEMA_BD}.PO_VEHICULO V
+      ON AD.ID_VEH = V.ID
+      LEFT JOIN ${SCHEMA_BD}.PO_MODELO MO
+      ON V.IDMOD = MO.ID
+      LEFT JOIN ${SCHEMA_BD}.PO_MARCA M
+      ON V.IDMAR = M.ID
+      LEFT JOIN ${SCHEMA_BD}.PO_OPERACIONES O
+      ON V.IDOPE = O.ID
+      WHERE  AD.LEASING = ? AND  AC.ID_CLIENTE = ? AND AD.ID_CONTRATO = ? AND CLASE_CONTRATO = ?
+    `;
+
+    const result = await cn.query(sql, [nroLeasing, clienteId, contratoId, tipoCont])
+
+    const cleanedResult = result.map((row) => ({
+      modelo: row.MODELO.trim() ?? "",
+      placa: row.PLACA.trim() ?? "",
+      terreno: transformType(row.TERRENO, {
+        0: "SUPERFICIE",
+        1: "SOCAVON",
+        2: "CIUDAD",
+        3: "SEVERO"
+      }),
+      año: row.ANO,
+      color: row.COLOR.trim() ?? "",
+      marca: row.MARCA.trim() ?? "",
+      operacion: row.OPERACION.trim() ?? "",
+      nroLeasing: row.LEASING.trim() ?? "",
+    }));
+
+    return res.status(200).json(cleanedResult);
+  } catch (error) {
+    console.error("Error al obtener asignaciones por leasing", error);
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Error al obtener asignaciones por leasing",
+      });
+  } finally {
   }
 };
 
@@ -362,5 +507,7 @@ module.exports = {
   listLeasingByContract,
   listLeasingByDocument,
   detailLeasing,
+  detailVehByLeasing,
+  detailAssignByLeasing,
   insertLeasing,
 };

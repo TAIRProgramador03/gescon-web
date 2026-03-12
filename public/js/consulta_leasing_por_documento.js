@@ -1,3 +1,21 @@
+toastr.options = {
+  closeButton: false,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-bottom-right",
+  preventDuplicates: false,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "5000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
+
 const getLeasings = async (documentoId, clienteId) => {
   const response = await fetch(
     `http://${IP_LOCAL}:3000/leasingByDocument?documentoId=${documentoId.toString()}&clienteId=${clienteId.toString()}`,
@@ -47,9 +65,46 @@ const getLeasings = async (documentoId, clienteId) => {
   return table;
 };
 
-const getDetailLeasing = async (leasingId) => {
+const getDetailLeasing = async (
+  leasingId,
+  nroLeasing,
+  clienteId,
+  documentoId,
+) => {
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/detailLeasing?leasingId=${leasingId.toString()}`,
+    `http://${IP_LOCAL}:3000/detailLeasing?leasingId=${leasingId.toString()}&nroLeasing=${nroLeasing.trim()}&clienteId=${clienteId.toString()}&documentoId=${documentoId.toString()}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    toastr.error(data.message, "Oops...");
+  }
+
+  return data;
+};
+
+const getVehByLeasing = async (leasingId) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/vehiclesByLeasing?leasingId=${leasingId.toString()}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  return data;
+};
+
+const getAssignByLeasing = async (nroLeasing, clienteId, documentoId) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/assignByLeasing?nroLeasing=${nroLeasing}&clienteId=${clienteId}&contratoId=${documentoId}&tipoCont=H`,
     {
       method: "GET",
       credentials: "include",
@@ -79,8 +134,8 @@ function obtenerEstado(fechaFin) {
 }
 
 function obtenerDiasVencimiento(fecha) {
-  const fechaActual = new Date(Date.now());
   const fechaFin = new Date(fecha);
-  const diferenciaTiempo = Math.abs(fechaFin - fechaActual);
+  const fechaActual = new Date(Date.now());
+  const diferenciaTiempo = fechaFin - fechaActual;
   return Math.floor(diferenciaTiempo / (1000 * 60 * 60 * 24));
 }

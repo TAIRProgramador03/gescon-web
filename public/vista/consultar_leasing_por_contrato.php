@@ -18,6 +18,12 @@ require './templates/header.html';
 <!--BOOTSTRAP CSS-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
+<!-- TOASTR CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+<!-- TOASTR JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 <div id="preloader-mini">
   <div class="gif-container">
     <img src="../img/carpeta.gif" alt="Cargando...">
@@ -30,34 +36,77 @@ require './templates/header.html';
 <main class="main-query-lea">
   <div class="header-title">
     <h1>Leasing's de contrato</h1>
-    <p>Nro de contrato consultado: <span id="parametroPintado"></span></p>
+    <p>Id contrato: <span id="parametroPintado"></span></p>
   </div>
 
   <div class="container-data">
-    <table id="listLeasing" class="display">
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>N° Leasing</th>
-          <th>Fecha Inicio</th>
-          <th>Fecha Fin</th>
-          <th>Cantidad</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <th>Item</th>
-          <th>N° Leasing</th>
-          <th>Fecha Inicio</th>
-          <th>Fecha Fin</th>
-          <th>Cantidad</th>
-        </tr>
-      </tfoot>
-    </table>
+    <div class="column-table">
+      <table id="listLeasing" class="display">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>N° Leasing</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Item</th>
+            <th>N° Leasing</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Cantidad</th>
+          </tr>
+        </tfoot>
+      </table>
+      <div class="item-result">
+        <label for="descripcion-result">Descripción</label>
+        <textarea id="descripcion-result" readonly></textarea>
+      </div>
+    </div>
+
+    <div class="result-search">
+      <h3>Resumen</h3>
+      <hr />
+      <div class="item-result">
+        <label for="vence-result">Vencimiento</label>
+        <input id="vence-result" readonly>
+      </div>
+      <div class="item-result">
+        <label for="estado-result">Estado</label>
+        <input id="estado-result" readonly>
+      </div>
+      <div class="item-result">
+        <label for="per-gra-result">Periodo de gracia</label>
+        <input id="per-gra-result" readonly>
+      </div>
+      <div class="card-view">
+        <div id="view-vehicle" class="card-result">
+          <span>N° Vehiculos</span>
+          <div class="card-info">
+            <i class="fa fa-cars" style="color: #0e2e67;"></i>
+            <p id="vehicle-result">0</p>
+          </div>
+        </div>
+        <div id="view-assign" class="card-result">
+          <span>Veh. Asignados</span>
+          <div class="card-info">
+            <i class="fa fa-cars" style="color: #0e2e67;"></i>
+            <p id="assign-result">0</p>
+          </div>
+        </div>
+      </div>
+      <button class="btn-success" id="btn-leasing">
+        Ver leasing
+        <i class="bi bi-file-earmark-arrow-down-fill"></i>
+      </button>
+    </div>
   </div>
 </main>
 
@@ -71,10 +120,6 @@ require './templates/header.html';
 
     </div>
     <div class="modal-footer">
-      <button class="btn-success" id="btn-leasing">
-        <span>Ver leasing</span>
-        <i class="bi bi-file-earmark-arrow-down-fill"></i>
-      </button>
       <button class="btn-error" id="btn-close">Cerrar</button>
     </div>
   </div>
@@ -91,68 +136,315 @@ require './templates/header.html';
 
   function transformType(value, object) {
     return object[value];
-  } 
+  }
+
+  let table;
 
   document.addEventListener("DOMContentLoaded", async () => {
     const param = new URLSearchParams(window.location.search);
-    const clienteId = param.get("clienteId")
+    const leasingId = param.get("leasingId");
+    const nroLeasing = param.get("nroLeasing");
+    const clienteId = param.get("clienteId");
     const contratoId = param.get("contratoId");
 
-    if (!contratoId || !clienteId) alert("No se encontraron los parametros necesarios")
+    if (!contratoId || !clienteId) {
+      toastr.warning("Faltan parametros obligatorios para realizar la consulta", "Advertencia");
+    }
 
     const textSpan = document.getElementById("parametroPintado");
     textSpan.innerHTML = contratoId;
 
-    const table = await getLeasings(contratoId, clienteId);
+    table = await getLeasings(contratoId, clienteId);
 
-    $("#listLeasing tbody").on("click", "tr", async function() {
+    if (leasingId && nroLeasing && clienteId && contratoId) {
+      const detailLeasing = await getDetailLeasing(leasingId, nroLeasing, clienteId, contratoId)
 
-      const data = table.row(this).data();
+      const fechaFin = convertirFecha(detailLeasing.fechaFin);
+      const diasVencer = obtenerDiasVencimiento(fechaFin);
+      const estado = obtenerEstado(fechaFin);
 
-      const detaiLeasing = await getDetailLeasing(data.nroLeasing);
+      // INPUTS DE DATOS
+      if (diasVencer > 0) {
+        $("#vence-result").val(`Faltan ${diasVencer} dias`);
+      } else if (diasVencer < 0) {
+        $("#vence-result").val(`Vencio hace ${Math.abs(diasVencer)} dias`);
+      } else {
+        $("#vence-result").val(`Vence hoy`);
+      }
 
-      $("#modal-body-info").append(`
-        <div class="info-document">
-          <div class="info-col">
-            <p>N° <b>${detaiLeasing.nroLeasing}</b></p>
-            <p>Inicio el <b>${convertirFecha(detaiLeasing.fechaInicio)}</b></p>
-            <p>Finaliza el <b>${convertirFecha(detaiLeasing.fechaInicio)}</b></p>
-            <p>Periodo de gracia de <b>${detaiLeasing.periGracia.toString()}</b> meses</p>
-            <p>Tipo <b>${detaiLeasing.tipo}</b></p>
-          </div>
-          <div class="info-col">
-            <div class="row-data">
-              <h3>Cantidad</h3>
-              <p>${detaiLeasing.cantVehi.toString()} veh.</p>
-            </div>
-            <div class="row-data">
-              <h3>Banco</h3>
-              <p>${transformType(detaiLeasing.banco, {
-                1: "BANBIF",
-                2: "BBVA",
-                3: "BCP",
-                4: "HSBC",
-                5: "INTERBANK",
-                6: "SCOTIABANK",
-                7: "TAIR",
-                8: "SANTANDER"
-              })}</p>
-            </div>
-            
-          </div>
-        </div>
-        <div class="info-description">
-          <h3>Descripcion</h3>
-          <p>${detaiLeasing.descripcion != "" ? detaiLeasing.descripcion.toString() : "Sin descripción"}</p>
-        </div>
-      `);
-      const modal = document.getElementById("modal-leasing");
-      modal.style.display = "flex";
+      $("#estado-result").val(estado);
+      $("#per-gra-result").val(`${detailLeasing.periGracia.toString()} meses`);
+
+      // CANTIDAD VEHICULOS
+      $("#vehicle-result").text(detailLeasing.cantVehi);
+      $("#assign-result").text(detailLeasing.cantAsign);
 
       $("#btn-leasing").off("click").on("click", () => {
-        window.open(detaiLeasing.archivoPdf, '_blank');
+        window.open(detailLeasing.archivoPdf, '_blank');
       })
+    }
+  })
+
+  $("#listLeasing tbody").on("click", "tr", async function(e) {
+    const data = table.row(this).data();
+
+    const param = new URLSearchParams(window.location.search);
+    const clienteId = param.get("clienteId");
+    const contratoId = param.get("contratoId");
+
+    param.set("nroLeasing", data.nroLeasing)
+    param.set("leasingId", data.id)
+
+    const nuevaURL = `${window.location.pathname}?${param.toString()}`;
+    window.history.replaceState({}, "", nuevaURL);
+
+    const detaiLeasing = await getDetailLeasing(data.id, data.nroLeasing, clienteId, contratoId);
+
+    const fechaFin = convertirFecha(detaiLeasing.fechaFin);
+    const diasVencer = obtenerDiasVencimiento(fechaFin);
+    const estado = obtenerEstado(fechaFin);
+
+    // INPUTS DE DATOS
+    if (diasVencer > 0) {
+      $("#vence-result").val(`Faltan ${diasVencer} dias`);
+    } else if (diasVencer < 0) {
+      $("#vence-result").val(`Vencio hace ${Math.abs(diasVencer)} dias`);
+    } else {
+      $("#vence-result").val(`Vence hoy`);
+    }
+
+    $("#estado-result").val(estado);
+    $("#per-gra-result").val(`${detaiLeasing.periGracia.toString()} meses`);
+
+    // CANTIDAD VEHICULOS
+    $("#vehicle-result").text(detaiLeasing.cantVehi);
+    $("#assign-result").text(detaiLeasing.cantAsign);
+
+    $("#btn-leasing").off("click").on("click", () => {
+      window.open(detaiLeasing.archivoPdf, '_blank');
     })
+  })
+
+  $("#view-vehicle").on("click", async () => {
+    const param = new URLSearchParams(window.location.search);
+    const leasingId = param.get("leasingId");
+
+    if (!leasingId) {
+      toastr.info("Debes seleccionar un leasing", "Aviso");
+      return;
+    }
+
+    const vehicles = await getVehByLeasing(leasingId);
+
+    $("#modal-body-info").append(`
+      <table id="listVeh" class="display">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Terreno</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Terreno</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
+          </tr>
+        </tfoot>
+      </table>
+    `);
+
+    $("#listVeh").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      select: true,
+      data: vehicles,
+      columns: [{
+          data: "item",
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "5%",
+        },
+        {
+          data: "placa",
+        },
+        {
+          data: "modelo",
+        },
+        {
+          data: "marca",
+        },
+        {
+          data: "terreno",
+        },
+        {
+          data: "cantidad",
+        },
+        {
+          data: "año",
+        },
+        {
+          data: "color",
+        },
+        {
+          data: "operacion",
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              return convertirFecha(data)
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              const fechaTsf = convertirFecha(data);
+              const dias = obtenerDiasVencimiento(fechaTsf);
+              switch (dias) {
+                case dias == 0:
+                  return `Hoy`
+                case dias > 0:
+                  return `${dias} dias`
+                case dias < 0:
+                  return `Hace ${dias} dias`
+                default:
+                  return `${dias} dias`
+              }
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "nroLeasing"
+        }
+      ],
+    })
+
+    const modal = document.getElementById("modal-leasing");
+    modal.style.display = "flex";
+  })
+
+  $("#view-assign").on("click", async () => {
+    const param = new URLSearchParams(window.location.search);
+    const nroLeasing = param.get("nroLeasing");
+    const clienteId = param.get("clienteId");
+    const contratoId = param.get("contratoId");
+
+    if (!nroLeasing) {
+      toastr.info("Debes seleccionar un leasing", "Aviso");
+      return;
+    }
+
+    const vehicles = await getAssignByLeasing(nroLeasing, clienteId, contratoId);
+
+    $("#modal-body-info").append(`
+      <table id="listVehAssign" class="display">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Terreno</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+            <th>Leasing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Terreno</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+            <th>Leasing</th>
+          </tr>
+        </tfoot>
+      </table>
+    `);
+
+    $("#listVehAssign").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      select: true,
+      data: vehicles,
+      columns: [{
+          data: "item",
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "5%",
+        },
+        {
+          data: "placa",
+        },
+        {
+          data: "modelo",
+        },
+        {
+          data: "marca",
+        },
+        {
+          data: "terreno",
+        },
+        {
+          data: "año",
+        },
+        {
+          data: "color",
+        },
+        {
+          data: "operacion",
+        },
+        {
+          data: "nroLeasing"
+        }
+      ],
+    })
+
+    const modal = document.getElementById("modal-leasing");
+    modal.style.display = "flex";
   })
 
   $("#btn-close").on("click", function() {

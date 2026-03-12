@@ -72,7 +72,7 @@ const getDetailLeasing = async (
   documentoId,
 ) => {
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/detailLeasing?leasingId=${leasingId.toString()}&nroLeasing=${nroLeasing.trim()}&clienteId=${clienteId.toString()}&documentoId=${documentoId.toString()}`,
+    `http://${IP_LOCAL}:3000/detailLeasing?leasingId=${leasingId.toString()}&nroLeasing=${nroLeasing.trim()}&clienteId=${clienteId.toString()}&contratoId=${documentoId.toString()}&tipoCont=H`,
     {
       method: "GET",
       credentials: "include",

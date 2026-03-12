@@ -1,9 +1,21 @@
-// const IP_LOCAL = "localhost";
+toastr.options = {
+  closeButton: false,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-bottom-right",
+  preventDuplicates: false,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "5000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
 
-/**
- * Método para traer la lista de documentos de un contrato especifico
- * @param contratoId Nro de contrato
- */
 const getLeasings = async (contratoId, clienteId) => {
   const response = await fetch(
     `http://${IP_LOCAL}:3000/leasingByContract?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
@@ -53,9 +65,46 @@ const getLeasings = async (contratoId, clienteId) => {
   return table;
 };
 
-const getDetailLeasing = async (leasingId) => {
+const getDetailLeasing = async (
+  leasingId,
+  nroLeasing,
+  clienteId,
+  contratoId,
+) => {
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/detailLeasing?leasingId=${leasingId.toString()}`,
+    `http://${IP_LOCAL}:3000/detailLeasing?leasingId=${leasingId.toString()}&nroLeasing=${nroLeasing.trim()}&clienteId=${clienteId.toString()}&contratoId=${contratoId.toString()}&tipoCont=P`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    toastr.error(data.message, "Oops...");
+  }
+
+  return data;
+};
+
+const getVehByLeasing = async (leasingId) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/vehiclesByLeasing?leasingId=${leasingId.toString()}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  return data;
+};
+
+const getAssignByLeasing = async (nroLeasing, clienteId, contratoId) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/assignByLeasing?nroLeasing=${nroLeasing}&clienteId=${clienteId}&contratoId=${contratoId}&tipoCont=P`,
     {
       method: "GET",
       credentials: "include",
@@ -72,4 +121,21 @@ function convertirFecha(fecha) {
   const mes = fecha.substring(4, 6);
   const dia = fecha.substring(6, 8);
   return `${anio}-${mes}-${dia}`;
+}
+
+function obtenerEstado(fechaFin) {
+  const fechaActual = new Date();
+  const fechaFinObj = new Date(fechaFin);
+  if (fechaFinObj >= fechaActual) {
+    return "Activo";
+  } else {
+    return "Finalizado";
+  }
+}
+
+function obtenerDiasVencimiento(fecha) {
+  const fechaFin = new Date(fecha);
+  const fechaActual = new Date(Date.now());
+  const diferenciaTiempo = fechaFin - fechaActual;
+  return Math.floor(diferenciaTiempo / (1000 * 60 * 60 * 24));
 }

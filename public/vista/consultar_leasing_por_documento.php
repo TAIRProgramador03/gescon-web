@@ -102,7 +102,7 @@ require './templates/header.html';
           </div>
         </div>
       </div>
-      <button class="btn-success" id="btn-document">
+      <button class="btn-success" id="btn-leasing">
         Ver leasing
         <i class="bi bi-file-earmark-arrow-down-fill"></i>
       </button>
@@ -178,6 +178,10 @@ require './templates/header.html';
       // CANTIDAD VEHICULOS
       $("#vehicle-result").text(detailLeasing.cantVehi);
       $("#assign-result").text(detailLeasing.cantAsign);
+
+      $("#btn-leasing").off("click").on("click", () => {
+      window.open(detailLeasing.archivoPdf, '_blank');
+    })
     }
   })
 

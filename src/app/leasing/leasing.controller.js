@@ -127,7 +127,7 @@ const listLeasingByContract = async (req, res) => {
 
   try {
     const sql = `
-      SELECT A.NRO_LEASING, A.CANT_VEH, A.FECHA_INI, A.FECHA_FIN, A.ID_CONTRATO, A.ID_CLIENTE
+      SELECT A.ID, A.NRO_LEASING, A.CANT_VEH, A.FECHA_INI, A.FECHA_FIN, A.ID_CONTRATO, A.ID_CLIENTE
       FROM ${SCHEMA_BD}.TBL_LEASING_CAB A 
       WHERE A.ID_CONTRATO = ? AND A.ID_CLIENTE = ? AND TIPCON = 'P'
     `;
@@ -135,6 +135,7 @@ const listLeasingByContract = async (req, res) => {
     const result = await cn.query(sql, [contratoId, clienteId]);
 
     const cleanedResult = result.map((row) => ({
+      id: row.ID,
       nroLeasing: row.NRO_LEASING ? row.NRO_LEASING.trim() : "",
       fechaInicio: row.FECHA_INI ? row.FECHA_INI.toString().trim() : "",
       fechaFin: row.FECHA_FIN ? row.FECHA_FIN.toString().trim() : "",
@@ -212,34 +213,50 @@ const detailLeasing = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
-  const { leasingId, nroLeasing, clienteId, documentoId } = req.query;
+  const { leasingId, nroLeasing, clienteId, contratoId, tipoCont } = req.query;
 
-  if (!leasingId || !nroLeasing || !clienteId || !documentoId)
+  if (!leasingId || !nroLeasing || !clienteId || !contratoId || !tipoCont)
     return res.status(400).json({
       success: false,
       message:
-        "Los parametros leasingId, nroLeasing, clienteId y documentoId son obligatorios",
+        "Los parametros leasingId, nroLeasing, clienteId, contratoId y tipoCont son obligatorios",
     });
 
   const cn = await connection(globalDbUser, globalPassword);
 
   try {
+    // const sql = `
+    //   SELECT L.ID, L.NRO_LEASING, L.BANCO, L.CANT_VEH, COUNT(A.ID) AS CANT_ASIGN , L.FECHA_INI, L.FECHA_FIN, L.PERIODO_GRACIA, L.PDF, L.DESCRIPCION, L.TIPCON
+    //   FROM ${SCHEMA_BD}.TBL_LEASING_CAB L
+    //   LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_DET A
+    //   ON L.NRO_LEASING = A.LEASING
+    //   LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_CAB AC
+    //   ON AC.ID = A.ID_ASIGNACION
+    //   WHERE L.ID = ? AND A.LEASING = ? AND AC.ID_CLIENTE = ? AND A.ID_CONTRATO = ? AND A.CLASE_CONTRATO = ?
+    //   GROUP BY L.ID, L.NRO_LEASING, L.BANCO, L.CANT_VEH, L.FECHA_INI, L.FECHA_FIN, L.PERIODO_GRACIA, L.PDF, L.DESCRIPCION, L.TIPCON
+    // `;
+
     const sql = `
-      SELECT L.ID, L.NRO_LEASING, L.BANCO, L.CANT_VEH, COUNT(A.ID) AS CANT_ASIGN , L.FECHA_INI, L.FECHA_FIN, L.PERIODO_GRACIA, L.PDF, L.DESCRIPCION, L.TIPCON
-      FROM ${SCHEMA_BD}.TBL_LEASING_CAB L
-      LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_DET A
+      SELECT L.ID, L.NRO_LEASING, L.BANCO, L.CANT_VEH, COUNT(A.ID) AS CANT_ASIGN, L.FECHA_INI, L.FECHA_FIN, L.PERIODO_GRACIA, L.PDF, L.DESCRIPCION, L.TIPCON
+      FROM SPEED400AT.TBL_LEASING_CAB L
+      LEFT JOIN (
+        SELECT A.ID, A.LEASING, AC.ID_CLIENTE, A.ID_CONTRATO, A.CLASE_CONTRATO
+        FROM SPEED400AT.TBL_ASIGNACION_DET A
+        LEFT JOIN SPEED400AT.TBL_ASIGNACION_CAB AC
+        ON AC.ID = A.ID_ASIGNACION
+        WHERE A.LEASING = ? AND AC.ID_CLIENTE = ? AND A.ID_CONTRATO = ? AND A.CLASE_CONTRATO = ?
+      ) A
       ON L.NRO_LEASING = A.LEASING
-      LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_CAB AC
-      ON AC.ID = A.ID_ASIGNACION
-      WHERE L.ID = ? AND A.LEASING = ? AND AC.ID_CLIENTE = ? AND A.ID_CONTRATO = ? AND A.CLASE_CONTRATO = 'H'
+      WHERE L.ID = ?
       GROUP BY L.ID, L.NRO_LEASING, L.BANCO, L.CANT_VEH, L.FECHA_INI, L.FECHA_FIN, L.PERIODO_GRACIA, L.PDF, L.DESCRIPCION, L.TIPCON
     `;
 
     const result = await cn.query(sql, [
-      leasingId,
       nroLeasing,
       clienteId,
-      documentoId,
+      contratoId,
+      tipoCont,
+      leasingId,
     ]);
 
     if (result.length == 0 || !result[0])
@@ -322,7 +339,7 @@ const detailVehByLeasing = async (req, res) => {
       color: row.COLOR.trim() ?? "",
       marca: row.MARCA.trim() ?? "",
       operacion: row.OPERACION.trim() ?? "",
-      fechaFin: row.FECHA_FIN.trim() ?? "",
+      fechaFin: row.FECHA_FIN ? row.FECHA_FIN.trim() : "",
       nroLeasing: row.NRO_LEASING.trim() ?? "",
     }));
 
@@ -353,7 +370,8 @@ const detailAssignByLeasing = async (req, res) => {
   if (!nroLeasing || !clienteId || !contratoId || !tipoCont)
     return res.status(400).json({
       success: false,
-      message: "Los parametros nroLeasing, clienteId, contratoId y tipoCont son obligatorios",
+      message:
+        "Los parametros nroLeasing, clienteId, contratoId y tipoCont son obligatorios",
     });
 
   const cn = await connection(globalDbUser, globalPassword);
@@ -375,7 +393,12 @@ const detailAssignByLeasing = async (req, res) => {
       WHERE  AD.LEASING = ? AND  AC.ID_CLIENTE = ? AND AD.ID_CONTRATO = ? AND CLASE_CONTRATO = ?
     `;
 
-    const result = await cn.query(sql, [nroLeasing, clienteId, contratoId, tipoCont])
+    const result = await cn.query(sql, [
+      nroLeasing,
+      clienteId,
+      contratoId,
+      tipoCont,
+    ]);
 
     const cleanedResult = result.map((row) => ({
       modelo: row.MODELO.trim() ?? "",
@@ -384,7 +407,7 @@ const detailAssignByLeasing = async (req, res) => {
         0: "SUPERFICIE",
         1: "SOCAVON",
         2: "CIUDAD",
-        3: "SEVERO"
+        3: "SEVERO",
       }),
       año: row.ANO,
       color: row.COLOR.trim() ?? "",
@@ -396,12 +419,10 @@ const detailAssignByLeasing = async (req, res) => {
     return res.status(200).json(cleanedResult);
   } catch (error) {
     console.error("Error al obtener asignaciones por leasing", error);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Error al obtener asignaciones por leasing",
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener asignaciones por leasing",
+    });
   } finally {
   }
 };

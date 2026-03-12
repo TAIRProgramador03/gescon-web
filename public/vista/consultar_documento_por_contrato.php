@@ -364,23 +364,31 @@ require './templates/header.html';
         {
           data: "fechaFin",
           render: function(data) {
-            return convertirFecha(data);
+            if (data) {
+              return convertirFecha(data);
+            } else {
+              return "--"
+            }
           }
         },
         {
           data: "fechaFin",
           render: function(data) {
-            const fechaTsf = convertirFecha(data);
-            const dias = obtenerDiasVencimiento(fechaTsf);
-            switch (dias) {
-              case dias == 0:
-                return `Hoy`
-              case dias > 0:
-                return `${dias} dias`
-              case dias < 0:
-                return `Hace ${dias} dias`
-              default:
-                return `${dias} dias`
+            if (data) {
+              const fechaTsf = convertirFecha(data);
+              const dias = obtenerDiasVencimiento(fechaTsf);
+              switch (dias) {
+                case dias == 0:
+                  return `Hoy`
+                case dias > 0:
+                  return `${dias} dias`
+                case dias < 0:
+                  return `Hace ${dias} dias`
+                default:
+                  return `${dias} dias`
+              }
+            } else {
+              return "--"
             }
           }
         },
@@ -479,23 +487,31 @@ require './templates/header.html';
         {
           data: "fechaFin",
           render: function(data) {
-            return convertirFecha(data);
+            if (data) {
+              return convertirFecha(data);
+            } else {
+              return "--"
+            }
           }
         },
         {
           data: "fechaFin",
           render: function(data) {
-            const fechaTsf = convertirFecha(data);
-            const dias = obtenerDiasVencimiento(fechaTsf);
-            switch (dias) {
-              case dias == 0:
-                return `Hoy`
-              case dias > 0:
-                return `${dias} dias`
-              case dias < 0:
-                return `Hace ${dias} dias`
-              default:
-                return `${dias} dias`
+            if (data) {
+              const fechaTsf = convertirFecha(data);
+              const dias = obtenerDiasVencimiento(fechaTsf);
+              switch (dias) {
+                case dias == 0:
+                  return `Hoy`
+                case dias > 0:
+                  return `${dias} dias`
+                case dias < 0:
+                  return `Hace ${dias} dias`
+                default:
+                  return `${dias} dias`
+              }
+            } else {
+              return "--"
             }
           }
         },
@@ -594,23 +610,31 @@ require './templates/header.html';
         {
           data: "fechaFin",
           render: function(data) {
-            return convertirFecha(data);
+            if (data) {
+              return convertirFecha(data);
+            } else {
+              return "--"
+            }
           }
         },
         {
           data: "fechaFin",
           render: function(data) {
-            const fechaTsf = convertirFecha(data);
-            const dias = obtenerDiasVencimiento(fechaTsf);
-            switch (dias) {
-              case dias == 0:
-                return `Hoy`
-              case dias > 0:
-                return `${dias} dias`
-              case dias < 0:
-                return `Hace ${dias} dias`
-              default:
-                return `${dias} dias`
+            if (data) {
+              const fechaTsf = convertirFecha(data);
+              const dias = obtenerDiasVencimiento(fechaTsf);
+              switch (dias) {
+                case dias == 0:
+                  return `Hoy`
+                case dias > 0:
+                  return `${dias} dias`
+                case dias < 0:
+                  return `Hace ${dias} dias`
+                default:
+                  return `${dias} dias`
+              }
+            } else {
+              return "--"
             }
           }
         },
@@ -709,23 +733,31 @@ require './templates/header.html';
         {
           data: "fechaFin",
           render: function(data) {
-            return convertirFecha(data);
+            if (data) {
+              return convertirFecha(data);
+            } else {
+              return "--"
+            }
           }
         },
         {
           data: "fechaFin",
           render: function(data) {
-            const fechaTsf = convertirFecha(data);
-            const dias = obtenerDiasVencimiento(fechaTsf);
-            switch (dias) {
-              case dias == 0:
-                return `Hoy`
-              case dias > 0:
-                return `${dias} dias`
-              case dias < 0:
-                return `Hace ${dias} dias`
-              default:
-                return `${dias} dias`
+            if (data) {
+              const fechaTsf = convertirFecha(data);
+              const dias = obtenerDiasVencimiento(fechaTsf);
+              switch (dias) {
+                case dias == 0:
+                  return `Hoy`
+                case dias > 0:
+                  return `${dias} dias`
+                case dias < 0:
+                  return `Hace ${dias} dias`
+                default:
+                  return `${dias} dias`
+              }
+            } else {
+              return "--"
             }
           }
         },

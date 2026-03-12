@@ -200,7 +200,7 @@ const detailVehByDocu = async (req, res) => {
       color: row.COLOR.trim() ?? "",
       marca: row.MARCA.trim() ?? "",
       operacion: row.OPERACION.trim() ?? "",
-      fechaFin: row.FECHA_FIN.trim() ?? "",
+      fechaFin: row.FECHA_FIN ? row.FECHA_FIN.trim() : "",
       nroLeasing: row.NRO_LEASING.trim() ?? ""
     }))
 

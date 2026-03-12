@@ -1,6 +1,6 @@
 const Router = require("express").Router();
 const authenticateToken = require("../../shared/middleware/jwt-valid.js");
-const { insertDocument, listDocumentByNroContract, detailDocument, detailVehByDocu } = require("./document.controller.js");
+const { insertDocument, listDocumentByNroContract, detailDocument, detailVehByDocu, detailVehByCont } = require("./document.controller.js");
 
 Router.get("/documentoPorContrato", authenticateToken, listDocumentByNroContract)
 Router.get("/detalleDocumento", authenticateToken, detailDocument)

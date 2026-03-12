@@ -291,6 +291,89 @@ const detailContract = async (req, res) => {
   }
 };
 
+const detailVehByCont = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { contratoId, tipoTerr } = req.query;
+
+  if (!contratoId)
+    return res.status(400).json({
+      success: false,
+      message: "El parametro contratoId es obligatorio",
+    });
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    const sqlLeasing = `
+      SELECT ID 
+      FROM ${SCHEMA_BD}.TBL_LEASING_CAB 
+      WHERE ID_CONTRATO = ? AND TIPCON = 'P'
+    `;
+
+    const resultLea = await cn.query(sqlLeasing, [contratoId])
+
+    if(resultLea.length == 0) return res.status(404).json({success: false, message: "Sin placas contratadas"});
+
+    const cleanLea = resultLea.map((row) => row.ID)
+
+    const placeHolders = resultLea.map(() => '?').join(",")
+
+    let sqlDetLea = `
+      SELECT L.MODELO, L.PLACA, L.CANTIDAD, V.ANO, V.COLOR, M.DESCRIPCION AS MARCA, O.DESCRIPCION AS OPERACION, A.FECHA_FIN, LC.NRO_LEASING
+      FROM ${SCHEMA_BD}.TBL_LEASING_DET L
+      LEFT JOIN ${SCHEMA_BD}.PO_VEHICULO V
+      ON L.ID_VEH = V.ID
+      LEFT JOIN ${SCHEMA_BD}.PO_MARCA M
+      ON V.IDMAR = M.ID
+      LEFT JOIN ${SCHEMA_BD}.PO_OPERACIONES O
+      ON V.IDOPE = O.ID
+      LEFT JOIN ${SCHEMA_BD}.TBL_ASIGNACION_DET A
+      ON L.PLACA = A.PLACA
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
+      ON LC.ID = L.ID_LEA_CAB
+      WHERE ID_LEA_CAB IN (${placeHolders})
+    `;
+
+    const params = [...cleanLea]
+
+    if(tipoTerr) {
+      sqlDetLea += ` AND TIPO_TERRENO = ?`
+      params.push(tipoTerr.toUpperCase())
+    }
+
+    const resultDet = await cn.query(sqlDetLea, params)
+
+    if(resultDet.length == 0) return res.status(404).json({success: false, message: "Sin placas encontradas"});
+    
+    const cleanedResult = resultDet.map((row) => ({
+      modelo: row.MODELO.trim() ?? "",
+      placa: row.PLACA.trim() ?? "",
+      cantidad: row.CANTIDAD,
+      año: row.ANO,
+      color: row.COLOR.trim() ?? "",
+      marca: row.MARCA.trim() ?? "",
+      operacion: row.OPERACION.trim() ?? "",
+      fechaFin: row.FECHA_FIN ? row.FECHA_FIN.trim() : "",
+      nroLeasing: row.NRO_LEASING.trim() ?? ""
+    }))
+
+    return res.status(200).json(cleanedResult)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({success: false, message: "Error al obtener placas por documento"})
+  } finally {
+    if(cn) await cn.close();
+  }
+};
+
 const contContract = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
 
@@ -618,6 +701,7 @@ module.exports = {
   contractNroAdi,
   tableContract,
   detailContract,
+  detailVehByCont,
   contContract,
   contClient,
   insertContract,

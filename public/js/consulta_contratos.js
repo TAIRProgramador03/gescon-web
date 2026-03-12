@@ -5,13 +5,31 @@
 //   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
 // });
 
+toastr.options = {
+  closeButton: false,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-bottom-right",
+  preventDuplicates: false,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "5000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
+
 $(document).ready(async function () {
   await cargarClientes();
   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
 
   const params = new URLSearchParams(window.location.search);
   const idClient = params.get("clienteId");
-  const idContract = params.get("contratoId")
+  const idContract = params.get("contratoId");
 
   $("#combo-box").select2({
     placeholder: "Seleccione un cliente",
@@ -29,9 +47,9 @@ $(document).ready(async function () {
     await cargarContrato(idClient);
     await cargarTablacliente(idClient);
 
-    if(idContract) {
-    await cargarDatosContrato(idContract, idClient)
-  }
+    if (idContract) {
+      await cargarDatosContrato(idContract, idClient);
+    }
   }
 });
 
@@ -48,8 +66,8 @@ $("#combo-box").on("select2:select", async function (e) {
 
 $("#combo-contrato").on("select2:select", async function (e) {
   const params = new URLSearchParams(window.location.search);
-  params.delete("contratoId")
-  window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+  params.delete("contratoId");
+  window.history.replaceState({}, "", `${window.location.pathname}?${params}`);
 
   await cargarTablacontrato(e.params.data.id);
 });
@@ -303,19 +321,19 @@ async function cargarDatosContrato(contratoId, clienteId) {
 
     // Aquí asignamos los valores de los vehículos a los campos correspondientes
     document.getElementById("txt-sev").textContent =
-      data.data.vehiculoSev || "0";
+      data.data.cantidadLeasing > 0 ? data.data.vehiculoSev : "0";
     document.getElementById("txt-soc").textContent =
-      data.data.vehiculoSoc || "0";
+      data.data.cantidadLeasing > 0 ? data.data.vehiculoSoc : "0";
     document.getElementById("txt-sup").textContent =
-      data.data.vehiculoSup || "0";
+      data.data.cantidadLeasing > 0 ? data.data.vehiculoSup : "0";
     document.getElementById("txt-ciu").textContent =
-      data.data.vehiculoCiu || "0";
+      data.data.cantidadLeasing > 0 ? data.data.vehiculoCiu : "0";
     document.getElementById("txt-aso").textContent =
       data.data.cantidadDocumentos || "0"; // Asignar texto al div
     document.getElementById("txt-leas").textContent =
       data.data.cantidadLeasing || "0"; // Asignar texto al div
     document.getElementById("txt-vehic").textContent =
-      data.data.cantidadVehiculos || "0";
+      data.data.cantidadLeasing > 0 ? data.data.cantidadVehiculos : "0";
     document.getElementById("txt-assign").textContent =
       data.data.cantidadAsignados || "0";
   } catch (error) {
@@ -351,10 +369,10 @@ document
 
       // MOSTRAMOS EL PARAMETRO EN LA URL
       const params = new URLSearchParams(window.location.search);
-      const clienteId = params.get("clienteId")
+      const clienteId = params.get("clienteId");
       params.set("contratoId", contratoId);
 
-      if(!clienteId) return;
+      if (!clienteId) return;
 
       const nuevaURL = `${window.location.pathname}?${params.toString()}`;
       window.history.replaceState({}, "", nuevaURL);
@@ -394,19 +412,19 @@ document
 
         // Aquí asignamos los valores de los vehículos a los campos correspondientes
         document.getElementById("txt-sev").textContent =
-          data.data.vehiculoSev || "0";
+          data.data.cantidadLeasing > 0 ? data.data.vehiculoSev : "0";
         document.getElementById("txt-soc").textContent =
-          data.data.vehiculoSoc || "0";
+          data.data.cantidadLeasing > 0 ? data.data.vehiculoSoc : "0";
         document.getElementById("txt-sup").textContent =
-          data.data.vehiculoSup || "0";
+          data.data.cantidadLeasing > 0 ? data.data.vehiculoSup : "0";
         document.getElementById("txt-ciu").textContent =
-          data.data.vehiculoCiu || "0";
+          data.data.cantidadLeasing > 0 ? data.data.vehiculoCiu : "0";
         document.getElementById("txt-aso").textContent =
           data.data.cantidadDocumentos || "0"; // Asignar texto al div
         document.getElementById("txt-leas").textContent =
           data.data.cantidadLeasing || "0"; // Asignar texto al div
         document.getElementById("txt-vehic").textContent =
-          data.data.cantidadVehiculos || "0";
+          data.data.cantidadLeasing > 0 ? data.data.cantidadVehiculos : "0";
         document.getElementById("txt-assign").textContent =
           data.data.cantidadAsignados || "0";
       } catch (error) {
@@ -414,6 +432,51 @@ document
       }
     }
   });
+
+// Función para obtener el estado del contrato según la fecha de fin
+function obtenerEstado(fechaFin) {
+  const fechaActual = new Date();
+  const fechaFinObj = new Date(fechaFin);
+  if (fechaFinObj >= fechaActual) {
+    return "Activo";
+  } else {
+    return "Finalizado";
+  }
+}
+
+function limpiarCampos() {
+  limpia();
+
+  document.querySelector(".tabla-form table tbody").innerHTML = `
+        <tr>
+            <td colspan="5">Seleccione un cliente para ver los contratos</td>
+        </tr>
+    `;
+
+  const comboBox = document.getElementById("combo-box");
+  comboBox.value = ""; // Restablece el valor al predeterminado
+
+  const comboBox2 = document.getElementById("combo-contrato");
+  comboBox2.value = ""; // Restablece el valor al predeterminado
+}
+
+const getVehByContract = async (contratoId, tipoTerr) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/placasPorContrato?contratoId=${contratoId.toString()}${tipoTerr ? `&tipoTerr=${tipoTerr}` : ""}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    toastr.info(data.message, "Aviso");
+  }
+
+  return data;
+};
 
 // Función para convertir la fecha yyyymmdd a yyyy-mm-dd
 function convertirFecha(fecha) {
@@ -476,29 +539,9 @@ function calcularFechaFin(fechaInicio, duracionMeses) {
   //fili
 }
 
-// Función para obtener el estado del contrato según la fecha de fin
-function obtenerEstado(fechaFin) {
-  const fechaActual = new Date();
-  const fechaFinObj = new Date(fechaFin);
-  if (fechaFinObj >= fechaActual) {
-    return "Activo";
-  } else {
-    return "Finalizado";
-  }
-}
-
-function limpiarCampos() {
-  limpia();
-
-  document.querySelector(".tabla-form table tbody").innerHTML = `
-        <tr>
-            <td colspan="5">Seleccione un cliente para ver los contratos</td>
-        </tr>
-    `;
-
-  const comboBox = document.getElementById("combo-box");
-  comboBox.value = ""; // Restablece el valor al predeterminado
-
-  const comboBox2 = document.getElementById("combo-contrato");
-  comboBox2.value = ""; // Restablece el valor al predeterminado
+function obtenerDiasVencimiento(fecha) {
+  const fechaActual = new Date(Date.now());
+  const fechaFin = new Date(fecha);
+  const diferenciaTiempo = Math.abs(fechaFin - fechaActual);
+  return Math.floor(diferenciaTiempo / (1000 * 60 * 60 * 24));
 }

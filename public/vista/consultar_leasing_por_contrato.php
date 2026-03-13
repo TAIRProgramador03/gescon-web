@@ -183,9 +183,16 @@ require './templates/header.html';
         window.open(detailLeasing.archivoPdf, '_blank');
       })
     }
+
+    table.on("page.dt", () => {
+      $('tr').removeClass("selected-row");
+    })
   })
 
   $("#listLeasing tbody").on("click", "tr", async function(e) {
+    $('tr').removeClass("selected-row");
+
+    $(this).addClass("selected-row");
     const data = table.row(this).data();
 
     const param = new URLSearchParams(window.location.search);
@@ -330,9 +337,9 @@ require './templates/header.html';
             if (data) {
               const fechaTsf = convertirFecha(data);
               const dias = obtenerDiasVencimiento(fechaTsf);
-              if(dias > 0) {
+              if (dias > 0) {
                 return `${dias} dias`
-              } else if(dias < 0) {
+              } else if (dias < 0) {
                 return `Hace ${Math.abs(dias)} dias`
               } else {
                 return `Vence hoy`

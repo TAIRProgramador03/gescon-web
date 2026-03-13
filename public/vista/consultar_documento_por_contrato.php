@@ -239,6 +239,9 @@ require './templates/header.html';
     }
 
     $("#listDocuments tbody").on("click", "tr", async function() {
+      $('tr').removeClass("selected-row");
+
+      $(this).addClass("selected-row");
 
       const data = table.row(this).data();
 
@@ -275,6 +278,10 @@ require './templates/header.html';
       $("#btn-document").off("click").on("click", () => {
         window.open(detailDocument.archivoPdf, '_blank');
       })
+    })
+
+    table.on("page.dt", () => {
+      $('tr').removeClass("selected-row");
     })
   })
 

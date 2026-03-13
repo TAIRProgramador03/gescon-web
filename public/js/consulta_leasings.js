@@ -63,7 +63,7 @@ function convertirFecha(fecha) {
   const anio = fecha.substring(0, 4);
   const mes = fecha.substring(4, 6);
   const dia = fecha.substring(6, 8);
-  return `${dia}/${mes}/${anio}`;
+  return `${anio}-${mes}-${dia}`;
 }
 
 function transformType(value, object) {

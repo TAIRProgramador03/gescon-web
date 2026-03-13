@@ -273,7 +273,7 @@ require './templates/header.html';
           data: "fechaIni",
           render: (data) => {
             if (data) {
-              return convertirFecha(data.toString());
+              return convertirFecha(data.toString())
             } else {
               return "--";
             }
@@ -283,7 +283,7 @@ require './templates/header.html';
           data: "fechaFin",
           render: (data) => {
             if (data) {
-              return convertirFecha(data.toString());
+              return convertirFecha(data.toString())
             } else {
               return "--";
             }
@@ -318,6 +318,10 @@ require './templates/header.html';
           }
         },
       ],
+    })
+
+    table.on("page.dt", () => {
+      $('tr').removeClass("selected-row");
     })
   })
 
@@ -408,7 +412,7 @@ require './templates/header.html';
           data: "fechaFin",
           render: function(data) {
             if (data) {
-              return convertirFecha(data)
+              return convertirFecha(data.toString())
             } else {
               return "--"
             }

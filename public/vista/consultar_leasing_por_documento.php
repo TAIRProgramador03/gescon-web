@@ -180,12 +180,16 @@ require './templates/header.html';
       $("#assign-result").text(detailLeasing.cantAsign);
 
       $("#btn-leasing").off("click").on("click", () => {
-      window.open(detailLeasing.archivoPdf, '_blank');
-    })
+        window.open(detailLeasing.archivoPdf, '_blank');
+      })
     }
   })
 
   $("#listLeasing tbody").on("click", "tr", async function(e) {
+    $('tr').removeClass("selected-row");
+
+    $(this).addClass("selected-row");
+    
     const data = table.row(this).data();
 
     const param = new URLSearchParams(window.location.search);
@@ -222,6 +226,10 @@ require './templates/header.html';
 
     $("#btn-leasing").off("click").on("click", () => {
       window.open(detaiLeasing.archivoPdf, '_blank');
+    })
+
+    table.on("page.dt", () => {
+      $('tr').removeClass("selected-row");
     })
   })
 
@@ -325,13 +333,13 @@ require './templates/header.html';
           render: function(data) {
             const fechaTsf = convertirFecha(data);
             const dias = obtenerDiasVencimiento(fechaTsf);
-            if(dias > 0) {
-                return `${dias} dias`
-              } else if(dias < 0) {
-                return `Hace ${Math.abs(dias)} dias`
-              } else {
-                return `Vence hoy`
-              }
+            if (dias > 0) {
+              return `${dias} dias`
+            } else if (dias < 0) {
+              return `Hace ${Math.abs(dias)} dias`
+            } else {
+              return `Vence hoy`
+            }
           }
         },
         {

@@ -40,22 +40,25 @@ require './templates/header.html';
     <p>¡Cargando!.....</p>
   </div>
 </div>
+
 <main>
   <div class="contenedor">
     <div class="form-col-1 contenedor-col-1">
       <div class="tittle-form-col">
         <h3>Administracion de Contratos</h3>
       </div>
-      <div class="cbo-form-col">
-        <label for="combo-box">Seleccione el Cliente:</label>
-        <select id="combo-box" name="opciones" class="cbo-form-cliente"></select>
-      </div>
-      <div class="cbo-form-col">
-        <label for="combo-contrato">Seleccione el Contrato:</label>
-        <select id="combo-contrato" name="opciones" class="cbo-form-cliente"></select>
+      <div class="cbo-row">
+        <div class="cbo-form-col">
+          <label for="combo-box">Seleccione el Cliente:</label>
+          <select id="combo-box" name="opciones" class="cbo-form-cliente"></select>
+        </div>
+        <div class="cbo-form-col">
+          <label for="combo-contrato">Seleccione el Contrato:</label>
+          <select id="combo-contrato" name="opciones" class="cbo-form-cliente"></select>
+        </div>
       </div>
       <div class="tabla-form">
-        <table>
+        <table id="listContracts" class="display">
           <thead>
             <tr>
               <th>Item</th>
@@ -65,16 +68,24 @@ require './templates/header.html';
               <th>Cant total</th>
             </tr>
           </thead>
-          <tbody id="contratos-tbody">
+          <tbody>
             <tr>
-              <td colspan="5">Seleccione un cliente para ver los contratos</td>
             </tr>
           </tbody>
+          <tfoot>
+            <tr>
+              <th>Item</th>
+              <th>N° contrato</th>
+              <th>Fecha Firma</th>
+              <th>Periodo</th>
+              <th>Cant total</th>
+            </tr>
+          </tfoot>
         </table>
       </div>
-      <div class="cbo-form-col">
-        <label for="combo-box area-text">Descripcion:</label>
-        <textarea id="story" name="story" rows="2" cols="70" style="resize: none;" placeholder="" disabled></textarea>
+      <div class="txt-description">
+        <label for="combo-box area-text">Descripcion</label>
+        <textarea id="story" name="story" readonly></textarea>
       </div>
       <div class="salio-form"> <!--text-form-col-->
         <button class="add-action" onclick="registrarContrato()">
@@ -175,9 +186,9 @@ require './templates/header.html';
             <div class="tda can-form"><i class="fa fa fa-book" style="color: #0e2e67;"></i><span id="txt-leas">0</span></div>
           </div>
           <div class="card terreno-form doc-form" id="href-query-veh">
-            <div class="tda tti-form nom-tp">Veh. Detallados</div>
+            <div class="tda tti-form nom-tp">N° Vehiculos</div>
             <hr>
-            <div class="tda can-form"><i class="fa fa-cars" style="color: #0e2e67;"></i><span id="txt-vehic">0</span></div>
+            <div class="tda can-form"><i class="fa-solid fa-car" style="color: #0e2e67;"></i><span id="txt-vehic">0</span></div>
           </div>
           <div class="card terreno-form doc-form" id="href-query-assign">
             <div class="tda tti-form nom-tp">Veh. Asignados</div>
@@ -205,6 +216,7 @@ require './templates/header.html';
     </div>
   </div>
 </main>
+
 <div id="modal-documents">
   <div class="modal-container">
     <div class="modal-header">
@@ -229,6 +241,194 @@ require './templates/header.html';
     }, 2000);
   };
 
+  let table;
+
+  $(document).on('DOMContentLoaded', async function() {
+    await cargarClientes();
+    document.getElementById("btnClear").addEventListener("click", limpiarCampos);
+
+    const params = new URLSearchParams(window.location.search);
+    const idClient = params.get("clienteId");
+    const idContract = params.get("contratoId");
+
+    table = $("#listContracts").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      data: [],
+      columns: [{
+          data: "item",
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "5%",
+        },
+        {
+          data: "DESCRIPCION",
+          render: function(data) {
+            return `${data}`;
+          },
+        },
+        {
+          data: "FECHACREA",
+          render: function(data) {
+            if (data) {
+              return convertirFecha(data);
+            } else {
+              return `--`
+            }
+          },
+        },
+        {
+          data: "DURACION",
+          render: function(data) {
+            return `${data} meses`;
+          },
+        },
+        {
+          data: "TOTVEH",
+          render: function(data) {
+            return `${data} und.`;
+          },
+        },
+      ],
+    });
+
+    $("#combo-box").select2({
+      placeholder: "Seleccione un cliente",
+      allowClear: false, // Desactiva la "X"
+    });
+
+    $("#combo-contrato").select2({
+      placeholder: "Seleccione un contrato",
+      allowClear: false, // Desactiva la "X"
+    });
+
+    if (idClient) {
+      $("#combo-box").val(`${idClient}`).trigger("change");
+
+      const contracts = await getContracts(idClient);
+
+      await cargarContrato(idClient);
+
+      table.clear();
+      table.rows.add(contracts);
+      table.draw();
+
+      if (idContract) {
+        await cargarDatosContrato(idContract, idClient);
+      }
+    }
+
+    table.on("page.dt", () => {
+      $('tr').removeClass("selected-row");
+    })
+  });
+
+  $("#combo-box").on("select2:select", async function(e) {
+    limpia();
+
+    const params = new URLSearchParams(window.location.search);
+    params.set("clienteId", e.params.data.id);
+    params.delete("contratoId")
+
+    const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", nuevaURL);
+
+    await cargarContrato(e.params.data.id);
+
+    const contracts = await getContracts(e.params.data.id);
+
+    table.clear();
+    table.rows.add(contracts);
+    table.draw();
+  });
+
+  $("#combo-contrato").on("select2:select", async function(e) {
+    const params = new URLSearchParams(window.location.search);
+    params.delete("contratoId");
+    window.history.replaceState({}, "", `${window.location.pathname}?${params}`);
+    
+    const contracts = await cargarTablacontrato(e.params.data.id)
+
+    table.clear();
+    table.rows.add(contracts);
+    table.draw();;
+  })
+
+  $("#listContracts tbody")
+    .on("click", "tr", async function(e) {
+      $('tr').removeClass("selected-row");
+
+      $(this).addClass("selected-row");
+
+      const data = table.row(this).data();
+
+      const contratoId = data.ID;
+
+      const params = new URLSearchParams(window.location.search);
+      params.set("contratoId", contratoId);
+
+      const clienteId = params.get("clienteId");
+
+      if (!clienteId) return;
+
+      const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, "", nuevaURL);
+
+      // Realizar la solicitud AJAX al backend para obtener los detalles del contrato
+      try {
+        const response = await fetch(
+          `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}&clienteId=${clienteId}`, {
+            method: "GET",
+            credentials: "include", // Asegura que las cookies se envíen con la solicitud
+          },
+        );
+        const data = await response.json();
+
+        if (!data.success) {
+          console.error("Error al obtener los detalles del contrato");
+          return;
+        }
+
+        // Asignar valores a los campos de entrada con los datos obtenidos
+        const fechaFirma = data.data.fechaFirma; // Se espera en formato yyyymmdd
+
+        // Convertir fecha firma a formato yyyy-mm-dd
+        const fechaInicio = convertirFecha(fechaFirma);
+        document.getElementById("text-inicio").value = fechaInicio; // Asignar FECHA_FIRMA
+
+        // Calcular fecha de fin
+        const fechaFin = calcularFechaFin(fechaInicio, data.data.duracion);
+        console.log(fechaFin);
+        document.getElementById("text-fin").value = fechaFin; // Asignar fecha de fin
+
+        const estado = obtenerEstado(fechaFin);
+        document.getElementById("text-estado").value = estado; // Asignar DESCRIPCION
+        // Establecer el estado según la fecha actual y la fecha de fin
+        document.getElementById("story").value = data.data.descripcion; // Asignar estado
+
+        // Aquí asignamos los valores de los vehículos a los campos correspondientes
+        document.getElementById("txt-sev").textContent =
+          data.data.cantidadLeasing > 0 ? data.data.vehiculoSev : "0";
+        document.getElementById("txt-soc").textContent =
+          data.data.cantidadLeasing > 0 ? data.data.vehiculoSoc : "0";
+        document.getElementById("txt-sup").textContent =
+          data.data.cantidadLeasing > 0 ? data.data.vehiculoSup : "0";
+        document.getElementById("txt-ciu").textContent =
+          data.data.cantidadLeasing > 0 ? data.data.vehiculoCiu : "0";
+        document.getElementById("txt-aso").textContent =
+          data.data.cantidadDocumentos || "0"; // Asignar texto al div
+        document.getElementById("txt-leas").textContent =
+          data.data.cantidadLeasing || "0"; // Asignar texto al div
+        document.getElementById("txt-vehic").textContent =
+          data.data.cantidadLeasing > 0 ? data.data.cantidadVehiculos : "0";
+        document.getElementById("txt-assign").textContent =
+          data.data.cantidadAsignados || "0";
+      } catch (error) {
+        console.error("Error al obtener los datos del contrato:", error);
+      }
+    });
 
   function registrarContrato() {
     window.location = 'registrar_contratos.php';
@@ -388,9 +588,9 @@ require './templates/header.html';
             if (data) {
               const fechaTsf = convertirFecha(data);
               const dias = obtenerDiasVencimiento(fechaTsf);
-              if(dias > 0) {
+              if (dias > 0) {
                 return `${dias} dias`
-              } else if(dias < 0) {
+              } else if (dias < 0) {
                 return `Hace ${Math.abs(dias)} dias`
               } else {
                 return `Vence hoy`
@@ -519,9 +719,9 @@ require './templates/header.html';
             if (data) {
               const fechaTsf = convertirFecha(data);
               const dias = obtenerDiasVencimiento(fechaTsf);
-              if(dias > 0) {
+              if (dias > 0) {
                 return `${dias} dias`
-              } else if(dias < 0) {
+              } else if (dias < 0) {
                 return `Hace ${Math.abs(dias)} dias`
               } else {
                 return `Vence hoy`
@@ -644,9 +844,9 @@ require './templates/header.html';
             if (data) {
               const fechaTsf = convertirFecha(data);
               const dias = obtenerDiasVencimiento(fechaTsf);
-              if(dias > 0) {
+              if (dias > 0) {
                 return `${dias} dias`
-              } else if(dias < 0) {
+              } else if (dias < 0) {
                 return `Hace ${Math.abs(dias)} dias`
               } else {
                 return `Vence hoy`
@@ -769,9 +969,9 @@ require './templates/header.html';
             if (data) {
               const fechaTsf = convertirFecha(data);
               const dias = obtenerDiasVencimiento(fechaTsf);
-              if(dias > 0) {
+              if (dias > 0) {
                 return `${dias} dias`
-              } else if(dias < 0) {
+              } else if (dias < 0) {
                 return `Hace ${Math.abs(dias)} dias`
               } else {
                 return `Vence hoy`
@@ -894,9 +1094,9 @@ require './templates/header.html';
             if (data) {
               const fechaTsf = convertirFecha(data);
               const dias = obtenerDiasVencimiento(fechaTsf);
-              if(dias > 0) {
+              if (dias > 0) {
                 return `${dias} dias`
-              } else if(dias < 0) {
+              } else if (dias < 0) {
                 return `Hace ${Math.abs(dias)} dias`
               } else {
                 return `Vence hoy`

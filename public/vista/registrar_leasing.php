@@ -2,6 +2,9 @@
 require './templates/header.html';
 ?>
 
+<!-- JQUERY -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <!-- ESTILOS -->
 <style>
     <?php include '../css/views/register_leasing.css'; ?>

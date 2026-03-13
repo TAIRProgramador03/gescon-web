@@ -23,7 +23,7 @@ const login = async (req, res) => {
     const token = jwt.sign(
       payload,
       process.env.SECRET_KEY || "3c0FNs1Md90ueIaYmaAZAC75TM1MD77l2JeffvxQY6w",
-      { expiresIn: "3h", algorithm: "HS256" },
+      { expiresIn: "24h", algorithm: "HS256" },
     );
 
     // Configura la cookie con el token JWT
@@ -32,7 +32,7 @@ const login = async (req, res) => {
       secure: false,
       sameSite: "strict",
       path: "/",
-      maxAge: 3 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
     });
     res.json({ success: true, message: "Conexión exitosa" });
   } catch (error) {
@@ -47,12 +47,7 @@ const login = async (req, res) => {
 
 const logout = async (_req, res) => {
   // Limpiamos la cookie eliminando el token JWT
-  res.clearCookie("access_token", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    path: "/",
-  });
+  res.clearCookie("access_token");
   res.json({ success: true, message: "Cierre de sesión exitoso" });
 };
 

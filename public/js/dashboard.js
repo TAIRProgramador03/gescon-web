@@ -1,4 +1,20 @@
-// const IP_LOCAL = 'localhost';
+toastr.options = {
+  closeButton: false,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-bottom-right",
+  preventDuplicates: false,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "5000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarContContrato();
@@ -151,6 +167,6 @@ async function cargarTablaconVehiculo() {
     });
   } catch (error) {
     console.error("Error al obtener los datos:", error);
-    alert("Error al obtener los datos. Inténtelo de nuevo más tarde.");
+    toastr.error("Error al obtener datos de dashboard", "Oops...")
   }
 }

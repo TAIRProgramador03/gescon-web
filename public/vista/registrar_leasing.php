@@ -20,7 +20,7 @@ require './templates/header.html';
     </div>
 </div>
 <div id="notification" class="hidden"></div>
-<main>
+<main class="main-register">
     <div class="contenedor">
         <div class="regis-form-leasing">
             <div class="leasing-tittle">

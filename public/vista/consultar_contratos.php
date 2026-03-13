@@ -41,7 +41,7 @@ require './templates/header.html';
   </div>
 </div>
 
-<main>
+<main class="main-query">
   <div class="contenedor">
     <div class="form-col-1 contenedor-col-1">
       <div class="tittle-form-col">

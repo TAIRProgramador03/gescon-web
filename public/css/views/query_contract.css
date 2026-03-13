@@ -13,7 +13,7 @@ body {
   /* color: #b2b2bb; */
 }
 
-main {
+.main-query {
   align-content: center;
 }
 
@@ -21,8 +21,6 @@ main {
   width: 100%;
   max-width: 1234px;
   margin: auto;
-  padding: 40px 0;
-
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 20px;

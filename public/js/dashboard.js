@@ -136,37 +136,12 @@ function actualizarGrafico(labels, data) {
 }
 
 async function cargarTablaconVehiculo() {
-  try {
-    // Realiza una solicitud al servidor para obtener los contratos del cliente
-    const response = await fetch(`http://${IP_LOCAL}:3000/tablaconVehiculo`, {
-      credentials: "include", // Asegura que las cookies se envíen con la solicitud
-    });
-    const conVehi = await response.json();
+  
+  const response = await fetch(`http://${IP_LOCAL}:3000/tablaconVehiculo`, {
+    credentials: "include",
+  });
 
-    // Verifica si hay contratos disponibles
-    if (conVehi.length === 0) {
-      document.querySelector(".tabla-form table tbody").innerHTML = `
-                    <tr>
-                        <td colspan="3">No hay contratos disponibles para este cliente</td>
-                    </tr>
-                `;
-      return;
-    }
-    // Llena la tabla con los datos de los contratos
-    const tbody = document.querySelector(".tabla-formu table tbody");
-    tbody.innerHTML = ""; // Limpia las filas existentes
-    conVehi.forEach((tablaVehiculo, index) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-                    <td>${index + 1}</td> <!-- Número de ítem -->
-                    <td>${tablaVehiculo.MODELO}</td> <!-- Número de contrato -->
-                    <td>${"$ " + tablaVehiculo.PRECIO_VEH || "Sin periodo"
-        }</td> <!-- Periodo -->
-                `;
-      tbody.appendChild(row);
-    });
-  } catch (error) {
-    console.error("Error al obtener los datos:", error);
-    toastr.error("Error al obtener datos de dashboard", "Oops...")
-  }
+  const conVehi = await response.json();
+
+  return conVehi;
 }

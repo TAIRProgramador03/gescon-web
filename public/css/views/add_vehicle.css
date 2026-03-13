@@ -1,10 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
-
-main {
+.main-register {
   align-content: center;
   justify-items: center;
   color: #000;
-  font-family: "Montserrat", serif;
+  font-family: "Fredoka Variable", serif;
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -65,7 +63,7 @@ table {
   width: 100%; /* La tabla debe ocupar todo el ancho disponible */
   table-layout: fixed; /* Permite que la tabla tenga un diseño fijo y se adapte mejor al tamaño */
   color: #000;
-  font-family: "Montserrat", serif;
+  font-family: "Fredoka Variable", serif;
   font-size: 13px;
 }
 
@@ -79,12 +77,12 @@ td {
 th {
   color: white;
   background-color: #0e2e67;
-  font-family: "Montserrat", serif;
+  font-family: "Fredoka Variable", serif;
   font-size: 12px;
 }
 
 td {
-  font-family: "Montserrat", serif;
+  font-family: "Fredoka Variable", serif;
   font-size: 12px;
 }
 
@@ -325,7 +323,7 @@ td td:nth-child(1) input {
   color: #fff;
   height: 35px;
   width: 100px;
-  font-family: "Montserrat", serif;
+  font-family: "Fredoka Variable", serif;
   font-optical-sizing: auto;
   font-size: 12px;
   /* font-weight: <weight>; */

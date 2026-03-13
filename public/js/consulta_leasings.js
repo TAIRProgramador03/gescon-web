@@ -11,6 +11,20 @@ const getLeasings = async (bank, clientId, contractId, typeContract) => {
   return data;
 };
 
+const getVehByLeasing = async (leasingId) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/vehiclesByLeasing?leasingId=${leasingId.toString()}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  return data;
+};
+
 const getClients = async () => {
   const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
     credentials: 'include'
@@ -49,9 +63,16 @@ function convertirFecha(fecha) {
   const anio = fecha.substring(0, 4);
   const mes = fecha.substring(4, 6);
   const dia = fecha.substring(6, 8);
-  return `${anio}-${mes}-${dia}`;
+  return `${dia}/${mes}/${anio}`;
 }
 
 function transformType(value, object) {
   return object[value];
+}
+
+function obtenerDiasVencimiento(fecha) {
+  const fechaActual = new Date(Date.now());
+  const fechaFin = new Date(fecha);
+  const diferenciaTiempo = fechaFin - fechaActual;
+  return Math.floor(diferenciaTiempo / (1000 * 60 * 60 * 24));
 }

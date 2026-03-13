@@ -542,6 +542,6 @@ function calcularFechaFin(fechaInicio, duracionMeses) {
 function obtenerDiasVencimiento(fecha) {
   const fechaActual = new Date(Date.now());
   const fechaFin = new Date(fecha);
-  const diferenciaTiempo = Math.abs(fechaFin - fechaActual);
+  const diferenciaTiempo = fechaFin - fechaActual;
   return Math.floor(diferenciaTiempo / (1000 * 60 * 60 * 24));
 }

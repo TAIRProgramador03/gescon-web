@@ -50,11 +50,13 @@ require './templates/header.html';
         <thead>
           <tr>
             <th>Item</th>
+            <th>Nro Leasing</th>
             <th>Banco</th>
             <th>Cantidad</th>
             <th>Fecha Inicio</th>
             <th>Fecha Fin</th>
             <th>Periodo</th>
+            <th>Tipo</th>
             <th>Archivo</th>
           </tr>
         </thead>
@@ -64,11 +66,13 @@ require './templates/header.html';
         <tfoot>
           <tr>
             <th>Item</th>
+            <th>Nro Leasing</th>
             <th>Banco</th>
             <th>Cantidad</th>
             <th>Fecha Inicio</th>
             <th>Fecha Fin</th>
             <th>Periodo</th>
+            <th>Tipo</th>
             <th>Archivo</th>
           </tr>
         </tfoot>
@@ -96,6 +100,21 @@ require './templates/header.html';
     </div>
   </div>
 </main>
+
+<div id="modal-leasing">
+  <div class="modal-container">
+    <div class="modal-header">
+      <i class="bi bi-info-circle"></i>
+      <h2>Detalles</h2>
+    </div>
+    <div class="modal-body" id="modal-body-info">
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-error" id="btn-close">Cerrar</button>
+    </div>
+  </div>
+</div>
 
 <script src="../js/consulta_leasings.js"></script>
 <script>
@@ -242,6 +261,9 @@ require './templates/header.html';
           width: "5%",
         },
         {
+          data: "nroLeasing"
+        },
+        {
           data: "banco"
         },
         {
@@ -282,6 +304,9 @@ require './templates/header.html';
           }
         },
         {
+          data: "tipoCon"
+        },
+        {
           data: "archivoPdf",
           render: (data) => {
             return `
@@ -291,37 +316,178 @@ require './templates/header.html';
               </button>
             `
           }
-        }
+        },
       ],
     })
   })
 
+  $("#listLeasing tbody").on("click", "tr", async function(e) {
+    const data = table.row(this).data();
+
+    const vehicles = await getVehByLeasing(data.id);
+
+    $("#modal-body-info").append(`
+      <table id="listVeh" class="display">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Terreno</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Item</th>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Marca</th>
+            <th>Terreno</th>
+            <th>Cantidad</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
+          </tr>
+        </tfoot>
+      </table>
+    `);
+
+    $("#listVeh").DataTable({
+      language: {
+        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      select: true,
+      data: vehicles,
+      columns: [{
+          data: "item",
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "5%",
+        },
+        {
+          data: "placa",
+        },
+        {
+          data: "modelo",
+        },
+        {
+          data: "marca",
+        },
+        {
+          data: "terreno",
+        },
+        {
+          data: "cantidad",
+        },
+        {
+          data: "año",
+        },
+        {
+          data: "color",
+        },
+        {
+          data: "operacion",
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              return convertirFecha(data)
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              const fechaTsf = convertirFecha(data);
+              const dias = obtenerDiasVencimiento(fechaTsf);
+              if(dias > 0) {
+                return `${dias} dias`
+              } else if(dias < 0) {
+                return `Hace ${Math.abs(dias)} dias`
+              } else {
+                return `Vence hoy`
+              }
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "nroLeasing"
+        }
+      ],
+    })
+
+    const modal = document.getElementById("modal-leasing");
+    modal.style.display = "flex";
+  })
 
   $("#filter-bank").on("select2:select", async () => {
     const bank = $("#filter-bank").val();
 
     const params = new URLSearchParams(window.location.search)
+    const clientId = params.get("clienteId");
+    const contractId = params.get("contratoId");
+    const documentId = params.get("documentoId")
 
     let leasings;
 
     if (bank != 0) {
       params.set("banco", bank)
-      leasings = await getLeasings(bank);
+
+      if (clientId) {
+        if (contractId) {
+          if (documentId) {
+            leasings = await getLeasings(bank, clientId, documentId, 'H');
+          } else {
+            leasings = await getLeasings(bank, clientId, contractId, 'P');
+          }
+        } else {
+          leasings = await getLeasings(bank, clientId);
+        }
+      } else {
+        leasings = await getLeasings(bank);
+      }
+
+
       $("#row-client").removeClass("filter-hidden");
     } else {
       params.delete("banco")
       params.delete("clienteId")
       params.delete("contratoId")
+      params.delete("documentoId")
 
       leasings = await getLeasings();
 
+      $("#filter-client").val('0').trigger('change')
+
+      $("#filter-contract").val('0').trigger('change')
+      $("#filter-document").val('0').trigger('change')
+
       $("#row-client").addClass("filter-hidden");
       $("#row-contract").addClass("filter-hidden");
+      $("#row-document").addClass("filter-hidden");
     }
-
-    params.delete("documentoId")
-
-    $("#row-document").addClass("filter-hidden");
 
     const nuevaURL = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", nuevaURL);
@@ -362,6 +528,9 @@ require './templates/header.html';
       params.delete("clienteId")
 
       leasings = await getLeasings(bank);
+
+      $("#filter-contract").val('0').trigger('change')
+      $("#filter-document").val('0').trigger('change')
 
       $("#row-contract").addClass("filter-hidden");
     }
@@ -408,10 +577,12 @@ require './templates/header.html';
 
       $("#row-document").removeClass("filter-hidden");
     } else {
-      params.delete("contractoId")
+      params.delete("contratoId")
       params.delete("documentoId")
 
       leasings = await getLeasings(bank, clientId);
+
+      $("#filter-document").val('0').trigger('change')
 
       $("#row-document").addClass("filter-hidden");
     }
@@ -422,6 +593,40 @@ require './templates/header.html';
     table.clear();
     table.rows.add(leasings);
     table.draw();
+  })
+
+  $("#filter-document").on("select2:select", async () => {
+    const documentId = $("#filter-document").val();
+    const params = new URLSearchParams(window.location.search)
+    const bank = params.get("banco")
+    const clientId = params.get("clienteId")
+    const contractId = params.get("contratoId")
+
+    let leasings;
+
+    if (documentId != 0) {
+      params.set("documentoId", documentId)
+
+      leasings = await getLeasings(bank, clientId, documentId, 'H');
+    } else {
+      params.delete("documentoId")
+
+      leasings = await getLeasings(bank, clientId, contractId, 'P');
+    }
+
+    const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", nuevaURL);
+
+    table.clear();
+    table.rows.add(leasings);
+    table.draw();
+  })
+
+  $("#btn-close").on("click", function() {
+    const modal = document.getElementById("modal-leasing");
+    modal.style.display = "none";
+
+    $("#modal-body-info").empty();
   })
 </script>
 

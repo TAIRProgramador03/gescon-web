@@ -377,15 +377,12 @@ require './templates/header.html';
             if (data) {
               const fechaTsf = convertirFecha(data);
               const dias = obtenerDiasVencimiento(fechaTsf);
-              switch (dias) {
-                case dias == 0:
-                  return `Hoy`
-                case dias > 0:
-                  return `${dias} dias`
-                case dias < 0:
-                  return `Hace ${dias} dias`
-                default:
-                  return `${dias} dias`
+              if(dias > 0) {
+                return `${dias} dias`
+              } else if(dias < 0) {
+                return `Hace ${Math.abs(dias)} dias`
+              } else {
+                return `Vence hoy`
               }
             } else {
               return "--"
@@ -500,15 +497,12 @@ require './templates/header.html';
             if (data) {
               const fechaTsf = convertirFecha(data);
               const dias = obtenerDiasVencimiento(fechaTsf);
-              switch (dias) {
-                case dias == 0:
-                  return `Hoy`
-                case dias > 0:
-                  return `${dias} dias`
-                case dias < 0:
-                  return `Hace ${dias} dias`
-                default:
-                  return `${dias} dias`
+              if(dias > 0) {
+                return `${dias} dias`
+              } else if(dias < 0) {
+                return `Hace ${Math.abs(dias)} dias`
+              } else {
+                return `Vence hoy`
               }
             } else {
               return "--"
@@ -623,15 +617,12 @@ require './templates/header.html';
             if (data) {
               const fechaTsf = convertirFecha(data);
               const dias = obtenerDiasVencimiento(fechaTsf);
-              switch (dias) {
-                case dias == 0:
-                  return `Hoy`
-                case dias > 0:
-                  return `${dias} dias`
-                case dias < 0:
-                  return `Hace ${dias} dias`
-                default:
-                  return `${dias} dias`
+              if(dias > 0) {
+                return `${dias} dias`
+              } else if(dias < 0) {
+                return `Hace ${Math.abs(dias)} dias`
+              } else {
+                return `Vence hoy`
               }
             } else {
               return "--"
@@ -746,15 +737,12 @@ require './templates/header.html';
             if (data) {
               const fechaTsf = convertirFecha(data);
               const dias = obtenerDiasVencimiento(fechaTsf);
-              switch (dias) {
-                case dias == 0:
-                  return `Hoy`
-                case dias > 0:
-                  return `${dias} dias`
-                case dias < 0:
-                  return `Hace ${dias} dias`
-                default:
-                  return `${dias} dias`
+              if(dias > 0) {
+                return `${dias} dias`
+              } else if(dias < 0) {
+                return `Hace ${Math.abs(dias)} dias`
+              } else {
+                return `Vence hoy`
               }
             } else {
               return "--"

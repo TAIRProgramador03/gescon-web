@@ -63,7 +63,7 @@ const listAllLeasing = async (req, res) => {
 
   try {
     let sql = `
-      SELECT L.ID, L.BANCO, L.CANT_VEH AS CANTIDAD, L.FECHA_INI, L.FECHA_FIN, L.PERIODO_GRACIA, L.PDF, L.DESCRIPCION
+      SELECT L.ID, L.NRO_LEASING, L.BANCO, L.CANT_VEH AS CANTIDAD, L.FECHA_INI, L.FECHA_FIN, L.PERIODO_GRACIA, L.PDF, L.TIPCON
       FROM SPEED400AT.TBL_LEASING_CAB L
     `;
 
@@ -92,6 +92,7 @@ const listAllLeasing = async (req, res) => {
 
     const cleanedResult = result.map((row) => ({
       id: row.ID,
+      nroLeasing: row.NRO_LEASING.trim(),
       banco: transformType(row.BANCO.trim(), {
         1: "BANBIF",
         2: "BBVA",
@@ -107,7 +108,10 @@ const listAllLeasing = async (req, res) => {
       fechaFin: row.FECHA_FIN,
       perGracia: row.PERIODO_GRACIA,
       archivoPdf: row.PDF.trim(),
-      descripcion: row.DESCRIPCION ? row.DESCRIPCION.trim() : "",
+      tipoCon: transformType(row.TIPCON.trim(), {
+        P: "Contrato",
+        H: "Documento"
+      }),
     }));
 
     return res.status(200).json(cleanedResult);

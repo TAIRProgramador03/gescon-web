@@ -16,17 +16,14 @@ toastr.options = {
   hideMethod: "fadeOut",
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  cargarContContrato();
-  cargarContClient();
-  cargarTablaconVehiculo();
-});
-
-async function cargarContContrato() {
+async function cargarContContrato(clientId) {
   try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/contContrato`, {
-      credentials: "include", // Asegura que las cookies se envíen con la solicitud
-    }); // Ruta relativa al servidor
+    const response = await fetch(
+      `http://${IP_LOCAL}:3000/contContrato${clientId ? `?clienteId=${clientId}` : ""}`,
+      {
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
+      },
+    ); // Ruta relativa al servidor
     if (!response.ok) throw new Error("Error en la solicitud");
 
     const conContrato = await response.json();
@@ -45,19 +42,6 @@ async function cargarContContrato() {
       conContrato.data.TIPO_2 || "0";
     document.getElementById("con-OC").textContent =
       conContrato.data.TIPO_3 || "0";
-
-    document.getElementById("por-Contra").textContent =
-      ((100 * conContrato.data.PADRE) / sumContra).toFixed(2) + "%" || "0%";
-    console.log((100 + conContrato.data.PADRE) / sumContra);
-    document.getElementById("por-Adenda").textContent =
-      ((100 * conContrato.data.TIPO_1) / sumContra).toFixed(2) + "%" || "0";
-    console.log((100 + conContrato.data.TIPO_1) / sumContra);
-    document.getElementById("por-Carta").textContent =
-      ((100 * conContrato.data.TIPO_2) / sumContra).toFixed(2) + "%" || "0";
-    console.log((100 + conContrato.data.TIPO_2) / sumContra);
-    document.getElementById("por-OC").textContent =
-      ((100 * conContrato.data.TIPO_3) / sumContra).toFixed(2) + "%" || "0";
-    console.log((100 + conContrato.data.TIPO_3) / sumContra);
   } catch (error) {
     console.error("Error al cargar los contadores:", error);
   }
@@ -136,7 +120,6 @@ function actualizarGrafico(labels, data) {
 }
 
 async function cargarTablaconVehiculo() {
-  
   const response = await fetch(`http://${IP_LOCAL}:3000/tablaconVehiculo`, {
     credentials: "include",
   });
@@ -145,3 +128,64 @@ async function cargarTablaconVehiculo() {
 
   return conVehi;
 }
+
+async function obtenerFlotaVehicular(status, clientId) {
+  let paramsString = "";
+
+  if (status && clientId) {
+    paramsString = `?status=${status}&clienteId=${clientId}`;
+  } else if (status) {
+    paramsString = `?status=${status}`;
+  } else if (clientId) {
+    paramsString = `?clienteId=${clientId}`;
+  }
+
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/contVehicleFleet${paramsString}`,
+    {
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  return data;
+}
+
+async function obtenerClientes() {
+  const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  return data;
+}
+
+async function obtenerLeasings(draw, currentPage, length, clientId) {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/contLeasing?draw=${draw}&start=${currentPage}&length=${length}${clientId ? `&clienteId=${clientId}` : ""}`,
+    {
+      method: "GET",
+      credentials: 'include'
+    },
+  );
+
+  const res = await response.json();
+
+  return res;
+}
+
+
+/*<th>Placa</th>
+              <th>Modelo</th>
+              <th>Nro Leasing</th>
+              <th>Cliente</th>
+              <th>Tipo</th>
+              <th>F. Ini. Cont.</th>
+              <th>F. Fin Cont.</th>
+              <th>Años Contrato</th>
+              <th>F. Ini. Lea.</th>
+              <th>F. Fin Lea.</th>
+              <th>Años Leasing</th>
+              <th>Diferencia Dias</th> */

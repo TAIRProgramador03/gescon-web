@@ -19,6 +19,12 @@ require './templates/header.html';
 <!-- JS DATATABLE -->
 <script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
 
+<!-- CSS de Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
+
+<!-- JS de Select2 -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
 <!-- CSS DE LA VISTA DASHBOARD -->
 <style>
   <?php include '../css/views/dashboard.css'; ?>
@@ -77,20 +83,16 @@ require './templates/header.html';
 </div>
 
 <div class="dashboard-container">
-  <!-- <header class="dashboard-header">
-    <div class="search-bar">
-      <input type="text" placeholder="Search">
-      <button><i class="bi bi-search"></i></button>
-    </div>
-    <div class="user-info">
-      <figure>
-        <img src="../../public/img/tair.png" alt="Perfil">
-      </figure>
-      <span id="user-data"></span>
-    </div>
-  </header> -->
   <main class="dashboard-main">
     <section class="dashboard-section">
+      <div class="dashboard-header">
+        <h1>Dashboard</h1>
+        <div class="cbo-client-container">
+          <label for="">Cliente</label>
+          <select id="cbo-client"></select>
+        </div>
+      </div>
+
       <div class="dashboard-cont-section">
         <div class="dashboard-item item-small">
           <div>
@@ -129,8 +131,13 @@ require './templates/header.html';
       </div>
 
       <div class="dashboard-item item-medium">
-        <h3>Flota vehicular</h3>
-        <div class="data-value">$48,352 revenue generated</div>
+        <h3>Monto Proyectado</h3>
+        <div id="vehFleetDifference" class="data-value"></div>
+        <div class="filter-veh-fleet">
+          <div class="row-filter">
+            <select id="status-veh-fleet"></select>
+          </div>
+        </div>
         <canvas id="campaignDonut" class="can-barra"></canvas>
       </div>
 
@@ -141,7 +148,7 @@ require './templates/header.html';
 
       <div class="dashboard-item item-large tabla-formu">
         <h3>Leasing Vehicular</h3>
-        <table id="listLeasing" class="display">
+        <table id="listVehicle" class="display">
           <thead>
             <tr>
               <th>Item</th>
@@ -157,12 +164,29 @@ require './templates/header.html';
         </table>
       </div>
 
-      <div class="dashboard-item item-large">
-        <h3>Geography Based Traffic</h3>
-        <div class="world-map">
-          <!-- Placeholder for a world map SVG or image -->
-          <img src="world-map-placeholder.png" alt="World Map">
-        </div>
+      <div class="dashboard-item item-large table-leasings">
+        <h3>Placas de Leasings</h3>
+        <table id="listLeasings" class="display">
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Modelo</th>
+              <th>Nro Leasing</th>
+              <th>Tipo</th>
+              <th>F. Ini. Cont.</th>
+              <th>F. Fin Cont.</th>
+              <th>Años Contrato</th>
+              <th>F. Ini. Lea.</th>
+              <th>F. Fin Lea.</th>
+              <th>Años Leasing</th>
+              <th>Diferencia Dias</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
   </main>
@@ -178,6 +202,9 @@ require './templates/header.html';
       }, 1000); // Espera 1 segundo después de ocultar
     }, 4000); // Ocultar todo después de 2 segundos
   };
+
+  let vehFleetChart;
+  let tableLea;
 
   const initLineChat = () => {
     const ctx = $("#revenueChart");
@@ -198,24 +225,31 @@ require './templates/header.html';
     })
   }
 
-  const initDoughnut = () => {
+  const initDoughnut = async (clientId) => {
+    const data = await obtenerFlotaVehicular(undefined, clientId);
+
+    const difference = data.totalCosto - data.totalVenta;
+
+    $("#vehFleetDifference").text(`${difference.toLocaleString('es-ES', {
+      style: 'currency',
+      currency: 'PEN'
+    })}`)
+
     const ctx = $("#campaignDonut")
 
-    new Chart(ctx, {
+    vehFleetChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
         labels: [
-          'Red',
-          'Blue',
-          'Yellow'
+          'T. Precio Costo',
+          'T. Precio Venta'
         ],
         datasets: [{
-          label: 'My First Dataset',
-          data: [300, 50, 100],
+          label: 'Costos',
+          data: [data.totalCosto, data.totalVenta],
           backgroundColor: [
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-            'rgb(255, 205, 86)'
+            'rgb(255, 226, 99)',
+            'rgb(41, 207, 35)',
           ],
           hoverOffset: 4
         }]
@@ -224,15 +258,56 @@ require './templates/header.html';
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(window.location.search)
+    const clientId = params.get("clienteId")
+
+    // INITIALIZE FETCH
+    cargarContContrato(clientId);
+    cargarContClient();
+    cargarTablaconVehiculo();
+
     // Initialize charts with placeholder data
     initLineChat();
-    initDoughnut();
+    await initDoughnut(clientId);
 
     const leasings = await cargarTablaconVehiculo();
+    const client = await obtenerClientes();
 
-    const table = $("#listLeasing").DataTable({
+    $("#cbo-client").select2({
+      placeholder: "Seleccione un estado",
+      allowClear: false, // Desactiva la "X"
+      data: [{
+          id: 0,
+          text: "Seleccione un cliente"
+        },
+        ...client.map(cli => ({
+          id: cli.IDCLI,
+          text: cli.CLINOM
+        }))
+      ]
+    })
+
+    $("#status-veh-fleet").select2({
+      placeholder: "Seleccione un estado",
+      allowClear: false, // Desactiva la "X"
+      data: [{
+          id: 'T',
+          text: "Seleccione un estado de contrato",
+        },
+        {
+          id: 'A',
+          text: "Activos",
+        },
+        {
+          id: 'F',
+          text: "Finalizados",
+        },
+      ]
+    })
+
+    const table = $("#listVehicle").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       scrollY: '200px',
       scrollCollapse: true,
@@ -253,8 +328,131 @@ require './templates/header.html';
       ],
     })
 
-    table.search('').draw();
+    tableLea = $("#listLeasings").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      scrollY: '200px',
+      scrollCollapse: true,
+      serverSide: true, // Activa el procesamiento en servidor
+      processing: true,
+      ajax: async function(dataRender, callback, settings) {
+        const paramsActualizados = new URLSearchParams(window.location.search);
+        const paramClient = paramsActualizados.get("clienteId")
+
+        try {
+          // 2. Ejecutar tu Fetch con tus headers/includes personalizados
+          const res = await obtenerLeasings(dataRender.draw, dataRender.start, dataRender.length, paramClient);
+
+          // 3. Mapear tu respuesta a lo que DataTables espera
+          callback({
+            draw: dataRender.draw,
+            recordsTotal: res.recordsTotal,
+            recordsFiltered: res.recordsFiltered,
+            data: res.data
+          });
+
+        } catch (error) {
+          console.error("Error en fetch:", error);
+        }
+      },
+      columns: [
+        {
+          data: 'placa'
+        },
+        {
+          data: 'modelo'
+        },
+        {
+          data: 'nroLeasing'
+        },
+        {
+          data: 'tipoCont'
+        },
+        {
+          data: 'fechaIniCont'
+        },
+        {
+          data: 'fechaFinCont'
+        },
+        {
+          data: 'añosContrato'
+        },
+        {
+          data: 'fechaIniLea'
+        },
+        {
+          data: 'fechaFinLea'
+        },
+        {
+          data: 'añosLeasing'
+        },
+        {
+          data: 'diferenciaDias'
+        }
+      ]
+    })
+
+    if (clientId) {
+      $("#cbo-client").val(clientId).trigger("change");
+    }
   });
+
+  $("#cbo-client").on("select2:select", async () => {
+    const clientId = $("#cbo-client").val();
+
+    const params = new URLSearchParams(window.location.search)
+
+    if (clientId == 0) {
+      params.delete("clienteId")
+    } else {
+      params.set("clienteId", clientId)
+    }
+
+    const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", nuevaURL);
+
+    // DOUGNUT CHART UPDATE
+    const data = await obtenerFlotaVehicular(status != "T" ? status : undefined, clientId != 0 ? clientId : undefined);
+
+    $("#status-veh-fleet").val(0).trigger("change");
+
+    const difference = data.totalCosto - data.totalVenta;
+
+    $("#vehFleetDifference").text(`${difference.toLocaleString('es-ES', {
+      style: 'currency',
+      currency: 'PEN'
+    })}`)
+
+    vehFleetChart.data.datasets[0].data = [data.totalCosto, data.totalVenta];
+    vehFleetChart.update();
+
+
+    // CONT UPDATE
+    cargarContContrato(clientId != 0 ? clientId : undefined);
+
+    // TABLE LEA
+    tableLea.draw();
+  })
+
+  $("#status-veh-fleet").on("select2:select", async () => {
+    const status = $("#status-veh-fleet").val();
+
+    const params = new URLSearchParams(window.location.search)
+    const clientId = params.get("clienteId")
+
+    const data = await obtenerFlotaVehicular(status != "T" ? status : undefined, clientId);
+
+    const difference = data.totalCosto - data.totalVenta;
+
+    $("#vehFleetDifference").text(`${difference.toLocaleString('es-ES', {
+      style: 'currency',
+      currency: 'PEN'
+    })}`)
+
+    vehFleetChart.data.datasets[0].data = [data.totalCosto, data.totalVenta];
+    vehFleetChart.update();
+  })
 </script>
 
 

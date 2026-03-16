@@ -384,11 +384,22 @@ const contContract = async (req, res) => {
       .json({ success: false, message: "Token inválido o no proporcionado" });
   }
 
+  const {clienteId} = req.query;
+
   const cn = await connection(globalDbUser, globalPassword);
 
   try {
+    let sql = `SELECT COUNT(DISTINCT A.ID) AS PADRE, SUM(CASE WHEN B.TIPO_DOC = 1 THEN 1 ELSE 0 END) AS TIPO_1, SUM(CASE WHEN B.TIPO_DOC = 2 THEN 1 ELSE 0 END) AS TIPO_2, SUM(CASE WHEN B.TIPO_DOC = 3 THEN 1 ELSE 0 END) AS TIPO_3 FROM ${SCHEMA_BD}.TBLCONTRATO_CAB A FULL OUTER JOIN ${SCHEMA_BD}.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE`
+    const params = [];
+
+    if(clienteId) {
+      sql += ` WHERE A.ID_CLIENTE = ?`
+      params.push(clienteId)
+    }
+
     const result = await cn.query(
-      `SELECT COUNT(DISTINCT A.ID) AS PADRE, SUM(CASE WHEN B.TIPO_DOC = 1 THEN 1 ELSE 0 END) AS TIPO_1, SUM(CASE WHEN B.TIPO_DOC = 2 THEN 1 ELSE 0 END) AS TIPO_2, SUM(CASE WHEN B.TIPO_DOC = 3 THEN 1 ELSE 0 END) AS TIPO_3 FROM ${SCHEMA_BD}.TBLCONTRATO_CAB A FULL OUTER JOIN ${SCHEMA_BD}.TBLDOCUMENTO_CAB B ON A.ID=B.ID_PADRE`,
+      sql,
+      params
     );
 
     // Decodificar los resultados desde latin1

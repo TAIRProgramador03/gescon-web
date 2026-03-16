@@ -15,6 +15,7 @@ const vehicleRoutes = require("./src/app/vehicle/vehicle.routes.js");
 const operationRoutes = require("./src/app/operation/operation.routes.js");
 const fileRoutes = require("./src/app/file/file.routes.js");
 const modelRoutes = require("./src/app/model/model.routes.js");
+const reportRoutes = require("./src/app/report/report.routes.js")
 
 const app = express();
 const port = 3000;
@@ -33,6 +34,7 @@ app.use(
       `http://${IP_LOCAL}`,
       "http://localhost:3000",
       `http://${IP_LOCAL}:3000`,
+      `http://cdn.datatables.net`
     ], // Permite solicitudes solo desde esta URL
     credentials: true, // Permite el envío de cookies con las solicitudes
   }),
@@ -51,6 +53,7 @@ app.use(vehicleRoutes);
 app.use(operationRoutes);
 app.use(fileRoutes);
 app.use(modelRoutes);
+app.use(reportRoutes);
 
 // Servir el archivo HTML
 app.get("/", (req, res) => {

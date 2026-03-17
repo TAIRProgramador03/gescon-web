@@ -626,7 +626,7 @@ require './templates/header.html';
       allowClear: false, // Desactiva la "X"
       data: [{
           id: 0,
-          text: "Todos"
+          text: "TODOS"
         },
         ...client.map(cli => ({
           id: cli.IDCLI,
@@ -658,7 +658,7 @@ require './templates/header.html';
       allowClear: false, // Desactiva la "X",
       data: quatityVehCli.map(cli => ({
         id: cli.id,
-        text: cli.cliente
+        text: `${cli.cliente} (${cli.total} )`
       })),
     })
 
@@ -744,19 +744,31 @@ require './templates/header.html';
           data: 'tipoCont'
         },
         {
-          data: 'fechaIniCont'
+          data: 'fechaIniCont',
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          }
         },
         {
-          data: 'fechaFinCont'
+          data: 'fechaFinCont',
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          }
         },
         {
           data: 'añosContrato'
         },
         {
-          data: 'fechaIniLea'
+          data: 'fechaIniLea',
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          }
         },
         {
-          data: 'fechaFinLea'
+          data: 'fechaFinLea',
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          }
         },
         {
           data: 'añosLeasing'

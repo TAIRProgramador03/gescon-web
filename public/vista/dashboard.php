@@ -146,29 +146,12 @@ require './templates/header.html';
         <canvas id="salesChart" style="max-height: 300px;"></canvas>
       </div>
 
-      <div class="dashboard-item item-large tabla-formu">
-        <h3>Leasing Vehicular</h3>
-        <table id="listVehicle" class="display">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Modelo</th>
-              <th>Precio</th>
-            </tr>
-          </thead>
-          <tbody id="vehiculos-tbody">
-            <tr>
-              <td colspan="3">No hay Vehiculos</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
       <div class="dashboard-item item-large table-leasings">
         <h3>Placas de Leasings</h3>
         <table id="listLeasings" class="display">
           <thead>
             <tr>
+              <th>Item</th>
               <th>Placa</th>
               <th>Modelo</th>
               <th>Nro Leasing</th>
@@ -179,7 +162,7 @@ require './templates/header.html';
               <th>F. Ini. Lea.</th>
               <th>F. Fin Lea.</th>
               <th>Años Leasing</th>
-              <th>Diferencia Dias</th>
+              <th>Estado (Diferencia)</th>
             </tr>
           </thead>
           <tbody>
@@ -188,8 +171,38 @@ require './templates/header.html';
           </tbody>
         </table>
       </div>
+
+      <div class="dashboard-item item-large">
+        <h3>Leasings Vencidos</h3>
+        <canvas id="donutLeasingA" class="can-barra"></canvas>
+      </div>
+
+      <div class="dashboard-item item-large">
+        <h3>Leasings Por Vencer</h3>
+        <canvas id="donutLeasingB" class="can-barra"></canvas>
+      </div>
+
+      <div class="dashboard-item item-large">
+        <h3>Resumen Vehiculos por Leasing</h3>
+        <canvas id="barVehicleLea"></canvas>
+      </div>
     </section>
   </main>
+</div>
+
+<div id="modal-leasing">
+  <div class="modal-container">
+    <div class="modal-header">
+      <i class="bi bi-info-circle"></i>
+      <h2 id="modal-title">Detalles</h2>
+    </div>
+    <div class="modal-body" id="modal-body-info">
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-error" id="btn-close">Cerrar</button>
+    </div>
+  </div>
 </div>
 
 <script src="../js/dashboard.js"></script>
@@ -203,7 +216,12 @@ require './templates/header.html';
     }, 4000); // Ocultar todo después de 2 segundos
   };
 
+  // CHARTS
   let vehFleetChart;
+  let chartDoughnutLeaA;
+  let chartDoughnutLeaB;
+
+  // TABLES
   let tableLea;
 
   const initLineChat = () => {
@@ -257,9 +275,327 @@ require './templates/header.html';
     })
   }
 
+  const initDoughnutLeaA = async (data) => {
+    const ctx = $("#donutLeasingA")
+
+    chartDoughnutLeaA = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: [
+          'Menor 30 dias',
+          'Entre 30 y 45 dias',
+          'Entre 45 y 60 dias',
+          'Entre 60 y 90 dias',
+          'Mayor 90 dias'
+        ],
+        datasets: [{
+          label: 'Vehiculos',
+          data: [
+            data.menor30Dias, data.entre30Y45Dias, data.entre45Y60Dias, data.entre60Y90Dias, data.mayor90Dias
+          ],
+          backgroundColor: [
+            'rgb(255, 99, 99)',
+            'rgb(255, 182, 99)',
+            'rgb(193, 99, 255)',
+            'rgb(99, 148, 255)',
+            'rgb(104, 255, 99)',
+          ],
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: 0
+        },
+        aspectRatio: 2.5,
+        plugins: {
+          legend: {
+            position: 'right', // Cambia de 'top' a 'right'
+            align: 'center' // Opcional: 'start', 'center' o 'end'
+          }
+        },
+        onClick: (evento, elementosActivos) => {
+          // Verificamos si se hizo clic en un segmento (y no en el espacio vacío)
+          if (elementosActivos.length > 0) {
+            const indice = elementosActivos[0].index;
+
+            // Obtenemos el label y el valor usando el índice
+            const label = chartDoughnutLeaA.data.labels[indice];
+            const valor = chartDoughnutLeaA.data.datasets[0].data[indice];
+
+            $("#modal-body-info").append(`
+              <table id="listVehExpires" class="display">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Placa</th>
+                    <th>Modelo</th>
+                    <th>Marca</th>
+                    <th>Leasing</th>
+                    <th>Cliente</th>
+                    <th>Fecha Fin</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                  </tr>
+                </tbody>
+              </table>
+            `);
+
+            $("#listVehExpires").DataTable({
+              language: {
+                url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+              },
+              scrollY: '300px',
+              scrollCollapse: true,
+              serverSide: true, // Activa el procesamiento en servidor
+              processing: true,
+              ajax: async function(dataRender, callback, settings) {
+                const paramsActualizados = new URLSearchParams(window.location.search);
+                const paramClient = paramsActualizados.get("clienteId")
+
+                try {
+                  const search = dataRender.search.value;
+
+                  // 2. Ejecutar tu Fetch con tus headers/includes personalizados
+                  const res = await obtenerVehiculosVencidos(dataRender.draw, dataRender.start, dataRender.length, label, search, paramClient);
+
+                  // 3. Mapear tu respuesta a lo que DataTables espera
+                  callback({
+                    draw: dataRender.draw,
+                    recordsTotal: res.recordsTotal,
+                    recordsFiltered: res.recordsFiltered,
+                    data: res.data
+                  });
+
+                } catch (error) {
+                  console.error("Error en fetch:", error);
+                }
+              },
+              columns: [{
+                  data: "item",
+                  render: function(data, type, row, meta) {
+                    return meta.row + 1;
+                  },
+                  width: "5%",
+                },
+                {
+                  data: "placa",
+                },
+                {
+                  data: "modelo",
+                },
+                {
+                  data: "marca",
+                },
+                {
+                  data: "nroLeasing"
+                },
+                {
+                  data: "cliente"
+                },
+                {
+                  data: "fechaFin"
+                }
+              ],
+            })
+
+            const modal = document.getElementById("modal-leasing");
+            modal.style.display = "flex";
+
+            $("#modal-title").text("Vehiculos vencidos")
+          }
+        }
+      }
+    })
+  }
+
+  const initDoughnutLeaB = async (data) => {
+    const ctx = $("#donutLeasingB")
+
+    chartDoughnutLeaB = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: [
+          'Menor 30 dias',
+          'Entre 30 y 45 dias',
+          'Entre 45 y 60 dias',
+          'Entre 60 y 90 dias',
+          'Mayor 90 dias'
+        ],
+        datasets: [{
+          label: 'Vehiculos',
+          data: [
+            data.menor30Dias, data.entre30Y45Dias, data.entre45Y60Dias, data.entre60Y90Dias, data.mayor90Dias
+          ],
+          backgroundColor: [
+            'rgb(255, 99, 99)',
+            'rgb(255, 182, 99)',
+            'rgb(193, 99, 255)',
+            'rgb(99, 148, 255)',
+            'rgb(104, 255, 99)',
+          ],
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: 0
+        },
+        aspectRatio: 2.5,
+        plugins: {
+          legend: {
+            position: 'right', // Cambia de 'top' a 'right'
+            align: 'center' // Opcional: 'start', 'center' o 'end'
+          }
+        },
+        onClick: (evento, elementosActivos) => {
+          // Verificamos si se hizo clic en un segmento (y no en el espacio vacío)
+          if (elementosActivos.length > 0) {
+            const indice = elementosActivos[0].index;
+
+            // Obtenemos el label y el valor usando el índice
+            const label = chartDoughnutLeaB.data.labels[indice];
+            const valor = chartDoughnutLeaB.data.datasets[0].data[indice];
+
+            $("#modal-body-info").append(`
+              <table id="listVehToExpires" class="display">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Placa</th>
+                    <th>Modelo</th>
+                    <th>Marca</th>
+                    <th>Leasing</th>
+                    <th>Cliente</th>
+                    <th>Fecha Fin</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                  </tr>
+                </tbody>
+              </table>
+            `);
+
+            $("#listVehToExpires").DataTable({
+              language: {
+                url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+              },
+              scrollY: '300px',
+              scrollCollapse: true,
+              serverSide: true, // Activa el procesamiento en servidor
+              processing: true,
+              ajax: async function(dataRender, callback, settings) {
+                const paramsActualizados = new URLSearchParams(window.location.search);
+                const paramClient = paramsActualizados.get("clienteId")
+
+                try {
+                  const search = dataRender.search.value;
+
+                  // 2. Ejecutar tu Fetch con tus headers/includes personalizados
+                  const res = await obtenerVehiculosPorVencer(dataRender.draw, dataRender.start, dataRender.length, label, search, paramClient);
+
+                  // 3. Mapear tu respuesta a lo que DataTables espera
+                  callback({
+                    draw: dataRender.draw,
+                    recordsTotal: res.recordsTotal,
+                    recordsFiltered: res.recordsFiltered,
+                    data: res.data
+                  });
+
+                } catch (error) {
+                  console.error("Error en fetch:", error);
+                }
+              },
+              columns: [{
+                  data: "item",
+                  render: function(data, type, row, meta) {
+                    return meta.row + 1;
+                  },
+                  width: "5%",
+                },
+                {
+                  data: "placa",
+                },
+                {
+                  data: "modelo",
+                },
+                {
+                  data: "marca",
+                },
+                {
+                  data: "nroLeasing"
+                },
+                {
+                  data: "cliente"
+                },
+                {
+                  data: "fechaFin"
+                }
+              ],
+            })
+
+            const modal = document.getElementById("modal-leasing");
+            modal.style.display = "flex";
+
+            $("#modal-title").text("Vehiculos por vencer")
+          }
+        }
+      }
+    })
+  }
+
+  const initBarVehicleLea = async () => {
+    const ctx = $("#barVehicleLea")
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+        datasets: [{
+          label: 'My First Dataset',
+          data: [65, 59, 80, 81, 56, 55, 40],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(255, 205, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(201, 203, 207, 0.2)'
+          ],
+          borderColor: [
+            'rgb(255, 99, 132)',
+            'rgb(255, 159, 64)',
+            'rgb(255, 205, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(54, 162, 235)',
+            'rgb(153, 102, 255)',
+            'rgb(201, 203, 207)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      },
+    })
+  }
+
   document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search)
     const clientId = params.get("clienteId")
+
+    const quantityVehLea = await obtenerCantidadVehicle(clientId);
 
     // INITIALIZE FETCH
     cargarContContrato(clientId);
@@ -269,6 +605,9 @@ require './templates/header.html';
     // Initialize charts with placeholder data
     initLineChat();
     await initDoughnut(clientId);
+    initDoughnutLeaA(quantityVehLea.vencidos);
+    initDoughnutLeaB(quantityVehLea.porVencer);
+    initBarVehicleLea();
 
     const leasings = await cargarTablaconVehiculo();
     const client = await obtenerClientes();
@@ -332,7 +671,7 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      scrollY: '200px',
+      scrollY: '300px',
       scrollCollapse: true,
       serverSide: true, // Activa el procesamiento en servidor
       processing: true,
@@ -341,8 +680,10 @@ require './templates/header.html';
         const paramClient = paramsActualizados.get("clienteId")
 
         try {
+          const search = dataRender.search.value;
+
           // 2. Ejecutar tu Fetch con tus headers/includes personalizados
-          const res = await obtenerLeasings(dataRender.draw, dataRender.start, dataRender.length, paramClient);
+          const res = await obtenerLeasings(dataRender.draw, dataRender.start, dataRender.length, search, paramClient);
 
           // 3. Mapear tu respuesta a lo que DataTables espera
           callback({
@@ -356,7 +697,22 @@ require './templates/header.html';
           console.error("Error en fetch:", error);
         }
       },
-      columns: [
+      rowCallback: function(row, data) {
+        if (data.diferenciaDias < 0) {
+          $($(row).find("td")[11]).css("background-color", "#E60026").css("color", "#fff");
+        } else if (data.diferenciaDias > 0) {
+          $($(row).find("td")[11]).css("background-color", "#259e01").css("color", "#fff");
+        } else {
+          $($(row).find("td")[11]).css("background-color", "#006be6").css("color", "#fff");
+        }
+      },
+      columns: [{
+          data: "item",
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "5%",
+        },
         {
           data: 'placa'
         },
@@ -388,7 +744,16 @@ require './templates/header.html';
           data: 'añosLeasing'
         },
         {
-          data: 'diferenciaDias'
+          data: 'diferenciaDias',
+          render: (data) => {
+            if (data > 0) {
+              return `Leasing vence antes (${Math.abs(data)} dias)`;
+            } else if (data < 0) {
+              return `Contrato vence antes (${Math.abs(data)} dias)`;
+            } else {
+              return `Vencen a la vez`;
+            }
+          }
         }
       ]
     })
@@ -427,6 +792,20 @@ require './templates/header.html';
     vehFleetChart.data.datasets[0].data = [data.totalCosto, data.totalVenta];
     vehFleetChart.update();
 
+    // DOUGNUT CHART LEASINGS UPDATE
+    const quantityVehLea = await obtenerCantidadVehicle(clientId != 0 ? clientId : undefined);
+    const vencidos = quantityVehLea.vencidos;
+    const porVencer = quantityVehLea.porVencer;
+    chartDoughnutLeaA.data.datasets[0].data = [
+      vencidos.menor30Dias, vencidos.entre30Y45Dias, vencidos.entre45Y60Dias, vencidos.entre60Y90Dias, vencidos.mayor90Dias
+    ]
+
+    chartDoughnutLeaB.data.datasets[0].data = [
+      porVencer.menor30Dias, porVencer.entre30Y45Dias, porVencer.entre45Y60Dias, porVencer.entre60Y90Dias, porVencer.mayor90Dias
+    ]
+
+    chartDoughnutLeaA.update();
+    chartDoughnutLeaB.update();
 
     // CONT UPDATE
     cargarContContrato(clientId != 0 ? clientId : undefined);
@@ -452,6 +831,13 @@ require './templates/header.html';
 
     vehFleetChart.data.datasets[0].data = [data.totalCosto, data.totalVenta];
     vehFleetChart.update();
+  })
+
+  $("#btn-close").on("click", function() {
+    const modal = document.getElementById("modal-leasing");
+    modal.style.display = "none";
+
+    $("#modal-body-info").empty();
   })
 </script>
 

@@ -162,9 +162,9 @@ async function obtenerClientes() {
   return data;
 }
 
-async function obtenerLeasings(draw, currentPage, length, clientId) {
+async function obtenerLeasings(draw, currentPage, length, search, clientId) {
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/contLeasing?draw=${draw}&start=${currentPage}&length=${length}${clientId ? `&clienteId=${clientId}` : ""}`,
+    `http://${IP_LOCAL}:3000/contVehicleLeasing?draw=${draw}&start=${currentPage}&length=${length}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
     {
       method: "GET",
       credentials: 'include'
@@ -176,16 +176,44 @@ async function obtenerLeasings(draw, currentPage, length, clientId) {
   return res;
 }
 
+async function obtenerCantidadVehicle(clientId) {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/contLeasing${clientId ? `?clienteId=${clientId}` : ""}`,
+    {
+      method: "GET",
+      credentials: 'include'
+    },
+  );
 
-/*<th>Placa</th>
-              <th>Modelo</th>
-              <th>Nro Leasing</th>
-              <th>Cliente</th>
-              <th>Tipo</th>
-              <th>F. Ini. Cont.</th>
-              <th>F. Fin Cont.</th>
-              <th>Años Contrato</th>
-              <th>F. Ini. Lea.</th>
-              <th>F. Fin Lea.</th>
-              <th>Años Leasing</th>
-              <th>Diferencia Dias</th> */
+  const res = await response.json();
+
+  return res;
+}
+
+async function obtenerVehiculosVencidos(draw, currentPage, length, label, search, clientId) {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/listVehicleExpires?draw=${draw}&start=${currentPage}&length=${length}&label=${label}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
+    {
+      method: "GET",
+      credentials: 'include'
+    },
+  );
+
+  const res = await response.json();
+
+  return res;
+}
+
+async function obtenerVehiculosPorVencer(draw, currentPage, length, label, search, clientId) {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/listVehicleToExpires?draw=${draw}&start=${currentPage}&length=${length}&label=${label}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
+    {
+      method: "GET",
+      credentials: 'include'
+    },
+  );
+
+  const res = await response.json();
+
+  return res;
+}

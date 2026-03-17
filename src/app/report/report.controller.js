@@ -132,7 +132,7 @@ const contVehicleFeet = async (req, res) => {
   }
 };
 
-const contLeasings = async (req, res) => {
+const contVehicleLeasings = async (req, res) => {
   const { globalDbUser, globalPassword } = req.user;
 
   // Validación de token y sus datos
@@ -147,6 +147,7 @@ const contLeasings = async (req, res) => {
   const draw = parseInt(req.query.draw);
   let start = parseInt(req.query.start) || 0;
   let length = parseInt(req.query.length) || 10;
+  const search = req.query.search || "";
 
   const cn = await connection(globalDbUser, globalPassword);
 
@@ -230,10 +231,10 @@ const contLeasings = async (req, res) => {
             SUBSTR(LC.FECHA_FIN, 7, 2)
           )
         ) AS DIFERENCIA_DIAS
-      FROM SPEED400AT.TBL_LEASING_DET LD
-      LEFT JOIN SPEED400AT.TBL_LEASING_CAB LC
+      FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
       ON LD.ID_LEA_CAB = LC.ID
-      LEFT JOIN SPEED400AT.TBLCONTRATO_CAB C
+      LEFT JOIN ${SCHEMA_BD}.TBLCONTRATO_CAB C
       ON LC.ID_CONTRATO = C.ID
       WHERE LC.TIPCON = 'P'
       UNION ALL
@@ -314,13 +315,14 @@ const contLeasings = async (req, res) => {
             SUBSTR(LC.FECHA_FIN, 7, 2)
           )
         ) AS DIFERENCIA_DIAS
-      FROM SPEED400AT.TBL_LEASING_DET LD
-      LEFT JOIN SPEED400AT.TBL_LEASING_CAB LC
+      FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
       ON LD.ID_LEA_CAB = LC.ID
-      LEFT JOIN SPEED400AT.TBLDOCUMENTO_CAB C
+      LEFT JOIN ${SCHEMA_BD}.TBLDOCUMENTO_CAB C
       ON LC.ID_CONTRATO = C.ID
       WHERE LC.TIPCON = 'H')
-      ${clienteId ? `WHERE CLIENTE = ?` : ""}
+      WHERE LOCATE_IN_STRING(NRO_LEASING, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 
+      ${clienteId ? `AND CLIENTE = ?` : ""}
       ORDER BY ID
       OFFSET ? ROWS
       FETCH NEXT ? ROWS ONLY
@@ -407,10 +409,10 @@ const contLeasings = async (req, res) => {
             SUBSTR(LC.FECHA_FIN, 7, 2)
           )
         ) AS DIFERENCIA_DIAS
-      FROM SPEED400AT.TBL_LEASING_DET LD
-      LEFT JOIN SPEED400AT.TBL_LEASING_CAB LC
+      FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
       ON LD.ID_LEA_CAB = LC.ID
-      LEFT JOIN SPEED400AT.TBLCONTRATO_CAB C
+      LEFT JOIN ${SCHEMA_BD}.TBLCONTRATO_CAB C
       ON LC.ID_CONTRATO = C.ID
       WHERE LC.TIPCON = 'P'
       UNION ALL
@@ -491,22 +493,24 @@ const contLeasings = async (req, res) => {
             SUBSTR(LC.FECHA_FIN, 7, 2)
           )
         ) AS DIFERENCIA_DIAS
-      FROM SPEED400AT.TBL_LEASING_DET LD
-      LEFT JOIN SPEED400AT.TBL_LEASING_CAB LC
+      FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
       ON LD.ID_LEA_CAB = LC.ID
-      LEFT JOIN SPEED400AT.TBLDOCUMENTO_CAB C
+      LEFT JOIN ${SCHEMA_BD}.TBLDOCUMENTO_CAB C
       ON LC.ID_CONTRATO = C.ID
       WHERE LC.TIPCON = 'H')
-      ${clienteId ? `WHERE CLIENTE = ?` : ""}
+      WHERE LOCATE_IN_STRING(NRO_LEASING, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 
+      ${clienteId ? `AND CLIENTE = ?` : ""}
     `;
 
     const paramsTotal = [];
 
     if (clienteId) {
-      params.push(clienteId, start, length);
-      paramsTotal.push(clienteId);
+      params.push(search, search, clienteId, start, length);
+      paramsTotal.push(search, search,clienteId);
     } else {
-      params.push(start, length)
+      params.push(search, search, start, length);
+      paramsTotal.push(search, search);
     }
 
     const result = await cn.query(sql, params);
@@ -530,24 +534,376 @@ const contLeasings = async (req, res) => {
     }));
 
     const totalElements = resultTotal[0].TOTAL;
-    const totalPages = Math.ceil(totalElements / length);
 
     return res.status(200).json({
       draw: draw,
       recordsTotal: totalElements,
       recordsFiltered: totalElements,
-      totalPages: totalPages,
-      page: start / length + 1,
       data: cleanedResult,
     });
   } catch (error) {
     console.error("Error al obtener reporte de leasings", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener reportes de leasings",
+    });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
+const contLeasings = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
     return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Error al obtener reportes de leasings",
-      });
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { clienteId } = req.query;
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    const sqlVencidos = `
+      SELECT 
+        COUNT(CASE WHEN  DIFERENCIA_DIAS < 0 AND DIFERENCIA_DIAS >= -30 THEN 1 END) AS "MENOR_30_DIAS" ,
+        COUNT(CASE WHEN  DIFERENCIA_DIAS < -30 AND DIFERENCIA_DIAS >= -45 THEN 1 END) AS "ENTRE_30_Y_45_DIAS",
+        COUNT(CASE WHEN  DIFERENCIA_DIAS < -45 AND DIFERENCIA_DIAS >= -60 THEN 1 END) AS "ENTRE_45_Y_60_DIAS",
+        COUNT(CASE WHEN  DIFERENCIA_DIAS < -60 AND DIFERENCIA_DIAS >= -90 THEN 1 END) AS "ENTRE_60_Y_90_DIAS",
+        COUNT(CASE WHEN  DIFERENCIA_DIAS < -90 THEN 1 END) AS "MAYOR_90_DIAS"
+      FROM (
+      SELECT LC.ID_CLIENTE, LD.MODELO, LD.PLACA, LC.NRO_LEASING, DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2)) AS FECHA_FIN, DAYS(DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2))) - DAYS(CURRENT DATE) AS DIFERENCIA_DIAS
+      FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
+      ON LD.ID_LEA_CAB = LC.ID
+      ) ${clienteId ? "WHERE ID_CLIENTE = ?" : ""}
+    `;
+
+    const sqlPorVencer = `
+      SELECT 
+        COUNT(CASE WHEN  DIFERENCIA_DIAS > 0 AND DIFERENCIA_DIAS <= 30 THEN 1 END) AS "MENOR_30_DIAS" ,
+        COUNT(CASE WHEN  DIFERENCIA_DIAS > 30 AND DIFERENCIA_DIAS <= 45 THEN 1 END) AS "ENTRE_30_Y_45_DIAS",
+        COUNT(CASE WHEN  DIFERENCIA_DIAS > 45 AND DIFERENCIA_DIAS <= 60 THEN 1 END) AS "ENTRE_45_Y_60_DIAS",
+        COUNT(CASE WHEN  DIFERENCIA_DIAS > 60 AND DIFERENCIA_DIAS <= 90 THEN 1 END) AS "ENTRE_60_Y_90_DIAS",
+        COUNT(CASE WHEN  DIFERENCIA_DIAS > 90 THEN 1 END) AS "MAYOR_90_DIAS"
+      FROM (
+      SELECT LC.ID_CLIENTE, LD.MODELO, LD.PLACA, LC.NRO_LEASING, DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2)) AS FECHA_FIN, DAYS(DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2))) - DAYS(CURRENT DATE) AS DIFERENCIA_DIAS
+      FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
+      ON LD.ID_LEA_CAB = LC.ID
+      ) ${clienteId ? "WHERE ID_CLIENTE = ?" : ""}
+    `;
+
+    const params = [];
+
+    if (clienteId) params.push(clienteId);
+
+    const resultVencidos = await cn.query(sqlVencidos, params);
+    const resultPorVencer = await cn.query(sqlPorVencer, params);
+
+    const clsVencidos = {
+      menor30Dias: resultVencidos[0].MENOR_30_DIAS,
+      entre30Y45Dias: resultVencidos[0].ENTRE_30_Y_45_DIAS,
+      entre45Y60Dias: resultVencidos[0].ENTRE_45_Y_60_DIAS,
+      entre60Y90Dias: resultVencidos[0].ENTRE_60_Y_90_DIAS,
+      mayor90Dias: resultVencidos[0].MAYOR_90_DIAS,
+    };
+
+    const clsPorVencer = {
+      menor30Dias: resultPorVencer[0].MENOR_30_DIAS,
+      entre30Y45Dias: resultPorVencer[0].ENTRE_30_Y_45_DIAS,
+      entre45Y60Dias: resultPorVencer[0].ENTRE_45_Y_60_DIAS,
+      entre60Y90Dias: resultPorVencer[0].ENTRE_60_Y_90_DIAS,
+      mayor90Dias: resultPorVencer[0].MAYOR_90_DIAS,
+    };
+
+    return res.status(200).json({
+      vencidos: clsVencidos,
+      porVencer: clsPorVencer,
+    });
+  } catch (error) {
+    console.error("Error al obtener leasings vencidos y por vencer", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener leasings vencidos y por vencer",
+    });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
+const listVehicleLeasingExpire = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { label, clienteId } = req.query;
+
+  if (!label)
+    return res
+      .status(400)
+      .json({ success: false, message: "El parametro label es obligatorio" });
+
+  const draw = parseInt(req.query.draw);
+  let start = parseInt(req.query.start) || 0;
+  let length = parseInt(req.query.length) || 10;
+  const search = req.query.search || "";
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    let sentences;
+
+    switch (label) {
+      case "Menor 30 dias":
+        sentences = "DIFERENCIA_DIAS < 0 AND DIFERENCIA_DIAS >= -30";
+        break;
+      case "Entre 30 y 45 dias":
+        sentences = "DIFERENCIA_DIAS < -30 AND DIFERENCIA_DIAS >= -45";
+        break;
+      case "Entre 45 y 60 dias":
+        sentences = "DIFERENCIA_DIAS < -45 AND DIFERENCIA_DIAS >= -60";
+        break;
+      case "Entre 60 y 90 dias":
+        sentences = "DIFERENCIA_DIAS < -60 AND DIFERENCIA_DIAS >= -90";
+        break;
+      case "Mayor 90 dias":
+        sentences = "DIFERENCIA_DIAS < -90";
+        break;
+      default:
+        return res
+          .status(400)
+          .json({ success: false, message: "El label no es valido" });
+    }
+
+    const sql = `
+      SELECT *
+      FROM (
+        SELECT LD.ID, LC.ID_CLIENTE, C.CLINOM AS CLIENTE, LD.MODELO, LD.PLACA, M.DESCRIPCION AS MARCA,  LC.NRO_LEASING, DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2)) AS FECHA_FIN, DAYS(DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2))) - DAYS(CURRENT DATE) AS DIFERENCIA_DIAS
+        FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
+        LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
+        ON LD.ID_LEA_CAB = LC.ID
+        LEFT JOIN ${SCHEMA_BD}.PO_VEHICULO V
+        ON LD.ID_VEH = V.ID
+        LEFT JOIN ${SCHEMA_BD}.PO_MARCA M
+        ON V.IDMAR = M.ID
+        LEFT JOIN (
+              SELECT DISTINCT A.IDCLI, B.CLINOM 
+              FROM ${SCHEMA_BD}.PO_OPERACIONES A 
+              INNER JOIN ${SCHEMA_BD}.TCLIE B ON A.IDCLI=B.CLICVE 
+              WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' 
+              ORDER BY CLINOM ASC
+        ) C ON LC.ID_CLIENTE = C.IDCLI
+      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(CLIENTE, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 OR LOCATE_IN_STRING(NRO_LEASING, ?) > 0)
+      ORDER BY ID
+      OFFSET ? ROWS
+      FETCH NEXT ? ROWS ONLY
+    `;
+
+    const params = [];
+
+    const sqlTotal = `
+      SELECT COUNT(*) AS TOTAL
+      FROM (
+        SELECT LD.ID, LC.ID_CLIENTE, C.CLINOM AS CLIENTE, LD.MODELO, LD.PLACA, M.DESCRIPCION AS MARCA,  LC.NRO_LEASING, DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2)) AS FECHA_FIN, DAYS(DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2))) - DAYS(CURRENT DATE) AS DIFERENCIA_DIAS
+        FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
+        LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
+        ON LD.ID_LEA_CAB = LC.ID
+        LEFT JOIN ${SCHEMA_BD}.PO_VEHICULO V
+        ON LD.ID_VEH = V.ID
+        LEFT JOIN ${SCHEMA_BD}.PO_MARCA M
+        ON V.IDMAR = M.ID
+        LEFT JOIN (
+              SELECT DISTINCT A.IDCLI, B.CLINOM 
+              FROM ${SCHEMA_BD}.PO_OPERACIONES A 
+              INNER JOIN ${SCHEMA_BD}.TCLIE B ON A.IDCLI=B.CLICVE 
+              WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' 
+              ORDER BY CLINOM ASC
+        ) C ON LC.ID_CLIENTE = C.IDCLI
+      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(CLIENTE, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 OR LOCATE_IN_STRING(NRO_LEASING, ?) > 0)
+    `;
+
+    const paramsTotal = [];
+
+    if (clienteId) {
+      params.push(clienteId);
+      paramsTotal.push(clienteId);
+    }
+
+    params.push(search, search, search, start, length);
+    paramsTotal.push(search, search, search)
+
+    const result = await cn.query(sql, params);
+    const resultTotal = await cn.query(sqlTotal, paramsTotal);
+
+    const cleanedResult = result.map((row) => ({
+      placa: row.PLACA.trim(), 
+      modelo: row.MODELO.trim(),
+      marca: row.MARCA.trim(),
+      nroLeasing: row.NRO_LEASING.trim(),
+      fechaFin: row.FECHA_FIN.trim(),
+      cliente: row.CLIENTE.trim()
+    }));
+
+    const totalElements = resultTotal[0].TOTAL;
+
+    return res.status(200).json({
+      draw: draw,
+      recordsTotal: totalElements,
+      recordsFiltered: totalElements,
+      data: cleanedResult,
+    });
+  } catch (error) {
+    console.error("Error al obtener vehiculos por grafico", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener vehiculos por grafico",
+    });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
+const listVehicleLeasingToExpire = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { label, clienteId } = req.query;
+
+  if (!label)
+    return res
+      .status(400)
+      .json({ success: false, message: "El parametro label es obligatorio" });
+
+  const draw = parseInt(req.query.draw);
+  let start = parseInt(req.query.start) || 0;
+  let length = parseInt(req.query.length) || 10;
+  const search = req.query.search || "";
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    let sentences;
+
+    switch (label) {
+      case "Menor 30 dias":
+        sentences = "DIFERENCIA_DIAS > 0 AND DIFERENCIA_DIAS <= 30";
+        break;
+      case "Entre 30 y 45 dias":
+        sentences = "DIFERENCIA_DIAS > 30 AND DIFERENCIA_DIAS <= 45";
+        break;
+      case "Entre 45 y 60 dias":
+        sentences = "DIFERENCIA_DIAS > 45 AND DIFERENCIA_DIAS <= 60";
+        break;
+      case "Entre 60 y 90 dias":
+        sentences = "DIFERENCIA_DIAS > 60 AND DIFERENCIA_DIAS <= 90";
+        break;
+      case "Mayor 90 dias":
+        sentences = "DIFERENCIA_DIAS > 90";
+        break;
+      default:
+        return res
+          .status(400)
+          .json({ success: false, message: "El label no es valido" });
+    }
+
+    const sql = `
+      SELECT *
+      FROM (
+        SELECT LD.ID, LC.ID_CLIENTE, C.CLINOM AS CLIENTE, LD.MODELO, LD.PLACA, M.DESCRIPCION AS MARCA,  LC.NRO_LEASING, DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2)) AS FECHA_FIN, DAYS(DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2))) - DAYS(CURRENT DATE) AS DIFERENCIA_DIAS
+        FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
+        LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
+        ON LD.ID_LEA_CAB = LC.ID
+        LEFT JOIN ${SCHEMA_BD}.PO_VEHICULO V
+        ON LD.ID_VEH = V.ID
+        LEFT JOIN ${SCHEMA_BD}.PO_MARCA M
+        ON V.IDMAR = M.ID
+        LEFT JOIN (
+              SELECT DISTINCT A.IDCLI, B.CLINOM 
+              FROM ${SCHEMA_BD}.PO_OPERACIONES A 
+              INNER JOIN ${SCHEMA_BD}.TCLIE B ON A.IDCLI=B.CLICVE 
+              WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' 
+              ORDER BY CLINOM ASC
+        ) C ON LC.ID_CLIENTE = C.IDCLI
+      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(CLIENTE, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 OR LOCATE_IN_STRING(NRO_LEASING, ?) > 0)
+      ORDER BY ID
+      OFFSET ? ROWS
+      FETCH NEXT ? ROWS ONLY
+    `;
+
+    const params = [];
+
+    const sqlTotal = `
+      SELECT COUNT(*) AS TOTAL
+      FROM (
+        SELECT LD.ID, LC.ID_CLIENTE, C.CLINOM AS CLIENTE, LD.MODELO, LD.PLACA, M.DESCRIPCION AS MARCA,  LC.NRO_LEASING, DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2)) AS FECHA_FIN, DAYS(DATE(SUBSTR(LC.FECHA_FIN, 1, 4) || '-' || SUBSTR(LC.FECHA_FIN, 5, 2) || '-' || SUBSTR(LC.FECHA_FIN, 7, 2))) - DAYS(CURRENT DATE) AS DIFERENCIA_DIAS
+        FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
+        LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
+        ON LD.ID_LEA_CAB = LC.ID
+        LEFT JOIN ${SCHEMA_BD}.PO_VEHICULO V
+        ON LD.ID_VEH = V.ID
+        LEFT JOIN ${SCHEMA_BD}.PO_MARCA M
+        ON V.IDMAR = M.ID
+        LEFT JOIN (
+              SELECT DISTINCT A.IDCLI, B.CLINOM 
+              FROM ${SCHEMA_BD}.PO_OPERACIONES A 
+              INNER JOIN ${SCHEMA_BD}.TCLIE B ON A.IDCLI=B.CLICVE 
+              WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' 
+              ORDER BY CLINOM ASC
+        ) C ON LC.ID_CLIENTE = C.IDCLI
+      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(CLIENTE, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 OR LOCATE_IN_STRING(NRO_LEASING, ?) > 0)
+    `;
+
+    const paramsTotal = [];
+
+    if (clienteId) {
+      params.push(clienteId);
+      paramsTotal.push(clienteId);
+    }
+
+    params.push(search, search, search, start, length);
+    paramsTotal.push(search, search, search);
+
+    const result = await cn.query(sql, params);
+    const resultTotal = await cn.query(sqlTotal, paramsTotal);
+
+    const cleanedResult = result.map((row) => ({
+      placa: row.PLACA.trim(), 
+      modelo: row.MODELO.trim(),
+      marca: row.MARCA.trim(),
+      nroLeasing: row.NRO_LEASING.trim(),
+      fechaFin: row.FECHA_FIN.trim(),
+      cliente: row.CLIENTE.trim()
+    }));
+
+    const totalElements = resultTotal[0].TOTAL;
+
+    return res.status(200).json({
+      draw: draw,
+      recordsTotal: totalElements,
+      recordsFiltered: totalElements,
+      data: cleanedResult,
+    });
+  } catch (error) {
+    console.error("Error al obtener vehiculos por grafico", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener vehiculos por grafico",
+    });
   } finally {
     if (cn) await cn.close();
   }
@@ -555,5 +911,8 @@ const contLeasings = async (req, res) => {
 
 module.exports = {
   contVehicleFeet,
+  contVehicleLeasings,
   contLeasings,
+  listVehicleLeasingExpire,
+  listVehicleLeasingToExpire,
 };

@@ -124,7 +124,7 @@ body::before {
   width: calc(100% - 40px);
   margin: 20px;
   /* Darker panel background */
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .dashboard-header {
@@ -136,6 +136,15 @@ body::before {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 12px;
+  z-index: 100;
+}
+
+.dashboard-header.is-stuck {
+  border: 1px solid #acacac;
+  box-shadow: 12px 12px 12px #00000044;
 }
 
 .dashboard-header h1 {
@@ -254,6 +263,10 @@ body::before {
   grid-column: span 1;
 }
 
+#cbo-clients-multiple {
+  width: 100%;
+}
+
 /* Placeholder for world map */
 .world-map {
   width: 100%;
@@ -305,6 +318,21 @@ i {
 
 .table-leasings {
   grid-column: 1 / -1;
+}
+
+.chart-vehicles-cli {
+  grid-column: 1 / -1;
+}
+
+.chart-vehicles-cli .data-chart {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+}
+
+.chart-vehicles-cli .data-chart select {
+  width: 100%;
+  max-width: 340px;
 }
 
 @media screen and (max-width: 1200px) {

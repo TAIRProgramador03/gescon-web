@@ -217,3 +217,21 @@ async function obtenerVehiculosPorVencer(draw, currentPage, length, label, searc
 
   return res;
 }
+
+async function obtenerTotalVehiculosPorCliente(clientsId) {
+  const query = clientsId
+  .map(cli => `clientesId=${cli}`)
+  .join("&")
+
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/contVehicleByClient?${query}`,
+    {
+      method: "GET",
+      credentials: 'include'
+    },
+  );
+
+  const res = await response.json();
+
+  return res;
+}

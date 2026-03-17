@@ -106,21 +106,21 @@ require './templates/header.html';
             <h3>Adendas</h3>
             <div class="data-value" id="con-Adenda">0</div>
           </div>
-          <img src="../img/icons/icon-contract.webp" alt="Adendas">
+          <img src="../img/icons/icon-adenda.webp" alt="Adendas">
         </div>
         <div class="dashboard-item item-small">
           <div>
             <h3>Cartas</h3>
             <div class="data-value" id="con-Carta">0</div>
           </div>
-          <img src="../img/icons/icon-contract.webp" alt="Cartas">
+          <img src="../img/icons/icon-carta.webp" alt="Cartas">
         </div>
         <div class="dashboard-item item-small">
           <div>
             <h3>Orden de compras</h3>
             <div class="data-value" id="con-OC">0</div>
           </div>
-          <img src="../img/icons/icon-contract.webp" alt="Orden de compras">
+          <img src="../img/icons/icon-orden-de-compra.webp" alt="Orden de compras">
         </div>
       </div>
 
@@ -173,18 +173,23 @@ require './templates/header.html';
       </div>
 
       <div class="dashboard-item item-large">
-        <h3>Leasings Vencidos</h3>
+        <h3>Vehiculos con leasings Vencidos</h3>
         <canvas id="donutLeasingA" class="can-barra"></canvas>
       </div>
 
       <div class="dashboard-item item-large">
-        <h3>Leasings Por Vencer</h3>
+        <h3>Vehiculos con leasings Por Vencer</h3>
         <canvas id="donutLeasingB" class="can-barra"></canvas>
       </div>
 
-      <div class="dashboard-item item-large">
-        <h3>Resumen Vehiculos por Leasing</h3>
-        <canvas id="barVehicleLea"></canvas>
+      <div class="dashboard-item item-large chart-vehicles-cli">
+        <h3>Total vehiculos por clientes</h3>
+        <div class="data-chart">
+          <select id="cbo-clients-multiple" name="clients[]" multiple="multiple"></select>
+          <div>
+            <canvas id="barVehicleLea"></canvas>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -220,6 +225,7 @@ require './templates/header.html';
   let vehFleetChart;
   let chartDoughnutLeaA;
   let chartDoughnutLeaB;
+  let chatBatVehCli;
 
   // TABLES
   let tableLea;
@@ -551,33 +557,33 @@ require './templates/header.html';
     })
   }
 
-  const initBarVehicleLea = async () => {
+  const initBarVehicleLea = async (data) => {
     const ctx = $("#barVehicleLea")
-    new Chart(ctx, {
+    chatBatVehCli = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+        labels: data.map((cli) => `${cli.cliente.substring(0, 14)}...`),
         datasets: [{
-          label: 'My First Dataset',
-          data: [65, 59, 80, 81, 56, 55, 40],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(255, 159, 64, 0.2)',
-            'rgba(255, 205, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(201, 203, 207, 0.2)'
-          ],
-          borderColor: [
-            'rgb(255, 99, 132)',
-            'rgb(255, 159, 64)',
-            'rgb(255, 205, 86)',
-            'rgb(75, 192, 192)',
-            'rgb(54, 162, 235)',
-            'rgb(153, 102, 255)',
-            'rgb(201, 203, 207)'
-          ],
+          label: 'Total Vehiculos',
+          data: data.map((cli) => cli.total),
+          backgroundColor: data.map((cli) => {
+            if (cli.total < 15) {
+              return 'rgba(255, 99, 132, 0.2)'
+            } else if (cli.total < 30) {
+              return 'rgba(235, 232, 54, 0.2)'
+            } else if (cli.total > 30) {
+              return 'rgba(54, 162, 235, 0.2)'
+            }
+          }),
+          borderColor: data.map((cli) => {
+            if (cli.total < 15) {
+              return 'rgb(255, 99, 132)'
+            } else if (cli.total > 15 && cli.total <= 30) {
+              return 'rgb(232, 235, 54)'
+            } else if (cli.total > 30) {
+              return 'rgb(54, 162, 235)'
+            }
+          }),
           borderWidth: 1
         }]
       },
@@ -593,9 +599,12 @@ require './templates/header.html';
 
   document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search)
-    const clientId = params.get("clienteId")
+    const clientId = params.get("clienteId");
 
     const quantityVehLea = await obtenerCantidadVehicle(clientId);
+    const quatityVehCli = await obtenerTotalVehiculosPorCliente([]);
+
+    const firstFiveResult = quatityVehCli.slice(0, 5)
 
     // INITIALIZE FETCH
     cargarContContrato(clientId);
@@ -607,7 +616,7 @@ require './templates/header.html';
     await initDoughnut(clientId);
     initDoughnutLeaA(quantityVehLea.vencidos);
     initDoughnutLeaB(quantityVehLea.porVencer);
-    initBarVehicleLea();
+    initBarVehicleLea(firstFiveResult);
 
     const leasings = await cargarTablaconVehiculo();
     const client = await obtenerClientes();
@@ -617,7 +626,7 @@ require './templates/header.html';
       allowClear: false, // Desactiva la "X"
       data: [{
           id: 0,
-          text: "Seleccione un cliente"
+          text: "Todos"
         },
         ...client.map(cli => ({
           id: cli.IDCLI,
@@ -642,6 +651,15 @@ require './templates/header.html';
           text: "Finalizados",
         },
       ]
+    })
+
+    $("#cbo-clients-multiple").select2({
+      placeholder: "Seleccione sus clientes",
+      allowClear: false, // Desactiva la "X",
+      data: quatityVehCli.map(cli => ({
+        id: cli.id,
+        text: cli.cliente
+      })),
     })
 
     const table = $("#listVehicle").DataTable({
@@ -761,6 +779,8 @@ require './templates/header.html';
     if (clientId) {
       $("#cbo-client").val(clientId).trigger("change");
     }
+
+    $('#cbo-clients-multiple').val(firstFiveResult.map(cli => cli.id)).trigger("change");
   });
 
   $("#cbo-client").on("select2:select", async () => {
@@ -832,6 +852,38 @@ require './templates/header.html';
     vehFleetChart.data.datasets[0].data = [data.totalCosto, data.totalVenta];
     vehFleetChart.update();
   })
+
+  $("#cbo-clients-multiple").on("change", async () => {
+    const value = $("#cbo-clients-multiple").val();
+
+    const quantityVehCli = await obtenerTotalVehiculosPorCliente(value);
+
+    chatBatVehCli.data.labels = quantityVehCli.map((cli) => `${cli.cliente.substring(0, 14)}...`)
+    chatBatVehCli.data.datasets[0].data = quantityVehCli.map((cli) => cli.total)
+    chatBatVehCli.data.datasets[0].backgroundColor = quantityVehCli.map((cli) => {
+      if (cli.total < 15) {
+        return 'rgba(255, 99, 132, 0.2)'
+      } else if (cli.total < 30) {
+        return 'rgba(235, 232, 54, 0.2)'
+      } else if (cli.total > 30) {
+        return 'rgba(54, 162, 235, 0.2)'
+      }
+    })
+    chatBatVehCli.data.datasets[0].borderColor = quantityVehCli.map((cli) => {
+        if (cli.total < 15) {
+          return 'rgb(255, 99, 132)'
+        } else if (cli.total > 15 && cli.total <= 30) {
+          return 'rgb(232, 235, 54)'
+        } else if (cli.total > 30) {
+          return 'rgb(54, 162, 235)'
+        }
+      }),
+      chatBatVehCli.update();
+  })
+
+  $('#listLeasings').on('page.dt', function() {
+    tableLea.table().container().getElementsByClassName('dt-scroll-body')[0].scrollTop = 0
+  });
 
   $("#btn-close").on("click", function() {
     const modal = document.getElementById("modal-leasing");

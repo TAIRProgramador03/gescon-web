@@ -321,7 +321,7 @@ const contVehicleLeasings = async (req, res) => {
       LEFT JOIN ${SCHEMA_BD}.TBLDOCUMENTO_CAB C
       ON LC.ID_CONTRATO = C.ID
       WHERE LC.TIPCON = 'H')
-      WHERE LOCATE_IN_STRING(NRO_LEASING, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 
+      WHERE (LOCATE_IN_STRING(NRO_LEASING, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0) 
       ${clienteId ? `AND CLIENTE = ?` : ""}
       ORDER BY ID
       OFFSET ? ROWS
@@ -499,7 +499,7 @@ const contVehicleLeasings = async (req, res) => {
       LEFT JOIN ${SCHEMA_BD}.TBLDOCUMENTO_CAB C
       ON LC.ID_CONTRATO = C.ID
       WHERE LC.TIPCON = 'H')
-      WHERE LOCATE_IN_STRING(NRO_LEASING, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 
+      WHERE (LOCATE_IN_STRING(NRO_LEASING, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0) 
       ${clienteId ? `AND CLIENTE = ?` : ""}
     `;
 
@@ -507,7 +507,7 @@ const contVehicleLeasings = async (req, res) => {
 
     if (clienteId) {
       params.push(search, search, clienteId, start, length);
-      paramsTotal.push(search, search,clienteId);
+      paramsTotal.push(search, search, clienteId);
     } else {
       params.push(search, search, start, length);
       paramsTotal.push(search, search);
@@ -739,18 +739,18 @@ const listVehicleLeasingExpire = async (req, res) => {
     }
 
     params.push(search, search, search, start, length);
-    paramsTotal.push(search, search, search)
+    paramsTotal.push(search, search, search);
 
     const result = await cn.query(sql, params);
     const resultTotal = await cn.query(sqlTotal, paramsTotal);
 
     const cleanedResult = result.map((row) => ({
-      placa: row.PLACA.trim(), 
+      placa: row.PLACA.trim(),
       modelo: row.MODELO.trim(),
       marca: row.MARCA.trim(),
       nroLeasing: row.NRO_LEASING.trim(),
       fechaFin: row.FECHA_FIN.trim(),
-      cliente: row.CLIENTE.trim()
+      cliente: row.CLIENTE.trim(),
     }));
 
     const totalElements = resultTotal[0].TOTAL;
@@ -882,12 +882,12 @@ const listVehicleLeasingToExpire = async (req, res) => {
     const resultTotal = await cn.query(sqlTotal, paramsTotal);
 
     const cleanedResult = result.map((row) => ({
-      placa: row.PLACA.trim(), 
+      placa: row.PLACA.trim(),
       modelo: row.MODELO.trim(),
       marca: row.MARCA.trim(),
       nroLeasing: row.NRO_LEASING.trim(),
       fechaFin: row.FECHA_FIN.trim(),
-      cliente: row.CLIENTE.trim()
+      cliente: row.CLIENTE.trim(),
     }));
 
     const totalElements = resultTotal[0].TOTAL;
@@ -909,10 +909,62 @@ const listVehicleLeasingToExpire = async (req, res) => {
   }
 };
 
+const contVehiculeByClient = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { clientesId } = req.query;
+
+  const listClient = clientesId ? clientesId : [];
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    const valueQuery = listClient.map(() => '?');
+
+    const sql = `
+      SELECT COUNT(*) AS TOTAL_VEH, C.IDCLI AS ID_CLIENTE, C.CLINOM AS CLIENTE FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
+      LEFT JOIN ${SCHEMA_BD}.TBL_LEASING_CAB LC
+      ON LD.ID_LEA_CAB = LC.ID
+      LEFT JOIN (
+        SELECT DISTINCT A.IDCLI, B.CLINOM 
+        FROM ${SCHEMA_BD}.PO_OPERACIONES A 
+        INNER JOIN ${SCHEMA_BD}.TCLIE B ON A.IDCLI=B.CLICVE 
+        WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' 
+        ORDER BY CLINOM ASC
+      ) C
+      ON LC.ID_CLIENTE = C.IDCLI
+      ${listClient.length > 0 ? `WHERE C.IDCLI IN (${valueQuery.join(",")})` : ""}
+      GROUP BY C.CLINOM, C.IDCLI
+      ORDER BY TOTAL_VEH DESC
+    `;
+
+    const result = await cn.query(sql, listClient);
+
+    return res.status(200).json(result.map((row) => ({
+      id: row.ID_CLIENTE.trim(),
+      cliente: row.CLIENTE.trim(),
+      total: row.TOTAL_VEH
+    })))
+  } catch (error) {
+    console.error("Error al obtener vehiculos por cliente");
+    return res.status(500).json({success: false, message: "Error al obtener vehiculos por cliente"})
+  } finally {
+    if(cn) await cn.close();
+  }
+};
+
 module.exports = {
   contVehicleFeet,
   contVehicleLeasings,
   contLeasings,
   listVehicleLeasingExpire,
   listVehicleLeasingToExpire,
+  contVehiculeByClient
 };

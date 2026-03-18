@@ -21,11 +21,11 @@ const contractNro = async (req, res) => {
 
   const { idCli } = req.query; // Obtiene el idCli de los parámetros de consulta
 
-  if (!idCli) {
-    return res
-      .status(400)
-      .json({ success: false, message: "El idCli es obligatorio" });
-  }
+  // if (!idCli) {
+  //   return res
+  //     .status(400)
+  //     .json({ success: false, message: "El idCli es obligatorio" });
+  // }
 
   const cn = await connection(globalDbUser, globalPassword);
 
@@ -34,9 +34,9 @@ const contractNro = async (req, res) => {
     const query = `
     SELECT ID, NRO_CONTRATO AS DESCRIPCION 
     FROM ${SCHEMA_BD}.TBLCONTRATO_CAB 
-    WHERE ID_CLIENTE = ?
+    ${idCli ? `WHERE ID_CLIENTE = ?` : ""}
     `;
-    const result = await cn.query(query, [idCli]);
+    const result = await cn.query(query, idCli ? [idCli] : []);
 
     const cleanedResult = result.map((row) => {
       return {

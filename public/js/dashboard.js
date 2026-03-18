@@ -28,12 +28,6 @@ async function cargarContContrato(clientId) {
 
     const conContrato = await response.json();
 
-    let sumContra =
-      conContrato.data.PADRE +
-      conContrato.data.TIPO_1 +
-      conContrato.data.TIPO_2 +
-      conContrato.data.TIPO_3;
-
     document.getElementById("con-Contra").textContent =
       conContrato.data.PADRE || "0";
     document.getElementById("con-Adenda").textContent =
@@ -167,7 +161,7 @@ async function obtenerLeasings(draw, currentPage, length, search, clientId) {
     `http://${IP_LOCAL}:3000/contVehicleLeasing?draw=${draw}&start=${currentPage}&length=${length}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
     {
       method: "GET",
-      credentials: 'include'
+      credentials: "include",
     },
   );
 
@@ -181,7 +175,7 @@ async function obtenerCantidadVehicle(clientId) {
     `http://${IP_LOCAL}:3000/contLeasing${clientId ? `?clienteId=${clientId}` : ""}`,
     {
       method: "GET",
-      credentials: 'include'
+      credentials: "include",
     },
   );
 
@@ -190,12 +184,19 @@ async function obtenerCantidadVehicle(clientId) {
   return res;
 }
 
-async function obtenerVehiculosVencidos(draw, currentPage, length, label, search, clientId) {
+async function obtenerVehiculosVencidos(
+  draw,
+  currentPage,
+  length,
+  label,
+  search,
+  clientId,
+) {
   const response = await fetch(
     `http://${IP_LOCAL}:3000/listVehicleExpires?draw=${draw}&start=${currentPage}&length=${length}&label=${label}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
     {
       method: "GET",
-      credentials: 'include'
+      credentials: "include",
     },
   );
 
@@ -204,12 +205,19 @@ async function obtenerVehiculosVencidos(draw, currentPage, length, label, search
   return res;
 }
 
-async function obtenerVehiculosPorVencer(draw, currentPage, length, label, search, clientId) {
+async function obtenerVehiculosPorVencer(
+  draw,
+  currentPage,
+  length,
+  label,
+  search,
+  clientId,
+) {
   const response = await fetch(
     `http://${IP_LOCAL}:3000/listVehicleToExpires?draw=${draw}&start=${currentPage}&length=${length}&label=${label}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
     {
       method: "GET",
-      credentials: 'include'
+      credentials: "include",
     },
   );
 
@@ -219,15 +227,55 @@ async function obtenerVehiculosPorVencer(draw, currentPage, length, label, searc
 }
 
 async function obtenerTotalVehiculosPorCliente(clientsId) {
-  const query = clientsId
-  .map(cli => `clientesId=${cli}`)
-  .join("&")
+  const query = clientsId.map((cli) => `clientesId=${cli}`).join("&");
 
   const response = await fetch(
     `http://${IP_LOCAL}:3000/contVehicleByClient?${query}`,
     {
       method: "GET",
-      credentials: 'include'
+      credentials: "include",
+    },
+  );
+
+  const res = await response.json();
+
+  return res;
+}
+
+async function obtenerContratos(clientId) {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/contratosNro${clientId ? `?idCli=${clientId}` : ""}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const res = await response.json();
+
+  return res;
+}
+
+async function obtenerLeasingsPorContrato(contractId) {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/leasingByContract${contractId ? `?contratoId=${contractId}` : ""}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const res = await response.json();
+
+  return res;
+}
+
+async function obtenerDiasContratoLeasing(contractId, leasingId) {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/contComparationDays?contractId=${contractId}&leasingId=${leasingId}`,
+    {
+      method: "GET",
+      credentials: "include",
     },
   );
 

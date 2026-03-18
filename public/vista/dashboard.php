@@ -59,25 +59,9 @@ require './templates/header.html';
   </div>
 
   <div class="content">
-    <!--<h2 data-content="TECNOLOGIA DE INFORMACION DEL GRUPO IBARCENA">
-                TECNOLOGIA DE INFORMACION DEL GRUPO IBARCENA
-            </h2>
-            <h1 data-content="WEB SYS">
-                WEB SYS
-            </h1>
-            <div class="author">
-                <h2>GES 360</h2>
-                <p><b>Web System</b></p>
-                <p>
-                  Developed by the IT area, by Fili
-                </p>
-            </div>-->
     <div class="author">
       <h3><em>GES 360 - Transformación Digital</em></h3>
       <p><b>TECNOLOGIA DE INFORMACION - GRUPO IBARCENA</b></p>
-      <!--<p>
-                  Developed by the IT area, by Fili and Erix
-                </p>-->
     </div>
   </div>
 </div>
@@ -125,9 +109,13 @@ require './templates/header.html';
       </div>
 
       <div class="dashboard-item item-large">
-        <h3>Resumen mensual</h3>
-        <div class="data-value">$59,342.32</div>
-        <canvas id="revenueChart" class="revenueChart"></canvas>
+        <h3>Linea de tiempo (Contrato - Leasing)</h3>
+        <div id="data-value-comparation" class="data-value">723 dias de diferencia</div>
+        <div class="row-cbo-comparation">
+          <select name="contratos" id="cbo-contratos"></select>
+          <select name="leasings" id="cbo-leasings"></select>
+        </div>
+        <canvas id="comparationChart" class="comparationChart"></canvas>
       </div>
 
       <div class="dashboard-item item-medium">
@@ -225,27 +213,118 @@ require './templates/header.html';
   let vehFleetChart;
   let chartDoughnutLeaA;
   let chartDoughnutLeaB;
-  let chatBatVehCli;
+  let chartBarVehCli;
+  let chartBarComparation;
 
   // TABLES
   let tableLea;
 
-  const initLineChat = () => {
-    const ctx = $("#revenueChart");
+  const initChartComparation = (data) => {
+    const ctx = $("#comparationChart");
 
-    new Chart(ctx, {
+    if (data.diferenciaDias) {
+      if (data.diferenciaDias > 0) {
+        $("#data-value-comparation").text(`Leasing vence antes (${Math.abs(data.diferenciaDias)} dias)`)
+      } else if (data.diferenciaDias < 0) {
+        $("#data-value-comparation").text(`Contrato vence antes (${Math.abs(data.diferenciaDias)} dias)`)
+      } else {
+        $("#data-value-comparation").text(`Vencen a la vez`)
+      }
+    } else {
+      $("#data-value-comparation").text(`Sin resultados`)
+    }
+
+    chartBarComparation = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ["Enero", "Febrero", "Marzo"],
         datasets: [{
-          type: "line",
-          label: 'My First Dataset',
-          data: [65, 59, 80],
-          fill: false,
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        }]
-      }
+            label: 'Contrato',
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 3, // <--- Grosor de la línea
+            borderCapStyle: 'round',
+            fill: false,
+            data: [{
+              x: data.fechaIniCont,
+              y: 50
+            }, {
+              x: data.fechaFinCont,
+              y: 50
+            }]
+          },
+          {
+            label: 'Leasing',
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 3, // <--- Grosor de la línea
+            borderCapStyle: 'round',
+            fill: false,
+            data: [{
+              x: data.fechaIniLea,
+              y: 40
+            }, {
+              x: data.fechaFinLea,
+              y: 40
+            }],
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: {
+          mode: 'nearest',
+        },
+        plugins: {
+          title: {
+            display: false,
+            text: 'Rango de fechas Contratos - Leasings'
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const datasetLabel = context.dataset.label || '';
+                return `${datasetLabel}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: 'time',
+            time: {
+              tooltipFormat: 'dd/MM/yyyy'
+            },
+            display: true,
+            title: {
+              display: false,
+              text: 'Fechas'
+            },
+            ticks: {
+              autoSkip: false,
+              maxRotation: 0,
+              major: {
+                enabled: true
+              },
+              font: function(context) {
+                if (context.tick && context.tick.major) {
+                  return {
+                    weight: 'bold',
+                  };
+                }
+              }
+            }
+          },
+          y: {
+            display: false,
+            min: 0,
+            max: 100,
+            title: {
+              display: true,
+              text: 'value'
+            }
+          }
+        }
+      },
     })
   }
 
@@ -404,7 +483,10 @@ require './templates/header.html';
                   data: "cliente"
                 },
                 {
-                  data: "fechaFin"
+                  data: "fechaFin",
+                  render: (data) => {
+                    dayjs(data).format("DD/MM/YYYY")
+                  }
                 }
               ],
             })
@@ -542,7 +624,10 @@ require './templates/header.html';
                   data: "cliente"
                 },
                 {
-                  data: "fechaFin"
+                  data: "fechaFin",
+                  render: (data) => {
+                    dayjs(data).format("DD/MM/YYYY")
+                  }
                 }
               ],
             })
@@ -559,7 +644,7 @@ require './templates/header.html';
 
   const initBarVehicleLea = async (data) => {
     const ctx = $("#barVehicleLea")
-    chatBatVehCli = new Chart(ctx, {
+    chartBarVehCli = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: data.map((cli) => `${cli.cliente.substring(0, 14)}...`),
@@ -584,14 +669,14 @@ require './templates/header.html';
               return 'rgb(54, 162, 235)'
             }
           }),
-          borderWidth: 1
+          borderWidth: 1,
         }]
       },
       options: {
         scales: {
           y: {
             beginAtZero: true
-          }
+          },
         }
       },
     })
@@ -603,8 +688,13 @@ require './templates/header.html';
 
     const quantityVehLea = await obtenerCantidadVehicle(clientId);
     const quatityVehCli = await obtenerTotalVehiculosPorCliente([]);
+    const listContracts = await obtenerContratos(clientId);
+    let listLeasings = [];
+    if (listContracts.length > 0) {
+      listLeasings = await obtenerLeasingsPorContrato(listContracts[0].ID)
+    }
 
-    const firstFiveResult = quatityVehCli.slice(0, 5)
+    const firstTenResult = quatityVehCli.slice(0, 10)
 
     // INITIALIZE FETCH
     cargarContContrato(clientId);
@@ -612,11 +702,23 @@ require './templates/header.html';
     cargarTablaconVehiculo();
 
     // Initialize charts with placeholder data
-    initLineChat();
+    if (listContracts.length > 0 && listLeasings.length > 0) {
+      const daysComparation = await obtenerDiasContratoLeasing(listContracts[0].ID, listLeasings[0].id)
+      initChartComparation(daysComparation);
+    } else {
+      initChartComparation({
+        "fechaIniCont": "",
+        "fechaFinCont": "",
+        "fechaIniLea": "",
+        "fechaFinLea": "",
+        "diferenciaDias": 0
+      });
+    }
+
     await initDoughnut(clientId);
     initDoughnutLeaA(quantityVehLea.vencidos);
     initDoughnutLeaB(quantityVehLea.porVencer);
-    initBarVehicleLea(firstFiveResult);
+    initBarVehicleLea(firstTenResult);
 
     const leasings = await cargarTablaconVehiculo();
     const client = await obtenerClientes();
@@ -660,6 +762,24 @@ require './templates/header.html';
         id: cli.id,
         text: `${cli.cliente} (${cli.total} )`
       })),
+    })
+
+    $("#cbo-contratos").select2({
+      placeholder: "Seleccione un contrato",
+      allowClear: false,
+      data: listContracts.map(con => ({
+        id: con.ID,
+        text: con.DESCRIPCION
+      }))
+    })
+
+    $("#cbo-leasings").select2({
+      placeholder: "Seleccione un leasing",
+      allowClear: false,
+      data: listLeasings.map(lea => ({
+        id: lea.id,
+        text: lea.nroLeasing
+      }))
     })
 
     const table = $("#listVehicle").DataTable({
@@ -792,7 +912,9 @@ require './templates/header.html';
       $("#cbo-client").val(clientId).trigger("change");
     }
 
-    $('#cbo-clients-multiple').val(firstFiveResult.map(cli => cli.id)).trigger("change");
+    $('#cbo-clients-multiple').val(firstTenResult.map(cli => cli.id)).trigger("change");
+    if (listContracts.length > 0) $("#cbo-contratos").val(listContracts[0].ID).trigger("change");
+    if (listLeasings.length > 0) $("#cbo-leasings").val(listLeasings[0].id).trigger("change");
   });
 
   $("#cbo-client").on("select2:select", async () => {
@@ -800,10 +922,20 @@ require './templates/header.html';
 
     const params = new URLSearchParams(window.location.search)
 
+    let contratos;
+    let leasings = [];
+    $('#cbo-contratos').empty().trigger('change');
+    $('#cbo-leasings').empty().trigger('change');
+
     if (clientId == 0) {
       params.delete("clienteId")
+      contratos = await obtenerContratos();
     } else {
       params.set("clienteId", clientId)
+      contratos = await obtenerContratos(clientId);
+      if(contratos.length > 0) {
+        leasings = await obtenerLeasingsPorContrato(contratos[0].ID)
+      }
     }
 
     const nuevaURL = `${window.location.pathname}?${params.toString()}`;
@@ -842,6 +974,82 @@ require './templates/header.html';
     // CONT UPDATE
     cargarContContrato(clientId != 0 ? clientId : undefined);
 
+    // CONT TIME LINE UPDATE
+    contratos.forEach(cont => {
+      const data = {
+        id: cont.ID,
+        text: cont.DESCRIPCION
+      };
+
+      const newOption = new Option(data.text, data.id, false, false);
+      $('#cbo-contratos').append(newOption).trigger('change');
+    })
+
+    leasings.forEach(lea => {
+      const data = {
+        id: lea.id,
+        text: lea.nroLeasing
+      };
+
+      const newOption = new Option(data.text, data.id, false, false);
+      $('#cbo-leasings').append(newOption).trigger('change');
+    })
+
+    const contractId = contratos[0] ? contratos[0].ID : null
+    const leasingId = $('#cbo-leasings').val();
+
+    if (contractId && leasingId) {
+      const data = await obtenerDiasContratoLeasing(contractId, leasingId)
+
+      if (data.diferenciaDias > 0) {
+        $("#data-value-comparation").text(`Leasing vence antes (${Math.abs(data.diferenciaDias)} dias)`)
+      } else if (data.diferenciaDias < 0) {
+        $("#data-value-comparation").text(`Contrato vence antes (${Math.abs(data.diferenciaDias)} dias)`)
+      } else {
+        $("#data-value-comparation").text(`Vencen a la vez`)
+      }
+
+      chartBarComparation.data.datasets[0].data = [{
+        x: data.fechaIniCont,
+        y: 50
+      }, {
+        x: data.fechaFinCont,
+        y: 50
+      }]
+
+      chartBarComparation.data.datasets[1].data = [{
+          x: data.fechaIniLea,
+          y: 40
+        },
+        {
+          x: data.fechaFinLea,
+          y: 40
+        }
+      ]
+
+    } else {
+      $("#data-value-comparation").text(`Sin resultados`)
+      chartBarComparation.data.datasets[0].data = [{
+        x: "",
+        y: 50
+      }, {
+        x: "",
+        y: 50
+      }]
+
+      chartBarComparation.data.datasets[1].data = [{
+          x: "",
+          y: 40
+        },
+        {
+          x: "",
+          y: 40
+        }
+      ]
+    }
+
+    chartBarComparation.update();
+
     // TABLE LEA
     tableLea.draw();
   })
@@ -870,9 +1078,9 @@ require './templates/header.html';
 
     const quantityVehCli = await obtenerTotalVehiculosPorCliente(value);
 
-    chatBatVehCli.data.labels = quantityVehCli.map((cli) => `${cli.cliente.substring(0, 14)}...`)
-    chatBatVehCli.data.datasets[0].data = quantityVehCli.map((cli) => cli.total)
-    chatBatVehCli.data.datasets[0].backgroundColor = quantityVehCli.map((cli) => {
+    chartBarVehCli.data.labels = quantityVehCli.map((cli) => `${cli.cliente.substring(0, 14)}...`)
+    chartBarVehCli.data.datasets[0].data = quantityVehCli.map((cli) => cli.total)
+    chartBarVehCli.data.datasets[0].backgroundColor = quantityVehCli.map((cli) => {
       if (cli.total < 15) {
         return 'rgba(255, 99, 132, 0.2)'
       } else if (cli.total < 30) {
@@ -881,7 +1089,7 @@ require './templates/header.html';
         return 'rgba(54, 162, 235, 0.2)'
       }
     })
-    chatBatVehCli.data.datasets[0].borderColor = quantityVehCli.map((cli) => {
+    chartBarVehCli.data.datasets[0].borderColor = quantityVehCli.map((cli) => {
         if (cli.total < 15) {
           return 'rgb(255, 99, 132)'
         } else if (cli.total > 15 && cli.total <= 30) {
@@ -890,7 +1098,112 @@ require './templates/header.html';
           return 'rgb(54, 162, 235)'
         }
       }),
-      chatBatVehCli.update();
+      chartBarVehCli.update();
+  })
+
+  $("#cbo-contratos").on("select2:select", async () => {
+    const contractId = $("#cbo-contratos").val();
+
+    $('#cbo-leasings').empty().trigger('change');
+
+    const listLeasings = await obtenerLeasingsPorContrato(contractId)
+    listLeasings.forEach(lea => {
+      const data = {
+        id: lea.id,
+        text: lea.nroLeasing
+      };
+
+      const newOption = new Option(data.text, data.id, false, false);
+      $('#cbo-leasings').append(newOption).trigger('change');
+    })
+
+    const leasingId = $('#cbo-leasings').val();
+
+    if (leasingId) {
+      const data = await obtenerDiasContratoLeasing(contractId, leasingId)
+
+      if (data.diferenciaDias > 0) {
+        $("#data-value-comparation").text(`Leasing vence antes (${Math.abs(data.diferenciaDias)} dias)`)
+      } else if (data.diferenciaDias < 0) {
+        $("#data-value-comparation").text(`Contrato vence antes (${Math.abs(data.diferenciaDias)} dias)`)
+      } else {
+        $("#data-value-comparation").text(`Vencen a la vez`)
+      }
+
+      chartBarComparation.data.datasets[0].data = [{
+        x: data.fechaIniCont,
+        y: 50
+      }, {
+        x: data.fechaFinCont,
+        y: 50
+      }]
+
+      chartBarComparation.data.datasets[1].data = [{
+          x: data.fechaIniLea,
+          y: 40
+        },
+        {
+          x: data.fechaFinLea,
+          y: 40
+        }
+      ]
+
+    } else {
+      $("#data-value-comparation").text(`Sin resultados`)
+      chartBarComparation.data.datasets[0].data = [{
+        x: "",
+        y: 50
+      }, {
+        x: "",
+        y: 50
+      }]
+
+      chartBarComparation.data.datasets[1].data = [{
+          x: "",
+          y: 40
+        },
+        {
+          x: "",
+          y: 40
+        }
+      ]
+    }
+
+    chartBarComparation.update();
+  })
+
+  $("#cbo-leasings").on("select2:select", async () => {
+    const contractId = $("#cbo-contratos").val();
+    const leasingId = $('#cbo-leasings').val();
+
+    const data = await obtenerDiasContratoLeasing(contractId, leasingId)
+
+    if (data.diferenciaDias > 0) {
+      $("#data-value-comparation").text(`Leasing vence antes (${Math.abs(data.diferenciaDias)} dias)`)
+    } else if (data.diferenciaDias < 0) {
+      $("#data-value-comparation").text(`Contrato vence antes (${Math.abs(data.diferenciaDias)} dias)`)
+    } else {
+      $("#data-value-comparation").text(`Vencen a la vez`)
+    }
+    chartBarComparation.data.datasets[0].data = [{
+      x: data.fechaIniCont,
+      y: 50
+    }, {
+      x: data.fechaFinCont,
+      y: 50
+    }]
+
+    chartBarComparation.data.datasets[1].data = [{
+        x: data.fechaIniLea,
+        y: 40
+      },
+      {
+        x: data.fechaFinLea,
+        y: 40
+      }
+    ]
+
+    chartBarComparation.update();
   })
 
   $('#listLeasings').on('page.dt', function() {

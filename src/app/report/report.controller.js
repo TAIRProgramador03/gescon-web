@@ -49,7 +49,7 @@ const contVehicleFeet = async (req, res) => {
                 SUBSTR(CC.FECHA_FIRMA, 5, 2) || '-'  ||
                 SUBSTR(CC.FECHA_FIRMA, 7, 2)
               ),
-              CAST(CC.DURACION AS INT)
+              CAST(CC.DURACION AS INTEGER)
             ) > CURRENT DATE
             GROUP BY CC.ID_CLIENTE
 
@@ -64,7 +64,7 @@ const contVehicleFeet = async (req, res) => {
                 SUBSTR(DC.FECHA_FIRMA, 5, 2) || '-'  ||
                 SUBSTR(DC.FECHA_FIRMA, 7, 2)
               ),
-              CAST(DC.DURACION AS INT)
+              CAST(DC.DURACION AS INTEGER)
             ) > CURRENT DATE
           GROUP BY DC.ID_CLIENTE
           )
@@ -82,7 +82,7 @@ const contVehicleFeet = async (req, res) => {
                 SUBSTR(CC.FECHA_FIRMA, 5, 2) || '-'  ||
                 SUBSTR(CC.FECHA_FIRMA, 7, 2)
               ),
-              CAST(CC.DURACION AS INT)
+              CAST(CC.DURACION AS INTEGER)
             ) < CURRENT DATE
             GROUP BY CC.ID_CLIENTE
 
@@ -97,7 +97,7 @@ const contVehicleFeet = async (req, res) => {
                 SUBSTR(DC.FECHA_FIRMA, 5, 2) || '-'  ||
                 SUBSTR(DC.FECHA_FIRMA, 7, 2)
               ),
-              CAST(DC.DURACION AS INT)
+              CAST(DC.DURACION AS INTEGER)
             ) < CURRENT DATE
           GROUP BY DC.ID_CLIENTE
           )
@@ -172,7 +172,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-          CAST(C.DURACION AS INT)
+          CAST(C.DURACION AS INTEGER)
         ) AS FECHA_FIN_CON,
         CAST(ROUND((DAYS(
         ADD_MONTHS(
@@ -181,7 +181,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-          CAST(C.DURACION AS INT)
+          CAST(C.DURACION AS INTEGER)
         )
         ) -
         DAYS (
@@ -222,7 +222,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-            CAST(C.DURACION AS INT)
+            CAST(C.DURACION AS INTEGER)
           )
         ) - DAYS (
           DATE(
@@ -256,7 +256,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-          CAST(C.DURACION AS INT)
+          CAST(C.DURACION AS INTEGER)
         ) AS FECHA_FIN_CON,
         CAST(ROUND((DAYS(
         ADD_MONTHS(
@@ -265,7 +265,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-          CAST(C.DURACION AS INT)
+          CAST(C.DURACION AS INTEGER)
         )
         ) -
         DAYS (
@@ -306,7 +306,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-            CAST(C.DURACION AS INT)
+            CAST(C.DURACION AS INTEGER)
           )
         ) - DAYS (
           DATE(
@@ -350,7 +350,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-          CAST(C.DURACION AS INT)
+          CAST(C.DURACION AS INTEGER)
         ) AS FECHA_FIN_CON,
         CAST(ROUND((DAYS(
         ADD_MONTHS(
@@ -359,7 +359,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-          CAST(C.DURACION AS INT)
+          CAST(C.DURACION AS INTEGER)
         )
         ) -
         DAYS (
@@ -400,7 +400,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-            CAST(C.DURACION AS INT)
+            CAST(C.DURACION AS INTEGER)
           )
         ) - DAYS (
           DATE(
@@ -434,7 +434,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-          CAST(C.DURACION AS INT)
+          CAST(C.DURACION AS INTEGER)
         ) AS FECHA_FIN_CON,
         CAST(ROUND((DAYS(
         ADD_MONTHS(
@@ -443,7 +443,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-          CAST(C.DURACION AS INT)
+          CAST(C.DURACION AS INTEGER)
         )
         ) -
         DAYS (
@@ -484,7 +484,7 @@ const contVehicleLeasings = async (req, res) => {
             SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
             SUBSTR(C.FECHA_FIRMA, 7, 2)
           ),
-            CAST(C.DURACION AS INT)
+            CAST(C.DURACION AS INTEGER)
           )
         ) - DAYS (
           DATE(
@@ -926,7 +926,7 @@ const contVehiculeByClient = async (req, res) => {
   const cn = await connection(globalDbUser, globalPassword);
 
   try {
-    const valueQuery = listClient.map(() => '?');
+    const valueQuery = listClient.map(() => "?");
 
     const sql = `
       SELECT COUNT(*) AS TOTAL_VEH, C.IDCLI AS ID_CLIENTE, C.CLINOM AS CLIENTE FROM ${SCHEMA_BD}.TBL_LEASING_DET LD
@@ -947,16 +947,113 @@ const contVehiculeByClient = async (req, res) => {
 
     const result = await cn.query(sql, listClient);
 
-    return res.status(200).json(result.map((row) => ({
-      id: row.ID_CLIENTE.trim(),
-      cliente: row.CLIENTE.trim(),
-      total: row.TOTAL_VEH
-    })))
+    return res.status(200).json(
+      result.map((row) => ({
+        id: row.ID_CLIENTE.trim(),
+        cliente: row.CLIENTE.trim(),
+        total: row.TOTAL_VEH,
+      })),
+    );
   } catch (error) {
     console.error("Error al obtener vehiculos por cliente");
-    return res.status(500).json({success: false, message: "Error al obtener vehiculos por cliente"})
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener vehiculos por cliente",
+    });
   } finally {
-    if(cn) await cn.close();
+    if (cn) await cn.close();
+  }
+};
+
+const contComparationDays = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { contractId, leasingId } = req.query; // Obtiene el idCli de los parámetros de consulta
+
+  if (!contractId || !leasingId)
+    return res.status(400).json({
+      success: false,
+      message: "Los parametros contractId y leasingId son obligatorios",
+    });
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    const sql = `
+      SELECT 
+      DATE(
+      SUBSTR(C.FECHA_FIRMA, 1, 4) || '-' ||
+      SUBSTR(C.FECHA_FIRMA, 5, 2) || '-' ||
+      SUBSTR(C.FECHA_FIRMA, 7, 2)
+      ) AS FECHA_INI_CON,
+
+      ADD_MONTHS(
+      DATE(
+      SUBSTR(C.FECHA_FIRMA, 1, 4) || '-' ||
+      SUBSTR(C.FECHA_FIRMA, 5, 2) || '-' ||
+      SUBSTR(C.FECHA_FIRMA, 7, 2)
+      ),
+      CAST(C.DURACION AS INTEGER)
+      ) AS FECHA_FIN_CON,
+
+      DATE(
+      SUBSTR(L.FECHA_INI, 1, 4) || '-' ||
+      SUBSTR(L.FECHA_INI, 5, 2) || '-' ||
+      SUBSTR(L.FECHA_INI, 7, 2)
+      ) AS FECHA_INI_LEA,
+
+      DATE(
+      SUBSTR(L.FECHA_FIN, 1, 4) || '-' ||
+      SUBSTR(L.FECHA_FIN, 5, 2) || '-' ||
+      SUBSTR(L.FECHA_FIN, 7, 2)
+      ) AS FECHA_FIN_LEA,
+       
+      DAYS(
+      ADD_MONTHS(
+      DATE(
+      SUBSTR(C.FECHA_FIRMA, 1, 4) || '-' || 
+      SUBSTR(C.FECHA_FIRMA, 5, 2) || '-'  ||
+      SUBSTR(C.FECHA_FIRMA, 7, 2)
+      ),
+      CAST(C.DURACION AS INTEGER)
+      )
+      ) - DAYS (
+      DATE(
+      SUBSTR(L.FECHA_FIN, 1, 4) || '-' || 
+      SUBSTR(L.FECHA_FIN, 5, 2) || '-'  ||
+      SUBSTR(L.FECHA_FIN, 7, 2)
+      )
+      ) AS DIFERENCIA_DIAS
+      FROM SPEED400AT.TBLCONTRATO_CAB C
+      LEFT JOIN SPEED400AT.TBL_LEASING_CAB L
+      ON C.ID = L.ID_CONTRATO
+      WHERE C.ID = ? AND L.ID = ?
+    `;
+
+    const result = await cn.query(sql, [contractId, leasingId])
+
+    return res.status(200).json({
+      fechaIniCont: result[0] ? result[0].FECHA_INI_CON : "",
+      fechaFinCont: result[0] ? result[0].FECHA_FIN_CON : "",
+      fechaIniLea: result[0] ? result[0].FECHA_INI_LEA : "",
+      fechaFinLea: result[0] ? result[0].FECHA_FIN_LEA : "",
+      diferenciaDias: result[0] ? result[0].DIFERENCIA_DIAS : "",
+    })
+  } catch (error) {
+    console.error("Error al obtener la diferencia de dias", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error al obtener la diferencia de dias",
+    });
+  } finally {
+    if (cn) await cn.close();
   }
 };
 
@@ -966,5 +1063,6 @@ module.exports = {
   contLeasings,
   listVehicleLeasingExpire,
   listVehicleLeasingToExpire,
-  contVehiculeByClient
+  contVehiculeByClient,
+  contComparationDays
 };

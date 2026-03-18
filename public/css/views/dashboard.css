@@ -267,6 +267,18 @@ body::before {
   width: 100%;
 }
 
+.row-cbo-comparation {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.row-cbo-comparation select {
+  width: 100%;
+}
+
 /* Placeholder for world map */
 .world-map {
   width: 100%;
@@ -368,7 +380,7 @@ i {
     /* Make medium items take up the full width */
   }
 
-  .revenueChart {
+  .comparationChart {
     width: 100%;
   }
 

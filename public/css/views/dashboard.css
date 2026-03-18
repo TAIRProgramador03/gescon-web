@@ -123,6 +123,7 @@ body::before {
 .dashboard-container {
   width: calc(100% - 40px);
   margin: 20px;
+  position: relative;
   /* Darker panel background */
   /* overflow: hidden; */
 }
@@ -140,11 +141,9 @@ body::before {
   position: sticky;
   top: 12px;
   z-index: 100;
-}
-
-.dashboard-header.is-stuck {
-  border: 1px solid #acacac;
-  box-shadow: 12px 12px 12px #00000044;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  border: 1px solid #d6d6d6;
 }
 
 .dashboard-header h1 {
@@ -263,7 +262,7 @@ body::before {
   grid-column: span 1;
 }
 
-#cbo-clients-multiple {
+.cbo-clients-multiple {
   width: 100%;
 }
 
@@ -337,6 +336,7 @@ i {
 }
 
 .chart-vehicles-cli .data-chart {
+  margin-top: 12px;
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -345,6 +345,18 @@ i {
 .chart-vehicles-cli .data-chart select {
   width: 100%;
   max-width: 340px;
+}
+
+.chart-container {
+  position: relative;
+  height: 400px; /* O el alto que desees */
+  width: 100%;
+}
+
+.chart-container canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 @media screen and (max-width: 1200px) {
@@ -632,4 +644,62 @@ table.dataTable.display tbody tr:hover > .sorting_1 {
 #modal-leasing .modal-footer .btn-error:hover {
   background-color: #005ad988;
   color: #fff;
+}
+
+.loader-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fffffffb;
+  z-index: -99999;
+  opacity: 0;
+  transition: linear 800ms;
+}
+
+.loader-screen .loading-wave {
+  width: 300px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.loader-screen .loading-bar {
+  width: 20px;
+  height: 10px;
+  margin: 0 5px;
+  background-color: #3498db;
+  border-radius: 5px;
+  animation: loading-wave-animation 1s ease-in-out infinite;
+}
+
+.loader-screen .loading-bar:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.loader-screen .loading-bar:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.loader-screen .loading-bar:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+@keyframes loading-wave-animation {
+  0% {
+    height: 10px;
+  }
+
+  50% {
+    height: 50px;
+  }
+
+  100% {
+    height: 10px;
+  }
 }

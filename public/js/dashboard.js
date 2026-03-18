@@ -113,16 +113,6 @@ function actualizarGrafico(labels, data) {
   });
 }
 
-async function cargarTablaconVehiculo() {
-  const response = await fetch(`http://${IP_LOCAL}:3000/tablaconVehiculo`, {
-    credentials: "include",
-  });
-
-  const conVehi = await response.json();
-
-  return conVehi;
-}
-
 async function obtenerFlotaVehicular(status, clientId) {
   let paramsString = "";
 

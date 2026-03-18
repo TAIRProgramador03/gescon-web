@@ -67,6 +67,14 @@ require './templates/header.html';
 </div>
 
 <div class="dashboard-container">
+  <div class="loader-screen">
+    <div class="loading-wave">
+      <div class="loading-bar"></div>
+      <div class="loading-bar"></div>
+      <div class="loading-bar"></div>
+      <div class="loading-bar"></div>
+    </div>
+  </div>
   <main class="dashboard-main">
     <section class="dashboard-section">
       <div class="dashboard-header">
@@ -110,7 +118,7 @@ require './templates/header.html';
 
       <div class="dashboard-item item-large">
         <h3>Linea de tiempo (Contrato - Leasing)</h3>
-        <div id="data-value-comparation" class="data-value">723 dias de diferencia</div>
+        <div id="data-value-comparation" class="data-value"></div>
         <div class="row-cbo-comparation">
           <select name="contratos" id="cbo-contratos"></select>
           <select name="leasings" id="cbo-leasings"></select>
@@ -162,19 +170,28 @@ require './templates/header.html';
 
       <div class="dashboard-item item-large">
         <h3>Vehiculos con leasings Vencidos</h3>
-        <canvas id="donutLeasingA" class="can-barra"></canvas>
+        <div id="data-value-veh-exp" class="data-value"></div>
+        <div style="width: 100%; height: 220px;">
+          <canvas id="donutLeasingA" class="can-barra"></canvas>
+        </div>
       </div>
 
       <div class="dashboard-item item-large">
         <h3>Vehiculos con leasings Por Vencer</h3>
-        <canvas id="donutLeasingB" class="can-barra"></canvas>
+        <div id="data-value-veh-to-exp" class="data-value"></div>
+        <div style="width: 100%; height: 220px;">
+          <canvas id="donutLeasingB" class="can-barra"></canvas>
+        </div>
       </div>
 
       <div class="dashboard-item item-large chart-vehicles-cli">
         <h3>Total vehiculos por clientes</h3>
+        <div id="data-value-chart-veh" class="data-value"></div>
         <div class="data-chart">
-          <select id="cbo-clients-multiple" name="clients[]" multiple="multiple"></select>
-          <div>
+          <div class="cbo-clients-multiple">
+            <select id="cbo-clients-multiple" name="clients[]" multiple="multiple"></select>
+          </div>
+          <div class="chart-container">
             <canvas id="barVehicleLea"></canvas>
           </div>
         </div>
@@ -200,14 +217,53 @@ require './templates/header.html';
 
 <script src="../js/dashboard.js"></script>
 <script>
-  window.onload = function() {
-    setTimeout(() => {
-      document.getElementById('banner').style.opacity = '0';
+  // window.onload = function() {
+  //   setTimeout(() => {
+  //     document.getElementById('banner').style.opacity = '0';
+  //     setTimeout(() => {
+  //       document.getElementById('banner').style.display = 'none';
+  //     }, 1000); // Espera 1 segundo después de ocultar
+  //   }, 4000); // Ocultar todo después de 2 segundos
+  // };
+
+  // CHARGE SCREEN
+  let onLoadWindow = 0;
+
+  function showLoaderWindow() {
+    onLoadWindow++;
+    $('.banner').css('opacity', '1');
+    $('.banner').css('z-index', '99999');
+    $('.banner').show();
+  }
+
+  function hideLoaderWindow() {
+    onLoadWindow--;
+    if (onLoadWindow <= 0) {
       setTimeout(() => {
-        document.getElementById('banner').style.display = 'none';
-      }, 1000); // Espera 1 segundo después de ocultar
-    }, 4000); // Ocultar todo después de 2 segundos
-  };
+        $('.banner').css('opacity', '0');
+        $('.banner').css('z-index', '-99999');
+        setTimeout(() => {
+          $('.banner').hide();
+        }, 200)
+      }, 800)
+    }
+  }
+
+  let activeRequests = 0;
+
+  function showLoader() {
+    activeRequests++;
+    $('.loader-screen').css('opacity', '1');
+    $('.loader-screen').css('z-index', '99999');
+  }
+
+  function hideLoader() {
+    activeRequests--;
+    if (activeRequests <= 0) {
+      $('.loader-screen').css('opacity', '0');
+      $('.loader-screen').css('z-index', '-99999');
+    }
+  }
 
   // CHARTS
   let vehFleetChart;
@@ -363,6 +419,8 @@ require './templates/header.html';
   const initDoughnutLeaA = async (data) => {
     const ctx = $("#donutLeasingA")
 
+    $("#data-value-veh-exp").text(`${data.menor30Dias + data.entre30Y45Dias + data.entre45Y60Dias + data.entre60Y90Dias + data.mayor90Dias} vehiculos`)
+
     chartDoughnutLeaA = new Chart(ctx, {
       type: 'doughnut',
       data: {
@@ -485,7 +543,7 @@ require './templates/header.html';
                 {
                   data: "fechaFin",
                   render: (data) => {
-                    dayjs(data).format("DD/MM/YYYY")
+                    return dayjs(data).format("DD/MM/YYYY")
                   }
                 }
               ],
@@ -503,6 +561,8 @@ require './templates/header.html';
 
   const initDoughnutLeaB = async (data) => {
     const ctx = $("#donutLeasingB")
+
+    $("#data-value-veh-to-exp").text(`${data.menor30Dias + data.entre30Y45Dias + data.entre45Y60Dias + data.entre60Y90Dias + data.mayor90Dias} vehiculos`)
 
     chartDoughnutLeaB = new Chart(ctx, {
       type: 'doughnut',
@@ -626,7 +686,7 @@ require './templates/header.html';
                 {
                   data: "fechaFin",
                   render: (data) => {
-                    dayjs(data).format("DD/MM/YYYY")
+                    return dayjs(data).format("DD/MM/YYYY")
                   }
                 }
               ],
@@ -644,6 +704,9 @@ require './templates/header.html';
 
   const initBarVehicleLea = async (data) => {
     const ctx = $("#barVehicleLea")
+
+    $("#data-value-chart-veh").text(`${data.reduce((acc, curr) => acc + curr.total, 0)} vehiculos`)
+
     chartBarVehCli = new Chart(ctx, {
       type: 'bar',
       data: {
@@ -673,16 +736,14 @@ require './templates/header.html';
         }]
       },
       options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          },
-        }
+        responsive: true,
+        maintainAspectRatio: false,
       },
     })
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
+    showLoaderWindow();
     const params = new URLSearchParams(window.location.search)
     const clientId = params.get("clienteId");
 
@@ -699,7 +760,6 @@ require './templates/header.html';
     // INITIALIZE FETCH
     cargarContContrato(clientId);
     cargarContClient();
-    cargarTablaconVehiculo();
 
     // Initialize charts with placeholder data
     if (listContracts.length > 0 && listLeasings.length > 0) {
@@ -720,7 +780,6 @@ require './templates/header.html';
     initDoughnutLeaB(quantityVehLea.porVencer);
     initBarVehicleLea(firstTenResult);
 
-    const leasings = await cargarTablaconVehiculo();
     const client = await obtenerClientes();
 
     $("#cbo-client").select2({
@@ -758,6 +817,7 @@ require './templates/header.html';
     $("#cbo-clients-multiple").select2({
       placeholder: "Seleccione sus clientes",
       allowClear: false, // Desactiva la "X",
+      width: '100%',
       data: quatityVehCli.map(cli => ({
         id: cli.id,
         text: `${cli.cliente} (${cli.total} )`
@@ -780,29 +840,6 @@ require './templates/header.html';
         id: lea.id,
         text: lea.nroLeasing
       }))
-    })
-
-    const table = $("#listVehicle").DataTable({
-      language: {
-        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
-      },
-      scrollY: '200px',
-      scrollCollapse: true,
-      data: leasings,
-      columns: [{
-          data: "item",
-          render: function(data, type, row, meta) {
-            return meta.row + 1;
-          },
-          width: "5%",
-        },
-        {
-          data: "MODELO",
-        },
-        {
-          data: "PRECIO_VEH",
-        },
-      ],
     })
 
     tableLea = $("#listLeasings").DataTable({
@@ -915,9 +952,14 @@ require './templates/header.html';
     $('#cbo-clients-multiple').val(firstTenResult.map(cli => cli.id)).trigger("change");
     if (listContracts.length > 0) $("#cbo-contratos").val(listContracts[0].ID).trigger("change");
     if (listLeasings.length > 0) $("#cbo-leasings").val(listLeasings[0].id).trigger("change");
+
+
+    hideLoaderWindow();
   });
 
   $("#cbo-client").on("select2:select", async () => {
+    showLoader();
+
     const clientId = $("#cbo-client").val();
 
     const params = new URLSearchParams(window.location.search)
@@ -930,10 +972,13 @@ require './templates/header.html';
     if (clientId == 0) {
       params.delete("clienteId")
       contratos = await obtenerContratos();
+      if (contratos.length > 0) {
+        leasings = await obtenerLeasingsPorContrato(contratos[0].ID)
+      }
     } else {
       params.set("clienteId", clientId)
       contratos = await obtenerContratos(clientId);
-      if(contratos.length > 0) {
+      if (contratos.length > 0) {
         leasings = await obtenerLeasingsPorContrato(contratos[0].ID)
       }
     }
@@ -960,6 +1005,10 @@ require './templates/header.html';
     const quantityVehLea = await obtenerCantidadVehicle(clientId != 0 ? clientId : undefined);
     const vencidos = quantityVehLea.vencidos;
     const porVencer = quantityVehLea.porVencer;
+
+    $("#data-value-veh-exp").text(`${vencidos.menor30Dias + vencidos.entre30Y45Dias + vencidos.entre45Y60Dias + vencidos.entre60Y90Dias + vencidos.mayor90Dias} vehiculos`)
+    $("#data-value-veh-to-exp").text(`${porVencer.menor30Dias + porVencer.entre30Y45Dias + porVencer.entre45Y60Dias + porVencer.entre60Y90Dias + porVencer.mayor90Dias} vehiculos`)
+
     chartDoughnutLeaA.data.datasets[0].data = [
       vencidos.menor30Dias, vencidos.entre30Y45Dias, vencidos.entre45Y60Dias, vencidos.entre60Y90Dias, vencidos.mayor90Dias
     ]
@@ -1052,6 +1101,10 @@ require './templates/header.html';
 
     // TABLE LEA
     tableLea.draw();
+
+    setTimeout(() => {
+      hideLoader();
+    }, 2000)
   })
 
   $("#status-veh-fleet").on("select2:select", async () => {
@@ -1077,6 +1130,8 @@ require './templates/header.html';
     const value = $("#cbo-clients-multiple").val();
 
     const quantityVehCli = await obtenerTotalVehiculosPorCliente(value);
+
+    $("#data-value-chart-veh").text(`${quantityVehCli.reduce((acc, curr) => acc + curr.total, 0)} vehiculos`)
 
     chartBarVehCli.data.labels = quantityVehCli.map((cli) => `${cli.cliente.substring(0, 14)}...`)
     chartBarVehCli.data.datasets[0].data = quantityVehCli.map((cli) => cli.total)
@@ -1216,6 +1271,10 @@ require './templates/header.html';
 
     $("#modal-body-info").empty();
   })
+
+  $(window).on('resize', function() {
+    chartBarVehCli.resize(); // Fuerza a Chart.js a recalcular el tamaño
+  });
 </script>
 
 

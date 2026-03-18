@@ -921,7 +921,7 @@ const contVehiculeByClient = async (req, res) => {
 
   const { clientesId } = req.query;
 
-  const listClient = clientesId ? clientesId : [];
+  const listClient = clientesId ? Array.isArray(clientesId) ? clientesId : [clientesId] : [];
 
   const cn = await connection(globalDbUser, globalPassword);
 

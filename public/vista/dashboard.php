@@ -15,15 +15,28 @@ require './templates/header.html';
 
 <!-- CSS DATATABLE -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.6/css/buttons.dataTables.css" />
 
 <!-- JS DATATABLE -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.print.min.js"></script>
 
 <!-- CSS de Select2 -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
 
 <!-- JS de Select2 -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<!-- LUCID ICON -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
 <!-- CSS DE LA VISTA DASHBOARD -->
 <style>
@@ -66,15 +79,16 @@ require './templates/header.html';
   </div>
 </div>
 
-<div class="dashboard-container">
-  <div class="loader-screen">
-    <div class="loading-wave">
-      <div class="loading-bar"></div>
-      <div class="loading-bar"></div>
-      <div class="loading-bar"></div>
-      <div class="loading-bar"></div>
-    </div>
+<div class="loader-screen">
+  <div class="loading-wave">
+    <div class="loading-bar"></div>
+    <div class="loading-bar"></div>
+    <div class="loading-bar"></div>
+    <div class="loading-bar"></div>
   </div>
+</div>
+
+<div class="dashboard-container">
   <main class="dashboard-main">
     <section class="dashboard-section">
       <div class="dashboard-header">
@@ -116,30 +130,37 @@ require './templates/header.html';
         </div>
       </div>
 
-      <div class="dashboard-item item-large">
-        <h3>Linea de tiempo (Contrato - Leasing)</h3>
-        <div id="data-value-comparation" class="data-value"></div>
-        <div class="row-cbo-comparation">
-          <select name="contratos" id="cbo-contratos"></select>
-          <select name="leasings" id="cbo-leasings"></select>
+      <div class="dashboard-time-section">
+        <div class="dashboard-item item-large">
+          <h3>Linea de tiempo (Contrato - Leasing)</h3>
+          <div id="data-value-comparation" class="data-value"></div>
+          <div class="row-cbo-comparation">
+            <select name="contratos" id="cbo-contratos"></select>
+            <select name="leasings" id="cbo-leasings"></select>
+          </div>
+          <canvas id="comparationChart" class="comparationChart"></canvas>
         </div>
-        <canvas id="comparationChart" class="comparationChart"></canvas>
-      </div>
 
-      <div class="dashboard-item item-medium">
-        <h3>Monto Proyectado</h3>
-        <div id="vehFleetDifference" class="data-value"></div>
-        <div class="filter-veh-fleet">
-          <div class="row-filter">
-            <select id="status-veh-fleet"></select>
+        <div class="dashboard-item item-large">
+          <h3>Venta por modelo</h3>
+          <div id="vehFleetDifference" class="data-value"></div>
+          <div class="filter-veh-fleet">
+            <div class="row-filter">
+              <select id="cbo-models-gen"></select>
+            </div>
+            <div class="row-filter">
+              <select id="cbo-years" name="years[]" multiple="multiple"></select>
+            </div>
+          </div>
+          <div class="chart-veh-model-container">
+            <canvas id="campaignDonut" class="can-barra"></canvas>
           </div>
         </div>
-        <canvas id="campaignDonut" class="can-barra"></canvas>
-      </div>
 
-      <div class="dashboard-item item-medium" style="overflow: hidden;">
-        <h3>Top 3 Cliente</h3>
-        <canvas id="salesChart" style="max-height: 300px;"></canvas>
+        <!-- <div class="dashboard-item item-medium" style="overflow: hidden;">
+          <h3>Top 3 Cliente</h3>
+          <canvas id="salesChart" style="max-height: 300px;"></canvas>
+        </div> -->
       </div>
 
       <div class="dashboard-item item-large table-leasings">
@@ -168,19 +189,21 @@ require './templates/header.html';
         </table>
       </div>
 
-      <div class="dashboard-item item-large">
-        <h3>Vehiculos con leasings Vencidos</h3>
-        <div id="data-value-veh-exp" class="data-value"></div>
-        <div style="width: 100%; height: 220px;">
-          <canvas id="donutLeasingA" class="can-barra"></canvas>
+      <div class="dashboard-doughnut-section">
+        <div class="dashboard-item item-large">
+          <h3>Vehiculos con leasings Vencidos</h3>
+          <div id="data-value-veh-exp" class="data-value"></div>
+          <div style="width: 100%; height: 220px;">
+            <canvas id="donutLeasingA" class="can-barra"></canvas>
+          </div>
         </div>
-      </div>
 
-      <div class="dashboard-item item-large">
-        <h3>Vehiculos con leasings Por Vencer</h3>
-        <div id="data-value-veh-to-exp" class="data-value"></div>
-        <div style="width: 100%; height: 220px;">
-          <canvas id="donutLeasingB" class="can-barra"></canvas>
+        <div class="dashboard-item item-large">
+          <h3>Vehiculos con leasings Por Vencer</h3>
+          <div id="data-value-veh-to-exp" class="data-value"></div>
+          <div style="width: 100%; height: 220px;">
+            <canvas id="donutLeasingB" class="can-barra"></canvas>
+          </div>
         </div>
       </div>
 
@@ -217,35 +240,32 @@ require './templates/header.html';
 
 <script src="../js/dashboard.js"></script>
 <script>
-  // window.onload = function() {
-  //   setTimeout(() => {
-  //     document.getElementById('banner').style.opacity = '0';
-  //     setTimeout(() => {
-  //       document.getElementById('banner').style.display = 'none';
-  //     }, 1000); // Espera 1 segundo después de ocultar
-  //   }, 4000); // Ocultar todo después de 2 segundos
-  // };
-
+  lucide.createIcons();
   // CHARGE SCREEN
   let onLoadWindow = 0;
 
   function showLoaderWindow() {
     onLoadWindow++;
     $('.banner').css('opacity', '1');
+    $('#preloader').css('opacity', '1');
     $('.banner').css('z-index', '99999');
-    $('.banner').show();
+    $('#preloader').css('z-index', '99999');
+
+    $(".carousel-container").css('opacity', '1');
+    $(".carousel-container").css('z-index', '99999');
+
+    // $('.banner').show();
   }
 
   function hideLoaderWindow() {
     onLoadWindow--;
     if (onLoadWindow <= 0) {
-      setTimeout(() => {
-        $('.banner').css('opacity', '0');
-        $('.banner').css('z-index', '-99999');
-        setTimeout(() => {
-          $('.banner').hide();
-        }, 200)
-      }, 800)
+      $('.banner').css('opacity', '0');
+      $('#preloader').css('opacity', '0');
+      $('.banner').css('z-index', '-99999');
+      $('#preloader').css('z-index', '-99999');
+      $(".carousel-container").css('opacity', '0');
+      $(".carousel-container").css('z-index', '-99999');
     }
   }
 
@@ -384,34 +404,41 @@ require './templates/header.html';
     })
   }
 
-  const initDoughnut = async (clientId) => {
-    const data = await obtenerFlotaVehicular(undefined, clientId);
-
-    const difference = data.totalCosto - data.totalVenta;
-
-    $("#vehFleetDifference").text(`${difference.toLocaleString('es-ES', {
-      style: 'currency',
-      currency: 'PEN'
-    })}`)
+  const initDoughnut = async (data) => {
 
     const ctx = $("#campaignDonut")
 
+    const labels = [...new Set(data.map(itm => itm.MODELO))];
+    const years = [...new Set(data.map(itm => Number(itm.ANO)))];
+
     vehFleetChart = new Chart(ctx, {
-      type: 'doughnut',
+      type: 'bar',
       data: {
-        labels: [
-          'T. Precio Costo',
-          'T. Precio Venta'
-        ],
-        datasets: [{
-          label: 'Costos',
-          data: [data.totalCosto, data.totalVenta],
-          backgroundColor: [
-            'rgb(255, 226, 99)',
-            'rgb(41, 207, 35)',
-          ],
-          hoverOffset: 4
-        }]
+        labels,
+        datasets: years.map(year => {
+
+          const filter = data.filter(itm => itm.ANO == year)
+          const color = generarColor();
+
+          return {
+            axis: 'y',
+            label: year,
+            data: filter.map(itm => itm.T_PRECIO_VEH),
+            fill: false,
+            backgroundColor: [
+              color[0],
+            ],
+            borderColor: [
+              color[1],
+            ],
+            borderWidth: 1
+          }
+        })
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
       }
     })
   }
@@ -492,6 +519,7 @@ require './templates/header.html';
               language: {
                 url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
               },
+              ordering: false,
               scrollY: '300px',
               scrollCollapse: true,
               serverSide: true, // Activa el procesamiento en servidor
@@ -635,6 +663,7 @@ require './templates/header.html';
               language: {
                 url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
               },
+              ordering: false,
               scrollY: '300px',
               scrollCollapse: true,
               serverSide: true, // Activa el procesamiento en servidor
@@ -744,214 +773,316 @@ require './templates/header.html';
 
   document.addEventListener('DOMContentLoaded', async () => {
     showLoaderWindow();
-    const params = new URLSearchParams(window.location.search)
-    const clientId = params.get("clienteId");
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const clientId = params.get("clienteId");
 
-    const quantityVehLea = await obtenerCantidadVehicle(clientId);
-    const quatityVehCli = await obtenerTotalVehiculosPorCliente([]);
-    const listContracts = await obtenerContratos(clientId);
-    let listLeasings = [];
-    if (listContracts.length > 0) {
-      listLeasings = await obtenerLeasingsPorContrato(listContracts[0].ID)
-    }
+      const quantityVehLea = await obtenerCantidadVehicle(clientId);
+      const quatityVehCli = await obtenerTotalVehiculosPorCliente([]);
 
-    const firstTenResult = quatityVehCli.slice(0, 10)
+      const listModel = await obtenerModelosGenericos();
+      let listYears = [];
+      let totalPriceByModel = [];
+      if (listModel.length > 0) {
+        listYears = await obtenerAñosPorModelo(listModel[0].id)
+        totalPriceByModel = await obtenerTotalCostoPorModelo(listModel[0].id, [listYears[0]])
+      }
 
-    // INITIALIZE FETCH
-    cargarContContrato(clientId);
-    cargarContClient();
+      const listContracts = await obtenerContratos(clientId);
+      let listLeasings = [];
+      if (listContracts.length > 0) {
+        listLeasings = await obtenerLeasingsPorContrato(listContracts[0].ID)
+      }
 
-    // Initialize charts with placeholder data
-    if (listContracts.length > 0 && listLeasings.length > 0) {
-      const daysComparation = await obtenerDiasContratoLeasing(listContracts[0].ID, listLeasings[0].id)
-      initChartComparation(daysComparation);
-    } else {
-      initChartComparation({
-        "fechaIniCont": "",
-        "fechaFinCont": "",
-        "fechaIniLea": "",
-        "fechaFinLea": "",
-        "diferenciaDias": 0
-      });
-    }
+      const firstTenResult = quatityVehCli.slice(0, 10)
 
-    await initDoughnut(clientId);
-    initDoughnutLeaA(quantityVehLea.vencidos);
-    initDoughnutLeaB(quantityVehLea.porVencer);
-    initBarVehicleLea(firstTenResult);
+      // INITIALIZE FETCH
+      cargarContContrato(clientId);
 
-    const client = await obtenerClientes();
+      // Initialize charts with placeholder data
+      if (listContracts.length > 0 && listLeasings.length > 0) {
+        const daysComparation = await obtenerDiasContratoLeasing(listContracts[0].ID, listLeasings[0].id)
+        initChartComparation(daysComparation);
+      } else {
+        initChartComparation({
+          "fechaIniCont": "",
+          "fechaFinCont": "",
+          "fechaIniLea": "",
+          "fechaFinLea": "",
+          "diferenciaDias": 0
+        });
+      }
 
-    $("#cbo-client").select2({
-      placeholder: "Seleccione un estado",
-      allowClear: false, // Desactiva la "X"
-      data: [{
-          id: 0,
-          text: "TODOS"
+      initDoughnut(totalPriceByModel);
+      initDoughnutLeaA(quantityVehLea.vencidos);
+      initDoughnutLeaB(quantityVehLea.porVencer);
+      initBarVehicleLea(firstTenResult);
+
+      const client = await obtenerClientes();
+
+      $("#cbo-client").select2({
+        placeholder: "Seleccione un estado",
+        allowClear: false, // Desactiva la "X"
+        language: {
+          noResults: function() {
+            return "No hay resultados disponibles"; // O puedes devolver un string HTML
+          }
         },
-        ...client.map(cli => ({
-          id: cli.IDCLI,
-          text: cli.CLINOM
-        }))
-      ]
-    })
-
-    $("#status-veh-fleet").select2({
-      placeholder: "Seleccione un estado",
-      allowClear: false, // Desactiva la "X"
-      data: [{
-          id: 'T',
-          text: "Seleccione un estado de contrato",
-        },
-        {
-          id: 'A',
-          text: "Activos",
-        },
-        {
-          id: 'F',
-          text: "Finalizados",
-        },
-      ]
-    })
-
-    $("#cbo-clients-multiple").select2({
-      placeholder: "Seleccione sus clientes",
-      allowClear: false, // Desactiva la "X",
-      width: '100%',
-      data: quatityVehCli.map(cli => ({
-        id: cli.id,
-        text: `${cli.cliente} (${cli.total} )`
-      })),
-    })
-
-    $("#cbo-contratos").select2({
-      placeholder: "Seleccione un contrato",
-      allowClear: false,
-      data: listContracts.map(con => ({
-        id: con.ID,
-        text: con.DESCRIPCION
-      }))
-    })
-
-    $("#cbo-leasings").select2({
-      placeholder: "Seleccione un leasing",
-      allowClear: false,
-      data: listLeasings.map(lea => ({
-        id: lea.id,
-        text: lea.nroLeasing
-      }))
-    })
-
-    tableLea = $("#listLeasings").DataTable({
-      language: {
-        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
-      },
-      scrollY: '300px',
-      scrollCollapse: true,
-      serverSide: true, // Activa el procesamiento en servidor
-      processing: true,
-      ajax: async function(dataRender, callback, settings) {
-        const paramsActualizados = new URLSearchParams(window.location.search);
-        const paramClient = paramsActualizados.get("clienteId")
-
-        try {
-          const search = dataRender.search.value;
-
-          // 2. Ejecutar tu Fetch con tus headers/includes personalizados
-          const res = await obtenerLeasings(dataRender.draw, dataRender.start, dataRender.length, search, paramClient);
-
-          // 3. Mapear tu respuesta a lo que DataTables espera
-          callback({
-            draw: dataRender.draw,
-            recordsTotal: res.recordsTotal,
-            recordsFiltered: res.recordsFiltered,
-            data: res.data
-          });
-
-        } catch (error) {
-          console.error("Error en fetch:", error);
-        }
-      },
-      rowCallback: function(row, data) {
-        if (data.diferenciaDias < 0) {
-          $($(row).find("td")[11]).css("background-color", "#E60026").css("color", "#fff");
-        } else if (data.diferenciaDias > 0) {
-          $($(row).find("td")[11]).css("background-color", "#259e01").css("color", "#fff");
-        } else {
-          $($(row).find("td")[11]).css("background-color", "#006be6").css("color", "#fff");
-        }
-      },
-      columns: [{
-          data: "item",
-          render: function(data, type, row, meta) {
-            return meta.row + 1;
+        data: [{
+            id: 0,
+            text: "TODOS"
           },
-          width: "5%",
-        },
-        {
-          data: 'placa'
-        },
-        {
-          data: 'modelo'
-        },
-        {
-          data: 'nroLeasing'
-        },
-        {
-          data: 'tipoCont'
-        },
-        {
-          data: 'fechaIniCont',
-          render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
+          ...client.map(cli => ({
+            id: cli.IDCLI,
+            text: cli.CLINOM
+          }))
+        ]
+      })
+
+      $("#cbo-models-gen").select2({
+        placeholder: "Seleccione un modelo",
+        allowClear: false, // Desactiva la "X"
+        language: {
+          noResults: function() {
+            return "No hay resultados disponibles"; // O puedes devolver un string HTML
           }
         },
-        {
-          data: 'fechaFinCont',
-          render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
+        data: listModel.map((mo) => ({
+          id: mo.id,
+          text: `${mo.description}`
+        }))
+      })
+
+      $("#cbo-years").select2({
+        placeholder: "Seleccione los años",
+        allowClear: false, // Desactiva la "X",
+        width: '100%',
+        language: {
+          noResults: function() {
+            return "No hay resultados disponibles"; // O puedes devolver un string HTML
           }
         },
-        {
-          data: 'añosContrato'
-        },
-        {
-          data: 'fechaIniLea',
-          render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
+        data: listYears.map(year => ({
+          id: year,
+          text: `${year}`
+        })),
+      })
+
+      $("#cbo-clients-multiple").select2({
+        placeholder: "Seleccione sus clientes",
+        allowClear: false, // Desactiva la "X",
+        width: '100%',
+        language: {
+          noResults: function() {
+            return "No hay resultados disponibles"; // O puedes devolver un string HTML
           }
         },
-        {
-          data: 'fechaFinLea',
-          render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
+        data: quatityVehCli.map(cli => ({
+          id: cli.id,
+          text: `${cli.cliente} (${cli.total})`
+        })),
+      })
+
+      $("#cbo-contratos").select2({
+        placeholder: "Seleccione un contrato",
+        allowClear: false,
+        language: {
+          noResults: function() {
+            return "No hay resultados disponibles"; // O puedes devolver un string HTML
           }
         },
-        {
-          data: 'añosLeasing'
+        data: listContracts.map(con => ({
+          id: con.ID,
+          text: con.DESCRIPCION
+        }))
+      })
+
+      $("#cbo-leasings").select2({
+        placeholder: "Seleccione un leasing",
+        allowClear: false,
+        language: {
+          noResults: function() {
+            return "No hay resultados disponibles"; // O puedes devolver un string HTML
+          }
         },
-        {
-          data: 'diferenciaDias',
-          render: (data) => {
-            if (data > 0) {
-              return `Leasing vence antes (${Math.abs(data)} dias)`;
-            } else if (data < 0) {
-              return `Contrato vence antes (${Math.abs(data)} dias)`;
-            } else {
-              return `Vencen a la vez`;
+        data: listLeasings.map(lea => ({
+          id: lea.id,
+          text: lea.nroLeasing
+        }))
+      })
+
+      tableLea = $("#listLeasings").DataTable({
+        language: {
+          url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        },
+        dom: '<"superior"Bf>rt<"inferior"i<"derecha-inferior"lp>>',
+        buttons: [{
+          extend: 'excelHtml5',
+          text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+          titleAttr: 'Excel',
+          className: 'btn-excel',
+          filename: 'Reporte_Placas_' + new Date().toLocaleDateString(),
+          title: 'Lista de placas de los Leasings',
+          customize: function(xlsx) {
+            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+            // 1. Cambiar el color del Título (Celda A1)
+            // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
+            $('row c[r^="A1"]', sheet).attr('s', '51');
+
+            // 2. Personalizar los Headers (Fila de encabezados)
+            // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
+            // El estilo '2' es negrita, '42' es fondo azul claro, etc.
+            $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
+
+            // 3. Si quieres colores manuales más específicos (estilos personalizados)
+            // Tienes que editar el diccionario de estilos de JSZip (más complejo)
+            // Pero DataTables trae estilos incorporados del 0 al 60:
+            // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
+          },
+          action: function(e, dt, button, config) {
+            var self = this;
+            var oldStart = dt.settings()._iDisplayStart;
+
+            // Mostrar un mensaje de "Procesando" manual
+            dt.buttons.info('Generando archivo', 'Por favor espere...', 3000);
+
+            dt.one('preXhr', function(e, s, data) {
+              data.start = 0;
+              data.length = 2147483647; // Tu número máximo para DB2
+
+              dt.one('preDraw', function(e, settings) {
+                // Ejecutar la exportación original
+                $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+
+                // IMPORTANTE: Decirle a DataTables que ya terminó el proceso visual
+                dt.processing(false);
+
+                // Restaurar paginación original
+                settings._iDisplayStart = oldStart;
+                setTimeout(function() {
+                  dt.ajax.reload(null, false); // Recargar la vista original sin resetear paginado
+                }, 200);
+
+                return false; // Evitar renderizar miles de filas
+              });
+            });
+
+            dt.ajax.reload();
+          }
+        }],
+        ordering: false,
+        scrollY: '300px',
+        scrollCollapse: true,
+        serverSide: true, // Activa el procesamiento en servidor
+        processing: true,
+        ajax: async function(dataRender, callback, settings) {
+          const paramsActualizados = new URLSearchParams(window.location.search);
+          const paramClient = paramsActualizados.get("clienteId")
+
+          try {
+            const search = dataRender.search.value;
+
+            // 2. Ejecutar tu Fetch con tus headers/includes personalizados
+            const res = await obtenerLeasings(dataRender.draw, dataRender.start, dataRender.length, search, paramClient);
+
+            // 3. Mapear tu respuesta a lo que DataTables espera
+            callback({
+              draw: dataRender.draw,
+              recordsTotal: res.recordsTotal,
+              recordsFiltered: res.recordsFiltered,
+              data: res.data
+            });
+
+          } catch (error) {
+            console.error("Error en fetch:", error);
+          }
+        },
+        rowCallback: function(row, data) {
+          if (data.diferenciaDias < 0) {
+            $($(row).find("td")[11]).css("background-color", "#E60026").css("color", "#fff");
+          } else if (data.diferenciaDias > 0) {
+            $($(row).find("td")[11]).css("background-color", "#259e01").css("color", "#fff");
+          } else {
+            $($(row).find("td")[11]).css("background-color", "#006be6").css("color", "#fff");
+          }
+        },
+        columns: [{
+            data: "item",
+            render: function(data, type, row, meta) {
+              return meta.row + 1;
+            },
+            width: "5%",
+          },
+          {
+            data: 'placa'
+          },
+          {
+            data: 'modelo'
+          },
+          {
+            data: 'nroLeasing'
+          },
+          {
+            data: 'tipoCont'
+          },
+          {
+            data: 'fechaIniCont',
+            render: (data) => {
+              return dayjs(data).format("DD/MM/YYYY")
+            }
+          },
+          {
+            data: 'fechaFinCont',
+            render: (data) => {
+              return dayjs(data).format("DD/MM/YYYY")
+            }
+          },
+          {
+            data: 'añosContrato'
+          },
+          {
+            data: 'fechaIniLea',
+            render: (data) => {
+              return dayjs(data).format("DD/MM/YYYY")
+            }
+          },
+          {
+            data: 'fechaFinLea',
+            render: (data) => {
+              return dayjs(data).format("DD/MM/YYYY")
+            }
+          },
+          {
+            data: 'añosLeasing'
+          },
+          {
+            data: 'diferenciaDias',
+            render: (data) => {
+              if (data > 0) {
+                return `Leasing vence antes (${Math.abs(data)} dias)`;
+              } else if (data < 0) {
+                return `Contrato vence antes (${Math.abs(data)} dias)`;
+              } else {
+                return `Vencen a la vez`;
+              }
             }
           }
-        }
-      ]
-    })
+        ]
+      })
 
-    if (clientId) {
-      $("#cbo-client").val(clientId).trigger("change");
+      if (clientId) {
+        $("#cbo-client").val(clientId).trigger("change");
+      }
+
+      if (listYears.length > 0) $('#cbo-years').val(listYears[0]).trigger("change");
+      $('#cbo-clients-multiple').val(firstTenResult.map(cli => cli.id)).trigger("change");
+      if (listContracts.length > 0) $("#cbo-contratos").val(listContracts[0].ID).trigger("change");
+      if (listLeasings.length > 0) $("#cbo-leasings").val(listLeasings[0].id).trigger("change");
+    } catch (err) {
+      console.error(err);
+      toastr.error(err.message, "Oops...")
     }
-
-    $('#cbo-clients-multiple').val(firstTenResult.map(cli => cli.id)).trigger("change");
-    if (listContracts.length > 0) $("#cbo-contratos").val(listContracts[0].ID).trigger("change");
-    if (listLeasings.length > 0) $("#cbo-leasings").val(listLeasings[0].id).trigger("change");
 
 
     hideLoaderWindow();
@@ -987,19 +1118,19 @@ require './templates/header.html';
     window.history.replaceState({}, "", nuevaURL);
 
     // DOUGNUT CHART UPDATE
-    const data = await obtenerFlotaVehicular(status != "T" ? status : undefined, clientId != 0 ? clientId : undefined);
+    // const data = await obtenerFlotaVehicular(status != "T" ? status : undefined, clientId != 0 ? clientId : undefined);
 
-    $("#status-veh-fleet").val(0).trigger("change");
+    // $("#status-veh-fleet").val(0).trigger("change");
 
-    const difference = data.totalCosto - data.totalVenta;
+    // const difference = data.totalCosto - data.totalVenta;
 
-    $("#vehFleetDifference").text(`${difference.toLocaleString('es-ES', {
-      style: 'currency',
-      currency: 'PEN'
-    })}`)
+    // $("#vehFleetDifference").text(`${difference.toLocaleString('es-ES', {
+    //   style: 'currency',
+    //   currency: 'PEN'
+    // })}`)
 
-    vehFleetChart.data.datasets[0].data = [data.totalCosto, data.totalVenta];
-    vehFleetChart.update();
+    // vehFleetChart.data.datasets[0].data = [data.totalCosto, data.totalVenta];
+    // vehFleetChart.update();
 
     // DOUGNUT CHART LEASINGS UPDATE
     const quantityVehLea = await obtenerCantidadVehicle(clientId != 0 ? clientId : undefined);
@@ -1107,22 +1238,87 @@ require './templates/header.html';
     }, 2000)
   })
 
-  $("#status-veh-fleet").on("select2:select", async () => {
-    const status = $("#status-veh-fleet").val();
+  $("#cbo-models-gen").on("select2:select", async () => {
+    const modelId = $("#cbo-models-gen").val();
 
-    const params = new URLSearchParams(window.location.search)
-    const clientId = params.get("clienteId")
+    const listYears = await obtenerAñosPorModelo(modelId)
+    let data = [];
 
-    const data = await obtenerFlotaVehicular(status != "T" ? status : undefined, clientId);
+    if (listYears.length > 0) data = await obtenerTotalCostoPorModelo(modelId, [listYears[0]])
 
-    const difference = data.totalCosto - data.totalVenta;
+    const labels = [...new Set(data.map(itm => itm.MODELO))];
+    const years = [...new Set(data.map(itm => Number(itm.ANO)))];
 
-    $("#vehFleetDifference").text(`${difference.toLocaleString('es-ES', {
-      style: 'currency',
-      currency: 'PEN'
-    })}`)
+    $('#cbo-years').empty().trigger('change');
 
-    vehFleetChart.data.datasets[0].data = [data.totalCosto, data.totalVenta];
+    listYears.forEach(year => {
+      const data = {
+        id: year,
+        text: year
+      };
+
+      const newOption = new Option(data.text, data.id, false, false);
+      $('#cbo-years').append(newOption).trigger('change');
+    })
+
+    $('#cbo-years').val(listYears[0]).trigger('change.select2');
+
+    vehFleetChart.data.labels = labels;
+    vehFleetChart.data.datasets = years.map(year => {
+
+      const filter = data.filter(itm => itm.ANO == year)
+      const color = generarColor();
+
+      return {
+        axis: 'y',
+        label: year,
+        data: filter.map(itm => itm.T_PRECIO_VEH),
+        fill: false,
+        backgroundColor: [
+          color[0],
+        ],
+        borderColor: [
+          color[1],
+        ],
+        borderWidth: 1
+      }
+    })
+
+    vehFleetChart.update();
+  })
+
+  $("#cbo-years").on("change", async () => {
+    const modelId = $("#cbo-models-gen").val();
+    const listYears = $("#cbo-years").val();
+
+    let data = [];
+
+    if (listYears.length > 0) data = await obtenerTotalCostoPorModelo(modelId, listYears)
+
+    const labels = [...new Set(data.map(itm => itm.MODELO))];
+    const years = [...new Set(data.map(itm => Number(itm.ANO)))];
+
+    vehFleetChart.data.labels = labels;
+    vehFleetChart.data.datasets = years.map(year => {
+
+      const filter = data.filter(itm => itm.ANO == year)
+      const color = generarColor();
+
+      return {
+        axis: 'y',
+        label: year,
+        data: filter.map(itm => itm.T_PRECIO_VEH),
+        fill: false,
+        backgroundColor: [
+          color[0],
+        ],
+        borderColor: [
+          color[1],
+        ],
+        borderWidth: 1
+      }
+    })
+
     vehFleetChart.update();
   })
 

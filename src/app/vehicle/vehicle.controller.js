@@ -1,4 +1,3 @@
-const odbc = require("odbc");
 const { SCHEMA_BD } = require("../../shared/conf.js");
 const { decodeString } = require("../../shared/utils.js");
 const connection = require("../../shared/connect.js");
@@ -266,8 +265,6 @@ const listVehiclesByContract = async (req, res) => {
     ]);
 
     const cleanedResult = result.map((row) => {
-      
-
       return {
         idContrato: row.CONTRATO,
         idCliente: row.CLIENTE,
@@ -294,10 +291,81 @@ const listVehiclesByContract = async (req, res) => {
   }
 };
 
+const listModelGen = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const cn = await connection(globalDbUser, globalPassword);
+  try {
+    const sql = `SELECT DISTINCT(IDMODGEN), DESMODGEN FROM SPEED400AT.PO_MODELO ORDER BY IDMODGEN ASC`;
+    const result = await cn.query(sql);
+
+    const cleanedResult = result.map((row) => ({
+      id: row.IDMODGEN,
+      description: row.DESMODGEN.trim(),
+    }));
+
+    return res.status(200).json(cleanedResult);
+  } catch (error) {
+    console.error("Error al listar modelos genericos", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Error al listar modelos genericos" });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
+const listYearByModelGen = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { modelId } = req.query;
+
+  if(!modelId) return res.status(400).json({success: false, message: "El parametro modelId es obligatorio"})
+
+  const cn = await connection(globalDbUser, globalPassword);
+  try {
+    const sql = `
+      SELECT DISTINCT(ANO) FROM SPEED400AT.PO_VEHICULO V
+      LEFT JOIN SPEED400AT.PO_MODELO MO
+      ON MO.ID = V.IDMOD
+      WHERE ANO != '0' AND MO.IDMODGEN = ?
+      ORDER BY ANO DESC
+    `;
+    const result = await cn.query(sql, [modelId]);
+
+    const cleanedResult = result.map((row) => row.ANO);
+
+    return res.status(200).json(cleanedResult);
+  } catch (error) {
+    console.error("Error al listar años por modelo", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Error al listar años por modelo" });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
 module.exports = {
   listVehicles,
   tableVehicles,
   contVehicles,
   vehicleLeasing,
   listVehiclesByContract,
+  listModelGen,
+  listYearByModelGen,
 };

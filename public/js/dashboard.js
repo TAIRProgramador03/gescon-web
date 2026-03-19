@@ -41,78 +41,6 @@ async function cargarContContrato(clientId) {
   }
 }
 
-async function cargarContClient() {
-  try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/contCliente`, {
-      credentials: "include", // Asegura que las cookies se envíen con la solicitud
-    });
-    if (!response.ok) throw new Error("Error en la solicitud");
-
-    const { data } = await response.json();
-
-    // Extraer los nombres y valores del Top 3
-    const labels = data.map((cliente) => cliente.CLIABR); // Abreviaciones de los clientes
-    const values = data.map((cliente) => cliente.TOTAL_VEHICULOS); // Cantidad de vehículos
-
-    actualizarGrafico(labels, values); // Llamar a la función para actualizar el gráfico
-  } catch (error) {
-    console.error("Error al cargar los contadores:", error);
-  }
-}
-
-let myChart; // Variable global para guardar la instancia del gráfico
-
-function actualizarGrafico(labels, data) {
-  const ctx = document.getElementById("salesChart").getContext("2d");
-
-  if (myChart) myChart.destroy(); // Destruir el gráfico anterior si ya existe
-
-  myChart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: labels, // Nombres de los clientes
-      datasets: [
-        {
-          label: "Total Vehículos",
-          data: data, // Valores de los vehículos
-          backgroundColor: "#a5b4fc",
-          borderColor: "#6366f1",
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        tooltip: {
-          enabled: true,
-          backgroundColor: "#1e293b",
-          titleColor: "#ffffff",
-          bodyColor: "#ffffff",
-        },
-        legend: {
-          labels: {
-            color: "#ffffff",
-          },
-        },
-      },
-      scales: {
-        x: {
-          ticks: {
-            color: "#ffffff",
-          },
-        },
-        y: {
-          ticks: {
-            color: "#ffffff",
-          },
-        },
-      },
-    },
-  });
-}
-
 async function obtenerFlotaVehicular(status, clientId) {
   let paramsString = "";
 
@@ -272,4 +200,53 @@ async function obtenerDiasContratoLeasing(contractId, leasingId) {
   const res = await response.json();
 
   return res;
+}
+
+async function obtenerModelosGenericos() {
+  const response = await fetch(`http://${IP_LOCAL}:3000/modedosGenericos`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const res = await response.json();
+
+  return res;
+}
+
+async function obtenerAñosPorModelo(modelId) {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/aniosPorModelo?modelId=${modelId}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const res = await response.json();
+
+  return res;
+}
+
+async function obtenerTotalCostoPorModelo(modelId, years) {
+  const query = years.map((year) => `years=${year}`).join("&");
+
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/contTotalPriceModel?modelId=${modelId}&${query}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const res = await response.json();
+
+  return res;
+}
+
+function generarColor() {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  
+  return [`rgba(${r}, ${g}, ${b}, 0.2)`, `rgba(${r}, ${g}, ${b})`];
 }

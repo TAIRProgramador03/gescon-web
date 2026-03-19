@@ -15,7 +15,7 @@
     z-index: 1000;
     /*overflow: hidden;*/
     opacity: 1;
-    transition: opacity 0.5s ease;
+    transition: linear 1.25s;
 }
 
 @keyframes autoRun{
@@ -37,7 +37,7 @@
     align-items: center;
     z-index: 1000;
     opacity: 1;
-    transition: opacity 0.5s ease;
+    transition: linear 0.8s;
   }
 
 /* Contenedor de logo y rueda */
@@ -140,6 +140,7 @@
     overflow: hidden;
     position: relative;
     top: 220px;
+    transition: linear 0.8s;
 }
 
 .carousel {

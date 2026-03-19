@@ -1,79 +1,3 @@
-@import url("https://fonts.cdnfonts.com/css/ica-rubrik-black");
-@import url("https://fonts.cdnfonts.com/css/poppins");
-
-/* Estilos para la pantalla de presentación 
-  #preloader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    opacity: 1;
-    transition: opacity 0.5s ease;
-  }*/
-
-/*.banner .slider{
-    position: absolute;
-    width: 200px;
-    height: 250px;
-    top: 10%;
-    left: calc(50% - 100px);
-    transform-style: preserve-3d;
-    transform: perspective(1000px);
-    animation: autoRun 20s linear infinite;
-    z-index: 2;
-}*/
-
-/*.banner .slider .item{
-    position: absolute;
-    inset: 0 0 0 0;
-    transform: 
-        rotateY(calc( (var(--position) - 1) * (360 / var(--quantity)) * 1deg))
-        translateZ(530px);
-}
-.banner .slider .item img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}*/
-
-/* Contenedor de logo y rueda */
-
-/* Fondo blanco pequeño debajo del logo, por encima de la rueda */
-
-/* Logo en el frente */
-
-/* Rueda giratoria detrás */
-
-/* Animación para la rueda */
-
-/*h2{
-    font-family: 'ICA Rubrik';
-    font-size: 3em;
-    line-height: 1em;
-    color: #25283B;
-    position: relative;
-    width: 80%;
-    font-family: monospace;
-    text-wrap: nowrap;
-    overflow: hidden;
-    animation: typing 2s steps(20) infinite alternate-reverse;
-}
-
-h2::after{
-    position: absolute;
-    inset: 0 0 0 0;
-    content: attr(data-content);
-    z-index: 2;
-    -webkit-text-stroke: 1px #d2d2d2;
-    color: #081121;
-}*/
-
 h3 {
   color: #081121;
   font-size: 22px;
@@ -83,17 +7,6 @@ h3 {
 b {
   font-size: 15px;
 }
-
-/*
-.banner .content .author{
-    font-family: Poppins;
-    text-align: right;
-    max-width: 200px;
-}
-.banner .content h2{
-    font-size: 3em;
-}
-*/
 
 body {
   font-family: sans-serif;
@@ -196,13 +109,29 @@ body::before {
 .dashboard-section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-auto-flow: dense;
   gap: 20px;
+  justify-items: stretch;
 }
 
 .dashboard-section .dashboard-cont-section {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.dashboard-section .dashboard-time-section {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.dashboard-section .dashboard-doughnut-section{
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
 }
 
@@ -359,6 +288,18 @@ i {
   top: 0;
 }
 
+.chart-veh-model-container {
+  position: relative;
+  height: 300px; /* O el alto que desees */
+  width: 100%;
+}
+
+.chart-veh-model-container canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
 @media screen and (max-width: 1200px) {
   .carousel-container {
     width: 70%;
@@ -456,16 +397,16 @@ table thead th .dt-column-title {
   font-weight: 600;
 }
 
-table tbody tr {
+/* table tbody tr {
   cursor: pointer;
-}
+} */
 
 table tbody tr:hover {
   background-color: #f5f5f580;
 }
 
 table tbody tr td {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 table tfoot {
@@ -498,6 +439,90 @@ table.dataTable.display > tbody > tr:hover > *,
 table.dataTable.display > tbody > tr:nth-child(odd) > *,
 table.dataTable.display tbody tr:hover > .sorting_1 {
   box-shadow: none !important;
+}
+
+.dt-container .superior {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.dt-container .inferior {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.dt-container .inferior .derecha-inferior {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+div.dt-container .dt-info {
+  color: oklch(0.556 0 0) !important;
+  font-size: 0.875rem;
+}
+
+.dt-container .inferior .derecha-inferior select {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current {
+  background: #2b5ce4 !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current:hover {
+  background: #3e68db !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button {
+  background: transparent !important;
+  color: rgb(139, 139, 139);
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button:hover {
+  background: #3e68db !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+.btn-excel {
+  border: 0 !important;
+  border-radius: 4px !important;
+  color: #fff !important;
+  transition: linear 200ms;
+  background-color: #077703 !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+  margin: 0 !important;
+}
+
+.btn-excel:hover {
+  box-shadow: 2px 2px 5px #0000002d !important;
+}
+
+.btn-excel span {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
 }
 
 /* MODAL */

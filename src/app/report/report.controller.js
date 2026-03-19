@@ -321,7 +321,7 @@ const contVehicleLeasings = async (req, res) => {
       LEFT JOIN ${SCHEMA_BD}.TBLDOCUMENTO_CAB C
       ON LC.ID_CONTRATO = C.ID
       WHERE LC.TIPCON = 'H')
-      WHERE (LOCATE_IN_STRING(NRO_LEASING, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0) 
+      WHERE (LOCATE_IN_STRING(UPPER(NRO_LEASING), UPPER(?)) > 0 OR LOCATE_IN_STRING(UPPER(PLACA), UPPER(?)) > 0)  
       ${clienteId ? `AND CLIENTE = ?` : ""}
       ORDER BY ID
       OFFSET ? ROWS
@@ -499,7 +499,7 @@ const contVehicleLeasings = async (req, res) => {
       LEFT JOIN ${SCHEMA_BD}.TBLDOCUMENTO_CAB C
       ON LC.ID_CONTRATO = C.ID
       WHERE LC.TIPCON = 'H')
-      WHERE (LOCATE_IN_STRING(NRO_LEASING, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0) 
+      WHERE (LOCATE_IN_STRING(UPPER(NRO_LEASING), UPPER(?)) > 0 OR LOCATE_IN_STRING(UPPER(PLACA), UPPER(?)) > 0) 
       ${clienteId ? `AND CLIENTE = ?` : ""}
     `;
 
@@ -702,7 +702,7 @@ const listVehicleLeasingExpire = async (req, res) => {
               WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' 
               ORDER BY CLINOM ASC
         ) C ON LC.ID_CLIENTE = C.IDCLI
-      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(CLIENTE, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 OR LOCATE_IN_STRING(NRO_LEASING, ?) > 0)
+      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(UPPER(CLIENTE), UPPER(?)) > 0 OR LOCATE_IN_STRING(UPPER(PLACA), UPPER(?)) > 0 OR LOCATE_IN_STRING(UPPER(NRO_LEASING), UPPER(?)) > 0)
       ORDER BY ID
       OFFSET ? ROWS
       FETCH NEXT ? ROWS ONLY
@@ -728,7 +728,7 @@ const listVehicleLeasingExpire = async (req, res) => {
               WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' 
               ORDER BY CLINOM ASC
         ) C ON LC.ID_CLIENTE = C.IDCLI
-      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(CLIENTE, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 OR LOCATE_IN_STRING(NRO_LEASING, ?) > 0)
+      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(UPPER(CLIENTE), UPPER(?)) > 0 OR LOCATE_IN_STRING(UPPER(PLACA), UPPER(?)) > 0 OR LOCATE_IN_STRING(UPPER(NRO_LEASING), UPPER(?)) > 0)
     `;
 
     const paramsTotal = [];
@@ -839,7 +839,7 @@ const listVehicleLeasingToExpire = async (req, res) => {
               WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' 
               ORDER BY CLINOM ASC
         ) C ON LC.ID_CLIENTE = C.IDCLI
-      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(CLIENTE, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 OR LOCATE_IN_STRING(NRO_LEASING, ?) > 0)
+      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(UPPER(CLIENTE), UPPER(?)) > 0 OR LOCATE_IN_STRING(UPPER(PLACA), UPPER(?)) > 0 OR LOCATE_IN_STRING(UPPER(NRO_LEASING), UPPER(?)) > 0)
       ORDER BY ID
       OFFSET ? ROWS
       FETCH NEXT ? ROWS ONLY
@@ -865,7 +865,7 @@ const listVehicleLeasingToExpire = async (req, res) => {
               WHERE A.ID<>86 AND B.CLINOM <> '*** ANULADO ***' 
               ORDER BY CLINOM ASC
         ) C ON LC.ID_CLIENTE = C.IDCLI
-      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(CLIENTE, ?) > 0 OR LOCATE_IN_STRING(PLACA, ?) > 0 OR LOCATE_IN_STRING(NRO_LEASING, ?) > 0)
+      ) WHERE ${sentences} ${clienteId ? "AND ID_CLIENTE = ?" : ""} AND (LOCATE_IN_STRING(UPPER(CLIENTE), UPPER(?)) > 0 OR LOCATE_IN_STRING(UPPER(PLACA), UPPER(?)) > 0 OR LOCATE_IN_STRING(UPPER(NRO_LEASING), UPPER(?)) > 0)
     `;
 
     const paramsTotal = [];
@@ -921,7 +921,11 @@ const contVehiculeByClient = async (req, res) => {
 
   const { clientesId } = req.query;
 
-  const listClient = clientesId ? Array.isArray(clientesId) ? clientesId : [clientesId] : [];
+  const listClient = clientesId
+    ? Array.isArray(clientesId)
+      ? clientesId
+      : [clientesId]
+    : [];
 
   const cn = await connection(globalDbUser, globalPassword);
 
@@ -1037,7 +1041,7 @@ const contComparationDays = async (req, res) => {
       WHERE C.ID = ? AND L.ID = ?
     `;
 
-    const result = await cn.query(sql, [contractId, leasingId])
+    const result = await cn.query(sql, [contractId, leasingId]);
 
     return res.status(200).json({
       fechaIniCont: result[0] ? result[0].FECHA_INI_CON : "",
@@ -1045,13 +1049,86 @@ const contComparationDays = async (req, res) => {
       fechaIniLea: result[0] ? result[0].FECHA_INI_LEA : "",
       fechaFinLea: result[0] ? result[0].FECHA_FIN_LEA : "",
       diferenciaDias: result[0] ? result[0].DIFERENCIA_DIAS : "",
-    })
+    });
   } catch (error) {
     console.error("Error al obtener la diferencia de dias", error);
     return res.status(500).json({
       success: false,
       message: "Error al obtener la diferencia de dias",
     });
+  } finally {
+    if (cn) await cn.close();
+  }
+};
+
+const contTotalPriceByModel = async (req, res) => {
+  const { globalDbUser, globalPassword } = req.user;
+
+  // Validación de token y sus datos
+  if (!globalDbUser || !globalPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Token inválido o no proporcionado" });
+  }
+
+  const { modelId, years } = req.query;
+
+  const listYears = years ? (Array.isArray(years) ? years : [years]) : [];
+
+  if (!modelId)
+    return res.status(400).json("El parametro modelId es obligatorio");
+
+  const cn = await connection(globalDbUser, globalPassword);
+
+  try {
+    const params = listYears.map(() => "?");
+
+    const sql = `
+      SELECT A.MODELO, A.ANO, SUM(PRECIO_VEH) AS T_PRECIO_VEH 
+      FROM SPEED400AT.TBLCONTRATO_DET C
+      LEFT JOIN (
+        SELECT DISTINCT(ANO), MO.IDMODGEN, MO.DESCRIPCION AS MODELO, MO.ID FROM SPEED400AT.PO_VEHICULO V
+        LEFT JOIN SPEED400AT.PO_MODELO MO
+        ON MO.ID = V.IDMOD
+        WHERE ANO != '0'
+        ORDER BY ANO DESC
+      ) A
+      ON A.ID = C.MODELO
+      WHERE A.IDMODGEN = ? ${listYears.length > 0 ? `AND A.ANO IN (${params.join(",")})` : ""}
+      GROUP BY C.MODELO, A.MODELO, A.ANO
+      ORDER BY T_PRECIO_VEH DESC
+    `;
+
+    const result = await cn.query(sql, [modelId, ...listYears]);
+
+    // 1. Obtener una lista única de modelos
+    const modelosUnicos = [...new Set(result.map((item) => item.MODELO))];
+
+    // 2. Generar la matriz completa (Modelo x Año)
+    const resultado = modelosUnicos.flatMap((modelo) => {
+      return listYears.map((anio) => {
+        // Buscamos si el dato existe en el JSON original
+        const registroExistente = result.find(
+          (d) => d.MODELO == modelo && d.ANO == anio,
+        );
+
+        // Si existe lo devolvemos, si no, creamos uno con precio 0
+        return (
+          registroExistente || {
+            MODELO: modelo,
+            ANO: anio,
+            T_PRECIO_VEH: 0,
+          }
+        );
+      });
+    });
+
+    return res.status(200).json(resultado);
+  } catch (error) {
+    console.error("Error al obtener costos por modelos", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Error al obtener costos por modelo" });
   } finally {
     if (cn) await cn.close();
   }
@@ -1064,5 +1141,6 @@ module.exports = {
   listVehicleLeasingExpire,
   listVehicleLeasingToExpire,
   contVehiculeByClient,
-  contComparationDays
+  contComparationDays,
+  contTotalPriceByModel,
 };

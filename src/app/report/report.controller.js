@@ -1084,46 +1084,81 @@ const contTotalPriceByModel = async (req, res) => {
     const params = listYears.map(() => "?");
 
     const sql = `
-      SELECT A.MODELO, A.ANO, SUM(PRECIO_VEH) AS T_PRECIO_VEH 
-      FROM SPEED400AT.TBLCONTRATO_DET C
-      LEFT JOIN (
-        SELECT DISTINCT(ANO), MO.IDMODGEN, MO.DESCRIPCION AS MODELO, MO.ID FROM SPEED400AT.PO_VEHICULO V
-        LEFT JOIN SPEED400AT.PO_MODELO MO
-        ON MO.ID = V.IDMOD
-        WHERE ANO != '0'
-        ORDER BY ANO DESC
-      ) A
-      ON A.ID = C.MODELO
-      WHERE A.IDMODGEN = ? ${listYears.length > 0 ? `AND A.ANO IN (${params.join(",")})` : ""}
-      GROUP BY C.MODELO, A.MODELO, A.ANO
-      ORDER BY T_PRECIO_VEH DESC
+      SELECT 
+      mc.IDMODGEN ,
+      mc.DESCRIPCION,
+      ac.ANIO,
+      SUM(cc.costo) AS total_costo
+      FROM (
+        SELECT 
+              td.ID_CON_CAB,
+              SUM(td.PRECIO_VEH * td.CANTIDAD) AS COSTO
+          FROM SPEED400AT.TBLCONTRATO_DET td
+          GROUP BY td.ID_CON_CAB 
+      ) cc
+      JOIN (
+        SELECT DISTINCT
+              l.ID_CONTRATO,
+              m.IDMODGEN,
+              m.DESCRIPCION
+          FROM SPEED400AT.TBL_LEASING_CAB l
+          JOIN SPEED400AT.TBL_LEASING_DET dl 
+              ON dl.ID_LEA_CAB = l.ID
+          JOIN SPEED400AT.PO_VEHICULO v 
+              ON v.ID = dl.ID_VEH
+          JOIN SPEED400AT.PO_MODELO m 
+              ON m.ID = v.IDMOD
+          WHERE m.IDMODGEN = ? 
+      ) mc 
+      ON mc.ID_CONTRATO  = cc.ID_CON_CAB 
+      JOIN (
+        SELECT 
+              ID_CONTRATO,
+              YEAR(DATE(SUBSTR(l.FECHA_INI, 1, 4) || '-' || SUBSTR(l.FECHA_INI, 5, 2) || '-' || SUBSTR(l.FECHA_INI, 7, 2)) - 2 MONTHS) AS ANIO
+          FROM SPEED400AT.TBL_LEASING_CAB l 
+          WHERE YEAR(DATE(SUBSTR(l.FECHA_INI, 1, 4) || '-' || SUBSTR(l.FECHA_INI, 5, 2) || '-' || SUBSTR(l.FECHA_INI, 7, 2)) - 2 MONTHS) IN (${params})
+      ) ac 
+      ON ac.ID_CONTRATO  = cc.ID_CON_CAB 
+      GROUP BY 
+          mc.IDMODGEN,
+          mc.DESCRIPCION,
+          ac.ANIO 
+      ORDER BY 
+      mc.IDMODGEN,
+      ac.ANIO
     `;
 
     const result = await cn.query(sql, [modelId, ...listYears]);
 
-    // 1. Obtener una lista única de modelos
-    const modelosUnicos = [...new Set(result.map((item) => item.MODELO))];
+    const cleanedResult = result.map((row) => ({
+      MODELO: row.DESCRIPCION.trim(),
+      ANO: row.ANIO,
+      T_PRECIO_VEH: row.TOTAL_COSTO,
+    }));
 
-    // 2. Generar la matriz completa (Modelo x Año)
-    const resultado = modelosUnicos.flatMap((modelo) => {
-      return listYears.map((anio) => {
-        // Buscamos si el dato existe en el JSON original
-        const registroExistente = result.find(
-          (d) => d.MODELO == modelo && d.ANO == anio,
-        );
+    // // 1. Obtener una lista única de modelos
+    // const modelosUnicos = [...new Set(result.map((item) => item.MODELO))];
 
-        // Si existe lo devolvemos, si no, creamos uno con precio 0
-        return (
-          registroExistente || {
-            MODELO: modelo,
-            ANO: anio,
-            T_PRECIO_VEH: 0,
-          }
-        );
-      });
-    });
+    // // 2. Generar la matriz completa (Modelo x Año)
+    // const resultado = modelosUnicos.flatMap((modelo) => {
+    //   return listYears.map((anio) => {
+    //     // Buscamos si el dato existe en el JSON original
+    //     const registroExistente = result.find(
+    //       (d) => d.MODELO == modelo && d.ANO == anio,
+    //     );
 
-    return res.status(200).json(resultado);
+    //     // Si existe lo devolvemos, si no, creamos uno con precio 0
+    //     return (
+    //       registroExistente || {
+    //         MODELO: modelo,
+    //         ANO: anio,
+    //         T_PRECIO_VEH: 0,
+    //       }
+    //     );
+    //   });
+    // });
+
+    return res.status(200).json(cleanedResult);
   } catch (error) {
     console.error("Error al obtener costos por modelos", error);
     return res

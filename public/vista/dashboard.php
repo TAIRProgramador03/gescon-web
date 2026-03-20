@@ -142,7 +142,7 @@ require './templates/header.html';
         </div>
 
         <div class="dashboard-item item-large">
-          <h3>Venta por modelo</h3>
+          <h3>Compra por modelo</h3>
           <div id="vehFleetDifference" class="data-value"></div>
           <div class="filter-veh-fleet">
             <div class="row-filter">

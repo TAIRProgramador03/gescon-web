@@ -105,7 +105,7 @@ require './templates/header.html';
 
     $("#listDocuments").DataTable({
     language: {
-      url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
     },
     data: vehicles,
     columns: [

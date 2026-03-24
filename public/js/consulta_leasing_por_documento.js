@@ -30,7 +30,7 @@ const getLeasings = async (documentoId, clienteId) => {
   // INTEGRAMOS LA LIBRERIA DATATABLE
   const table = $("#listLeasing").DataTable({
     language: {
-      url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
     },
     data: lesaings,
     columns: [

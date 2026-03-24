@@ -172,7 +172,7 @@ require './templates/header.html';
 
     const table = $("#listDocuments").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: documents,
@@ -336,7 +336,7 @@ require './templates/header.html';
 
     $("#listVehSup").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
@@ -456,7 +456,7 @@ require './templates/header.html';
 
     $("#listVehSev").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
@@ -576,7 +576,7 @@ require './templates/header.html';
 
     $("#listVehSoc").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
@@ -696,7 +696,7 @@ require './templates/header.html';
 
     $("#listVehCiu").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,

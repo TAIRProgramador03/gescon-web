@@ -517,7 +517,7 @@ require './templates/header.html';
 
             $("#listVehExpires").DataTable({
               language: {
-                url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+                url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
               },
               ordering: false,
               scrollY: '300px',
@@ -661,7 +661,7 @@ require './templates/header.html';
 
             $("#listVehToExpires").DataTable({
               language: {
-                url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+                url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
               },
               ordering: false,
               scrollY: '300px',

@@ -191,7 +191,7 @@ require './templates/header.html';
             <div class="tda can-form"><i class="fa-solid fa-car" style="color: #0e2e67;"></i><span id="txt-vehic">0</span></div>
           </div>
           <div class="card terreno-form doc-form" id="href-query-assign">
-            <div class="tda tti-form nom-tp">Veh. Asignados</div>
+            <div class="tda tti-form nom-tp" id="cab-href-query-assign">Veh. Asignados</div>
             <hr>
             <div class="tda can-form"><i class="fa-solid fa-check" style="color: #0e2e67;"></i><span id="txt-assign">0</span></div>
           </div>
@@ -253,7 +253,7 @@ require './templates/header.html';
 
     table = $("#listContracts").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       data: [],
       columns: [{
@@ -316,7 +316,9 @@ require './templates/header.html';
       table.draw();
 
       if (idContract) {
-        await cargarDatosContrato(idContract, idClient);
+        await cargarDatosContrato(idClient, idContract);
+      } else {
+        await cargarDatosContrato(idClient);
       }
     }
 
@@ -337,6 +339,8 @@ require './templates/header.html';
 
     await cargarContrato(e.params.data.id);
 
+    await cargarDatosContrato(e.params.data.id);
+
     const contracts = await getContracts(e.params.data.id);
 
     table.clear();
@@ -348,7 +352,7 @@ require './templates/header.html';
     const params = new URLSearchParams(window.location.search);
     params.delete("contratoId");
     window.history.replaceState({}, "", `${window.location.pathname}?${params}`);
-    
+
     const contracts = await cargarTablacontrato(e.params.data.id)
 
     table.clear();
@@ -425,6 +429,12 @@ require './templates/header.html';
           data.data.cantidadLeasing > 0 ? data.data.cantidadVehiculos : "0";
         document.getElementById("txt-assign").textContent =
           data.data.cantidadAsignados || "0";
+
+        if (data.data.hayActivos) {
+          $("#cab-href-query-assign").addClass("nom-tp-danger")
+        } else {
+          $("#cab-href-query-assign").removeClass("nom-tp-danger")
+        }
       } catch (error) {
         console.error("Error al obtener los datos del contrato:", error);
       }
@@ -540,7 +550,7 @@ require './templates/header.html';
 
     $("#listVeh").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
@@ -671,7 +681,7 @@ require './templates/header.html';
 
     $("#listVehSev").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
@@ -796,7 +806,7 @@ require './templates/header.html';
 
     $("#listVehSoc").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
@@ -921,7 +931,7 @@ require './templates/header.html';
 
     $("#listVehSup").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
@@ -1046,7 +1056,7 @@ require './templates/header.html';
 
     $("#listVehCiu").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,

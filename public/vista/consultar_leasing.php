@@ -250,7 +250,7 @@ require './templates/header.html';
 
     table = $("#listLeasing").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       data: leasings,
       columns: [{
@@ -373,7 +373,7 @@ require './templates/header.html';
 
     $("#listVeh").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,

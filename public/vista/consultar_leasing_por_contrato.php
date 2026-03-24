@@ -286,7 +286,7 @@ require './templates/header.html';
 
     $("#listVeh").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
@@ -409,7 +409,7 @@ require './templates/header.html';
 
     $("#listVehAssign").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,

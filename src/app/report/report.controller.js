@@ -1136,29 +1136,29 @@ const contTotalPriceByModel = async (req, res) => {
       T_PRECIO_VEH: row.TOTAL_COSTO,
     }));
 
-    // // 1. Obtener una lista única de modelos
-    // const modelosUnicos = [...new Set(result.map((item) => item.MODELO))];
+    // 1. Obtener una lista única de modelos
+    const modelosUnicos = [...new Set(cleanedResult.map((item) => item.MODELO))];
 
-    // // 2. Generar la matriz completa (Modelo x Año)
-    // const resultado = modelosUnicos.flatMap((modelo) => {
-    //   return listYears.map((anio) => {
-    //     // Buscamos si el dato existe en el JSON original
-    //     const registroExistente = result.find(
-    //       (d) => d.MODELO == modelo && d.ANO == anio,
-    //     );
+    // 2. Generar la matriz completa (Modelo x Año)
+    const resultado = modelosUnicos.flatMap((modelo) => {
+      return listYears.map((anio) => {
+        // Buscamos si el dato existe en el JSON original
+        const registroExistente = cleanedResult.find(
+          (d) => d.MODELO == modelo && d.ANO == anio,
+        );
 
-    //     // Si existe lo devolvemos, si no, creamos uno con precio 0
-    //     return (
-    //       registroExistente || {
-    //         MODELO: modelo,
-    //         ANO: anio,
-    //         T_PRECIO_VEH: 0,
-    //       }
-    //     );
-    //   });
-    // });
+        // Si existe lo devolvemos, si no, creamos uno con precio 0
+        return (
+          registroExistente || {
+            MODELO: modelo,
+            ANO: anio,
+            T_PRECIO_VEH: 0,
+          }
+        );
+      });
+    });
 
-    return res.status(200).json(cleanedResult);
+    return res.status(200).json(resultado);
   } catch (error) {
     console.error("Error al obtener costos por modelos", error);
     return res

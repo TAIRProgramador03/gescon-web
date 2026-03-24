@@ -1,10 +1,3 @@
-// const IP_LOCAL = "localhost";
-
-// document.addEventListener("DOMContentLoaded", () => {
-//   cargarClientes();
-//   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
-// });
-
 toastr.options = {
   closeButton: false,
   debug: false,
@@ -150,11 +143,11 @@ async function cargarTablacontrato(id) {
   }
 }
 
-async function cargarDatosContrato(contratoId, clienteId) {
+async function cargarDatosContrato(clienteId, contratoId) {
   // Realizar la solicitud AJAX al backend para obtener los detalles del contrato
   try {
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}&clienteId=${clienteId}`,
+      `http://${IP_LOCAL}:3000/contratoDetalle?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -172,15 +165,15 @@ async function cargarDatosContrato(contratoId, clienteId) {
 
     // Convertir fecha firma a formato yyyy-mm-dd
     const fechaInicio = convertirFecha(fechaFirma);
-    document.getElementById("text-inicio").value = fechaInicio; // Asignar FECHA_FIRMA
+    document.getElementById("text-inicio").value = data.data.fechaFirma != "" ? fechaInicio : "--"; // Asignar FECHA_FIRMA
 
     // Calcular fecha de fin
     const fechaFin = calcularFechaFin(fechaInicio, data.data.duracion);
     console.log(fechaFin);
-    document.getElementById("text-fin").value = fechaFin; // Asignar fecha de fin
+    document.getElementById("text-fin").value = data.data.fechaFirma != "" ? fechaFin : "--"; // Asignar fecha de fin
 
     const estado = obtenerEstado(fechaFin);
-    document.getElementById("text-estado").value = estado; // Asignar DESCRIPCION
+    document.getElementById("text-estado").value = data.data.fechaFirma != "" ? estado : "--"; // Asignar DESCRIPCION
     // Establecer el estado según la fecha actual y la fecha de fin
     document.getElementById("story").value = data.data.descripcion; // Asignar estado
 
@@ -201,6 +194,12 @@ async function cargarDatosContrato(contratoId, clienteId) {
       data.data.cantidadLeasing > 0 ? data.data.cantidadVehiculos : "0";
     document.getElementById("txt-assign").textContent =
       data.data.cantidadAsignados || "0";
+
+    if(data.data.hayActivos) {
+      $("#cab-href-query-assign").addClass("nom-tp-danger")
+    } else {
+      $("#cab-href-query-assign").removeClass("nom-tp-danger")
+    }
   } catch (error) {
     console.error("Error al obtener los datos del contrato:", error);
   }
@@ -236,6 +235,10 @@ function obtenerEstado(fechaFin) {
 }
 
 function limpiarCampos() {
+  const params = new URL(window.location);
+  params.search = ""; // Limpia los parámetros
+  window.history.replaceState({}, document.title, params.pathname);
+
   limpia();
 
   document.querySelector(".tabla-form table tbody").innerHTML = `
@@ -244,11 +247,8 @@ function limpiarCampos() {
         </tr>
     `;
 
-  const comboBox = document.getElementById("combo-box");
-  comboBox.value = ""; // Restablece el valor al predeterminado
-
-  const comboBox2 = document.getElementById("combo-contrato");
-  comboBox2.value = ""; // Restablece el valor al predeterminado
+  $("#combo-box").val(null).trigger("change");
+  $("#combo-contrato").val(null).trigger("change");
 }
 
 const getVehByContract = async (contratoId, tipoTerr) => {

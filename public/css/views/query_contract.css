@@ -204,6 +204,10 @@ body {
   border-top-right-radius: 6px;
 }
 
+.nom-tp-danger {
+  background: #be0000 !important;
+}
+
 .salio-form {
   padding: 20px 20px;
   display: flex;

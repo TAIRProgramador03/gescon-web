@@ -20,7 +20,37 @@ function closeAllSubMenus() {
   });
 }*/
 
-const IP_LOCAL = "192.168.5.95"
+const IP_LOCAL = "192.168.5.95";
+
+async function authenticateValid() {
+  const response = await fetch(`http://${IP_LOCAL}:3000/verify`, {
+    method: "GET",
+    credentials: "include", // Asegura que las cookies se envíen con la solicitud
+  });
+
+  if (!response.ok) {
+    window.location.replace("/Ges360/Index.html"); // replace no guarda la página en el historial
+    return;
+  }
+
+  const data = response.json()
+
+  return data;
+}
+
+$(document).on("DOMContentLoaded", async () => {
+  const user = await authenticateValid();
+
+  $("#user-data").text(`${user.globalDbUser.toUpperCase()}`)
+});
+
+window.addEventListener('pageshow', async function () {
+    await authenticateValid();
+});
+
+$("#dropdown-menu-btn").on("click", () => {
+  document.querySelector('.dropdown-menu').classList.toggle('show');
+})
 
 const toggleButton = document.getElementById("toggle-btn");
 const sidebar = document.getElementById("sidebar");

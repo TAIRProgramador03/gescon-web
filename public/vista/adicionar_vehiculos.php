@@ -2,6 +2,9 @@
     require './templates/header.html';
 ?>
 
+<!-- JQUERY -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <!-- CSS DE LA VISTA ADICIONAR VEHICULOS -->
 <style>
     <?php include '../css/views/add_vehicle.css'; ?>
@@ -17,7 +20,7 @@
         <p>¡Cargando!.....</p>
     </div>
 </div>
-<main>
+<main class="main-register">
     <div id="notification" class="hidden"></div>
 
     <div class="contenedor">

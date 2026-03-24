@@ -2,6 +2,9 @@
 require './templates/header.html';
 ?>
 
+<!-- JQUERY -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <!-- ESTILOS -->
 <style>
     <?php include '../css/views/register_leasing.css'; ?>
@@ -17,7 +20,7 @@ require './templates/header.html';
     </div>
 </div>
 <div id="notification" class="hidden"></div>
-<main>
+<main class="main-register">
     <div class="contenedor">
         <div class="regis-form-leasing">
             <div class="leasing-tittle">

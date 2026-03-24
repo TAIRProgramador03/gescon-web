@@ -1,3 +1,5 @@
+    
+    </main>
     <script>
         // const loggedUser = localStorage.getItem('dbUser');
 
@@ -17,16 +19,16 @@
                 credentials: "include",
                 });
                 const data = await response.json();
-                if (data.success) {
-                localStorage.removeItem("dbUser");
-                window.location.href = "/Ges360/Index.html";
+                if (response.ok) {
+                    localStorage.removeItem("dbUser");
+                    window.location.href = "/Ges360/Index.html";
                 } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "No se pudo cerrar sesión",
-                    confirmButtonColor: "#004f83",
-                });
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "No se pudo cerrar sesión",
+                        confirmButtonColor: "#004f83",
+                    });
                 }
             } catch (error) {
                 console.error("Error al hacer la solicitud:", error);

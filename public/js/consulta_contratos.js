@@ -1,58 +1,20 @@
-// const IP_LOCAL = "localhost";
-
-// document.addEventListener("DOMContentLoaded", () => {
-//   cargarClientes();
-//   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
-// });
-
-$(document).ready(async function () {
-  await cargarClientes();
-  document.getElementById("btnClear").addEventListener("click", limpiarCampos);
-
-  const params = new URLSearchParams(window.location.search);
-  const idClient = params.get("clienteId");
-  const idContract = params.get("contratoId")
-
-  $("#combo-box").select2({
-    placeholder: "Seleccione un cliente",
-    allowClear: false, // Desactiva la "X"
-  });
-
-  $("#combo-contrato").select2({
-    placeholder: "Seleccione un contrato",
-    allowClear: false, // Desactiva la "X"
-  });
-
-  if (idClient) {
-    $("#combo-box").val(`${idClient}`).trigger("change");
-
-    await cargarContrato(idClient);
-    await cargarTablacliente(idClient);
-
-    if(idContract) {
-    await cargarDatosContrato(idContract, idClient)
-  }
-  }
-});
-
-$("#combo-box").on("select2:select", async function (e) {
-  const params = new URLSearchParams(window.location.search);
-  params.set("clienteId", e.params.data.id);
-
-  const nuevaURL = `${window.location.pathname}?${params.toString()}`;
-  window.history.replaceState({}, "", nuevaURL);
-
-  await cargarContrato(e.params.data.id);
-  await cargarTablacliente(e.params.data.id);
-});
-
-$("#combo-contrato").on("select2:select", async function (e) {
-  const params = new URLSearchParams(window.location.search);
-  params.delete("contratoId")
-  window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
-
-  await cargarTablacontrato(e.params.data.id);
-});
+toastr.options = {
+  closeButton: false,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-bottom-right",
+  preventDuplicates: false,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "5000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
 
 async function cargarClientes() {
   try {
@@ -82,7 +44,6 @@ async function cargarClientes() {
       comboBox.appendChild(option);
     });
     cargarContrato();
-    cargarTablacliente();
   } catch (error) {
     console.error("Error al cargar clientes:", error);
   }
@@ -125,27 +86,18 @@ async function cargarContrato(idCli) {
       contratoSelect.appendChild(option);
     });
 
-    cargarTablacontrato();
+    // cargarTablacontrato();
   } catch (error) {
     console.error("Error al obtener los contratos:", error);
-    alert("Error al obtener los contratos. Inténtelo de nuevo más tarde.");
+    toastr.error(
+      "Error al obtener los contratos. Inténtelo de nuevo más tarde.",
+      "Oops...",
+    );
   }
 }
 
-async function cargarTablacliente(idCli) {
-  limpia();
-  if (!idCli) {
-    // Si no hay cliente seleccionado, limpia la tabla
-    document.querySelector(".tabla-form table tbody").innerHTML = `
-                <tr>
-                    <td colspan="5">Seleccione un cliente para ver los contratos</td>
-                </tr>
-            `;
-    return;
-  }
-
+const getContracts = async (idCli) => {
   try {
-    // Realiza una solicitud al servidor para obtener los contratos del cliente
     const response = await fetch(
       `http://${IP_LOCAL}:3000/tablaCliente?idCli=${idCli}`,
       {
@@ -155,63 +107,22 @@ async function cargarTablacliente(idCli) {
     );
     const contratos = await response.json();
 
-    // Verifica si hay contratos disponibles
-    if (contratos.length === 0) {
-      document.querySelector(".tabla-form table tbody").innerHTML = `
-                    <tr>
-                        <td colspan="5">No hay contratos disponibles para este cliente</td>
-                    </tr>
-                `;
-      return;
-    }
-    // Llena la tabla con los datos de los contratos
-    // const fechita = convertirFecha(tablaCliente.FECHACREA);
-    const tbody = document.querySelector(".tabla-form table tbody");
-    tbody.innerHTML = ""; // Limpia las filas existentes
-    contratos.forEach((tablaCliente, index) => {
-      const fechita = convertirFecha(tablaCliente.FECHACREA);
-      const row = document.createElement("tr");
-      row.innerHTML = `
-                    <td>${index + 1}</td> <!-- Número de ítem -->
-                    <td style="display: none;">${tablaCliente.ID}</td> <!-- Número de ítem -->
-                    <td>${
-                      tablaCliente.DESCRIPCION
-                    }</td> <!-- Número de contrato -->
-                    <td>${fechita || "Sin fecha"}</td> <!-- Fecha de firma -->
-                    <td>${
-                      tablaCliente.DURACION + " MESES" || "Sin periodo"
-                    }</td> <!-- Periodo -->
-                    <td>${
-                      tablaCliente.TOTVEH || "0"
-                    }</td> <!-- Cantidad total -->
-                `;
-      tbody.appendChild(row);
-    });
+    return contratos;
   } catch (error) {
     console.error("Error al obtener los datos:", error);
-    alert("Error al obtener los datos. Inténtelo de nuevo más tarde.");
+    toastr.error(
+      "Error al obtener los datos. Inténtelo de nuevo más tarde.",
+      "Oops...",
+    );
   }
-}
+};
 
 async function cargarTablacontrato(id) {
   limpia();
   const params = new URLSearchParams(window.location.search);
   const idCli = params.get("clienteId"); // ID del cliente seleccionado
 
-  const tbody = document.querySelector(".tabla-form table tbody"); // Elemento tbody de la tabla
-
-  // Validación inicial
-  if (!idCli || !id) {
-    tbody.innerHTML = `
-                <tr>
-                    <td colspan="5">Seleccione un cliente y un contrato para ver los datos.</td>
-                </tr>
-            `;
-    return;
-  }
-
   try {
-    // Llamada al servidor
     const response = await fetch(
       `http://${IP_LOCAL}:3000/tablaContrato?idCli=${idCli}&id=${id}`,
       {
@@ -221,57 +132,22 @@ async function cargarTablacontrato(id) {
     );
     // Verifica si la respuesta es exitosa
     if (!response.ok) {
-      throw new Error(`Error en la solicitud: ${response.statusText}`);
+      toastr.error(`Error en la solicitud: ${response.statusText}`);
     }
 
     const contratos = await response.json();
 
-    // Limpia el contenido previo de la tabla
-    tbody.innerHTML = "";
-
-    // Verifica si hay datos
-    if (contratos.length === 0) {
-      tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5">No hay contratos disponibles para este cliente y contrato seleccionado.</td>
-                    </tr>
-                `;
-      return;
-    }
-
-    // Rellena la tabla con los datos
-    contratos.forEach((tablaContrato, index) => {
-      const row = document.createElement("tr");
-      const fechito = convertirFecha(tablaContrato.FECHACREA);
-      row.innerHTML = `
-                    <td>${index + 1}</td> <!-- Número de ítem -->
-                    <td style="display: none;">${tablaContrato.ID}</td>
-                    <td>${tablaContrato.DESCRIPCION}</td> <!-- Descripción -->
-                    <td>${fechito || "Sin fecha"}</td> <!-- Fecha -->
-                    <td>${
-                      tablaContrato.DURACION + " MESES" || "Sin periodo"
-                    }</td> <!-- Periodo -->
-                    <td>${
-                      tablaContrato.TOTVEH || "0"
-                    }</td> <!-- Total vehículos -->
-                `;
-      tbody.appendChild(row);
-    });
+    return contratos;
   } catch (error) {
     console.error("Error al cargar los datos:", error);
-    tbody.innerHTML = `
-                <tr>
-                    <td colspan="5">Hubo un error al cargar los datos. Intente de nuevo más tarde.</td>
-                </tr>
-            `;
   }
 }
 
-async function cargarDatosContrato(contratoId, clienteId) {
+async function cargarDatosContrato(clienteId, contratoId) {
   // Realizar la solicitud AJAX al backend para obtener los detalles del contrato
   try {
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}&clienteId=${clienteId}`,
+      `http://${IP_LOCAL}:3000/contratoDetalle?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -289,35 +165,41 @@ async function cargarDatosContrato(contratoId, clienteId) {
 
     // Convertir fecha firma a formato yyyy-mm-dd
     const fechaInicio = convertirFecha(fechaFirma);
-    document.getElementById("text-inicio").value = fechaInicio; // Asignar FECHA_FIRMA
+    document.getElementById("text-inicio").value = data.data.fechaFirma != "" ? fechaInicio : "--"; // Asignar FECHA_FIRMA
 
     // Calcular fecha de fin
     const fechaFin = calcularFechaFin(fechaInicio, data.data.duracion);
     console.log(fechaFin);
-    document.getElementById("text-fin").value = fechaFin; // Asignar fecha de fin
+    document.getElementById("text-fin").value = data.data.fechaFirma != "" ? fechaFin : "--"; // Asignar fecha de fin
 
     const estado = obtenerEstado(fechaFin);
-    document.getElementById("text-estado").value = estado; // Asignar DESCRIPCION
+    document.getElementById("text-estado").value = data.data.fechaFirma != "" ? estado : "--"; // Asignar DESCRIPCION
     // Establecer el estado según la fecha actual y la fecha de fin
     document.getElementById("story").value = data.data.descripcion; // Asignar estado
 
     // Aquí asignamos los valores de los vehículos a los campos correspondientes
     document.getElementById("txt-sev").textContent =
-      data.data.vehiculoSev || "0";
+      data.data.cantidadLeasing > 0 ? data.data.vehiculoSev : "0";
     document.getElementById("txt-soc").textContent =
-      data.data.vehiculoSoc || "0";
+      data.data.cantidadLeasing > 0 ? data.data.vehiculoSoc : "0";
     document.getElementById("txt-sup").textContent =
-      data.data.vehiculoSup || "0";
+      data.data.cantidadLeasing > 0 ? data.data.vehiculoSup : "0";
     document.getElementById("txt-ciu").textContent =
-      data.data.vehiculoCiu || "0";
+      data.data.cantidadLeasing > 0 ? data.data.vehiculoCiu : "0";
     document.getElementById("txt-aso").textContent =
       data.data.cantidadDocumentos || "0"; // Asignar texto al div
     document.getElementById("txt-leas").textContent =
       data.data.cantidadLeasing || "0"; // Asignar texto al div
     document.getElementById("txt-vehic").textContent =
-      data.data.cantidadVehiculos || "0";
+      data.data.cantidadLeasing > 0 ? data.data.cantidadVehiculos : "0";
     document.getElementById("txt-assign").textContent =
       data.data.cantidadAsignados || "0";
+
+    if(data.data.hayActivos) {
+      $("#cab-href-query-assign").addClass("nom-tp-danger")
+    } else {
+      $("#cab-href-query-assign").removeClass("nom-tp-danger")
+    }
   } catch (error) {
     console.error("Error al obtener los datos del contrato:", error);
   }
@@ -341,79 +223,51 @@ function limpia() {
   document.getElementById("txt-assign").textContent = "0";
 }
 
-document
-  .getElementById("contratos-tbody")
-  .addEventListener("click", async function (e) {
-    // Verificar si se hace clic en una fila <tr>
-    if (e.target.tagName.toLowerCase() === "td") {
-      const fila = e.target.closest("tr"); // Obtener la fila
-      const contratoId = fila.querySelectorAll("td")[1].textContent.trim(); // Obtener el ID de contrato (ajusta según tu estructura de tabla)
+// Función para obtener el estado del contrato según la fecha de fin
+function obtenerEstado(fechaFin) {
+  const fechaActual = new Date();
+  const fechaFinObj = new Date(fechaFin);
+  if (fechaFinObj >= fechaActual) {
+    return "Activo";
+  } else {
+    return "Finalizado";
+  }
+}
 
-      // MOSTRAMOS EL PARAMETRO EN LA URL
-      const params = new URLSearchParams(window.location.search);
-      const clienteId = params.get("clienteId")
-      params.set("contratoId", contratoId);
+function limpiarCampos() {
+  const params = new URL(window.location);
+  params.search = ""; // Limpia los parámetros
+  window.history.replaceState({}, document.title, params.pathname);
 
-      if(!clienteId) return;
+  limpia();
 
-      const nuevaURL = `${window.location.pathname}?${params.toString()}`;
-      window.history.replaceState({}, "", nuevaURL);
+  document.querySelector(".tabla-form table tbody").innerHTML = `
+        <tr>
+            <td colspan="5">Seleccione un cliente para ver los contratos</td>
+        </tr>
+    `;
 
-      // Realizar la solicitud AJAX al backend para obtener los detalles del contrato
-      try {
-        const response = await fetch(
-          `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}&clienteId=${clienteId}`,
-          {
-            method: "GET",
-            credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          },
-        );
-        const data = await response.json();
+  $("#combo-box").val(null).trigger("change");
+  $("#combo-contrato").val(null).trigger("change");
+}
 
-        if (!data.success) {
-          console.error("Error al obtener los detalles del contrato");
-          return;
-        }
+const getVehByContract = async (contratoId, tipoTerr) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/placasPorContrato?contratoId=${contratoId.toString()}${tipoTerr ? `&tipoTerr=${tipoTerr}` : ""}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
 
-        // Asignar valores a los campos de entrada con los datos obtenidos
-        const fechaFirma = data.data.fechaFirma; // Se espera en formato yyyymmdd
+  const data = await response.json();
 
-        // Convertir fecha firma a formato yyyy-mm-dd
-        const fechaInicio = convertirFecha(fechaFirma);
-        document.getElementById("text-inicio").value = fechaInicio; // Asignar FECHA_FIRMA
+  if (!response.ok) {
+    toastr.info(data.message, "Aviso");
+  }
 
-        // Calcular fecha de fin
-        const fechaFin = calcularFechaFin(fechaInicio, data.data.duracion);
-        console.log(fechaFin);
-        document.getElementById("text-fin").value = fechaFin; // Asignar fecha de fin
-
-        const estado = obtenerEstado(fechaFin);
-        document.getElementById("text-estado").value = estado; // Asignar DESCRIPCION
-        // Establecer el estado según la fecha actual y la fecha de fin
-        document.getElementById("story").value = data.data.descripcion; // Asignar estado
-
-        // Aquí asignamos los valores de los vehículos a los campos correspondientes
-        document.getElementById("txt-sev").textContent =
-          data.data.vehiculoSev || "0";
-        document.getElementById("txt-soc").textContent =
-          data.data.vehiculoSoc || "0";
-        document.getElementById("txt-sup").textContent =
-          data.data.vehiculoSup || "0";
-        document.getElementById("txt-ciu").textContent =
-          data.data.vehiculoCiu || "0";
-        document.getElementById("txt-aso").textContent =
-          data.data.cantidadDocumentos || "0"; // Asignar texto al div
-        document.getElementById("txt-leas").textContent =
-          data.data.cantidadLeasing || "0"; // Asignar texto al div
-        document.getElementById("txt-vehic").textContent =
-          data.data.cantidadVehiculos || "0";
-        document.getElementById("txt-assign").textContent =
-          data.data.cantidadAsignados || "0";
-      } catch (error) {
-        console.error("Error al obtener los datos del contrato:", error);
-      }
-    }
-  });
+  return data;
+};
 
 // Función para convertir la fecha yyyymmdd a yyyy-mm-dd
 function convertirFecha(fecha) {
@@ -476,29 +330,9 @@ function calcularFechaFin(fechaInicio, duracionMeses) {
   //fili
 }
 
-// Función para obtener el estado del contrato según la fecha de fin
-function obtenerEstado(fechaFin) {
-  const fechaActual = new Date();
-  const fechaFinObj = new Date(fechaFin);
-  if (fechaFinObj >= fechaActual) {
-    return "Activo";
-  } else {
-    return "Finalizado";
-  }
-}
-
-function limpiarCampos() {
-  limpia();
-
-  document.querySelector(".tabla-form table tbody").innerHTML = `
-        <tr>
-            <td colspan="5">Seleccione un cliente para ver los contratos</td>
-        </tr>
-    `;
-
-  const comboBox = document.getElementById("combo-box");
-  comboBox.value = ""; // Restablece el valor al predeterminado
-
-  const comboBox2 = document.getElementById("combo-contrato");
-  comboBox2.value = ""; // Restablece el valor al predeterminado
+function obtenerDiasVencimiento(fecha) {
+  const fechaActual = new Date(Date.now());
+  const fechaFin = new Date(fecha);
+  const diferenciaTiempo = fechaFin - fechaActual;
+  return Math.floor(diferenciaTiempo / (1000 * 60 * 60 * 24));
 }

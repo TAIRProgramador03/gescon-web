@@ -75,6 +75,14 @@ require './templates/header.html';
       <h3>Resumen</h3>
       <hr />
       <div class="item-result">
+        <label for="fec-fin-result">Fecha Fin</label>
+        <input id="fec-fin-result" readonly>
+      </div>
+      <div class="item-result">
+        <label for="estado-result">Estado</label>
+        <input id="estado-result" readonly>
+      </div>
+      <div class="item-result">
         <label for="tipo-result">Tipo de Doc.</label>
         <input id="tipo-result" readonly>
       </div>
@@ -109,6 +117,13 @@ require './templates/header.html';
             <p id="ciu-result">0</p>
           </li>
         </ul>
+      </div>
+      <div id="view-leasings" class="leasing-result">
+        <span>N° Leasings</span>
+        <div class="card-lea">
+          <i class="fa fa fa-book" style="color: #0e2e67;"></i>
+          <p id="leasing-result">0</p>
+        </div>
       </div>
       <button class="btn-success" id="btn-document">
         Ver documento
@@ -157,7 +172,7 @@ require './templates/header.html';
 
     const table = $("#listDocuments").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: documents,
@@ -195,7 +210,13 @@ require './templates/header.html';
     if (documentoId && !isNaN(documentoId)) {
       const detailDocument = await getDetailDocument(Number(documentoId));
 
+      const fechaIni = convertirFecha(detailDocument.firma)
+      const fechaFin = calcularFechaFin(fechaIni, detailDocument.duracion);
+      const estado = obtenerEstado(fechaFin);
+
       // INPUTS DE DATOS
+      $("#fec-fin-result").val(fechaFin);
+      $("#estado-result").val(estado);
       $("#tipo-result").val(detailDocument.tipoDocumento);
       $("#motivo-result").val(detailDocument.motivoDoc);
       $("#km-total-result").val(detailDocument.kmTotal);
@@ -203,10 +224,13 @@ require './templates/header.html';
       $("#descripcion-result").val(detailDocument.descripcion);
 
       // VEHICULOS POR TERRENOS
-      $("#sup-result").text(detailDocument.vehSup);
-      $("#sev-result").text(detailDocument.vehSev);
-      $("#soc-result").text(detailDocument.vehSoc);
-      $("#ciu-result").text(detailDocument.vehCiu);
+      $("#sup-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSup : 0);
+      $("#sev-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSev : 0);
+      $("#soc-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSoc : 0);
+      $("#ciu-result").text(detailDocument.cantLea > 0 ? detailDocument.vehCiu : 0);
+
+      // CANTIDAD LEASING
+      $("#leasing-result").text(detailDocument.cantLea);
 
       // ABRIR EL PDF
       $("#btn-document").off("click").on("click", () => {
@@ -215,6 +239,9 @@ require './templates/header.html';
     }
 
     $("#listDocuments tbody").on("click", "tr", async function() {
+      $('tr').removeClass("selected-row");
+
+      $(this).addClass("selected-row");
 
       const data = table.row(this).data();
 
@@ -225,7 +252,13 @@ require './templates/header.html';
 
       const detailDocument = await getDetailDocument(data.id);
 
+      const fechaIni = convertirFecha(detailDocument.firma)
+      const fechaFin = calcularFechaFin(fechaIni, detailDocument.duracion);
+      const estado = obtenerEstado(fechaFin);
+
       // INPUTS DE DATOS
+      $("#fec-fin-result").val(fechaFin);
+      $("#estado-result").val(estado);
       $("#tipo-result").val(detailDocument.tipoDocumento);
       $("#motivo-result").val(detailDocument.motivoDoc);
       $("#km-total-result").val(detailDocument.kmTotal);
@@ -233,15 +266,22 @@ require './templates/header.html';
       $("#descripcion-result").val(detailDocument.descripcion);
 
       // VEHICULOS POR TERRENOS
-      $("#sup-result").text(detailDocument.vehSup);
-      $("#sev-result").text(detailDocument.vehSev);
-      $("#soc-result").text(detailDocument.vehSoc);
-      $("#ciu-result").text(detailDocument.vehCiu);
+      $("#sup-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSup : 0);
+      $("#sev-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSev : 0);
+      $("#soc-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSoc : 0);
+      $("#ciu-result").text(detailDocument.cantLea > 0 ? detailDocument.vehCiu : 0);
+
+      // CANTIDAD LEASING
+      $("#leasing-result").text(detailDocument.cantLea);
 
       // ABRIR EL PDF
       $("#btn-document").off("click").on("click", () => {
         window.open(detailDocument.archivoPdf, '_blank');
       })
+    })
+
+    table.on("page.dt", () => {
+      $('tr').removeClass("selected-row");
     })
   })
 
@@ -249,7 +289,7 @@ require './templates/header.html';
     const param = new URLSearchParams(window.location.search)
     const documentoId = param.get("documentoId")
 
-    if(!documentoId) return;
+    if (!documentoId) return;
 
     const vehicles = await getVehByDocument(documentoId, "SUPERFICIE");
 
@@ -267,6 +307,9 @@ require './templates/header.html';
             <th>Año</th>
             <th>Color</th>
             <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
           </tr>
         </thead>
         <tbody>
@@ -283,6 +326,9 @@ require './templates/header.html';
             <th>Año</th>
             <th>Color</th>
             <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
           </tr>
         </tfoot>
       </table>
@@ -290,12 +336,11 @@ require './templates/header.html';
 
     $("#listVehSup").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
-      columns: [
-        {
+      columns: [{
           data: "item",
           render: function(data, type, row, meta) {
             return meta.row + 1;
@@ -323,6 +368,37 @@ require './templates/header.html';
         {
           data: "operacion",
         },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              return convertirFecha(data);
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              const fechaTsf = convertirFecha(data);
+              const dias = obtenerDiasVencimiento(fechaTsf);
+              if(dias > 0) {
+                return `${dias} dias`
+              } else if(dias < 0) {
+                return `Hace ${Math.abs(dias)} dias`
+              } else {
+                return `Vence hoy`
+              }
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "nroLeasing"
+        }
       ],
     })
     const modal = document.getElementById("modal-documents");
@@ -333,7 +409,7 @@ require './templates/header.html';
     const param = new URLSearchParams(window.location.search)
     const documentoId = param.get("documentoId")
 
-    if(!documentoId) return;
+    if (!documentoId) return;
 
     const vehicles = await getVehByDocument(documentoId, "SEVERO");
 
@@ -351,6 +427,9 @@ require './templates/header.html';
             <th>Año</th>
             <th>Color</th>
             <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
           </tr>
         </thead>
         <tbody>
@@ -367,6 +446,9 @@ require './templates/header.html';
             <th>Año</th>
             <th>Color</th>
             <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
           </tr>
         </tfoot>
       </table>
@@ -374,12 +456,11 @@ require './templates/header.html';
 
     $("#listVehSev").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
-      columns: [
-        {
+      columns: [{
           data: "item",
           render: function(data, type, row, meta) {
             return meta.row + 1;
@@ -407,6 +488,37 @@ require './templates/header.html';
         {
           data: "operacion",
         },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              return convertirFecha(data);
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              const fechaTsf = convertirFecha(data);
+              const dias = obtenerDiasVencimiento(fechaTsf);
+              if(dias > 0) {
+                return `${dias} dias`
+              } else if(dias < 0) {
+                return `Hace ${Math.abs(dias)} dias`
+              } else {
+                return `Vence hoy`
+              }
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "nroLeasing"
+        }
       ],
     })
     const modal = document.getElementById("modal-documents");
@@ -417,7 +529,7 @@ require './templates/header.html';
     const param = new URLSearchParams(window.location.search)
     const documentoId = param.get("documentoId")
 
-    if(!documentoId) return;
+    if (!documentoId) return;
 
     const vehicles = await getVehByDocument(documentoId, "SOCAVON");
 
@@ -435,6 +547,9 @@ require './templates/header.html';
             <th>Año</th>
             <th>Color</th>
             <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
           </tr>
         </thead>
         <tbody>
@@ -451,6 +566,9 @@ require './templates/header.html';
             <th>Año</th>
             <th>Color</th>
             <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
           </tr>
         </tfoot>
       </table>
@@ -458,12 +576,11 @@ require './templates/header.html';
 
     $("#listVehSoc").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
-      columns: [
-        {
+      columns: [{
           data: "item",
           render: function(data, type, row, meta) {
             return meta.row + 1;
@@ -491,6 +608,37 @@ require './templates/header.html';
         {
           data: "operacion",
         },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              return convertirFecha(data);
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              const fechaTsf = convertirFecha(data);
+              const dias = obtenerDiasVencimiento(fechaTsf);
+              if(dias > 0) {
+                return `${dias} dias`
+              } else if(dias < 0) {
+                return `Hace ${Math.abs(dias)} dias`
+              } else {
+                return `Vence hoy`
+              }
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "nroLeasing"
+        }
       ],
     })
     const modal = document.getElementById("modal-documents");
@@ -501,7 +649,7 @@ require './templates/header.html';
     const param = new URLSearchParams(window.location.search)
     const documentoId = param.get("documentoId")
 
-    if(!documentoId) return;
+    if (!documentoId) return;
 
     const vehicles = await getVehByDocument(documentoId, "CIUDAD");
 
@@ -519,6 +667,9 @@ require './templates/header.html';
             <th>Año</th>
             <th>Color</th>
             <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
           </tr>
         </thead>
         <tbody>
@@ -535,6 +686,9 @@ require './templates/header.html';
             <th>Año</th>
             <th>Color</th>
             <th>Operación</th>
+            <th>Fecha Fin</th>
+            <th>Vence en</th>
+            <th>Leasing</th>
           </tr>
         </tfoot>
       </table>
@@ -542,12 +696,11 @@ require './templates/header.html';
 
     $("#listVehCiu").DataTable({
       language: {
-        url: "//cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
       data: vehicles,
-      columns: [
-        {
+      columns: [{
           data: "item",
           render: function(data, type, row, meta) {
             return meta.row + 1;
@@ -575,6 +728,37 @@ require './templates/header.html';
         {
           data: "operacion",
         },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              return convertirFecha(data);
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            if (data) {
+              const fechaTsf = convertirFecha(data);
+              const dias = obtenerDiasVencimiento(fechaTsf);
+              if(dias > 0) {
+                return `${dias} dias`
+              } else if(dias < 0) {
+                return `Hace ${Math.abs(dias)} dias`
+              } else {
+                return `Vence hoy`
+              }
+            } else {
+              return "--"
+            }
+          }
+        },
+        {
+          data: "nroLeasing"
+        }
       ],
     })
     const modal = document.getElementById("modal-documents");
@@ -586,6 +770,16 @@ require './templates/header.html';
     modal.style.display = "none";
 
     $("#modal-body-info").empty();
+  })
+
+  $("#view-leasings").on("click", () => {
+    const params = new URLSearchParams(window.location.search);
+    const clienteId = params.get("clienteId")
+    const documentoId = params.get("documentoId")
+
+    if (!documentoId || !clienteId) return;
+
+    window.location.href = `consultar_leasing_por_documento.php?documentoId=${documentoId}&clienteId=${clienteId}`;
   })
 </script>
 

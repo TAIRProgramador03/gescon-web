@@ -3,7 +3,7 @@ require './templates/header.html';
 ?>
 
 <style>
-  <?php include '../css/views/query_leasing_by_contract.css'; ?>
+  <?php include '../css/views/query_leasing_by_document.css'; ?>
 </style>
 
 <!-- JQUERY -->
@@ -35,8 +35,8 @@ require './templates/header.html';
 
 <main class="main-query-lea">
   <div class="header-title">
-    <h1>Leasing's de contrato</h1>
-    <p>Id contrato: <span id="parametroPintado"></span></p>
+    <h1>Leasing's de documento</h1>
+    <p>Id documento: <span id="parametroPintado"></span></p>
   </div>
 
   <div class="container-data">
@@ -125,7 +125,7 @@ require './templates/header.html';
   </div>
 </div>
 
-<script src="../js/consulta_leasing_por_contrato.js"></script>
+<script src="../js/consulta_leasing_por_documento.js"></script>
 <script type="module">
   window.onload = function() {
     setTimeout(() => {
@@ -145,19 +145,19 @@ require './templates/header.html';
     const leasingId = param.get("leasingId");
     const nroLeasing = param.get("nroLeasing");
     const clienteId = param.get("clienteId");
-    const contratoId = param.get("contratoId");
+    const documentoId = param.get("documentoId");
 
-    if (!contratoId || !clienteId) {
+    if (!documentoId || !clienteId) {
       toastr.warning("Faltan parametros obligatorios para realizar la consulta", "Advertencia");
     }
 
     const textSpan = document.getElementById("parametroPintado");
-    textSpan.innerHTML = contratoId;
+    textSpan.innerHTML = documentoId;
 
-    table = await getLeasings(contratoId, clienteId);
+    table = await getLeasings(documentoId, clienteId);
 
-    if (leasingId && nroLeasing && clienteId && contratoId) {
-      const detailLeasing = await getDetailLeasing(leasingId, nroLeasing, clienteId, contratoId)
+    if (leasingId && nroLeasing && clienteId && documentoId) {
+      const detailLeasing = await getDetailLeasing(leasingId, nroLeasing, clienteId, documentoId)
 
       const fechaFin = convertirFecha(detailLeasing.fechaFin);
       const diasVencer = obtenerDiasVencimiento(fechaFin);
@@ -183,21 +183,18 @@ require './templates/header.html';
         window.open(detailLeasing.archivoPdf, '_blank');
       })
     }
-
-    table.on("page.dt", () => {
-      $('tr').removeClass("selected-row");
-    })
   })
 
   $("#listLeasing tbody").on("click", "tr", async function(e) {
     $('tr').removeClass("selected-row");
 
     $(this).addClass("selected-row");
+    
     const data = table.row(this).data();
 
     const param = new URLSearchParams(window.location.search);
     const clienteId = param.get("clienteId");
-    const contratoId = param.get("contratoId");
+    const documentoId = param.get("documentoId");
 
     param.set("nroLeasing", data.nroLeasing)
     param.set("leasingId", data.id)
@@ -205,7 +202,7 @@ require './templates/header.html';
     const nuevaURL = `${window.location.pathname}?${param.toString()}`;
     window.history.replaceState({}, "", nuevaURL);
 
-    const detaiLeasing = await getDetailLeasing(data.id, data.nroLeasing, clienteId, contratoId);
+    const detaiLeasing = await getDetailLeasing(data.id, data.nroLeasing, clienteId, documentoId);
 
     const fechaFin = convertirFecha(detaiLeasing.fechaFin);
     const diasVencer = obtenerDiasVencimiento(fechaFin);
@@ -229,6 +226,10 @@ require './templates/header.html';
 
     $("#btn-leasing").off("click").on("click", () => {
       window.open(detaiLeasing.archivoPdf, '_blank');
+    })
+
+    table.on("page.dt", () => {
+      $('tr').removeClass("selected-row");
     })
   })
 
@@ -324,28 +325,20 @@ require './templates/header.html';
         {
           data: "fechaFin",
           render: function(data) {
-            if (data) {
-              return convertirFecha(data)
-            } else {
-              return "--"
-            }
+            return convertirFecha(data);
           }
         },
         {
           data: "fechaFin",
           render: function(data) {
-            if (data) {
-              const fechaTsf = convertirFecha(data);
-              const dias = obtenerDiasVencimiento(fechaTsf);
-              if (dias > 0) {
-                return `${dias} dias`
-              } else if (dias < 0) {
-                return `Hace ${Math.abs(dias)} dias`
-              } else {
-                return `Vence hoy`
-              }
+            const fechaTsf = convertirFecha(data);
+            const dias = obtenerDiasVencimiento(fechaTsf);
+            if (dias > 0) {
+              return `${dias} dias`
+            } else if (dias < 0) {
+              return `Hace ${Math.abs(dias)} dias`
             } else {
-              return "--"
+              return `Vence hoy`
             }
           }
         },
@@ -363,14 +356,14 @@ require './templates/header.html';
     const param = new URLSearchParams(window.location.search);
     const nroLeasing = param.get("nroLeasing");
     const clienteId = param.get("clienteId");
-    const contratoId = param.get("contratoId");
+    const documentoId = param.get("documentoId");
 
     if (!nroLeasing) {
       toastr.info("Debes seleccionar un leasing", "Aviso");
       return;
     }
 
-    const vehicles = await getAssignByLeasing(nroLeasing, clienteId, contratoId);
+    const vehicles = await getAssignByLeasing(nroLeasing, clienteId, documentoId);
 
     $("#modal-body-info").append(`
       <table id="listVehAssign" class="display">

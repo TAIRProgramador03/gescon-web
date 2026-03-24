@@ -22,7 +22,7 @@
         <p>¡Cargando!.....</p>
     </div>
 </div>
-<main>
+<main class="main-register">
     <div id="notification" class="hidden"></div>
     <div class="contenedor">
         <div class="form-registrar">

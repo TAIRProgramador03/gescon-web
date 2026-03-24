@@ -16,9 +16,9 @@ toastr.options = {
   hideMethod: "fadeOut",
 };
 
-const getLeasings = async (contratoId, clienteId) => {
+const getLeasings = async (documentoId, clienteId) => {
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/leasingByContract?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
+    `http://${IP_LOCAL}:3000/leasingByDocument?documentoId=${documentoId.toString()}&clienteId=${clienteId.toString()}`,
     {
       method: "GET",
       credentials: "include",
@@ -69,10 +69,10 @@ const getDetailLeasing = async (
   leasingId,
   nroLeasing,
   clienteId,
-  contratoId,
+  documentoId,
 ) => {
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/detailLeasing?leasingId=${leasingId.toString()}&nroLeasing=${nroLeasing.trim()}&clienteId=${clienteId.toString()}&contratoId=${contratoId.toString()}&tipoCont=P`,
+    `http://${IP_LOCAL}:3000/detailLeasing?leasingId=${leasingId.toString()}&nroLeasing=${nroLeasing.trim()}&clienteId=${clienteId.toString()}&contratoId=${documentoId.toString()}&tipoCont=H`,
     {
       method: "GET",
       credentials: "include",
@@ -102,9 +102,9 @@ const getVehByLeasing = async (leasingId) => {
   return data;
 };
 
-const getAssignByLeasing = async (nroLeasing, clienteId, contratoId) => {
+const getAssignByLeasing = async (nroLeasing, clienteId, documentoId) => {
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/assignByLeasing?nroLeasing=${nroLeasing}&clienteId=${clienteId}&contratoId=${contratoId}&tipoCont=P`,
+    `http://${IP_LOCAL}:3000/assignByLeasing?nroLeasing=${nroLeasing}&clienteId=${clienteId}&contratoId=${documentoId}&tipoCont=H`,
     {
       method: "GET",
       credentials: "include",

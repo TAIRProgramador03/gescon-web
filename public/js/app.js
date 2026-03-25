@@ -29,7 +29,7 @@ async function authenticateValid() {
   });
 
   if (!response.ok) {
-    window.location.replace("/Ges360/Index.html"); // replace no guarda la página en el historial
+    window.location.replace("/gescon-web/index.html"); // replace no guarda la página en el historial
     return;
   }
 

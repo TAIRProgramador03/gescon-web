@@ -186,7 +186,7 @@ require './templates/header.html';
             <div class="tda can-form"><i class="fa fa fa-book" style="color: #0e2e67;"></i><span id="txt-leas">0</span></div>
           </div>
           <div class="card terreno-form doc-form" id="href-query-veh">
-            <div class="tda tti-form nom-tp">N° Vehiculos</div>
+            <div class="tda tti-form nom-tp">Veh. Activos</div>
             <hr>
             <div class="tda can-form"><i class="fa-solid fa-car" style="color: #0e2e67;"></i><span id="txt-vehic">0</span></div>
           </div>
@@ -198,7 +198,8 @@ require './templates/header.html';
         </div>
       </div>
       <div class="text-form-col">
-        <button class="continue-pen" disabled>
+        <button class="continue-pen btn-assign">
+          <span class="count-veh-alert"></span>
           <div>
             <div class="pencil"></div>
             <div class="folder">
@@ -229,6 +230,13 @@ require './templates/header.html';
     <div class="modal-footer">
       <button class="btn-error" id="btn-close">Cerrar</button>
     </div>
+  </div>
+</div>
+
+<div id="alert-modal">
+  <div class="alert-bg"></div>
+  <div class="alert-container">
+
   </div>
 </div>
 
@@ -311,6 +319,35 @@ require './templates/header.html';
 
       await cargarContrato(idClient);
 
+      const vehPending = await getPendingVeh(idClient);
+
+      if (vehPending.data && vehPending.data.length > 0) {
+        setTimeout(() => {
+          $("#alert-modal").css("display", "flex");
+
+          $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
+
+          $("#alert-modal .alert-container").html(
+            `
+              <h2>¡Aviso de unidades pendientes!</h2>
+              <p style="color: black !important">El sistema ha detectado que este cliente cuenta con vehiculos sin asignar. Le sugerimos asignarlos para evitar irregularidades</p>
+              <p style="color: black !important">¿Deseas asignarlos ahora?</p>
+              <div class="btn-group">
+                <button class="btn btn-info btn-assign">Si, quiero asignarlos</button>
+                <button id="btn-close-alert" class="btn btn-dark">Ignorar alerta</button>
+              </div>
+            `
+          )
+        }, 2000)
+
+        $(".continue-pen").addClass("alert");
+        $(".continue-pen").show();
+        $(".count-veh-alert").text(vehPending.data.length)
+      } else {
+        $(".continue-pen").removeClass("alert");
+        $(".continue-pen").hide();
+      }
+
       table.clear();
       table.rows.add(contracts);
       table.draw();
@@ -327,6 +364,29 @@ require './templates/header.html';
     })
   });
 
+  $("#alert-modal .alert-bg").on("click", () => {
+    const modal = document.getElementById("alert-modal");
+    modal.style.display = "none";
+
+    $("#alert-modal .alert-container").empty();
+  })
+
+  $(document).on("click", ".btn-assign", () => {
+    const params = new URLSearchParams(window.location.search);
+    const clienteId = params.get("clienteId")
+
+    if (!clienteId) return;
+
+    window.location.href = `adicionar_vehiculos.php?clienteId=${clienteId}`;
+  })
+
+  $(document).on("click", "#btn-close-alert", () => {
+    const modal = document.getElementById("alert-modal");
+    modal.style.display = "none";
+
+    $("#alert-modal .alert-container").empty();
+  })
+
   $("#combo-box").on("select2:select", async function(e) {
     limpia();
 
@@ -342,6 +402,33 @@ require './templates/header.html';
     await cargarDatosContrato(e.params.data.id);
 
     const contracts = await getContracts(e.params.data.id);
+
+    const vehPending = await getPendingVeh(e.params.data.id);
+
+    if (vehPending.data && vehPending.data.length > 0) {
+      $("#alert-modal").css("display", "flex");
+
+      $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
+
+      $("#alert-modal .alert-container").html(
+        `
+          <h2>¡Aviso de unidades pendientes!</h2>
+          <p style="color: black !important">El sistema ha detectado que este cliente cuenta con vehiculos sin asignar. Le sugerimos asignarlos para evitar irregularidades</p>
+          <p style="color: black !important">¿Deseas asignarlos ahora?</p>
+          <div class="btn-group">
+            <button class="btn btn-info btn-assign">Si, quiero asignarlos</button>
+            <button id="btn-close-alert" class="btn btn-dark">Ignorar alerta</button>
+          </div>
+        `
+      )
+
+      $(".continue-pen").addClass("alert");
+      $(".continue-pen").show();
+      $(".count-veh-alert").text(vehPending.data.length)
+    } else {
+      $(".continue-pen").removeClass("alert");
+      $(".continue-pen").hide();
+    }
 
     table.clear();
     table.rows.add(contracts);
@@ -414,31 +501,27 @@ require './templates/header.html';
 
         // Aquí asignamos los valores de los vehículos a los campos correspondientes
         document.getElementById("txt-sev").textContent =
-          data.data.cantidadLeasing > 0 ? data.data.vehiculoSev : "0";
+          data.data.vehiculoSev || "0";
         document.getElementById("txt-soc").textContent =
-          data.data.cantidadLeasing > 0 ? data.data.vehiculoSoc : "0";
+          data.data.vehiculoSoc || "0";
         document.getElementById("txt-sup").textContent =
-          data.data.cantidadLeasing > 0 ? data.data.vehiculoSup : "0";
+          data.data.vehiculoSup || "0";
         document.getElementById("txt-ciu").textContent =
-          data.data.cantidadLeasing > 0 ? data.data.vehiculoCiu : "0";
+          data.data.vehiculoCiu || "0";
         document.getElementById("txt-aso").textContent =
           data.data.cantidadDocumentos || "0"; // Asignar texto al div
         document.getElementById("txt-leas").textContent =
           data.data.cantidadLeasing || "0"; // Asignar texto al div
         document.getElementById("txt-vehic").textContent =
-          data.data.cantidadLeasing > 0 ? data.data.cantidadVehiculos : "0";
+          data.data.cantidadVehiculos || "0";
         document.getElementById("txt-assign").textContent =
           data.data.cantidadAsignados || "0";
 
-        if (data.data.hayActivos) {
-          $("#cab-href-query-assign").addClass("nom-tp-danger")
-        } else {
-          $("#cab-href-query-assign").removeClass("nom-tp-danger")
-        }
       } catch (error) {
         console.error("Error al obtener los datos del contrato:", error);
       }
     });
+
 
   function registrarContrato() {
     window.location = 'registrar_contratos.php';
@@ -483,9 +566,9 @@ require './templates/header.html';
     const clienteId = params.get("clienteId")
     const contratoId = params.get("contratoId")
 
-    if (!contratoId || !clienteId) return;
+    if (!clienteId) return;
 
-    window.location.href = `consultar_asignaciones_por_contrato.php?contratoId=${contratoId}&clienteId=${clienteId}`;
+    window.location.href = `consultar_asignaciones_por_contrato.php?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`;
   }
 
   $("#href-query-doc").on("click", () => {
@@ -498,33 +581,59 @@ require './templates/header.html';
 
   $("#href-query-veh").on("click", async () => {
     const param = new URLSearchParams(window.location.search)
+    const clientId = param.get("clienteId")
     const contratoId = param.get("contratoId")
 
-    if (!contratoId) {
-      toastr.info("Debes de seleccionar un contrato en la tabla", "Aviso")
+    if (!clientId) {
+      toastr.info("Debes de seleccionar un cliente en la tabla", "Aviso")
       return;
     }
 
-    const vehicles = await getVehByContract(contratoId);
+    const vehicles = await getAssignVehActive(clientId, contratoId, "A");
 
     if (!Array.isArray(vehicles)) return;
 
     $("#modal-body-info").append(`
+      <div class="legends-tag">
+        <div>
+          <span class="tag-unidad"></span>
+          <p>Unidad</p>
+        </div>
+        <div>
+          <span class="tag-leasing"></span>
+          <p>Leasing</p>
+        </div>
+        <div>
+          <span class="tag-contrato"></span>
+          <p>Contrato</p>
+        </div>
+      </div>
       <table id="listVeh" class="display">
         <thead>
           <tr>
             <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
+            <th>Cliente</th>
+            <th>Operacion</th>
+            <th style="background: #ffe6047c !important;">Placa</th>
+            <th style="background: #ffe6047c !important;">Año</th>
+            <th style="background: #ffe6047c !important;">Color</th>
+            <th style="background: #ffe6047c !important;">Marca</th>
+            <th style="background: #ffe6047c !important;">Modelo</th>
+            <th style="background: #ffe6047c !important;">Terreno</th>
+            <th style="background: #04ff827c !important;">Leasing</th>
+            <th style="background: #04ff827c !important;">Fecha Inicio de leasing</th>
+            <th style="background: #04ff827c !important;">Fecha Fin de leasing</th>
+            <th style="background: #0479ff7c !important;">Contrato/Adenda</th>
+            <th style="background: #0479ff7c !important;">Fecha Inicio de contrato</th>
+            <th style="background: #0479ff7c !important;">Fecha Fin de contrato</th>
+            <th style="background: #0479ff7c !important;">Plazo</th>
+            <th style="background: #0479ff7c !important;">Tarifa</th>
+            <th style="background: #0479ff7c !important;">Moneda</th>
+            <th>Fecha de Acta de Entrega</th>
+            <th>Fecha Devolucion</th>
+            <th>% de contrato</th>
+            <th>Condicion</th>
+        </tr>
         </thead>
         <tbody>
           <tr>
@@ -533,16 +642,27 @@ require './templates/header.html';
         <tfoot>
           <tr>
             <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
+            <th>Cliente</th>
+            <th>Operacion</th>
+            <th style="background: #ffe6047c !important;">Placa</th>
+            <th style="background: #ffe6047c !important;">Año</th>
+            <th style="background: #ffe6047c !important;">Color</th>
+            <th style="background: #ffe6047c !important;">Marca</th>
+            <th style="background: #ffe6047c !important;">Modelo</th>
+            <th style="background: #ffe6047c !important;">Terreno</th>
+            <th style="background: #04ff827c !important;">Leasing</th>
+            <th style="background: #04ff827c !important;">Fecha Inicio de leasing</th>
+            <th style="background: #04ff827c !important;">Fecha Fin de leasing</th>
+            <th style="background: #0479ff7c !important;">Contrato/Adenda</th>
+            <th style="background: #0479ff7c !important;">Fecha Inicio de contrato</th>
+            <th style="background: #0479ff7c !important;">Fecha Fin de contrato</th>
+            <th style="background: #0479ff7c !important;">Plazo</th>
+            <th style="background: #0479ff7c !important;">Tarifa</th>
+            <th style="background: #0479ff7c !important;">Moneda</th>
+            <th>Fecha de Acta de Entrega</th>
+            <th>Fecha Devolucion</th>
+            <th>% de contrato</th>
+            <th>Condicion</th>
           </tr>
         </tfoot>
       </table>
@@ -553,6 +673,7 @@ require './templates/header.html';
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       select: true,
+      scrollX: true,
       data: vehicles,
       columns: [{
           data: "item",
@@ -562,57 +683,143 @@ require './templates/header.html';
           width: "5%",
         },
         {
-          data: "placa",
-        },
-        {
-          data: "modelo",
-        },
-        {
-          data: "marca",
-        },
-        {
-          data: "cantidad",
-        },
-        {
-          data: "año",
-        },
-        {
-          data: "color",
+          data: "cliente",
+          width: "200px"
         },
         {
           data: "operacion",
+          width: "150px"
         },
         {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              return convertirFecha(data);
-            } else {
-              return "--"
-            }
+          data: "placa",
+          width: "80px"
+        },
+        {
+          data: "año"
+        },
+        {
+          data: "color",
+          width: "100px"
+        },
+        {
+          data: "marca",
+          width: "80px"
+        },
+        {
+          data: "modelo",
+          width: "150px"
+        },
+        {
+          data: "terreno",
+          render: (data) => {
+            return transformType(data, {
+              0: "Superficie",
+              1: "Socavón",
+              2: "Ciudad",
+              3: "Severo"
+            })
+          },
+          width: "100px"
+        },
+        {
+          data: "leasing",
+          width: "120px"
+        },
+        {
+          data: "fechaIniLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "contrato",
+          width: "150px"
+        },
+        {
+          data: "fechaIniCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "plazo",
+          render: (data) => {
+            return data + ` meses`
+          },
+          width: "80px"
+        },
+        {
+          data: "tarifa",
+          render: (data) => {
+            return data.toFixed(2);
           }
         },
         {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              const fechaTsf = convertirFecha(data);
-              const dias = obtenerDiasVencimiento(fechaTsf);
-              if (dias > 0) {
-                return `${dias} dias`
-              } else if (dias < 0) {
-                return `Hace ${Math.abs(dias)} dias`
-              } else {
-                return `Vence hoy`
-              }
-            } else {
-              return "--"
-            }
-          }
+          data: "moneda"
         },
         {
-          data: "nroLeasing"
-        }
+          data: "fechaIni",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFin",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "porcentaje",
+          render: (data, type, row) => {
+
+            const fechaIni = dayjs(row.fechaIni).format("YYYY-MM-DD")
+            const fechaFin = dayjs(row.fechaFin).format("YYYY-MM-DD")
+
+            const result = calcularPorcentaje(fechaIni, fechaFin);
+
+            if (typeof result == "string") {
+              return `<span style="color: red;">${result}</span>`;
+            } else {
+              const color = result > 0 && result <= 25 ? "red-relleno" : result > 25 && result <= 60 ? "yellow-relleno" : "green-relleno";
+              const colorText = result > 0 && result <= 25 ? "black-porcentaje" : result > 25 && result <= 60 ? "black-porcentaje" : "white-porcentaje";
+              return `
+                <div class="contenedor-barra">
+                  <div class="progreso-relleno ${color}" style="width: ${result}%;"></div>
+                  <span class="numero-porcentaje ${colorText}">${result}%</span>
+                </div>
+              `
+            }
+          },
+          width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data, type, row) => {
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+
+            return `<span class="tag-estado ${color}">${status}</span>`
+          }
+        },
       ],
     })
 

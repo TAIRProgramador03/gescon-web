@@ -52,20 +52,46 @@ require './templates/header.html';
       </div>
     </div>
 
+    <div class="legends-tag">
+      <div>
+        <span class="tag-unidad"></span>
+        <p>Unidad</p>
+      </div>
+      <div>
+        <span class="tag-leasing"></span>
+        <p>Leasing</p>
+      </div>
+      <div>
+        <span class="tag-contrato"></span>
+        <p>Contrato</p>
+      </div>
+    </div>
+
     <table id="listAssign" class="display">
       <thead>
         <tr>
           <th>Item</th>
-          <th>Placa</th>
-          <th>Año</th>
-          <th>Color</th>
-          <th>Marca</th>
-          <th>Modelo</th>
-          <th>Tarifa</th>
-          <th>Terreno</th>
-          <th>Fecha Inicio</th>
-          <th>Fecha Fin</th>
-          <th>Leasing</th>
+          <th>Cliente</th>
+          <th>Operacion</th>
+          <th style="background: #ffe6047c !important;">Placa</th>
+          <th style="background: #ffe6047c !important;">Año</th>
+          <th style="background: #ffe6047c !important;">Color</th>
+          <th style="background: #ffe6047c !important;">Marca</th>
+          <th style="background: #ffe6047c !important;">Modelo</th>
+          <th style="background: #ffe6047c !important;">Terreno</th>
+          <th style="background: #04ff827c !important;">Leasing</th>
+          <th style="background: #04ff827c !important;">Fecha Inicio de leasing</th>
+          <th style="background: #04ff827c !important;">Fecha Fin de leasing</th>
+          <th style="background: #0479ff7c !important;">Contrato/Adenda</th>
+          <th style="background: #0479ff7c !important;">Fecha Inicio de contrato</th>
+          <th style="background: #0479ff7c !important;">Fecha Fin de contrato</th>
+          <th style="background: #0479ff7c !important;">Plazo</th>
+          <th style="background: #0479ff7c !important;">Tarifa</th>
+          <th style="background: #0479ff7c !important;">Moneda</th>
+          <th>Fecha de Acta de Entrega</th>
+          <th>Fecha Devolucion</th>
+          <th>% de contrato</th>
+          <th>Condicion</th>
         </tr>
       </thead>
       <tbody>
@@ -75,16 +101,27 @@ require './templates/header.html';
       <tfoot>
         <tr>
           <th>Item</th>
-          <th>Placa</th>
-          <th>Año</th>
-          <th>Color</th>
-          <th>Marca</th>
-          <th>Modelo</th>
-          <th>Tarifa</th>
-          <th>Terreno</th>
-          <th>Fecha Inicio</th>
-          <th>Fecha Fin</th>
-          <th>Leasing</th>
+          <th>Cliente</th>
+          <th>Operacion</th>
+          <th style="background: #ffe6047c !important;">Placa</th>
+          <th style="background: #ffe6047c !important;">Año</th>
+          <th style="background: #ffe6047c !important;">Color</th>
+          <th style="background: #ffe6047c !important;">Marca</th>
+          <th style="background: #ffe6047c !important;">Modelo</th>
+          <th style="background: #ffe6047c !important;">Terreno</th>
+          <th style="background: #04ff827c !important;">Leasing</th>
+          <th style="background: #04ff827c !important;">Fecha Inicio de leasing</th>
+          <th style="background: #04ff827c !important;">Fecha Fin de leasing</th>
+          <th style="background: #0479ff7c !important;">Contrato/Adenda</th>
+          <th style="background: #0479ff7c !important;">Fecha Inicio de contrato</th>
+          <th style="background: #0479ff7c !important;">Fecha Fin de contrato</th>
+          <th style="background: #0479ff7c !important;">Plazo</th>
+          <th style="background: #0479ff7c !important;">Tarifa</th>
+          <th style="background: #0479ff7c !important;">Moneda</th>
+          <th>Fecha de Acta de Entrega</th>
+          <th>Fecha Devolucion</th>
+          <th>% de contrato</th>
+          <th>Condicion</th>
         </tr>
       </tfoot>
     </table>
@@ -133,18 +170,19 @@ require './templates/header.html';
     const leasingId = param.get("leasingId")
     const tipoTerr = param.get("tipoTerr")
 
-    if (!contratoId || !clienteId) alert("No se encontraron los parametros necesarios")
+    if (!clienteId) toastr.error("No se encontraron los parametros necesarios")
 
     const textSpan = document.getElementById("parametroPintado");
     textSpan.innerHTML = contratoId;
 
-    const assigns = await getAssigns(contratoId, clienteId, leasingId, tipoTerr);
+    const assigns = await getAssigns(clienteId, contratoId, leasingId, tipoTerr);
 
     // INTEGRAMOS LA LIBRERIA DATATABLE
     table = $("#listAssign").DataTable({
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
+      scrollX: true,
       data: assigns,
       columns: [{
           data: "item",
@@ -154,62 +192,147 @@ require './templates/header.html';
           width: "5%",
         },
         {
-          data: "placa",
-          width: "10%",
+          data: "cliente",
+          width: "200px"
         },
         {
-          data: "año",
-          width: "5%",
+          data: "operacion",
+          width: "150px"
+        },
+        {
+          data: "placa",
+          width: "80px"
+        },
+        {
+          data: "año"
         },
         {
           data: "color",
-          width: "10%",
+          width: "100px"
         },
         {
           data: "marca",
-          width: "10%",
+          width: "80px"
         },
         {
           data: "modelo",
-          width: "10%",
-        },
-        {
-          data: "tarifa",
+          width: "150px"
         },
         {
           data: "terreno",
-          render: function(data) {
+          render: (data) => {
             return transformType(data, {
               0: "Superficie",
-              1: "Socavon",
+              1: "Socavón",
               2: "Ciudad",
-              3: "Servero",
-            });
+              3: "Severo"
+            })
           },
-          width: "15%",
-        },
-        {
-          data: "fechaIni",
-          render: function(data) {
-            return convertirFecha(data);
-          },
-          width: "10%",
-        },
-        {
-          data: "fechaFin",
-          render: function(data) {
-            return convertirFecha(data);
-          },
-          width: "10%",
+          width: "100px"
         },
         {
           data: "leasing",
-          width: "15%"
+          width: "120px"
+        },
+        {
+          data: "fechaIniLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "contrato",
+          width: "150px"
+        },
+        {
+          data: "fechaIniCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "plazo",
+          render: (data) => {
+            return data + ` meses`
+          },
+          width: "80px"
+        },
+        {
+          data: "tarifa",
+          render: (data) => {
+            return data.toFixed(2);
+          }
+        },
+        {
+          data: "moneda"
+        },
+        {
+          data: "fechaIni",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFin",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "porcentaje",
+          render: (data, type, row) => {
+
+            const fechaIni = dayjs(row.fechaIni).format("YYYY-MM-DD")
+            const fechaFin = dayjs(row.fechaFin).format("YYYY-MM-DD")
+
+            const result = calcularPorcentaje(fechaIni, fechaFin);
+
+            if (typeof result == "string") {
+              return `<span style="color: red;">${result}</span>`;
+            } else {
+              const color = result > 0 && result <= 25 ? "red-relleno" : result > 25 && result <= 60 ? "yellow-relleno" : "green-relleno";
+              const colorText = result > 0 && result <= 25 ? "black-porcentaje" : result > 25 && result <= 60 ? "black-porcentaje" : "white-porcentaje";
+              return `
+                <div class="contenedor-barra">
+                  <div class="progreso-relleno ${color}" style="width: ${result}%;"></div>
+                  <span class="numero-porcentaje ${colorText}">${result}%</span>
+                </div>
+              `
+            }
+          },
+          width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data, type, row) => {
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+
+            return `<span class="tag-estado ${color}">${status}</span>`
+          }
         },
       ],
     });
 
-    const listLeasing = await getLeasings(contratoId, clienteId)
+    const listLeasing = await getLeasings(clienteId, contratoId)
 
     const dataCleaned = listLeasing.map((lea) => ({
       id: lea.nroLeasing,
@@ -221,7 +344,7 @@ require './templates/header.html';
       allowClear: false, // Desactiva la "X"
       data: [{
           id: 0,
-          text: "Sin selección",
+          text: "Todos",
         },
         ...dataCleaned
       ]
@@ -232,7 +355,7 @@ require './templates/header.html';
       allowClear: false, // Desactiva la "X"
       data: [{
           id: 4,
-          text: "Sin selección"
+          text: "Todos"
         },
         {
           id: 0,
@@ -276,7 +399,7 @@ require './templates/header.html';
     const nuevaURL = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", nuevaURL);
 
-    const assings = await getAssigns(contratoId, clienteId, leasingId != 0 ? leasingId : null, terrId);
+    const assings = await getAssigns(clienteId, contratoId, leasingId != 0 ? leasingId : null, terrId);
 
     table.clear();
     table.rows.add(assings);
@@ -301,7 +424,7 @@ require './templates/header.html';
     const nuevaURL = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", nuevaURL);
 
-    const assings = await getAssigns(contratoId, clienteId, leasingId, terrId >= 4 ? null : terrId);
+    const assings = await getAssigns(clienteId, contratoId, leasingId, terrId >= 4 ? null : terrId);
 
     table.clear();
     table.rows.add(assings);

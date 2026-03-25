@@ -165,41 +165,38 @@ async function cargarDatosContrato(clienteId, contratoId) {
 
     // Convertir fecha firma a formato yyyy-mm-dd
     const fechaInicio = convertirFecha(fechaFirma);
-    document.getElementById("text-inicio").value = data.data.fechaFirma != "" ? fechaInicio : "--"; // Asignar FECHA_FIRMA
+    document.getElementById("text-inicio").value =
+      data.data.fechaFirma != "" ? fechaInicio : "--"; // Asignar FECHA_FIRMA
 
     // Calcular fecha de fin
     const fechaFin = calcularFechaFin(fechaInicio, data.data.duracion);
     console.log(fechaFin);
-    document.getElementById("text-fin").value = data.data.fechaFirma != "" ? fechaFin : "--"; // Asignar fecha de fin
+    document.getElementById("text-fin").value =
+      data.data.fechaFirma != "" ? fechaFin : "--"; // Asignar fecha de fin
 
     const estado = obtenerEstado(fechaFin);
-    document.getElementById("text-estado").value = data.data.fechaFirma != "" ? estado : "--"; // Asignar DESCRIPCION
+    document.getElementById("text-estado").value =
+      data.data.fechaFirma != "" ? estado : "--"; // Asignar DESCRIPCION
     // Establecer el estado según la fecha actual y la fecha de fin
     document.getElementById("story").value = data.data.descripcion; // Asignar estado
 
     // Aquí asignamos los valores de los vehículos a los campos correspondientes
     document.getElementById("txt-sev").textContent =
-      data.data.cantidadLeasing > 0 ? data.data.vehiculoSev : "0";
+      data.data.vehiculoSev || "0";
     document.getElementById("txt-soc").textContent =
-      data.data.cantidadLeasing > 0 ? data.data.vehiculoSoc : "0";
+      data.data.vehiculoSoc || "0";
     document.getElementById("txt-sup").textContent =
-      data.data.cantidadLeasing > 0 ? data.data.vehiculoSup : "0";
+      data.data.vehiculoSup || "0";
     document.getElementById("txt-ciu").textContent =
-      data.data.cantidadLeasing > 0 ? data.data.vehiculoCiu : "0";
+      data.data.vehiculoCiu || "0";
     document.getElementById("txt-aso").textContent =
       data.data.cantidadDocumentos || "0"; // Asignar texto al div
     document.getElementById("txt-leas").textContent =
       data.data.cantidadLeasing || "0"; // Asignar texto al div
     document.getElementById("txt-vehic").textContent =
-      data.data.cantidadLeasing > 0 ? data.data.cantidadVehiculos : "0";
+      data.data.cantidadVehiculos || "0";
     document.getElementById("txt-assign").textContent =
       data.data.cantidadAsignados || "0";
-
-    if(data.data.hayActivos) {
-      $("#cab-href-query-assign").addClass("nom-tp-danger")
-    } else {
-      $("#cab-href-query-assign").removeClass("nom-tp-danger")
-    }
   } catch (error) {
     console.error("Error al obtener los datos del contrato:", error);
   }
@@ -221,6 +218,9 @@ function limpia() {
   document.getElementById("txt-leas").textContent = "0"; // Asignar texto al div
   document.getElementById("txt-vehic").textContent = "0";
   document.getElementById("txt-assign").textContent = "0";
+
+  $(".continue-pen").removeClass("alert");
+  $(".continue-pen").hide();
 }
 
 // Función para obtener el estado del contrato según la fecha de fin
@@ -265,6 +265,42 @@ const getVehByContract = async (contratoId, tipoTerr) => {
   if (!response.ok) {
     toastr.info(data.message, "Aviso");
   }
+
+  return data;
+};
+
+const getAssignVehActive = async (clienteId, contratoId, status) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/asignacionPorContrato?idCliente=${clienteId.toString()}${contratoId ? `&idContrato=${contratoId.toString()}` : ""}${status ? `&status=${status}` : ""}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    toastr.info(data.message, "Aviso");
+  }
+
+  return data;
+};
+
+const getPendingVeh = async (clienteId) => {
+  const response = await fetch(
+    `http://${IP_LOCAL}:3000/consultaVehiculoLeasing?idCli=${clienteId.toString()}&nroLeasing=all`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  // if (!response.ok) {
+  //   toastr.info(data.message, "Aviso");
+  // }
 
   return data;
 };
@@ -335,4 +371,33 @@ function obtenerDiasVencimiento(fecha) {
   const fechaFin = new Date(fecha);
   const diferenciaTiempo = fechaFin - fechaActual;
   return Math.floor(diferenciaTiempo / (1000 * 60 * 60 * 24));
+}
+
+function calcularPorcentaje(fechaIni, fechaFinal) {
+  const fechaInicio = new Date(fechaIni);
+  const fechaFin = new Date(fechaFinal);
+  const fechaActual = new Date();
+
+  if (fechaActual > fechaFin) {
+    const diffMs = fechaActual - fechaFin;
+    const diasVencidos = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    return `Vencido hace ${diasVencidos} días`;
+  }
+
+  const tiempoTotal = fechaFin - fechaInicio;
+
+  // INVERSIÓN: Restamos la fecha actual de la fecha fin
+  // para obtener cuánto "camino" queda por recorrer.
+  const tiempoRestante = fechaFin - fechaActual;
+
+  let porcentaje = Math.round((tiempoRestante / tiempoTotal) * 100);
+
+  // Aseguramos que no baje de 0 ni suba de 100
+  porcentaje = Math.min(Math.max(porcentaje, 0), 100);
+
+  return porcentaje;
+}
+
+function transformType(value, object) {
+  return object[value];
 }

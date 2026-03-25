@@ -1,6 +1,9 @@
 // const IP_LOCAL = 'localhost';
 
 document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const clientId = params.get("clienteId");
+
   document
     .getElementById("btnClear")
     .addEventListener("click", deshabilitarSelect);
@@ -19,19 +22,28 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarClientes();
   // cargarLeasing();
 
-  const selectClientes = document.querySelector(".select-form-clientes");
+  const selectClientes = document.getElementById("combo-box");
   const selectLeasingAnonim = document.getElementById("combo-box-leasing");
 
+  if (clientId) {
+    cargarLeasingOfClient(clientId).then(() => {
+      listaVehiculosAsignables(clientId);
+    });
+  }
+
   selectClientes.addEventListener("change", async (e) => {
+    params.set("clienteId", e.target.value)
+    const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", nuevaURL);
     // deshabilitarSelect();
     // btnSelectLeasing.setAttribute("disabled", "disabled");
     cargarLeasingOfClient(e.target.value).then(() => {
-      listaVehiculosAsignables();
+      listaVehiculosAsignables(e.target.value);
     });
   });
 
   selectLeasingAnonim.addEventListener("change", async (e) => {
-    listaVehiculosAsignables();
+    listaVehiculosAsignables(clientId);
   });
 
   cargarClientesAsig();
@@ -71,6 +83,12 @@ async function cargarClientes() {
       option.textContent = cliente.CLINOM; // El nombre del cliente
       comboBox.appendChild(option);
     });
+
+    const params = new URLSearchParams(window.location.search);
+    const clientId = params.get("clienteId");
+    if (clientId) {
+      comboBox.value = clientId;
+    }
   } catch (error) {
     console.error("Error al cargar clientes:", error);
   }
@@ -84,7 +102,7 @@ async function cargarLeasingOfClient(idCli) {
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
-      }
+      },
     ); // Ruta relativa al servidor
     if (!response.ok) throw new Error("Error en la solicitud");
 
@@ -136,7 +154,7 @@ async function cargarLeasing() {
 
     const leasing = await response.json();
     const comboBox2 = document.querySelector(
-      '#combo-box-leasing[name="opciones"]'
+      '#combo-box-leasing[name="opciones"]',
     );
     comboBox2.innerHTML = ""; // Limpia las opciones previas
 
@@ -165,10 +183,10 @@ function limpiarSelect(selector) {
   select.selectedIndex = 0;
 }
 
-async function listaVehiculosAsignables() {
+async function listaVehiculosAsignables(clientId) {
   // let id = "";
-
-  const idCli = document.getElementById("combo-box").value;
+  let idCli = clientId;
+  if(!clientId) idCli = document.getElementById("combo-box").value;
   const idLea = document.getElementById("combo-box-leasing").value;
 
   console.log({ idCli, idLea });
@@ -188,7 +206,7 @@ async function listaVehiculosAsignables() {
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
-      }
+      },
     );
     const vehiLeasing = await response.json();
 
@@ -208,18 +226,23 @@ async function listaVehiculosAsignables() {
       const row = document.createElement("tr");
       row.innerHTML = `
                 <td>${(contador =
-          contador +
-          1)} &nbsp;&nbsp;<input type="checkbox" name="item[]" value=""></td>
-                <td><input type="text" name="codini[]" value="${vehi.codini
-        }" disabled></td>
-                <td><input type="text" name="placa[]" value="${vehi.placa
-        }" disabled></td>
-                <td><input type="text" name="marca[]" value="${vehi.marca
-        }" disabled></td>
-                <td><input type="text" name="modelo[]" value="${vehi.modelo
-        }" disabled></td>
-                <td><input type="text" name="leasing[]" value="${vehi.nro_leasing
-        }" disabled></td>
+                  contador +
+                  1)} &nbsp;&nbsp;<input type="checkbox" name="item[]" value=""></td>
+                <td><input type="text" name="codini[]" value="${
+                  vehi.codini
+                }" disabled></td>
+                <td><input type="text" name="placa[]" value="${
+                  vehi.placa
+                }" disabled></td>
+                <td><input type="text" name="marca[]" value="${
+                  vehi.marca
+                }" disabled></td>
+                <td><input type="text" name="modelo[]" value="${
+                  vehi.modelo
+                }" disabled></td>
+                <td><input type="text" name="leasing[]" value="${
+                  vehi.nro_leasing
+                }" disabled></td>
                 <td><input type="text" name="tarifa[]" value=""></td>
                 <td><input type="date" name="fechaIni[]" value=""></td>
                 <td><input type="date" name="fechaFin[]" value=""></td>
@@ -331,10 +354,11 @@ async function cargarOperaciones() {
       try {
         // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
         const response = await fetch(
-          `http://${IP_LOCAL}:3000/operacionesAsig?idCli=${idCli}`, {
+          `http://${IP_LOCAL}:3000/operacionesAsig?idCli=${idCli}`,
+          {
             method: "GET",
             credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          }
+          },
         );
         const operaciones = await response.json();
 
@@ -361,7 +385,7 @@ async function cargarOperaciones() {
       } catch (error) {
         console.error("Error al obtener las operaciones:", error);
         alert(
-          "Error al obtener las operaciones. Inténtelo de nuevo más tarde."
+          "Error al obtener las operaciones. Inténtelo de nuevo más tarde.",
         );
       }
     });
@@ -387,7 +411,7 @@ async function cargarContrato() {
           {
             method: "GET",
             credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          }
+          },
         );
         const contratos = await response.json();
 
@@ -413,7 +437,7 @@ async function cargarContrato() {
       } catch (error) {
         console.error("Error al obtener las operaciones:", error);
         alert(
-          "Error al obtener las operaciones. Inténtelo de nuevo más tarde."
+          "Error al obtener las operaciones. Inténtelo de nuevo más tarde.",
         );
       }
     });
@@ -430,7 +454,7 @@ async function guardaAsignacion() {
   if (!formData.idCliente) {
     mostrarNotificacion(
       "Por favor, completa todos los campos obligatorios.",
-      "#C70039"
+      "#C70039",
     );
     return;
   }
@@ -465,7 +489,7 @@ async function guardaAsignacion() {
         if (fechaFinal <= fechaInicio) {
           mostrarNotificacion(
             "La fecha de finalización debe ser mayor que la fecha de inicio",
-            "#C70039"
+            "#C70039",
           );
           return;
         } else {
@@ -498,7 +522,7 @@ async function guardaAsignacion() {
   if (!validacionResult.success) {
     mostrarNotificacion(
       validacionResult.mensaje || "Validación fallida",
-      "#C70039"
+      "#C70039",
     );
     return false;
   }
@@ -552,7 +576,7 @@ const validarAsignacion = async (detalles) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ detalles }),
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
-    }
+    },
   );
 
   const validacionResult = await validacionResponse.json();

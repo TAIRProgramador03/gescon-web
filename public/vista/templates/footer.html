@@ -7,7 +7,7 @@
         // // Mostrar el usuario en el dashboard
         // //document.getElementById('welcomeMessage').textContent = `${loggedUser}`;
         // } else {
-        //     window.location.href = '../../Index.html';
+        //     window.location.href = '../../index.html';
         // }
 
         const logoutIcon = document.getElementById('log_out');
@@ -21,7 +21,7 @@
                 const data = await response.json();
                 if (response.ok) {
                     localStorage.removeItem("dbUser");
-                    window.location.href = "/Ges360/Index.html";
+                    window.location.href = "/gescon-web/index.html";
                 } else {
                     Swal.fire({
                         icon: "error",

@@ -1,15 +1,59 @@
-// const IP_LOCAL = "localhost";
+const instance = axios.create({
+  baseURL: `http://${IP_LOCAL}:3000`,
+  timeout: 3000,
+});
+
+toastr.options = {
+  closeButton: false,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-bottom-right",
+  preventDuplicates: false,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "5000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
 
 /**
  * Inicializa la página cargando clientes, modelos y configurando los eventos de los botones
  */
-document.addEventListener("DOMContentLoaded", () => {
-  cargarClientes();
-  cargarModelos();
+document.addEventListener("DOMContentLoaded", async () => {
+  const params = new URLSearchParams(window.location.search);
+  const isUpd = params.get("formUpd");
+  const contractId = params.get("contratoId");
+
+  if (isUpd && isUpd === "true" && contractId) {
+    $("#title-form").text("Actualizar contrato");
+    $(".btn-update").show();
+    $(".clear-action").hide();
+    $(".continue-application").hide();
+    const findContract = await cargarContrato(contractId);
+
+    if (!findContract) {
+      cargarClientes();
+      cargarModelos();
+    } else {
+      $("#combo-cliente").prop("disabled", true);
+      cargarCampos(findContract);
+    }
+  } else {
+    cargarClientes();
+    cargarModelos();
+  }
 
   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
   document
     .getElementById("grabarButton")
+    .addEventListener("click", guardarContrato);
+  document
+    .getElementById("actualizarButton")
     .addEventListener("click", guardarContrato);
 });
 
@@ -24,19 +68,19 @@ document.addEventListener("DOMContentLoaded", function () {
     actualizarDuracionEstado();
   });
 
-  function actualizarDuracionEstado() {
-    const duracionCeldas = document.querySelectorAll(
-      'input[name="duracion[]"]',
-    );
-    const checkbox = document.getElementById("especial"); // Reemplaza con el ID real del checkbox
+  // function actualizarDuracionEstado() {
+  //   const duracionCeldas = document.querySelectorAll(
+  //     'input[name="duracion[]"]',
+  //   );
+  //   const checkbox = document.getElementById("especial"); // Reemplaza con el ID real del checkbox
 
-    duracionCeldas.forEach(function (celda) {
-      if (!checkbox.checked) {
-        celda.value = "0"; // Establece el valor en 0 si el checkbox está desactivado
-      }
-      celda.disabled = !checkbox.checked;
-    });
-  }
+  //   duracionCeldas.forEach(function (celda) {
+  //     if (!checkbox.checked) {
+  //       celda.value = "0"; // Establece el valor en 0 si el checkbox está desactivado
+  //     }
+  //     celda.disabled = !checkbox.checked;
+  //   });
+  // }
 
   /**
    * AGREGA UNA NUEVA FILA A LA TABLA DE VEHICULOS
@@ -75,6 +119,9 @@ document.addEventListener("DOMContentLoaded", function () {
             } data-tooltip="Duracion contrato"></td>
             <td><input type="text" name="compra_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
             <td><input type="text" name="precio_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+            <td>
+              <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
+            </td>
         `;
 
     tabla.querySelector("tbody").appendChild(nuevaFila);
@@ -113,18 +160,197 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  tabla.addEventListener("click", function (e) {
+  $("#addVehicle").on("click", function (e) {
     // Verifica si se hace clic en la última fila
-    if (
-      e.target.closest("tr") &&
-      e.target.closest("tr") === tabla.querySelector("tbody tr:last-child")
-    ) {
-      agregarFila();
-    }
+    // if (
+    //   e.target.closest("tr") &&
+    //   e.target.closest("tr") === tabla.querySelector("tbody tr:last-child")
+    // ) {
+    //   agregarFila();
+    // }
+
+    agregarFila();
   });
 });
 
-async function cargarClientes() {
+$("#tabla-dinamica").on("click", ".btn-remove-vehicle", function () {
+  $(this).closest("tr").remove();
+  console.log("Borrando fila");
+});
+
+function actualizarDuracionEstado() {
+  const duracionCeldas = document.querySelectorAll('input[name="duracion[]"]');
+  const checkbox = document.getElementById("especial"); // Reemplaza con el ID real del checkbox
+
+  duracionCeldas.forEach(function (celda) {
+    if (!checkbox.checked) {
+      celda.value = "0"; // Establece el valor en 0 si el checkbox está desactivado
+    }
+    celda.disabled = !checkbox.checked;
+  });
+}
+
+function cargarFilas(data) {
+  const tabla = document.getElementById("tabla-dinamica");
+  const checkbox = document.getElementById("especial");
+
+  const lastRow = tabla.querySelector("tbody tr:last-child");
+  const lastRowIndex = Array.from(tabla.querySelectorAll("tbody tr")).indexOf(
+    lastRow,
+  );
+
+  const nuevaFila = document.createElement("tr");
+  nuevaFila.innerHTML = `
+            <td><input type="text" name="item[]" value="${
+              lastRowIndex + 2
+            }" disabled></td>
+            <td>
+                <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
+                    <option value="">Seleccione un modelo</option>
+                </select>
+            </td>
+            <td>
+                <select name="tipo_terreno[]" class="cbo-form-cliente terreno-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
+                    <option value="4">Seleccione el tipo</option>
+                    <option value="0">Superficie</option>
+                    <option value="1">Socavon</option>
+                    <option value="2">Ciudad</option>
+                    <option value="3">Severo</option>
+                </select>
+            </td>
+            <td><input type="text" name="tarifa[]" class="tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
+            <td><input type="text" name="cpk[]" class="tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
+            <td><input type="number" name="rm[]" class="tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
+            <td><input type="number" name="cantidad[]" class="tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
+            <td><input type="text" name="duracion[]" class="tooltip-input"  value="0" ${
+              checkbox.checked ? "" : "disabled"
+            } data-tooltip="Duracion contrato"></td>
+            <td><input type="text" name="compra_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
+            <td><input type="text" name="precio_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+            <td>
+              <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
+            </td>
+        `;
+
+  tabla.querySelector("tbody").appendChild(nuevaFila);
+  actualizarDuracionEstado();
+
+  // Llenar el select de modelos en la nueva fila
+  cargarModelosFila(nuevaFila.querySelector(".modelo-select"));
+
+  $(nuevaFila)
+    .find(".modelo-select")
+    .select2({
+      placeholder: "Seleccione el modelo",
+      allowClear: false,
+    })
+    .next(".select2-container")
+    .css({
+      "font-family": "Fredoka Variable, sans-serif",
+      "font-size": "13px",
+      "font-optical-sizing": "auto",
+      "font-style": "normal",
+      "font-weight": "400",
+    });
+
+  $(nuevaFila)
+    .find(".terreno-select")
+    .select2({
+      placeholder: "Seleccione el terreno",
+      allowClear: false,
+    })
+    .next(".select2-container")
+    .css({
+      "font-family": "Fredoka Variable, sans-serif",
+      "font-size": "13px",
+      "font-optical-sizing": "auto",
+      "font-style": "normal",
+    });
+}
+
+async function cargarContrato(id) {
+  try {
+    const response = await instance.get(`/contratoPorId/${id}`, {
+      withCredentials: true,
+    });
+
+    const result = response.data;
+
+    if (response.status !== 200) {
+      console.error(result.message);
+      toastr.error(result.message, "Oops...");
+      return;
+    }
+
+    return result;
+  } catch (error) {
+    console.error(error);
+    toastr.error(error.response.data.message, "Oops...");
+  }
+}
+
+function cargarCampos(data) {
+  cargarClientes(data.idCliente);
+
+  $('input[name="Contrato"]').val(data.nroContrato);
+  $('input[name="Vehiculos"]').val(data.cantVehiculos);
+  $('input[name="Firma"]').val(convertirFecha(data.fechaFirma));
+  $('input[name="Duracion"]').val(data.duracion);
+  $("#combo-moneda").val(data.tipoMoneda).trigger("change");
+  $("#combo-tipo").val(data.tipoCliente).trigger("change");
+  $('input[name="Adicional"]').val(data.kmAdicional);
+  $('input[name="Bolsa"]').val(data.kmTotal);
+  $('input[name="Sup"]').val(data.vehSup);
+  $('input[name="Soc"]').val(data.vehSoc);
+  $('input[name="Ciu"]').val(data.vehCiu);
+  $('input[name="Sev"]').val(data.vehSev);
+  $('input[name="especial"]').prop(
+    "checked",
+    data.contratoEspecial ? true : false,
+  );
+  $('input[name="story"]').val(data.story);
+
+  cargarCampoPDF(data.archivoPdf);
+
+  cargarModelos();
+
+  data.detalles.forEach((row) => {
+    cargarFilas(row);
+  });
+}
+
+async function cargarCampoPDF(url) {
+  try {
+    const response = await axios.get(url, {
+      withCredentials: true,
+      responseType: "blob",
+    });
+
+    const blob = response.data;
+
+    const name = url.split("/");
+
+    const file = new File([blob], name[name.length - 1], {
+      type: blob.type,
+    });
+
+    const dt = new DataTransfer();
+    dt.items.add(file);
+
+    $("#fileInput")[0].files = dt.files;
+
+    if (file) {
+      $("#uploadMessage").hide(); // Ocultar mensaje de carga
+      $("#fileInfo").css("display", "flex"); // Mostrar el área con el archivo
+      $("#fileName").text(truncateFileName(file.name)); // Mostrar el nombre truncado del archivo
+    }
+  } catch (error) {
+    console.error(error);
+    toastr.error(error, "Oops...");
+  }
+}
+
+async function cargarClientes(id) {
   try {
     const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
       method: "GET",
@@ -153,6 +379,10 @@ async function cargarClientes() {
       option.textContent = cliente.CLINOM; // El nombre del cliente
       comboBox.appendChild(option);
     });
+
+    if (id) {
+      comboBox.value = id;
+    }
   } catch (error) {
     console.error("Error al cargar clientes:", error);
   }
@@ -488,30 +718,30 @@ async function guardarContrato() {
   // Construcción del objeto final de datos
   const contratoData = { ...formData, detalles, archivoPdf: nombreArchivo };
 
-  // console.log("CONTRATO ===> ", contratoData);
+  console.log("CONTRATO ===> ", contratoData);
 
-  try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/insertarContrato`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(contratoData),
-      credentials: "include", // Asegura que las cookies se envíen con la solicitud
-    });
+  // try {
+  //   const response = await fetch(`http://${IP_LOCAL}:3000/insertarContrato`, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify(contratoData),
+  //     credentials: "include", // Asegura que las cookies se envíen con la solicitud
+  //   });
 
-    const result = await response.json();
-    if (result.success) {
-      mostrarNotificacion("Contrato guardado exitosamente", "#01b204");
-      await subirArchivo(fileInput.files[0]);
-      limpiarCampos();
-    } else {
-      mostrarNotificacion(result.message, "#C70039");
-    }
-  } catch (error) {
-    const mensaje =
-      error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
-    console.error("Error al enviar los datos:", error);
-    mostrarNotificacion(`Error al guardar: ${mensaje}`, "#C70039");
-  }
+  //   const result = await response.json();
+  //   if (result.success) {
+  //     mostrarNotificacion("Contrato guardado exitosamente", "#01b204");
+  //     await subirArchivo(fileInput.files[0]);
+  //     limpiarCampos();
+  //   } else {
+  //     mostrarNotificacion(result.message, "#C70039");
+  //   }
+  // } catch (error) {
+  //   const mensaje =
+  //     error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
+  //   console.error("Error al enviar los datos:", error);
+  //   mostrarNotificacion(`Error al guardar: ${mensaje}`, "#C70039");
+  // }
 }
 
 async function subirArchivo(archivo) {
@@ -662,4 +892,20 @@ function limpiarSelect(idSelect) {
   const select = document.getElementById(idSelect);
   // Limpia todas las opciones dejando una inicial
   select.innerHTML = '<option value="">Seleccione una opción</option>';
+}
+
+function convertirFecha(fecha) {
+  const anio = fecha.substring(0, 4);
+  const mes = fecha.substring(4, 6);
+  const dia = fecha.substring(6, 8);
+  return `${anio}-${mes}-${dia}`;
+}
+
+function truncateFileName(name) {
+  const maxLength = 25;
+  if (name.length <= maxLength) return name;
+
+  const fileExtension = name.slice(name.lastIndexOf("."));
+  const truncatedName = name.slice(0, maxLength - fileExtension.length - 3);
+  return truncatedName + "..." + fileExtension;
 }

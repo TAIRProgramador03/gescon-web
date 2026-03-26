@@ -197,7 +197,21 @@ require './templates/header.html';
           </div>
         </div>
       </div>
-      <div class="text-form-col">
+      <div class="button-action-col">
+        <button id="btn-edit-con">
+          <div>
+            <div class="pencil"></div>
+            <div class="folder">
+              <div class="top">
+                <svg viewBox="0 0 24 27">
+                  <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
+                </svg>
+              </div>
+              <div class="paper"></div>
+            </div>
+          </div>
+          Editar contrato
+        </button>
         <button class="continue-pen btn-assign">
           <span class="count-veh-alert"></span>
           <div>
@@ -354,8 +368,10 @@ require './templates/header.html';
 
       if (idContract) {
         await cargarDatosContrato(idClient, idContract);
+        $("#btn-edit-con").show()
       } else {
         await cargarDatosContrato(idClient);
+        $("#btn-edit-con").hide()
       }
     }
 
@@ -516,6 +532,8 @@ require './templates/header.html';
           data.data.cantidadVehiculos || "0";
         document.getElementById("txt-assign").textContent =
           data.data.cantidadAsignados || "0";
+
+        $("#btn-edit-con").show()
 
       } catch (error) {
         console.error("Error al obtener los datos del contrato:", error);
@@ -829,6 +847,15 @@ require './templates/header.html';
 
   $("#href-query-assign").on("click", () => {
     queryAssign()
+  })
+
+  $("#btn-edit-con").on("click", () => {
+    const params = new URLSearchParams(window.location.search);
+    const contratoId = params.get("contratoId")
+
+    if (!contratoId) return;
+
+    window.location.href = `registrar_contratos.php?formUpd=true&contratoId=${contratoId}`;
   })
 
   // OPCION PARA VER VEHICULOS POR TERRENO

@@ -504,7 +504,7 @@ async function guardarContrato() {
       await subirArchivo(fileInput.files[0]);
       limpiarCampos();
     } else {
-      mostrarNotificacion("Hubo un error al guardar el contrato", "#C70039");
+      mostrarNotificacion(result.message, "#C70039");
     }
   } catch (error) {
     const mensaje =

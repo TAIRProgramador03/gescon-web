@@ -1,7 +1,8 @@
     
     </main>
     <script>
-
+        dayjs.extend(dayjs_plugin_customParseFormat);
+        
         const logoutIcon = document.getElementById('log_out');
 
         document.getElementById("log_out").addEventListener("click", async () => {

@@ -138,7 +138,7 @@ require './templates/header.html';
             <select name="contratos" id="cbo-contratos"></select>
             <select name="leasings" id="cbo-leasings"></select>
           </div>
-          <canvas id="comparationChart" class="comparationChart"></canvas>
+          <canvas id="comparationChart" class="comparationChart !overflow-visible"></canvas>
         </div>
 
         <div class="dashboard-item item-large">
@@ -173,8 +173,8 @@ require './templates/header.html';
               <th>Modelo</th>
               <th>Nro Leasing</th>
               <th>Tipo</th>
-              <th>F. Ini. Cont.</th>
-              <th>F. Fin Cont.</th>
+              <th>F. Acta Entrega.</th>
+              <th>F. Devolucion.</th>
               <th>Años Contrato</th>
               <th>F. Ini. Lea.</th>
               <th>F. Fin Lea.</th>
@@ -322,10 +322,10 @@ require './templates/header.html';
             fill: false,
             data: [{
               x: data.fechaIniCont,
-              y: 50
+              y: 60
             }, {
               x: data.fechaFinCont,
-              y: 50
+              y: 60
             }]
           },
           {
@@ -337,10 +337,10 @@ require './templates/header.html';
             fill: false,
             data: [{
               x: data.fechaIniLea,
-              y: 40
+              y: 30
             }, {
               x: data.fechaFinLea,
-              y: 40
+              y: 30
             }],
           }
         ]
@@ -355,12 +355,17 @@ require './templates/header.html';
             display: false,
             text: 'Rango de fechas Contratos - Leasings'
           },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                const datasetLabel = context.dataset.label || '';
-                return `${datasetLabel}`;
-              }
+          tooltip: false,
+          datalabels: {
+            formatter: (value) => dayjs(value.x).format("DD/MM/YYYY"),
+            backgroundColor: "#2563eb",
+            borderRadius: 6,
+            color: "white",
+            padding: 6,
+            align: "top",
+            anchor: "end",
+            font: {
+              weight: "bold"
             }
           }
         },
@@ -399,8 +404,15 @@ require './templates/header.html';
               text: 'value'
             }
           }
+        },
+        layout: {
+          padding: {
+            left: 40,
+            right : 40
+          }
         }
       },
+      plugins: [ChartDataLabels]
     })
   }
 
@@ -1191,19 +1203,19 @@ require './templates/header.html';
 
       chartBarComparation.data.datasets[0].data = [{
         x: data.fechaIniCont,
-        y: 50
+        y: 60
       }, {
         x: data.fechaFinCont,
-        y: 50
+        y: 60
       }]
 
       chartBarComparation.data.datasets[1].data = [{
           x: data.fechaIniLea,
-          y: 40
+          y: 30
         },
         {
           x: data.fechaFinLea,
-          y: 40
+          y: 30
         }
       ]
 
@@ -1211,19 +1223,19 @@ require './templates/header.html';
       $("#data-value-comparation").text(`Sin resultados`)
       chartBarComparation.data.datasets[0].data = [{
         x: "",
-        y: 50
+        y: 60
       }, {
         x: "",
-        y: 50
+        y: 60
       }]
 
       chartBarComparation.data.datasets[1].data = [{
           x: "",
-          y: 40
+          y: 30
         },
         {
           x: "",
-          y: 40
+          y: 30
         }
       ]
     }
@@ -1383,19 +1395,19 @@ require './templates/header.html';
 
       chartBarComparation.data.datasets[0].data = [{
         x: data.fechaIniCont,
-        y: 50
+        y: 60
       }, {
         x: data.fechaFinCont,
-        y: 50
+        y: 60
       }]
 
       chartBarComparation.data.datasets[1].data = [{
           x: data.fechaIniLea,
-          y: 40
+          y: 30
         },
         {
           x: data.fechaFinLea,
-          y: 40
+          y: 30
         }
       ]
 
@@ -1403,19 +1415,19 @@ require './templates/header.html';
       $("#data-value-comparation").text(`Sin resultados`)
       chartBarComparation.data.datasets[0].data = [{
         x: "",
-        y: 50
+        y: 60
       }, {
         x: "",
-        y: 50
+        y: 60
       }]
 
       chartBarComparation.data.datasets[1].data = [{
           x: "",
-          y: 40
+          y: 30
         },
         {
           x: "",
-          y: 40
+          y: 30
         }
       ]
     }
@@ -1438,19 +1450,19 @@ require './templates/header.html';
     }
     chartBarComparation.data.datasets[0].data = [{
       x: data.fechaIniCont,
-      y: 50
+      y: 60
     }, {
       x: data.fechaFinCont,
-      y: 50
+      y: 60
     }]
 
     chartBarComparation.data.datasets[1].data = [{
         x: data.fechaIniLea,
-        y: 40
+        y: 30
       },
       {
         x: data.fechaFinLea,
-        y: 40
+        y: 30
       }
     ]
 

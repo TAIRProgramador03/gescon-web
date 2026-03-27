@@ -6,15 +6,6 @@ require './templates/header.html';
   <?php include '../css/views/query_assign_by_contract.css'; ?>
 </style>
 
-<!-- JQUERY -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- CSS DATATABLE -->
-<link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.css" />
-
-<!-- JS DATATABLE -->
-<script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
-
 <!-- CSS de Select2 -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
 
@@ -34,12 +25,13 @@ require './templates/header.html';
 </div>
 
 <main class="main-query-lea">
-  <div class="header-title">
-    <h1>Vehiculos asignados</h1>
-    <p>ID de contrato consultado: <span id="parametroPintado"></span></p>
+  <div class="header-title border border-gray-300 shadow-lg">
+    <h1 class="text-2xl font-bold">Vehiculos asignados</h1>
+    <p>Cliente ID: <span id="paramClient"></span></p>
+    <p id="paramContText" class="hidden">Contrato ID: <span id="paramContract"></span></p>
   </div>
 
-  <div class="container-data">
+  <div class="container-data border border-gray-300">
     <div class="filter-table">
       <span>Buscar por</span>
       <div class="contain-filter">
@@ -52,78 +44,37 @@ require './templates/header.html';
       </div>
     </div>
 
-    <div class="legends-tag">
-      <div>
-        <span class="tag-unidad"></span>
-        <p>Unidad</p>
-      </div>
-      <div>
-        <span class="tag-leasing"></span>
-        <p>Leasing</p>
-      </div>
-      <div>
-        <span class="tag-contrato"></span>
-        <p>Contrato</p>
-      </div>
-    </div>
-
-    <table id="listAssign" class="display">
+    <table id="listAssign" class="display rounded-md">
       <thead>
         <tr>
-          <th>Item</th>
-          <th>Cliente</th>
-          <th>Operacion</th>
-          <th style="background: #ffe6047c !important;">Placa</th>
-          <th style="background: #ffe6047c !important;">Año</th>
-          <th style="background: #ffe6047c !important;">Color</th>
-          <th style="background: #ffe6047c !important;">Marca</th>
-          <th style="background: #ffe6047c !important;">Modelo</th>
-          <th style="background: #ffe6047c !important;">Terreno</th>
-          <th style="background: #04ff827c !important;">Leasing</th>
-          <th style="background: #04ff827c !important;">Fecha Inicio de leasing</th>
-          <th style="background: #04ff827c !important;">Fecha Fin de leasing</th>
-          <th style="background: #0479ff7c !important;">Contrato/Adenda</th>
-          <th style="background: #0479ff7c !important;">Fecha Inicio de contrato</th>
-          <th style="background: #0479ff7c !important;">Fecha Fin de contrato</th>
-          <th style="background: #0479ff7c !important;">Plazo</th>
-          <th style="background: #0479ff7c !important;">Tarifa</th>
-          <th style="background: #0479ff7c !important;">Moneda</th>
-          <th>Fecha de Acta de Entrega</th>
-          <th>Fecha Devolucion</th>
-          <th>% de contrato</th>
-          <th>Condicion</th>
+          <th class="text-gray-500 !font-medium">Item</th>
+          <th class="text-gray-500 !font-medium">Cliente</th>
+          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Año</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Color</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Marca</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Modelo</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Terreno</th>
+          <th class="bg-green-400 !text-white !font-medium">Leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
+          <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
+          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
+          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
+          <th class="text-gray-500 !font-medium">% de contrato</th>
+          <th class="text-gray-500 !font-medium">Condicion</th>
         </tr>
       </thead>
       <tbody>
         <tr>
         </tr>
       </tbody>
-      <tfoot>
-        <tr>
-          <th>Item</th>
-          <th>Cliente</th>
-          <th>Operacion</th>
-          <th style="background: #ffe6047c !important;">Placa</th>
-          <th style="background: #ffe6047c !important;">Año</th>
-          <th style="background: #ffe6047c !important;">Color</th>
-          <th style="background: #ffe6047c !important;">Marca</th>
-          <th style="background: #ffe6047c !important;">Modelo</th>
-          <th style="background: #ffe6047c !important;">Terreno</th>
-          <th style="background: #04ff827c !important;">Leasing</th>
-          <th style="background: #04ff827c !important;">Fecha Inicio de leasing</th>
-          <th style="background: #04ff827c !important;">Fecha Fin de leasing</th>
-          <th style="background: #0479ff7c !important;">Contrato/Adenda</th>
-          <th style="background: #0479ff7c !important;">Fecha Inicio de contrato</th>
-          <th style="background: #0479ff7c !important;">Fecha Fin de contrato</th>
-          <th style="background: #0479ff7c !important;">Plazo</th>
-          <th style="background: #0479ff7c !important;">Tarifa</th>
-          <th style="background: #0479ff7c !important;">Moneda</th>
-          <th>Fecha de Acta de Entrega</th>
-          <th>Fecha Devolucion</th>
-          <th>% de contrato</th>
-          <th>Condicion</th>
-        </tr>
-      </tfoot>
     </table>
   </div>
 </main>
@@ -172,8 +123,12 @@ require './templates/header.html';
 
     if (!clienteId) toastr.error("No se encontraron los parametros necesarios")
 
-    const textSpan = document.getElementById("parametroPintado");
-    textSpan.innerHTML = contratoId;
+    $("#paramClient").text(clienteId);
+    if(contratoId) {
+      $("#paramContText").removeClass("hidden");
+      $("#paramContract").text(contratoId);
+    }
+
 
     const assigns = await getAssigns(clienteId, contratoId, leasingId, tipoTerr);
 
@@ -182,6 +137,52 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
+      fixedHeader: true,
+      dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      buttons: [{
+        extend: 'excelHtml5',
+        text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+        titleAttr: 'Excel',
+        className: 'btn-excel',
+        filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
+        title: `Lista de placas del cliente ${clienteId}`,
+        customize: function(xlsx) {
+          var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+          // 1. Cambiar el color del Título (Celda A1)
+          // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
+          $('row c[r^="A1"]', sheet).attr('s', '51');
+
+          // 2. Personalizar los Headers (Fila de encabezados)
+          // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
+          // El estilo '2' es negrita, '42' es fondo azul claro, etc.
+          $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
+
+          // 3. Si quieres colores manuales más específicos (estilos personalizados)
+          // Tienes que editar el diccionario de estilos de JSZip (más complejo)
+          // Pero DataTables trae estilos incorporados del 0 al 60:
+          // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
+        },
+      }],
+      initComplete: function() {
+        $(".leyendas").html(`
+          <div class="w-full flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-yellow-400"></span>
+              <p class="text-xs !m-0">Unidad</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-green-400"></span>
+              <p class="text-xs !m-0">Leasing</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-blue-400"></span>
+              <p class="text-xs !m-0">Contrato</p>
+            </div>
+          </div>
+        `);
+      },
+      ordering: false,
       scrollX: true,
       data: assigns,
       columns: [{

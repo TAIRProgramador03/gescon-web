@@ -20,13 +20,14 @@
 }
 * {
   margin: 0;
-  padding: 0;
+  /* padding: 0; */
   font-family: "Fredoka Variable", sans-serif;
 }
-html {
+
+/* html {
   font-family: Poppins, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.5rem;
-}
+} */
 
 body {
   min-height: 100vh;
@@ -432,6 +433,7 @@ main p {
   opacity: 1 !important;
   transition: linear 200ms;
   padding: 8px 12px !important;
+  animation: pulse 1s ease-in-out infinite;
 }
 
 #toast-container > div:hover {
@@ -443,23 +445,35 @@ main p {
   background-image: none !important;
 }
 
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 /* SUCCESS  */
 
 .toast-success {
   background-color: #ecfdf3 !important;
   border-radius: 8px !important;
-  border: 1px solid #00ff6a !important;
+  border: 3px solid #00be4f !important;
   background-image: none !important;
 }
 
 .toast-success .toast-message {
-  color: #00ff6a !important;
+  color: #00be4f !important;
   font-weight: 400;
   font-size: 13px;
 }
 
 .toast-success .toast-title {
-  color: #00ff6a !important;
+  color: #00be4f !important;
   font-weight: 500;
   font-size: 13px;
 }
@@ -469,7 +483,7 @@ main p {
 .toast-info {
   background-color: #eefaff !important;
   border-radius: 8px !important;
-  border: 1px solid #00aeff !important;
+  border: 3px solid #00aeff !important;
   background-image: none !important;
 }
 
@@ -482,28 +496,28 @@ main p {
 .toast-info .toast-title {
   color: #00aeff !important;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 /* WARNING  */
 
 .toast-warning {
-  background-color: #fffcf0 !important;
+  background-color: #fff6d4 !important;
   border-radius: 8px !important;
-  border: 1px solid #ffc400 !important;
+  border: 3px solid #ffa600 !important;
   background-image: none !important;
 }
 
 .toast-warning .toast-message {
-  color: #ffc400 !important;
+  color: #ffa600 !important;
   font-weight: 400;
   font-size: 13px;
 }
 
 .toast-warning .toast-title {
-  color: #ffc400 !important;
+  color: #ffa600 !important;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 /* ERROR  */
@@ -511,7 +525,7 @@ main p {
 .toast-error {
   background-color: #fff0f0 !important;
   border-radius: 8px !important;
-  border: 1px solid #ff0000 !important;
+  border: 3px solid #ff0000 !important;
   background-image: none !important;
 }
 
@@ -524,5 +538,5 @@ main p {
 .toast-error .toast-title {
   color: #ff0000 !important;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 15px;
 }

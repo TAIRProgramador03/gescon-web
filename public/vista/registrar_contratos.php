@@ -34,53 +34,204 @@ require './templates/header.html';
 </div>
 
 <main class="main-register">
-  <div id="notification" class="hidden"></div>
-  <div class="contenedor">
+  <!-- <div id="notification" class="hidden"></div> -->
+  <div class="w-full bg-white border border-gray-300 rounded-xl shadow-md flex flex-col justify-center !p-3">
+    <h3 id="title-form" class="text-3xl text-[#002141] font-semibold">Registrar Contrato</h3>
+    <p class="!m-0 text-sm font-normal text-gray-500">Crear un nuevo contrato para un cliente</p>
+  </div>
+
+  <div class="contenedor border border-gray-300">
     <div class="form-registrar">
-      <div class="form-tittle">
-        <div class="form-tittle-h3">
-          <h3 id="title-form">Nuevo Contrato</h3>
-        </div>
-      </div>
-      <div class="form-cliente-cbo">
-        <div class="cbo-registrar">
+      <div class="form-cliente-cbo px-5">
+        <!-- <div class="cbo-registrar">
           <label for="combo-cliente">Razon Social(*):</label>
           <select id="combo-cliente" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente">
             <option value="">Seleccione un cliente</option>
           </select>
+        </div> -->
+        <div class="flex flex-col w-full relative">
+          <select id="combo-cliente" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente">
+            <option value="">Seleccione un cliente</option>
+          </select>
+
+          <!-- El label DEBE estar después del select en el HTML -->
+          <label
+            for="combo-cliente"
+            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+            Razon Social(*)
+          </label>
         </div>
       </div>
       <!--<div id="tooltip"></div>-->
-      <div class="form-one">
-        <div class="form-cliente">
+      <div class="form-one px-5">
+
+        <!-- NRO CONTRATO -->
+        <div class="input flex flex-col w-full relative">
+          <input
+            id="contrato"
+            name="Contrato"
+            type="text"
+            placeholder="CLIENTE-MM-AAAA-0001"
+            data-tooltip="El número del contrato debe ser un correlativo (CLIENTE-MM-AAAA-0001)"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+          <label
+            for="contrato"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            N° de Contrato(*)
+          </label>
+        </div>
+
+        <!-- CANTIDAD VEHICULOS -->
+        <div class="input flex flex-col w-full relative">
+          <input
+            id="vehiculos"
+            name="Vehiculos"
+            type="number"
+            placeholder="Ingrese una cantidad de vehiculos"
+            value="0"
+            data-tooltip="Cantidad de vehiculos contratados"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+          <label
+            for="vehiculos"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            Cant. de Vehiculos(*)
+          </label>
+        </div>
+
+        <!-- FECHA FIRMA -->
+        <div class="input flex flex-col w-full relative">
+          <input
+            id="firma"
+            name="Firma"
+            type="text"
+            placeholder="Ingrese una fehca"
+            data-tooltip="Fecha de la firma del contrato"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+          <label
+            for="firma"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            Fecha Firma(*)
+          </label>
+        </div>
+
+        <!-- DURACION -->
+        <div class="input flex flex-col w-full relative">
+          <input
+            id="duracion"
+            name="Duracion"
+            type="text"
+            placeholder="CLIENTE-MM-AAAA-0001"
+            data-tooltip="Duracion del contrato en meses"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+          <label
+            for="duracion"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            Duracion (Meses)(*)
+          </label>
+        </div>
+        <!-- <div class="form-cliente">
           <label for="combo-box">N° de Contrato(*):</label>
-          <input id="contrato" name="Contrato" type="text" class="resumen-form-contrato tooltip-input" data-tooltip="El número del contrato debe ser un correlativo (CLIENTE-MM-AAAA-0001)">
-        </div>
-        <div class="form-cliente">
+          <input id="contrato" name="Contrato" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="El número del contrato debe ser un correlativo (CLIENTE-MM-AAAA-0001)">
+        </div> -->
+        <!-- <div class="form-cliente">
           <label for="combo-box">Cant. Vehiculos(*):</label>
-          <input id="vehiculos" name="Vehiculos" type="number" class="resumen-form-contrato tooltip-input" value="0" data-tooltip="Cantidad de vehiculos contratados">
-        </div>
+          <input id="vehiculos" name="Vehiculos" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" value="0" data-tooltip="Cantidad de vehiculos contratados">
+        </div> -->
       </div>
-      <div class="form-two">
-        <div class="form-cliente custom-date">
+      <div class="form-two px-5">
+        <!-- TIPO MONEDA -->
+        <div class="flex flex-col w-full relative">
+          <select id="combo-moneda" name="opciones" class="tooltip-input">
+            <option value="">Seleccione una moneda</option>
+            <option value="0">Soles</option>
+            <option value="1">Dólares</option>
+          </select>
+
+          <label
+            for="combo-moneda"
+            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+            Tipo Moneda(*)
+          </label>
+        </div>
+
+        <!-- RUBRO DE EMPRESA -->
+        <div class="flex flex-col w-full relative">
+          <select id="combo-tipo" name="opciones" class="tooltip-input" data-tooltip="Selecciona el rubro del cliente">
+            <option value="">Seleccione un tipo</option>
+            <option value="1">AVICOLA</option>
+            <option value="2">CONTRATISTA MINERA</option>
+            <option value="3">ENERGIA</option>
+            <option value="4">GOBIERNO</option>
+            <option value="5">INMOBILIARIA</option>
+            <option value="6">MINERIA</option>
+            <option value="7">PESQUERA</option>
+            <option value="8">SEGURIDAD</option>
+            <option value="9">TELEFONIA</option>
+            <option value="10">TRANSPORTES</option>
+            <option value="11">OTROS</option>
+          </select>
+
+          <label
+            for="combo-tipo"
+            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+            Rubro de empresa
+          </label>
+        </div>
+
+        <!-- <div class="form-cliente custom-date">
           <label for="combo-box">Fecha Firma(*):</label>
-          <input id="firma" name="Firma" type="date" class="resumen-form-contrato dta tooltip-input" data-tooltip="Fecha de la firma del contrato">
-        </div>
-        <div class="form-cliente">
+          <input id="firma" name="Firma" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm dta tooltip-input" data-tooltip="Fecha de la firma del contrato">
+        </div> -->
+        <!-- <div class="form-cliente">
           <label for="combo-box">Duracion (Meses):</label>
-          <input id="duracion" name="Duracion" type="text" class="resumen-form-contrato tooltip-input" data-tooltip="Duracion del contrato en meses">
-        </div>
+          <input id="duracion" name="Duracion" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="Duracion del contrato en meses">
+        </div> -->
       </div>
-      <div class="form-three">
-        <div class="form-cliente">
+      <div class="form-three px-5">
+        <!-- KM ADICIONAL -->
+        <div class="input flex flex-col w-full relative">
+          <input
+            id="adicional" 
+            name="Adicional" 
+            type="text"
+            placeholder="Ingrese el km adicional"
+            value="0"
+            data-tooltip="Tarifa por km adicional de recorrido 0.000"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+          <label
+            for="adicional"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            $ KM Adicional(*)
+          </label>
+        </div>
+
+        <!-- BOLSA KM TOTAL -->
+        <div class="input flex flex-col w-full relative">
+          <input
+            id="bolsa" 
+            name="Bolsa" 
+            type="text"
+            placeholder="Ingrese el km total"
+            value="0"
+            data-tooltip="Km total a recorrer por unidad"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+          <label
+            for="bolsa"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            Bolsa KM Total(*)
+          </label>
+        </div>
+
+
+        <!-- <div class="form-cliente">
           <label for="combo-box">Tipo Moneda(*):</label>
           <select id="combo-moneda" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Tipo de moneda soles o dolares">
             <option value="">Seleccione una moneda</option>
             <option value="0">Soles</option>
             <option value="1">Dolares</option>
           </select>
-        </div>
-        <div class="form-cliente">
+        </div> -->
+        <!-- <div class="form-cliente">
           <label for="combo-box">Rubro de empresa:</label>
           <select id="combo-tipo" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el rubro del cliente">
             <option value="">Seleccione un tipo</option>
@@ -96,43 +247,110 @@ require './templates/header.html';
             <option value="10">TRANSPORTES</option>
             <option value="11">OTROS</option>
           </select>
-        </div>
+        </div> -->
       </div>
-      <div class="form-four">
-        <div class="form-cliente">
+      <div class="form-four px-5">
+        <!-- VEH SUP -->
+        <div class="input flex flex-col w-full relative">
+          <input
+            id="sup" 
+            name="Sup" 
+            type="number"
+            placeholder="Ingrese cantidad"
+            value="0"
+            data-tooltip="Cantidad de vehículos en Superficie"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+          <label
+            for="sup"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            # Veh. Sup(*)
+          </label>
+        </div>
+
+        <!-- VEH SOC -->
+        <div class="input flex flex-col w-full relative">
+          <input
+            id="soc" 
+            name="Soc" 
+            type="number"
+            placeholder="Ingrese cantidad"
+            value="0"
+            data-tooltip="Cantidad de vehículos en Socavón"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+          <label
+            for="soc"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            # Veh. Soc(*)
+          </label>
+        </div>
+
+        <!-- VEH CIU -->
+        <div class="input flex flex-col w-full relative">
+          <input
+            id="ciu" 
+            name="Ciu" 
+            type="number"
+            placeholder="Ingrese cantidad"
+            value="0"
+            data-tooltip="Cantidad de vehículos en Ciudad"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+          <label
+            for="ciu"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            # Veh. Ciu(*)
+          </label>
+        </div>
+
+        <!-- VEH SEV -->
+        <div class="input flex flex-col w-full relative">
+          <input
+            id="sev" 
+            name="Sev" 
+            type="number"
+            placeholder="Ingrese cantidad"
+            value="0"
+            data-tooltip="Cantidad de vehículos en Severo"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+          <label
+            for="sev"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            # Veh. Sev(*)
+          </label>
+        </div>
+        <!-- <div class="form-cliente">
           <label for="combo-box">$ KM Adicional:</label>
-          <input id="adicional" name="Adicional" type="text" class="resumen-form-contrato tooltip-input" data-tooltip="Tarifa por km adicional de recorrido 0.000">
-        </div>
-        <div class="form-cliente">
+          <input id="adicional" name="Adicional" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="Tarifa por km adicional de recorrido 0.000">
+        </div> -->
+        <!-- <div class="form-cliente">
           <label for="combo-box">Bolsa KM Total:</label>
-          <input id="bolsa" name="Bolsa" type="text" class="resumen-form-contrato tooltip-input" data-tooltip="Km total a recorrer por unidad">
-        </div>
+          <input id="bolsa" name="Bolsa" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="Km total a recorrer por unidad">
+        </div> -->
       </div>
       <div class="form-five">
-        <div class="form-cliente">
+        <!-- <div class="form-cliente">
           <label for="combo-box"># Veh. Sup(*):</label>
-          <input id="sup" name="Sup" type="number" class="resumen-form-contrato tooltip-input " value="0" data-tooltip="Cantidad de vehículos en Superficie">
+          <input id="sup" name="Sup" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input " value="0" data-tooltip="Cantidad de vehículos en Superficie">
         </div>
         <div class="form-cliente">
           <label for="combo-box"># Veh. Soc(*):</label>
-          <input id="soc" name="Soc" type="number" class="resumen-form-contrato tooltip-input" value="0" data-tooltip="Cantidad de vehículos en Socavon">
+          <input id="soc" name="Soc" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" value="0" data-tooltip="Cantidad de vehículos en Socavon">
         </div>
       </div>
       <div class="form-six">
         <div class="form-cliente">
           <label for="combo-box"># Veh. Ciu(*):</label>
-          <input id="ciu" name="Ciu" type="number" class="resumen-form-contrato tooltip-input" value="0" data-tooltip="Cantidad de vehículos en Ciudad">
+          <input id="ciu" name="Ciu" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" value="0" data-tooltip="Cantidad de vehículos en Ciudad">
         </div>
         <div class="form-cliente">
           <label for="combo-box"># Veh. Sev(*):</label>
-          <input id="sev" name="Sev" type="number" class="resumen-form-contrato tooltip-input" value="0" data-tooltip="Cantidad de vehículos en Severo">
-        </div>
+          <input id="sev" name="Sev" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" value="0" data-tooltip="Cantidad de vehículos en Severo">
+        </div> -->
       </div>
-      <div class="form-six">
-        <div class="form-cliente adjunto-pdf">
+      <div class="form-six px-5">
+        <div class="form-cliente adjunto-pdf h-48">
           <label for="combo-box">Adjuntar pdf:</label>
           <div class="file-adjunta">
-            <label class="file-upload tooltip-input" id="dropZone" data-tooltip="Arrastra o seleccione un archivo en pdf">
+            <label class="file-upload tooltip-input !h-36" id="dropZone" data-tooltip="Arrastra o seleccione un archivo en pdf">
               <span id="uploadMessage">Haz clic o arrastra un archivo aquí</span>
               <input type="file" id="fileInput" accept=".pdf" data-tooltip="Arrastra o seleccione un archivo en pdf">
               <div class="file-info" id="fileInfo">
@@ -152,16 +370,20 @@ require './templates/header.html';
       <!--agregar una columna mas-->
       <div class="form-seven">
         <div class="tabla-form">
-          <div class="tabla-add-vehicle">
-            <button id="addVehicle" class="btn btn-success">
+          <div class="tabla-add-vehicle flex gap-3">
+            <button id="addVehicle" class="btn bg-blue-600 text-white">
               <span>Agregar vehiculo</span>
               <span>
                 <i class="bi bi-car-front"></i>
                 <i class="bi bi-plus"></i>
               </span>
             </button>
+            <button id="exportVehicle" class="btn bg-green-600 text-white">
+              <span>Exportar</span>
+              <i class="bi bi-file-earmark-excel"></i>
+            </button>
           </div>
-          <table id="tabla-dinamica">
+          <table id="tabla-dinamica" class="w-full">
             <thead>
               <tr>
                 <th>Item</th>
@@ -178,34 +400,7 @@ require './templates/header.html';
               </tr>
             </thead>
             <tbody id="contratos-tbody" class="table-detalle">
-              <tr>
-                <td><input type="text" name="item[]" value="1" disabled></td>
-                <td>
-                  <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select" id="tipoModelo" style="width: 100%;" data-tooltip="Selecciona el modelo">
-                    <option value="">Seleccione un modelo</option>
-                  </select>
-                  <!--<input type="text" name="modelo[]" value="" title="Modelo del vehiculo">-->
-                </td>
-                <td>
-                  <select name="tipo_terreno[]" class="cbo-form-cliente tooltip-input" id="tipoTerreno" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
-                    <option value="4">Seleccione el tipo</option>
-                    <option value="0">Superficie</option>
-                    <option value="1">Socavon</option>
-                    <option value="2">Ciudad</option>
-                    <option value="3">Severo</option>
-                  </select>
-                </td>
-                <td><input type="text" name="tarifa[]" value="" class="tooltip-input" data-tooltip="Tarifa del contrato estipulado"></td>
-                <td><input type="text" name="cpk[]" value="" class="tooltip-input" data-tooltip="Costo por kilometraje"></td>
-                <td><input type="number" name="rm[]" value="0" class="tooltip-input" data-tooltip="Recorrido mensual del vehiculo"></td>
-                <td><input type="number" name="cantidad[]" value="0" class="tooltip-input" data-tooltip="Cantidad de unidades"></td>
-                <td><input type="text" name="duracion[]" value="0" class="tooltip-input" data-tooltip="Duracion Contrato" disabled></td>
-                <td><input type="text" name="compra_veh[]" value="" class="tooltip-input" data-tooltip="Precio promedio de la compra del vehiculo"></td>
-                <td><input type="text" name="precio_veh[]" value="" class="tooltip-input" data-tooltip="Precio promedio de la venta del vehiculo"></td>
-                <td>
-                  <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
+
             </tbody>
           </table>
         </div>
@@ -214,7 +409,7 @@ require './templates/header.html';
       <div class="form-cliente-cbo">
         <div class="cbo-registrar">
           <label for="combo-box">Descripcion:</label>
-          <textarea id="story" name="story" rows="4" placeholder="" class="area-campo tooltip-input" data-tooltip="Ingrese aqui algun comentario adicional"></textarea>
+          <textarea id="story" name="story" rows="4" placeholder="" class="area-campo tooltip-input border border-gray-300 rounded-sm focus:outline-1 focus:outline-blue-500 focus:shadow-sm" data-tooltip="Ingrese aqui algun comentario adicional"></textarea>
         </div>
       </div>
       <div class="form-cliente-cbo">
@@ -270,7 +465,13 @@ require './templates/header.html';
 <div id="pdfModal" class="modal">
   <div class="modal-content">
     <span class="close-modal" id="closeModal">&times;</span>
-    <iframe id="modalPdfViewer" width="100%" height="500px"></iframe>
+    <iframe id="modalPdfViewer" width="100%" height="600px"></iframe>
+  </div>
+</div>
+
+<div id="alert-modal">
+  <div class="alert-bg"></div>
+  <div class="alert-container">
   </div>
 </div>
 
@@ -469,7 +670,7 @@ require './templates/header.html';
   });
 
   flatpickr("#firma", {
-    dateFormat: "Y-m-d"
+    dateFormat: "d/m/Y"
   });
 </script>
 <script type="module" src="../js/registrar_contratos.js"></script>

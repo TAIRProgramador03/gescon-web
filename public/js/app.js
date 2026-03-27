@@ -19,6 +19,7 @@ function closeAllSubMenus() {
     subMenu.previousElementSibling.classList.remove('rotate');
   });
 }*/
+lucide.createIcons();
 
 const IP_LOCAL = "192.168.5.95";
 

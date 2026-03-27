@@ -14,6 +14,8 @@ body {
 
 .main-register {
   display: flex;
+  flex-direction: column;
+  gap: 20px;
   justify-content: center;
   flex-wrap: wrap;
   align-content: center;
@@ -57,14 +59,14 @@ body {
 .form-seven {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  align-content: space-around;
-  justify-content: space-around;
-  align-items: stretch;
+  /* flex-wrap: wrap; */
+  /* align-content: space-around; */
+  /* justify-content: space-around; */
+  /* align-items: stretch; */
   width: 100%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  gap: 20px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  gap: 12px;
 }
 
 .form-cliente-cbo {
@@ -125,11 +127,11 @@ body {
   align-items: center;
 }
 
-.form-cliente input {
+/* .form-cliente input {
   height: 25px;
   border-radius: 5px;
   border: 1px solid;
-}
+} */
 
 .form-cliente label {
   width: 35%;
@@ -182,7 +184,7 @@ body {
   border-top-right-radius: 10px;
   font-size: 16px;
   font-weight: 500;
-  font-family: 'Fredoka Variable', sans-serif;
+  font-family: "Fredoka Variable", sans-serif;
 }
 
 .tabla-form {
@@ -319,11 +321,11 @@ td:nth-child(10) input {
   width: 100px;
 }
 
-tr:hover {
+/* tr:hover {
   background-color: #e7edf7;
   color: #fff;
   cursor: pointer;
-}
+} */
 
 .tabla-form table::-webkit-scrollbar {
   width: 15px;
@@ -742,12 +744,13 @@ tr:hover {
   font-size: 14px;
   cursor: pointer;
   gap: 4px;
+  outline: none;
 }
 
 .btn.btn-error {
   background: rgb(199, 0, 0);
   color: white;
-  transition: background 150ms ease-in
+  transition: background 150ms ease-in;
 }
 
 .btn.btn-error:hover {
@@ -757,16 +760,16 @@ tr:hover {
 .btn.btn-success {
   background: rgb(0, 184, 16);
   color: white;
-  transition: background 150ms ease-in
+  transition: background 150ms ease-in;
 }
 
 .btn.btn-success:hover {
-  background: rgb(45, 233, 70)
+  background: rgb(45, 233, 70);
 }
 
 input {
-  text-align: center;
-  font-family: "Montserrat", serif;
+  /* text-align: center; */
+  /* font-family: "Montserrat", serif; */
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -994,15 +997,19 @@ td select {
   width: 156px;
 }
 
+.select2-container {
+  order: 2;
+}
+
 .select2-container--default
   .select2-selection--single
   .select2-selection__rendered {
   color: #000000;
-  line-height: 28px;
+  /* line-height: 28px; */
 }
 
 .select2-container .select2-selection--single {
-  font-family: "Montserrat", serif;
+  /* font-family: "Montserrat", serif; */
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -1010,8 +1017,12 @@ td select {
   color: black;
 }
 
+.select2-container .select2-selection--single .select2-selection__rendered {
+  padding: 0;
+}
+
 .select2-dropdown {
-  font-family: "Montserrat", serif;
+  /* font-family: "Montserrat", serif; */
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -1021,7 +1032,7 @@ td select {
 
 /* Cambia la fuente de los elementos dentro del desplegable */
 .select2-results__option {
-  font-family: "Montserrat", serif;
+  /* font-family: "Montserrat", serif; */
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -1029,6 +1040,55 @@ td select {
   color: black;
 }
 
+.select2-container .select2-selection--single {
+  height: 43.3px !important;
+  padding: 11px 10px;
+}
+
+.select2-selection__arrow {
+  top: 50% !important;
+  transform: translate(0, -50%);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: normal;
+}
+
+.select2-container--default .select2-selection--single {
+  outline: none;
+  border: 2px solid oklch(87.2% 0.01 258.338) !important;
+  border-radius: 5px;
+}
+
+.select2-container--default.select2-container--disabled .select2-selection--single {
+  background: #fff !important;
+  color: #eee !important;
+}
+
+.select2-container--default.select2-container--disabled ~ .label-select {
+  color: #eee !important;
+}
+
+/* Cuando el contenedor de Select2 tenga el foco, pinta el label que viene después */
+.select2-container--default.select2-container--focus ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* Cambia el color del borde cuando Select2 recibe el foco */
+.select2-container--default.select2-container--focus
+  .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* También cuando el menú desplegable está abierto */
+.select2-container--default.select2-container--open .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* OPCIONAL: Si quieres que también cambie cuando el menú está ABIERTO */
+.select2-container--default.select2-container--open ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
+}
 @media screen and (max-width: 1690px) {
   .contenedor {
     width: 100%;
@@ -1106,8 +1166,9 @@ td select {
   .form-five,
   .form-six,
   .form-seven {
-    justify-content: flex-end;
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     width: 100%;
     gap: 0px;
     padding-top: 0px;
@@ -1211,15 +1272,15 @@ td select {
 .modal-content {
   margin: auto;
   background: #fff;
-  padding: 20px;
+  padding: 12px;
   width: 80%;
-  max-width: 800px;
-  border-radius: 8px;
+  /* max-width: 800px; */
+  /* border-radius: 8px; */
   position: relative;
 }
 
 .close-modal {
-  color: #aaa;
+  color: #ff0000;
   position: absolute;
   top: 10px;
   right: 20px;
@@ -1229,7 +1290,7 @@ td select {
 }
 
 .close-modal:hover {
-  color: #000;
+  color: #ff3737;
 }
 
 .view-file {
@@ -1244,5 +1305,84 @@ td select {
   padding: 0 20px;
 }
 
-/* NUEVO CSS PARA LOS SELECTS */
+/* MODAL DE ALERTA */
+#alert-modal {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9990;
+}
 
+#alert-modal .alert-bg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9990;
+}
+
+#alert-modal .alert-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 12px;
+  width: 30%;
+  max-height: 90%;
+  overflow: hidden !important;
+  z-index: 9999;
+  padding: 20px;
+}
+
+#alert-modal .btn-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#alert-modal h2 {
+  color: #e0a501;
+  font-weight: 500;
+}
+
+#alert-modal .btn-group a {
+  padding: 8px 4px;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+#alert-modal .btn-group .btn {
+  padding: 8px 16px;
+  color: white;
+  outline: none;
+  cursor: pointer;
+  border: 0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+#alert-modal .btn-group .btn-info {
+  background-color: #005ad9;
+  transition: background 150ms ease-in;
+}
+
+#alert-modal .btn-group .btn-info:hover {
+  background-color: #0d72ff;
+}
+
+#alert-modal .btn-group .btn-dark {
+  background-color: #292929;
+  transition: background 150ms ease-in;
+}
+
+#alert-modal .btn-group .btn-dark:hover {
+  background-color: #464646;
+}

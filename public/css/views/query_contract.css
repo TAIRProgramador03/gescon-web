@@ -902,6 +902,7 @@ h3 {
   --pencil-middle: #fff;
   --pencil-bottom: #5c86ff;
   --shadow: rgba(13, 15, 25, 0.2);
+  display: none;
   width: 100%;
   border: none;
   outline: none;

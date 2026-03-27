@@ -4,8 +4,7 @@
 .main-query-lea h4, 
 .main-query-lea h5, 
 .main-query-lea h6, 
-.main-query-lea p, 
-.main-query-lea span {
+.main-query-lea p {
   color: #000;
 }
 
@@ -128,48 +127,7 @@
 .tag-green {
   background-color: #01e009;
   color: white !important;
-}
-
-.legends-tag {
-  margin-top: 12px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 12px;
-}
-
-.legends-tag div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-}
-
-.legends-tag .tag-unidad {
-  display: block;
-  width: 20px;
-  height: 20px;
-  background: #ffe6047c;
-}
-
-.legends-tag .tag-leasing {
-  display: block;
-  width: 20px;
-  height: 20px;
-  background: #04ff827c;
-}
-
-.legends-tag .tag-contrato {
-  display: block;
-  width: 20px;
-  height: 20px;
-  background: #0479ff7c;
-}
-
-.legends-tag p {
-  margin: 0;
-  font-size: 12px;
-}
+} 
 
 
 /* MODAL DE INFORMACION DE DOCUMENTO */
@@ -316,9 +274,9 @@
 }
 
 /* TABLA ESTILOS */
-
-table {
+div.dt-scroll {
   border-radius: 8px !important;
+  border: 1px solid #e5e5e5;
   overflow: hidden;
 }
 
@@ -326,14 +284,14 @@ table thead {
   border: 0;
 }
 
-table thead tr {
-  background: #f8f9fa;
+table thead th .dt-column-title {
+  /* color: #667085 !important; */
+  font-size: 14px;
+  /* font-weight: 600; */
 }
 
-table thead th .dt-column-title {
-  color: #667085 !important;
-  font-size: 14px;
-  font-weight: 600;
+table.dataTable>thead>tr>th {
+  padding: 0px 8px;
 }
 
 /* table tbody tr {
@@ -441,4 +399,25 @@ div.dt-container .dt-paging .dt-paging-button:hover {
   color: #fff !important;
   border: 0;
   border-radius: 4px;
+}
+
+.btn-excel {
+  border: 0 !important;
+  border-radius: 4px !important;
+  color: #fff !important;
+  transition: linear 200ms;
+  background-color: #077703 !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+  margin: 0 !important;
+}
+
+.btn-excel:hover {
+  box-shadow: 2px 2px 5px #0000002d !important;
+}
+
+.btn-excel span {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
 }

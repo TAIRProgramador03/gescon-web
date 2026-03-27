@@ -108,6 +108,7 @@ require './templates/header.html';
       url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
     },
     data: vehicles,
+    fixedHeader: true,
     columns: [
       {
         data: "item",

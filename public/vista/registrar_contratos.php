@@ -35,14 +35,15 @@ require './templates/header.html';
 
 <main class="main-register">
   <!-- <div id="notification" class="hidden"></div> -->
-  <div class="w-full bg-white border border-gray-300 rounded-xl shadow-md flex flex-col justify-center !p-3">
-    <h3 id="title-form" class="text-3xl text-[#002141] font-semibold">Registrar Contrato</h3>
-    <p class="!m-0 text-sm font-normal text-gray-500">Crear un nuevo contrato para un cliente</p>
-  </div>
 
-  <div class="contenedor border border-gray-300">
+
+  <div class="contenedor border border-gray-300 px-9 py-7">
+    <div class="w-full flex flex-col justify-center gap-2">
+      <h3 id="title-form" class="text-5xl text-[#002141] font-semibold">Registrar Contrato</h3>
+      <p id="desc-form" class="!m-0 text-base font-normal text-gray-500">Crear un nuevo contrato para un cliente</p>
+    </div>
     <div class="form-registrar">
-      <div class="form-cliente-cbo px-5">
+      <div class="form-cliente-cbo">
         <!-- <div class="cbo-registrar">
           <label for="combo-cliente">Razon Social(*):</label>
           <select id="combo-cliente" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente">
@@ -63,7 +64,7 @@ require './templates/header.html';
         </div>
       </div>
       <!--<div id="tooltip"></div>-->
-      <div class="form-one px-5">
+      <div class="form-one">
 
         <!-- NRO CONTRATO -->
         <div class="input flex flex-col w-full relative">
@@ -87,10 +88,11 @@ require './templates/header.html';
             id="vehiculos"
             name="Vehiculos"
             type="number"
-            placeholder="Ingrese una cantidad de vehiculos"
+            min="0"
+            placeholder="Ingrese la cantidad de vehiculos"
             value="0"
             data-tooltip="Cantidad de vehiculos contratados"
-            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
           <label
             for="vehiculos"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
@@ -104,7 +106,7 @@ require './templates/header.html';
             id="firma"
             name="Firma"
             type="text"
-            placeholder="Ingrese una fehca"
+            placeholder="Ingrese una fecha"
             data-tooltip="Fecha de la firma del contrato"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
           <label
@@ -120,7 +122,7 @@ require './templates/header.html';
             id="duracion"
             name="Duracion"
             type="text"
-            placeholder="CLIENTE-MM-AAAA-0001"
+            placeholder="Ingrese la duración"
             data-tooltip="Duracion del contrato en meses"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
           <label
@@ -138,7 +140,7 @@ require './templates/header.html';
           <input id="vehiculos" name="Vehiculos" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" value="0" data-tooltip="Cantidad de vehiculos contratados">
         </div> -->
       </div>
-      <div class="form-two px-5">
+      <div class="form-two">
         <!-- TIPO MONEDA -->
         <div class="flex flex-col w-full relative">
           <select id="combo-moneda" name="opciones" class="tooltip-input">
@@ -187,12 +189,12 @@ require './templates/header.html';
           <input id="duracion" name="Duracion" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="Duracion del contrato en meses">
         </div> -->
       </div>
-      <div class="form-three px-5">
+      <div class="form-three">
         <!-- KM ADICIONAL -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="adicional" 
-            name="Adicional" 
+            id="adicional"
+            name="Adicional"
             type="text"
             placeholder="Ingrese el km adicional"
             value="0"
@@ -208,8 +210,8 @@ require './templates/header.html';
         <!-- BOLSA KM TOTAL -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="bolsa" 
-            name="Bolsa" 
+            id="bolsa"
+            name="Bolsa"
             type="text"
             placeholder="Ingrese el km total"
             value="0"
@@ -249,17 +251,18 @@ require './templates/header.html';
           </select>
         </div> -->
       </div>
-      <div class="form-four px-5">
+      <div class="form-four">
         <!-- VEH SUP -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="sup" 
-            name="Sup" 
+            id="sup"
+            name="Sup"
             type="number"
+            min="0"
             placeholder="Ingrese cantidad"
             value="0"
             data-tooltip="Cantidad de vehículos en Superficie"
-            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
           <label
             for="sup"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
@@ -270,13 +273,14 @@ require './templates/header.html';
         <!-- VEH SOC -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="soc" 
-            name="Soc" 
+            id="soc"
+            name="Soc"
             type="number"
+            min="0"
             placeholder="Ingrese cantidad"
             value="0"
             data-tooltip="Cantidad de vehículos en Socavón"
-            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
           <label
             for="soc"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
@@ -287,13 +291,14 @@ require './templates/header.html';
         <!-- VEH CIU -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="ciu" 
-            name="Ciu" 
+            id="ciu"
+            name="Ciu"
             type="number"
+            min="0"
             placeholder="Ingrese cantidad"
             value="0"
             data-tooltip="Cantidad de vehículos en Ciudad"
-            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
           <label
             for="ciu"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
@@ -304,13 +309,14 @@ require './templates/header.html';
         <!-- VEH SEV -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="sev" 
-            name="Sev" 
+            id="sev"
+            name="Sev"
             type="number"
+            min="0"
             placeholder="Ingrese cantidad"
             value="0"
             data-tooltip="Cantidad de vehículos en Severo"
-            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
           <label
             for="sev"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
@@ -346,10 +352,10 @@ require './templates/header.html';
           <input id="sev" name="Sev" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" value="0" data-tooltip="Cantidad de vehículos en Severo">
         </div> -->
       </div>
-      <div class="form-six px-5">
-        <div class="form-cliente adjunto-pdf h-48">
-          <label for="combo-box">Adjuntar pdf:</label>
-          <div class="file-adjunta">
+      <div class="form-six">
+        <div class="form-cliente adjunto-pdf py-3">
+          <label for="combo-box" class="text-gray-500 text-xs font-semibold">Adjuntar pdf:</label>
+          <div class="file-adjunta h-fit">
             <label class="file-upload tooltip-input !h-36" id="dropZone" data-tooltip="Arrastra o seleccione un archivo en pdf">
               <span id="uploadMessage">Haz clic o arrastra un archivo aquí</span>
               <input type="file" id="fileInput" accept=".pdf" data-tooltip="Arrastra o seleccione un archivo en pdf">
@@ -363,10 +369,11 @@ require './templates/header.html';
           </div>
         </div>
         <div class="form-cliente form-especial">
-          <label for="combo-box">Contrato Especial:</label>
+          <label for="combo-box" class="text-gray-500 text-xs font-semibold">Contrato Especial:</label>
           <input id="especial" name="especial" type="checkbox" class="check-form-contrato tooltip-input" data-tooltip="Contrato especial, Cuando un contrato tiene varios periodos de finalización.">
         </div>
       </div>
+
       <!--agregar una columna mas-->
       <div class="form-seven">
         <div class="tabla-form">
@@ -406,10 +413,25 @@ require './templates/header.html';
         </div>
       </div>
       <!--agregar una columna mas-->
+
       <div class="form-cliente-cbo">
-        <div class="cbo-registrar">
+        <!-- <div class="cbo-registrar">
           <label for="combo-box">Descripcion:</label>
           <textarea id="story" name="story" rows="4" placeholder="" class="area-campo tooltip-input border border-gray-300 rounded-sm focus:outline-1 focus:outline-blue-500 focus:shadow-sm" data-tooltip="Ingrese aqui algun comentario adicional"></textarea>
+        </div> -->
+
+        <div class="input flex flex-col w-full relative">
+          <textarea
+            id="story"
+            name="story"
+            placeholder="Escribe una descripción"
+            data-tooltip="Ingrese aqui algun comentario adicional"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] h-24 text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></textarea>
+          <label
+            for="contrato"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            Descripción
+          </label>
         </div>
       </div>
       <div class="form-cliente-cbo">
@@ -574,6 +596,43 @@ require './templates/header.html';
       handleFile();
     }
   });
+
+  // INPUTS NUMBER NO NEGATIVE
+  const inputsNumber = document.querySelectorAll('.no-negative');
+
+  inputsNumber.forEach(input => {
+
+    const check = () => {
+      if (!input.validity.valid) input.value = 0;
+      if (+input.value < 0) input.value = 0;
+    };
+
+    input.addEventListener('input', check);
+    input.addEventListener('blur', check);
+
+  });
+
+  document.addEventListener("input", function(e) {
+
+    if (!e.target.classList.contains("no-negative")) return;
+
+    const input = e.target;
+
+    if (!input.validity.valid) input.value = 0;
+    if (+input.value < 0) input.value = 0;
+
+  });
+
+  document.addEventListener("blur", function(e) {
+
+    if (!e.target.classList.contains("no-negative")) return;
+
+    const input = e.target;
+
+    if (!input.validity.valid) input.value = 0;
+    if (+input.value < 0) input.value = 0;
+
+  }, true);
 
   // Mostrar archivo y cambiar el contenido visual
   function handleFile() {

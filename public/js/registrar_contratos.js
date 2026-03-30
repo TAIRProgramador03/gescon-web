@@ -29,6 +29,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const isUpd = params.get("formUpd");
   const contractId = params.get("contratoId");
 
+  const checkbox = document.getElementById("especial");
+
+  checkbox.addEventListener("change", function () {
+    actualizarDuracionEstado();
+  });
+
   if (isUpd && isUpd === "true" && contractId) {
     const findContract = await cargarContrato(contractId);
 
@@ -36,6 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const isEdit = validNroContract(findContract.nroContrato);
       if (isEdit === "TEMP") {
         $("#title-form").text("Actualizar contrato");
+        $("#desc-form").text("Modifica la información del contrato temporal");
         $(".btn-update").show();
         $(".clear-action").hide();
         $(".continue-application").hide();
@@ -48,14 +55,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
         cargarClientes();
         cargarModelos();
+        cargarFilasRegistrar(checkbox);
       }
     } else {
       cargarClientes();
       cargarModelos();
+      cargarFilasRegistrar(checkbox);
     }
   } else {
     cargarClientes();
     cargarModelos();
+    cargarFilasRegistrar(checkbox);
   }
 
   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
@@ -68,21 +78,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 /**
- * Habilita o deshabilita el campo de duración según el estado del checkbox "especial"
+ * AGREGA UNA NUEVA FILA A LA TABLA DE VEHICULOS
  */
-document.addEventListener("DOMContentLoaded", function () {
-  const checkbox = document.getElementById("especial");
-
-  checkbox.addEventListener("change", function () {
-    actualizarDuracionEstado();
-  });
-
-  /**
-   * AGREGA UNA NUEVA FILA A LA TABLA DE VEHICULOS
-   */
-  $("#addVehicle").on("click", function (e) {
-    cargarFilasRegistrar(checkbox);
-  });
+$("#addVehicle").on("click", function (e) {
+  cargarFilasRegistrar(checkbox);
 });
 
 $("#tabla-dinamica").on("click", ".btn-remove-vehicle", function () {
@@ -116,7 +115,7 @@ function cargarFilasRegistrar(checkbox) {
   nuevaFila.innerHTML = `
             <td><input type="text" name="item[]" value="${
               lastRowIndex + 2
-            }" disabled></td>
+            }" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
             <td style="display: none;"><input type="text" name="iddet[]" class="tooltip-input" value=0"></td>
             <td>
                 <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
@@ -132,15 +131,15 @@ function cargarFilasRegistrar(checkbox) {
                     <option value="3">Severo</option>
                 </select>
             </td>
-            <td><input type="text" name="tarifa[]" class="tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
-            <td><input type="text" name="cpk[]" class="tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
-            <td><input type="number" name="rm[]" class="tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
-            <td><input type="number" name="cantidad[]" class="tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
-            <td><input type="text" name="duracion[]" class="tooltip-input"  value="0" ${
+            <td><input type="text" name="tarifa[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
+            <td><input type="text" name="cpk[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
+            <td><input type="number" min="0" name="rm[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
+            <td><input type="number" min="0" name="cantidad[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
+            <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"  value="0" ${
               checkbox.checked ? "" : "disabled"
             } data-tooltip="Duracion contrato"></td>
-            <td><input type="text" name="compra_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
-            <td><input type="text" name="precio_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+            <td><input type="text" name="compra_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
+            <td><input type="text" name="precio_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
             <td>
               <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
             </td>
@@ -172,6 +171,7 @@ function cargarFilasRegistrar(checkbox) {
     .select2({
       placeholder: "Seleccione el terreno",
       allowClear: false,
+      width: "140px",
     })
     .next(".select2-container")
     .css({
@@ -195,8 +195,8 @@ function cargarFilas(data, modelos) {
   nuevaFila.innerHTML = `
             <td><input type="text" name="item[]" value="${
               lastRowIndex + 2
-            }" disabled></td>
-            <td style="display: none;"><input type="text" name="iddet[]" class="tooltip-input" value="${data.id}"></td>
+            }" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
+            <td style="display: none;"><input type="text" name="iddet[]" value="${data.id}"></td>
             <td>
                 <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
                     <option value="">Seleccione un modelo</option>
@@ -211,15 +211,15 @@ function cargarFilas(data, modelos) {
                     <option value="3">Severo</option>
                 </select>
             </td>
-            <td><input type="text" name="tarifa[]" class="tooltip-input" value="${data.tarifa}" data-tooltip="Tarifa del contrato estipulado"></td>
-            <td><input type="text" name="cpk[]" class="tooltip-input" value="${data.cpk}" data-tooltip="Costo por kilometraje"></td>
-            <td><input type="number" name="rm[]" class="tooltip-input" value="${data.rm}" data-tooltip="Recorrido mensual del vehiculo"></td>
-            <td><input type="number" name="cantidad[]" class="tooltip-input" value="${data.cantidad}" data-tooltip="Cantidad de unidades"></td>
-            <td><input type="text" name="duracion[]" class="tooltip-input"  value="${data.duracion}" ${
+            <td><input type="text" name="tarifa[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.tarifa}" data-tooltip="Tarifa del contrato estipulado"></td>
+            <td><input type="text" name="cpk[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.cpk}" data-tooltip="Costo por kilometraje"></td>
+            <td><input type="number" min="0" name="rm[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.rm}" data-tooltip="Recorrido mensual del vehiculo"></td>
+            <td><input type="number" min="0" name="cantidad[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.cantidad}" data-tooltip="Cantidad de unidades"></td>
+            <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"  value="${data.duracion}" ${
               checkbox.checked ? "" : "disabled"
             } data-tooltip="Duracion contrato"></td>
-            <td><input type="text" name="compra_veh[]" class="tooltip-input" value="${data.compraVeh}" data-tooltip="Precio promedio de la compra del vehiculo"></td>
-            <td><input type="text" name="precio_veh[]" class="tooltip-input" value="${data.precioVeh}" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+            <td><input type="text" name="compra_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.compraVeh}" data-tooltip="Precio promedio de la compra del vehiculo"></td>
+            <td><input type="text" name="precio_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.precioVeh}" data-tooltip="Precio promedio de la venta del vehiculo"></td>
             <td>
               <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
             </td>
@@ -255,6 +255,7 @@ function cargarFilas(data, modelos) {
     .select2({
       placeholder: "Seleccione el terreno",
       allowClear: false,
+      width: "140px",
     })
     .next(".select2-container")
     .css({
@@ -296,7 +297,9 @@ async function cargarCampos(data) {
 
   $('input[name="Contrato"]').val(data.nroContrato);
   $('input[name="Vehiculos"]').val(data.cantVehiculos);
-  $('input[name="Firma"]').val(dayjs(convertirFecha(data.fechaFirma)).format("DD/MM/YYYY"));
+  $('input[name="Firma"]').val(
+    dayjs(convertirFecha(data.fechaFirma)).format("DD/MM/YYYY"),
+  );
   $('input[name="Duracion"]').val(data.duracion);
   $("#combo-moneda").val(data.tipoMoneda).trigger("change");
   $("#combo-tipo").val(data.tipoCliente).trigger("change");
@@ -477,7 +480,10 @@ async function guardarContrato() {
     idCliente: document.querySelector("#combo-cliente").value,
     nroContrato: textoAGuiones(document.querySelector("#contrato").value),
     cantVehiculos: document.querySelector("#vehiculos").value,
-    fechaFirma: dayjs(document.querySelector("#firma").value, 'DD/MM/YYYY').format("YYYY-MM-DD"),
+    fechaFirma: dayjs(
+      document.querySelector("#firma").value,
+      "DD/MM/YYYY",
+    ).format("YYYY-MM-DD"),
     duracion: document.querySelector("#duracion").value.trim() || "0",
     kmAdicional: document.querySelector("#adicional").value.trim() || "0",
     kmTotal: document.querySelector("#bolsa").value.trim() || "0",
@@ -742,56 +748,54 @@ async function guardarContrato() {
   const contractId = params.get("contratoId");
 
   async function registrar() {
-    console.log(contratoData);
-    // try {
-    //   const response = await fetch(`http://${IP_LOCAL}:3000/insertarContrato`, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(contratoData),
-    //     credentials: "include", // Asegura que las cookies se envíen con la solicitud
-    //   });
-    //   const result = await response.json();
-    //   if (result.success) {
-    //     toastr.success("Contrato guardado exitosamente", "¡Exitó!");
-    //     await subirArchivo(fileInput.files[0]);
-    //     limpiarCampos();
-    //   } else {
-    //     toastr.warning(result.message, "¡Alto!");
-    //   }
-    // } catch (error) {
-    //   const mensaje =
-    //     error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
-    //   console.error("Error al enviar los datos:", error);
-    //   toastr.warning(`Ocurrio algo: ${mensaje}`, "Oops...");
-    // }
+    try {
+      const response = await fetch(`http://${IP_LOCAL}:3000/insertarContrato`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contratoData),
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
+      });
+      const result = await response.json();
+      if (result.success) {
+        toastr.success("Contrato guardado exitosamente", "¡Exitó!");
+        await subirArchivo(fileInput.files[0]);
+        limpiarCampos();
+      } else {
+        toastr.warning(result.message, "¡Alto!");
+      }
+    } catch (error) {
+      const mensaje =
+        error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
+      console.error("Error al enviar los datos:", error);
+      toastr.warning(`Ocurrio algo: ${mensaje}`, "Oops...");
+    }
   }
 
   async function actualizar(contractId) {
-    console.log(contratoData);
-    // try {
-    //   const response = await fetch(
-    //     `http://${IP_LOCAL}:3000/actualizarContrato/${contractId}`,
-    //     {
-    //       method: "PUT",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify(contratoData),
-    //       credentials: "include", // Asegura que las cookies se envíen con la solicitud
-    //     },
-    //   );
-    //   const result = await response.json();
-    //   if (result.success) {
-    //     toastr.success("Contrato actualizado exitosamente", "¡Exitó!");
-    //     await subirArchivo(fileInput.files[0]);
-    //     limpiarCampos();
-    //   } else {
-    //     toastr.warning(result.message, "¡Alto!");
-    //   }
-    // } catch (error) {
-    //   const mensaje =
-    //     error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
-    //   console.error("Error al enviar los datos:", error);
-    //   toastr.warning(`Ocurrio algo: ${mensaje}`, "Oops...");
-    // }
+    try {
+      const response = await fetch(
+        `http://${IP_LOCAL}:3000/actualizarContrato/${contractId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(contratoData),
+          credentials: "include", // Asegura que las cookies se envíen con la solicitud
+        },
+      );
+      const result = await response.json();
+      if (result.success) {
+        toastr.success("Contrato actualizado exitosamente", "¡Exitó!");
+        await subirArchivo(fileInput.files[0]);
+        limpiarCampos();
+      } else {
+        toastr.warning(result.message, "¡Alto!");
+      }
+    } catch (error) {
+      const mensaje =
+        error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
+      console.error("Error al enviar los datos:", error);
+      toastr.warning(`Ocurrio algo: ${mensaje}`, "Oops...");
+    }
   }
 
   // CON TARIFA ALTA
@@ -950,9 +954,7 @@ async function exportVehicle() {
       let modelo = fila.querySelector('select[name="tipo_modelo[]"]');
       let modeloText = modelo.options[modelo.selectedIndex].text;
 
-      let tipoTerreno = fila.querySelector(
-        'select[name="tipo_terreno[]"]',
-      );
+      let tipoTerreno = fila.querySelector('select[name="tipo_terreno[]"]');
       let tipoTerrenoText = tipoTerreno.options[tipoTerreno.selectedIndex].text;
 
       let tarifa =
@@ -1017,18 +1019,20 @@ async function exportVehicle() {
     { header: "Precio Venta", key: "precioVeh", width: 18 },
   ];
 
-  worksheet.addRows(detalles.map((row, i) => ({
-    item: i + 1,
-    modelo: row.modelo,
-    tipoTerreno: row.tipoTerreno,
-    tarifa: row.tarifa,
-    cpk: row.cpk,
-    rm: row.rm,
-    cantidad: row.cantidad,
-    duracion: row.duracion,
-    comprarVeh: row.compraVeh,
-    precioVeh: row.precioVeh
-  })));
+  worksheet.addRows(
+    detalles.map((row, i) => ({
+      item: i + 1,
+      modelo: row.modelo,
+      tipoTerreno: row.tipoTerreno,
+      tarifa: row.tarifa,
+      cpk: row.cpk,
+      rm: row.rm,
+      cantidad: row.cantidad,
+      duracion: row.duracion,
+      comprarVeh: row.compraVeh,
+      precioVeh: row.precioVeh,
+    })),
+  );
 
   // estilo del header
   worksheet.getRow(1).eachCell((cell) => {

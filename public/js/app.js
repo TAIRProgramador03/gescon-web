@@ -54,9 +54,11 @@ $("#dropdown-menu-btn").on("click", () => {
 })
 
 const toggleButton = document.getElementById("toggle-btn");
+const titleSide = document.getElementById("title-sidebar");
 const sidebar = document.getElementById("sidebar");
 
 function toggleSidebar() {
+  titleSide.classList.toggle("hidden")
   sidebar.classList.toggle("close");
   toggleButton.classList.toggle("rotate");
   closeAllSubMenus(); // Cierra todos los submenús al cerrar el sidebar

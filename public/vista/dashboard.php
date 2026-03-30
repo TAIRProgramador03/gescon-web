@@ -44,7 +44,7 @@ require './templates/header.html';
 </style>
 
 <!-- MAQUETACIÓN DE LA VISTA -->
-<div class="banner" id="banner">
+<!-- <div class="banner" id="banner">
   <div id="preloader">
     <div class="presentation">
       <div class="rotating-wheel"></div>
@@ -61,7 +61,7 @@ require './templates/header.html';
       <img src="../img/NEUMATICOS.png" alt="Imagen 4">
       <img src="../img/OPERACIONES.png" alt="Imagen 5">
       <img src="../img/LOGISTICA.png" alt="Imagen 6">
-      <!-- Duplicamos las imágenes para el efecto infinito -->
+
       <img src="../img/COMBUSTIBLE.png" alt="Imagen 1">
       <img src="../img/CONTRATOS.png" alt="Imagen 2">
       <img src="../img/MANTENIMIENTO.png" alt="Imagen 3">
@@ -75,6 +75,25 @@ require './templates/header.html';
     <div class="author">
       <h3><em>GES 360 - Transformación Digital</em></h3>
       <p><b>TECNOLOGIA DE INFORMACION - GRUPO IBARCENA</b></p>
+    </div>
+  </div>
+</div> -->
+
+<div id="banner" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
+  <!-- <h3 class="!text-7xl !font-semibold !text-blue-600 uppercase">Gescon</h3> -->
+  <h3 class="!text-7xl !font-semibold !text-blue-600 uppercase flex gap-1">
+    <span class="animate-wave" style="animation-delay:0s">G</span>
+    <span class="animate-wave" style="animation-delay:0.1s">e</span>
+    <span class="animate-wave" style="animation-delay:0.2s">s</span>
+    <span class="animate-wave" style="animation-delay:0.3s">c</span>
+    <span class="animate-wave" style="animation-delay:0.4s">o</span>
+    <span class="animate-wave" style="animation-delay:0.5s">n</span>
+  </h3>
+  <p class="m-0 font-medium text-gray-400 text-xl">Sistema de gestión de contratos</p>
+  <div class="flex-col gap-4 w-full flex items-center justify-center relative">
+    <div class="w-28 h-28 border-8 text-blue-600 text-4xl animate-spin border-gray-300 flex items-center justify-center border-t-blue-600 rounded-full"></div>
+    <div class="gif-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <img src="../img/carpeta.gif">
     </div>
   </div>
 </div>
@@ -246,9 +265,10 @@ require './templates/header.html';
 
   function showLoaderWindow() {
     onLoadWindow++;
-    $('.banner').css('opacity', '1');
+    $('#banner').css('opacity', '1');
+    $('#banner').css('z-index', '99999');
+
     $('#preloader').css('opacity', '1');
-    $('.banner').css('z-index', '99999');
     $('#preloader').css('z-index', '99999');
 
     $(".carousel-container").css('opacity', '1');
@@ -260,9 +280,9 @@ require './templates/header.html';
   function hideLoaderWindow() {
     onLoadWindow--;
     if (onLoadWindow <= 0) {
-      $('.banner').css('opacity', '0');
+      $('#banner').css('opacity', '0');
       $('#preloader').css('opacity', '0');
-      $('.banner').css('z-index', '-99999');
+      $('#banner').css('z-index', '-99999');
       $('#preloader').css('z-index', '-99999');
       $(".carousel-container").css('opacity', '0');
       $(".carousel-container").css('z-index', '-99999');
@@ -408,7 +428,7 @@ require './templates/header.html';
         layout: {
           padding: {
             left: 40,
-            right : 40
+            right: 40
           }
         }
       },

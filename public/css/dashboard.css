@@ -32,7 +32,7 @@
 body {
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: #e7e7e7;
+  background-color: #F5F5F5;
   /* color: var(--text-clr); */
   display: grid;
   grid-template-columns: auto 1fr;
@@ -47,7 +47,7 @@ body {
 #sidebar {
   box-sizing: border-box;
   height: 100vh;
-  width: 250px;
+  width: 280px;
   padding: 5px 1em;
   background-color: #002141;
   border-right: 1px solid var(--line-clr);
@@ -67,11 +67,9 @@ body {
 }
 #sidebar > ul > li:first-child {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-bottom: 16px;
-  .logo {
-    font-weight: 600;
-  }
+  padding: 8px 16px;
 }
 
 #sidebar ul li.active a {
@@ -110,6 +108,7 @@ body {
   background: #fff;
   padding: 0 16px;
   min-height: 64px;
+  border-bottom: 1px solid #dcdfe4;
 }
 
 .user-info {
@@ -212,7 +211,7 @@ body {
 }
 #sidebar a:hover,
 #sidebar .dropdown-btn:hover {
-  background-color: #14202d;
+  background-color: #167BD9;
 }
 #sidebar .sub-menu {
   display: grid;
@@ -245,7 +244,7 @@ body {
 .dropdown-btn svg {
   transition: 200ms ease;
 }
-.rotate svg:last-child {
+.rotate i:last-child {
   rotate: 180deg;
 }
 #sidebar .sub-menu a {
@@ -265,16 +264,17 @@ body {
   border-radius: 0.5em;
   background: none;
   cursor: pointer;
-  height: 60%;
-  top: 13px;
+  height: 64px;
+  color: white;
   position: relative;
 
-  svg {
+  i {
     transition: rotate 150ms ease;
   }
 }
+
 #toggle-btn:hover {
-  background-color: #14202d;
+  background-color: #142941;
 }
 
 .sub-menu-sec a {
@@ -539,4 +539,18 @@ main p {
   color: #ff0000 !important;
   font-weight: 500;
   font-size: 15px;
+}
+
+
+@keyframes wave {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-wave {
+  animation: wave 1s ease-in-out infinite;
 }

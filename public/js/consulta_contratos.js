@@ -166,13 +166,13 @@ async function cargarDatosContrato(clienteId, contratoId) {
     // Convertir fecha firma a formato yyyy-mm-dd
     const fechaInicio = convertirFecha(fechaFirma);
     document.getElementById("text-inicio").value =
-      data.data.fechaFirma != "" ? fechaInicio : "--"; // Asignar FECHA_FIRMA
+      data.data.fechaFirma != "" ? dayjs(fechaInicio).format("DD/MM/YYYY") : "--"; // Asignar FECHA_FIRMA
 
     // Calcular fecha de fin
     const fechaFin = calcularFechaFin(fechaInicio, data.data.duracion);
     console.log(fechaFin);
     document.getElementById("text-fin").value =
-      data.data.fechaFirma != "" ? fechaFin : "--"; // Asignar fecha de fin
+      data.data.fechaFirma != "" ? dayjs(fechaFin).format("DD/MM/YYYY") : "--"; // Asignar fecha de fin
 
     const estado = obtenerEstado(fechaFin);
     document.getElementById("text-estado").value =
@@ -219,8 +219,8 @@ function limpia() {
   document.getElementById("txt-vehic").textContent = "0";
   document.getElementById("txt-assign").textContent = "0";
 
-  $(".continue-pen").removeClass("alert");
-  $(".continue-pen").hide();
+  $("#btn-assign").addClass("hidden");
+  $("#btn-assign").removeClass("flex");
 }
 
 // Función para obtener el estado del contrato según la fecha de fin
@@ -269,9 +269,9 @@ const getVehByContract = async (contratoId, tipoTerr) => {
   return data;
 };
 
-const getAssignVehActive = async (clienteId, contratoId, status) => {
+const getAssignVehActive = async (clienteId, contratoId, status, tipTerr) => {
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/asignacionPorContrato?idCliente=${clienteId.toString()}${contratoId ? `&idContrato=${contratoId.toString()}` : ""}${status ? `&status=${status}` : ""}`,
+    `http://${IP_LOCAL}:3000/asignacionPorContrato?idCliente=${clienteId.toString()}${contratoId ? `&idContrato=${contratoId.toString()}` : ""}${status ? `&status=${status}` : ""}${tipTerr == 0 || tipTerr ? `&tipoTerr=${tipTerr}` : ""}`,
     {
       method: "GET",
       credentials: "include",

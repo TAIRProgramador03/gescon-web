@@ -5,17 +5,35 @@ require './templates/header.html';
 <!-- JQUERY -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- DATATABLE CSS -->
+<link
+  href="https://cdn.datatables.net/v/dt/dt-2.3.7/fh-4.0.6/datatables.min.css"
+  rel="stylesheet"
+  integrity="sha384-7Hrw81H4xX5hYX7S8L0eMfpG12eNpu/o/EJa19nQ3b9LlwFZ+knIhQdpUWrM1GG0"
+  crossorigin="anonymous" />
+<link
+  rel="stylesheet"
+  href="https://cdn.datatables.net/buttons/3.2.6/css/buttons.dataTables.css" />
+
+<!-- DATATABLE JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script
+  src="https://cdn.datatables.net/v/dt/dt-2.3.7/fh-4.0.6/datatables.min.js"
+  integrity="sha384-CNOVKT615Y5C0jlUJ8NQOcckxgpoWtMsl4+LFWMwh/asaMKYPG8K0hlZayw/GSa+"
+  crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.print.min.js"></script>
+
 <!-- CSS de Select2 -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
 
 <!-- JS de Select2 -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
-<!-- CSS DATATABLE -->
-<link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.css" />
-
-<!-- JS DATATABLE -->
-<script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
 
 <!--BOOTSTRAP CSS-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -32,63 +50,126 @@ require './templates/header.html';
 </style>
 
 <!-- MAQUETACIÓN DE LA VISTA -->
-<div id="preloader-mini">
-  <div class="gif-container">
-    <img src="../img/carpeta.gif" alt="Cargando...">
+<div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
+  <div class="flex-col gap-4 w-full flex items-center justify-center relative">
+    <div class="w-28 h-28 border-8 text-blue-600 text-4xl animate-spin border-gray-300 flex items-center justify-center border-t-blue-600 rounded-full"></div>
+    <div class="gif-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <img src="../img/carpeta.gif">
+    </div>
   </div>
-  <div class="welcome-message">
-    <p>¡Cargando!.....</p>
-  </div>
+  <p class="m-0 font-medium text-gray-400 text-xl flex gap-1"><span class="animate-wave" style="animation-delay:0s"></span>
+    <span class="animate-wave" style="animation-delay:0.1s">C</span>
+    <span class="animate-wave" style="animation-delay:0.2s">a</span>
+    <span class="animate-wave" style="animation-delay:0.3s">r</span>
+    <span class="animate-wave" style="animation-delay:0.4s">g</span>
+    <span class="animate-wave" style="animation-delay:0.5s">a</span>
+    <span class="animate-wave" style="animation-delay:0.6s">n</span>
+    <span class="animate-wave" style="animation-delay:0.7s">d</span>
+    <span class="animate-wave" style="animation-delay:0.8s">o</span>
+  </p>
 </div>
 
 <main class="main-query">
   <div class="contenedor">
     <div class="form-col-1 contenedor-col-1">
-      <div class="tittle-form-col">
-        <h3>Administracion de Contratos</h3>
+      <div class="tittle-form-col bg-blue-900">
+        <h3 class="text-3xl font-medium">Administracion de Contratos</h3>
       </div>
       <div class="cbo-row">
-        <div class="cbo-form-col">
+        <div class="flex flex-col w-full relative">
+          <select id="combo-box" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente">
+          </select>
+
+          <label
+            for="combo-cliente"
+            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+            Seleccione el cliente
+          </label>
+        </div>
+        <div class="flex flex-col w-full relative">
+          <select id="combo-contrato" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el contrato">
+          </select>
+
+          <label
+            for="combo-cliente"
+            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+            Seleccione el Contrato
+          </label>
+        </div>
+        <!-- <div class="cbo-form-col">
           <label for="combo-box">Seleccione el Cliente:</label>
           <select id="combo-box" name="opciones" class="cbo-form-cliente"></select>
-        </div>
-        <div class="cbo-form-col">
+        </div> -->
+        <!-- <div class="cbo-form-col">
           <label for="combo-contrato">Seleccione el Contrato:</label>
           <select id="combo-contrato" name="opciones" class="cbo-form-cliente"></select>
-        </div>
+        </div> -->
       </div>
       <div class="tabla-form">
         <table id="listContracts" class="display">
           <thead>
             <tr>
-              <th>Item</th>
-              <th>N° contrato</th>
-              <th>Fecha Firma</th>
-              <th>Periodo</th>
-              <th>Cant total</th>
+              <th class="text-gray-500 !font-medium">Item</th>
+              <th class="text-gray-500 !font-medium">N° contrato</th>
+              <th class="text-gray-500 !font-medium">Fecha Firma</th>
+              <th class="text-gray-500 !font-medium">Periodo</th>
+              <th class="text-gray-500 !font-medium">Cant total</th>
             </tr>
           </thead>
           <tbody>
             <tr>
             </tr>
           </tbody>
-          <tfoot>
-            <tr>
-              <th>Item</th>
-              <th>N° contrato</th>
-              <th>Fecha Firma</th>
-              <th>Periodo</th>
-              <th>Cant total</th>
-            </tr>
-          </tfoot>
         </table>
       </div>
-      <div class="txt-description">
+      <!-- <div class="txt-description">
         <label for="combo-box area-text">Descripcion</label>
-        <textarea id="story" name="story" readonly></textarea>
+        <textarea id="story" name="story" class="px-[10px] py-[11px] h-24 text-sm rounded-[5px] border-2 border-gray-300 bg-gray-100 text-gray-800 resize-none outline-none" readonly></textarea>
+      </div> -->
+      <div class="input flex flex-col w-full relative px-5">
+        <textarea
+          id="story" name="story"
+          type="text"
+          placeholder="Vacío"
+          class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 h-24 text-sm resize-none" disabled></textarea>
+        <label
+          for="contrato"
+          class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+          Descripción
+        </label>
       </div>
       <div class="salio-form"> <!--text-form-col-->
-        <button class="add-action" onclick="registrarContrato()">
+        <button
+          type="button"
+          id="btnNewDoc"
+          class="cursor-pointer bg-cyan-800 text-center w-full rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
+          <div
+            class="bg-cyan-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+            <i class="bi bi-file-earmark-plus-fill"></i>
+          </div>
+          <p class="translate-x-4 !m-0 !text-white text-base font-medium">Nuevo doc.</p>
+        </button>
+        <button
+          type="button"
+          id="btnNewLea"
+          class="cursor-pointer bg-green-800 text-center w-full rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
+          <div
+            class="bg-green-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+            <i class="bi bi-file-earmark-arrow-up-fill"></i>
+          </div>
+          <p class="translate-x-4 !m-0 !text-white text-base font-medium">Nuevo lea.</p>
+        </button>
+        <button
+          type="button"
+          id="btnClear"
+          class="cursor-pointer bg-yellow-700 text-center w-full rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
+          <div
+            class="bg-yellow-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+            <i class="bi bi-stars"></i>
+          </div>
+          <p class="translate-x-4 !m-0 !text-white text-base font-medium">Limpiar</p>
+        </button>
+        <!-- <button class="add-action" onclick="registrarContrato()">
           <div>
             <div class="broom"></div>
             <div class="trash">
@@ -101,8 +182,8 @@ require './templates/header.html';
             </div>
           </div>
           Nuevo Doc.
-        </button>
-        <button class="continue-application" onclick="registrarDocumento()">
+        </button> -->
+        <!-- <button class="continue-application" onclick="registrarDocumento()">
           <div>
             <div class="pencil"></div>
             <div class="folder">
@@ -115,8 +196,8 @@ require './templates/header.html';
             </div>
           </div>
           Doc. Asoc.
-        </button>
-        <button class="clear-action" id="btnClear">
+        </button> -->
+        <!-- <button class="clear-action" id="btnClear">
           <div>
             <div class="broom"></div>
             <div class="trash">
@@ -129,76 +210,115 @@ require './templates/header.html';
             </div>
           </div>
           Limpiar
-        </button>
+        </button> -->
       </div>
     </div>
     <div class="form-col-2 contenedor-col-2">
-      <div class="tittle-form-col">
-        <h3>Resumen de Contrato</h3>
+      <div class="tittle-form-col bg-blue-900">
+        <h3 class="text-3xl font-medium">Resumen de Contrato</h3>
       </div>
-      <div class="text-form-col">
-        <label for="combo-box">Estado:</label>
-        <input id="text-estado" name="estado" type="text" class="resumen-form-contrato" disabled>
-      </div>
-      <div class="text-form-col">
-        <label for="combo-box">Fecha Ini:</label>
-        <input id="text-inicio" name="inicio" type="text" class="resumen-form-contrato" disabled>
-      </div>
-      <div class="text-form-col">
-        <label for="combo-box">Fecha Fin:</label>
-        <input id="text-fin" name="fin" type="text" class="resumen-form-contrato" disabled>
-      </div>
-      <div class="text-form-col">
-        <label for="combo-box tp-form">Tipo Terreno:</label>
-        <div class="cuadradro">
-          <div id="view-sev" class="card terreno-form">
-            <div class="tdh nom-tp">Sev.</div>
-            <hr>
-            <div class="tdh" id="txt-sev">0</div>
-          </div>
-          <div id="view-soc" class="card terreno-form">
-            <div class="tdh nom-tp">Soc.</div>
-            <hr>
-            <div class="tdh" id="txt-soc">0</div>
-          </div>
-          <div id="view-sup" class="card terreno-form">
-            <div class="tdh nom-tp">Sup.</div>
-            <hr>
-            <div class="tdh" id="txt-sup">0</div>
-          </div>
-          <div id="view-ciu" class="card terreno-form">
-            <div class="tdh nom-tp">Ciu.</div>
-            <hr>
-            <div class="tdh" id="txt-ciu">0</div>
+      <div id="skeleton-contract" class="w-[318px] hidden flex-col items-center">
+        <div class="p-5 w-full">
+          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+        </div>
+        <div class="p-5 w-full">
+          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+        </div>
+        <div class="p-5 w-full">
+          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+        </div>
+        <div class="p-5 w-full flex gap-2">
+          <div class="w-1/3 h-[47px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full grid grid-cols-4 gap-1">
+            <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+            <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+            <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+            <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
           </div>
         </div>
-      </div>
-      <div class="text-form-col">
-        <div class="cuadradro-form">
-          <div class="card terreno-form doc-form" id="href-query-doc">
-            <div class="tda tti-form nom-tp">N° Documentos</div>
-            <hr>
-            <div class="tda can-form"><i class="fa fa fa-sheet-plastic" style="color: #0e2e67;"></i><span id="txt-aso">0</span></div>
-          </div>
-          <div class="card terreno-form doc-form" id="href-query-lea">
-            <div class="tda tti-form nom-tp">N° leasing</div>
-            <hr>
-            <div class="tda can-form"><i class="fa fa fa-book" style="color: #0e2e67;"></i><span id="txt-leas">0</span></div>
-          </div>
-          <div class="card terreno-form doc-form" id="href-query-veh">
-            <div class="tda tti-form nom-tp">Veh. Activos</div>
-            <hr>
-            <div class="tda can-form"><i class="fa-solid fa-car" style="color: #0e2e67;"></i><span id="txt-vehic">0</span></div>
-          </div>
-          <div class="card terreno-form doc-form" id="href-query-assign">
-            <div class="tda tti-form nom-tp" id="cab-href-query-assign">Veh. Asignados</div>
-            <hr>
-            <div class="tda can-form"><i class="fa-solid fa-check" style="color: #0e2e67;"></i><span id="txt-assign">0</span></div>
-          </div>
+        <div class="p-5 w-full grid grid-cols-2 gap-2">
+          <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
+        </div>
+        <div class="p-5 w-full grid grid-cols-2 gap-2">
+          <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
         </div>
       </div>
-      <div class="button-action-col">
-        <button id="btn-edit-con">
+      <div id="data-contract" class="flex flex-col">
+        <div class="text-form-col">
+          <label for="combo-box">Estado:</label>
+          <input id="text-estado" name="estado" type="text" class="px-[10px] py-[11px] rounded-[5px] border-2 border-gray-300 bg-gray-50 text-gray-600" value="--" disabled>
+        </div>
+        <div class="text-form-col">
+          <label for="combo-box">Fecha Ini:</label>
+          <input id="text-inicio" name="inicio" type="text" class="px-[10px] py-[11px] rounded-[5px] border-2 border-gray-300 bg-gray-50 text-gray-600" value="--" disabled>
+        </div>
+        <div class="text-form-col">
+          <label for="combo-box">Fecha Fin:</label>
+          <input id="text-fin" name="fin" type="text" class="px-[10px] py-[11px] rounded-[5px] border-2 border-gray-300 bg-gray-50 text-gray-600" value="--" disabled>
+        </div>
+        <div class="text-form-col">
+          <label for="combo-box tp-form">Tipo Terreno:</label>
+          <div class="cuadradro">
+            <div id="view-sev" class="card terreno-form">
+              <div class="tdh nom-tp">Sev.</div>
+
+              <div class="tdh" id="txt-sev">0</div>
+            </div>
+            <div id="view-soc" class="card terreno-form">
+              <div class="tdh nom-tp">Soc.</div>
+
+              <div class="tdh" id="txt-soc">0</div>
+            </div>
+            <div id="view-sup" class="card terreno-form">
+              <div class="tdh nom-tp">Sup.</div>
+
+              <div class="tdh" id="txt-sup">0</div>
+            </div>
+            <div id="view-ciu" class="card terreno-form">
+              <div class="tdh nom-tp">Ciu.</div>
+
+              <div class="tdh" id="txt-ciu">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="text-form-col">
+          <div class="cuadradro-form">
+            <div class="card terreno-form doc-form" id="href-query-doc">
+              <div class="tda tti-form nom-tp">N° Documentos</div>
+
+              <div class="tda can-form"><i class="fa fa fa-sheet-plastic" style="color: #1e3a8a;"></i><span id="txt-aso">0</span></div>
+            </div>
+            <div class="card terreno-form doc-form" id="href-query-lea">
+              <div class="tda tti-form nom-tp">N° leasing</div>
+
+              <div class="tda can-form"><i class="fa fa fa-book" style="color: #1e3a8a;"></i><span id="txt-leas">0</span></div>
+            </div>
+            <div class="card terreno-form doc-form" id="href-query-veh">
+              <div class="tda tti-form nom-tp">Veh. Activos</div>
+
+              <div class="tda can-form"><i class="fa-solid fa-car" style="color: #1e3a8a;"></i><span id="txt-vehic">0</span></div>
+            </div>
+            <div class="card terreno-form doc-form" id="href-query-assign">
+              <div class="tda tti-form nom-tp" id="cab-href-query-assign">Veh. Asignados</div>
+
+              <div class="tda can-form"><i class="fa-solid fa-check" style="color: #1e3a8a;"></i><span id="txt-assign">0</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="button-action-col">
+          <button
+            type="button"
+            id="btn-edit-con"
+            class="cursor-pointer bg-blue-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
+            <div
+              class="bg-blue-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+              <i class="bi bi-pencil-fill"></i>
+            </div>
+            <p class="translate-x-4 !m-0 !text-white text-base font-medium">Editar contrato</p>
+          </button>
+          <!-- <button id="btn-edit-con">
           <div>
             <div class="pencil"></div>
             <div class="folder">
@@ -211,8 +331,8 @@ require './templates/header.html';
             </div>
           </div>
           Editar contrato
-        </button>
-        <button class="continue-pen btn-assign">
+        </button> -->
+          <!-- <button class="continue-pen btn-assign">
           <span class="count-veh-alert"></span>
           <div>
             <div class="pencil"></div>
@@ -226,7 +346,20 @@ require './templates/header.html';
             </div>
           </div>
           Pendientes
-        </button>
+        </button> -->
+          <button
+            id="btn-assign"
+            type="button"
+            class="cursor-pointer bg-red-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group btn-assign">
+            <span class="count-veh-alert"></span>
+            <div
+              class="bg-red-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+              <i class="bi bi-car-front-fill"></i>
+            </div>
+            <p class="translate-x-4 !m-0 !text-white text-base font-medium">Pendientes</p>
+          </button>
+
+        </div>
       </div>
     </div>
   </div>
@@ -250,22 +383,65 @@ require './templates/header.html';
 <div id="alert-modal">
   <div class="alert-bg"></div>
   <div class="alert-container">
-
   </div>
 </div>
 
 <script src="../js/consulta_contratos.js"></script>
 <script type="module">
-  window.onload = function() {
-    setTimeout(() => {
-      document.body.classList.add('loaded');
-      document.getElementById('preloader-mini').style.display = 'none';
-    }, 2000);
-  };
+  let activeRequests = 0;
+
+  function showLoader() {
+    activeRequests++;
+    $('#preloader-mini').css('opacity', '1');
+    $('#preloader-mini').css('z-index', '99999');
+  }
+
+  function hideLoader() {
+    activeRequests--;
+    if (activeRequests <= 0) {
+      setTimeout(() => {
+        $('#preloader-mini').css('opacity', '0');
+        $('#preloader-mini').css('z-index', '-99999');
+      }, 400)
+    }
+  }
+
+  let activeSkeleton = 0;
+
+  function showSkeleton() {
+    activeSkeleton++;
+    $('#skeleton-contract').addClass("flex");
+    $('#skeleton-contract').removeClass("hidden");
+
+    $('#data-contract').addClass("hidden");
+    $('#data-contract').removeClass("flex");
+  }
+
+  function hideSkeleton() {
+    activeSkeleton--;
+    if (activeSkeleton <= 0) {
+      setTimeout(() => {
+        $('#skeleton-contract').addClass("hidden");
+        $('#skeleton-contract').removeClass("flex");
+
+        $('#data-contract').addClass("flex");
+        $('#data-contract').removeClass("hidden");
+      }, 400)
+    }
+  }
+
+  // window.onload = function() {
+  //   setTimeout(() => {
+  //     document.body.classList.add('loaded');
+  //     document.getElementById('preloader-mini').style.display = 'none';
+  //   }, 2000);
+  // };
 
   let table;
 
   $(document).on('DOMContentLoaded', async function() {
+    showLoader();
+
     await cargarClientes();
     document.getElementById("btnClear").addEventListener("click", limpiarCampos);
 
@@ -277,6 +453,9 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
+      ordering: false,
+      searching: false,
+      dom: '<"superior"f>rt<"inferior"i<"derecha-inferior"lp>>',
       data: [],
       columns: [{
           data: "item",
@@ -295,7 +474,7 @@ require './templates/header.html';
           data: "FECHACREA",
           render: function(data) {
             if (data) {
-              return convertirFecha(data);
+              return dayjs(convertirFecha(data)).format("DD/MM/YYYY");
             } else {
               return `--`
             }
@@ -354,12 +533,12 @@ require './templates/header.html';
           )
         }, 2000)
 
-        $(".continue-pen").addClass("alert");
-        $(".continue-pen").show();
+        $("#btn-assign").removeClass("hidden");
+        $("#btn-assign").addClass("flex");
         $(".count-veh-alert").text(vehPending.data.length)
       } else {
-        $(".continue-pen").removeClass("alert");
-        $(".continue-pen").hide();
+        $("#btn-assign").removeClass("flex");
+        $("#btn-assign").addClass("hidden");
       }
 
       table.clear();
@@ -368,16 +547,21 @@ require './templates/header.html';
 
       if (idContract) {
         await cargarDatosContrato(idClient, idContract);
-        $("#btn-edit-con").show()
+        $("#btn-edit-con").addClass("flex");
+        $("#btn-edit-con").removeClass("hidden");
       } else {
         await cargarDatosContrato(idClient);
-        $("#btn-edit-con").hide()
+        $("#btn-edit-con").addClass("hidden");
+        $("#btn-edit-con").removeClass("flex");
       }
     }
 
     table.on("page.dt", () => {
       $('tr').removeClass("selected-row");
     })
+
+
+    hideLoader();
   });
 
   $("#alert-modal .alert-bg").on("click", () => {
@@ -404,6 +588,8 @@ require './templates/header.html';
   })
 
   $("#combo-box").on("select2:select", async function(e) {
+    showLoader();
+
     limpia();
 
     const params = new URLSearchParams(window.location.search);
@@ -438,17 +624,22 @@ require './templates/header.html';
         `
       )
 
-      $(".continue-pen").addClass("alert");
-      $(".continue-pen").show();
+      $("#btn-assign").removeClass("hidden");
+      $("#btn-assign").addClass("flex");
       $(".count-veh-alert").text(vehPending.data.length)
     } else {
-      $(".continue-pen").removeClass("alert");
-      $(".continue-pen").hide();
+      $("#btn-assign").addClass("hidden");
+      $("#btn-assign").removeClass("flex");
     }
+
+    $("#btn-edit-con").addClass("hidden");
+    $("#btn-edit-con").removeClass("flex");
 
     table.clear();
     table.rows.add(contracts);
     table.draw();
+
+    hideLoader();
   });
 
   $("#combo-contrato").on("select2:select", async function(e) {
@@ -465,6 +656,8 @@ require './templates/header.html';
 
   $("#listContracts tbody")
     .on("click", "tr", async function(e) {
+      showSkeleton();
+
       $('tr').removeClass("selected-row");
 
       $(this).addClass("selected-row");
@@ -503,12 +696,11 @@ require './templates/header.html';
 
         // Convertir fecha firma a formato yyyy-mm-dd
         const fechaInicio = convertirFecha(fechaFirma);
-        document.getElementById("text-inicio").value = fechaInicio; // Asignar FECHA_FIRMA
+        document.getElementById("text-inicio").value = dayjs(fechaInicio).format("DD/MM/YYYY"); // Asignar FECHA_FIRMA
 
         // Calcular fecha de fin
         const fechaFin = calcularFechaFin(fechaInicio, data.data.duracion);
-        console.log(fechaFin);
-        document.getElementById("text-fin").value = fechaFin; // Asignar fecha de fin
+        document.getElementById("text-fin").value = dayjs(fechaFin).format("DD/MM/YYYY"); // Asignar fecha de fin
 
         const estado = obtenerEstado(fechaFin);
         document.getElementById("text-estado").value = estado; // Asignar DESCRIPCION
@@ -533,17 +725,28 @@ require './templates/header.html';
         document.getElementById("txt-assign").textContent =
           data.data.cantidadAsignados || "0";
 
-        $("#btn-edit-con").show()
+        $("#btn-edit-con").addClass("flex")
+        $("#btn-edit-con").removeClass("hidden")
 
       } catch (error) {
         console.error("Error al obtener los datos del contrato:", error);
       }
+
+      hideSkeleton();
     });
 
 
   function registrarContrato() {
-    window.location = 'registrar_contratos.php';
+
   };
+
+  $("#btnNewDoc").on("click", function() {
+    window.location = 'registrar_documentos.php';
+  });
+
+  $("#btnNewLea").on("click", function() {
+    window.location = 'registrar_leasing.php';
+  });
 
   function registrarDocumento() {
     window.location = 'registrar_documentos.php';
@@ -612,77 +815,37 @@ require './templates/header.html';
     if (!Array.isArray(vehicles)) return;
 
     $("#modal-body-info").append(`
-      <div class="legends-tag">
-        <div>
-          <span class="tag-unidad"></span>
-          <p>Unidad</p>
-        </div>
-        <div>
-          <span class="tag-leasing"></span>
-          <p>Leasing</p>
-        </div>
-        <div>
-          <span class="tag-contrato"></span>
-          <p>Contrato</p>
-        </div>
-      </div>
       <table id="listVeh" class="display">
         <thead>
-          <tr>
-            <th>Item</th>
-            <th>Cliente</th>
-            <th>Operacion</th>
-            <th style="background: #ffe6047c !important;">Placa</th>
-            <th style="background: #ffe6047c !important;">Año</th>
-            <th style="background: #ffe6047c !important;">Color</th>
-            <th style="background: #ffe6047c !important;">Marca</th>
-            <th style="background: #ffe6047c !important;">Modelo</th>
-            <th style="background: #ffe6047c !important;">Terreno</th>
-            <th style="background: #04ff827c !important;">Leasing</th>
-            <th style="background: #04ff827c !important;">Fecha Inicio de leasing</th>
-            <th style="background: #04ff827c !important;">Fecha Fin de leasing</th>
-            <th style="background: #0479ff7c !important;">Contrato/Adenda</th>
-            <th style="background: #0479ff7c !important;">Fecha Inicio de contrato</th>
-            <th style="background: #0479ff7c !important;">Fecha Fin de contrato</th>
-            <th style="background: #0479ff7c !important;">Plazo</th>
-            <th style="background: #0479ff7c !important;">Tarifa</th>
-            <th style="background: #0479ff7c !important;">Moneda</th>
-            <th>Fecha de Acta de Entrega</th>
-            <th>Fecha Devolucion</th>
-            <th>% de contrato</th>
-            <th>Condicion</th>
+        <tr>
+          <th class="text-gray-500 !font-medium">Item</th>
+          <th class="text-gray-500 !font-medium">Cliente</th>
+          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Año</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Color</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Marca</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Modelo</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Terreno</th>
+          <th class="bg-green-400 !text-white !font-medium">Leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
+          <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
+          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
+          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
+          <th class="text-gray-500 !font-medium">% de contrato</th>
+          <th class="text-gray-500 !font-medium">Condicion</th>
         </tr>
-        </thead>
-        <tbody>
-          <tr>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Item</th>
-            <th>Cliente</th>
-            <th>Operacion</th>
-            <th style="background: #ffe6047c !important;">Placa</th>
-            <th style="background: #ffe6047c !important;">Año</th>
-            <th style="background: #ffe6047c !important;">Color</th>
-            <th style="background: #ffe6047c !important;">Marca</th>
-            <th style="background: #ffe6047c !important;">Modelo</th>
-            <th style="background: #ffe6047c !important;">Terreno</th>
-            <th style="background: #04ff827c !important;">Leasing</th>
-            <th style="background: #04ff827c !important;">Fecha Inicio de leasing</th>
-            <th style="background: #04ff827c !important;">Fecha Fin de leasing</th>
-            <th style="background: #0479ff7c !important;">Contrato/Adenda</th>
-            <th style="background: #0479ff7c !important;">Fecha Inicio de contrato</th>
-            <th style="background: #0479ff7c !important;">Fecha Fin de contrato</th>
-            <th style="background: #0479ff7c !important;">Plazo</th>
-            <th style="background: #0479ff7c !important;">Tarifa</th>
-            <th style="background: #0479ff7c !important;">Moneda</th>
-            <th>Fecha de Acta de Entrega</th>
-            <th>Fecha Devolucion</th>
-            <th>% de contrato</th>
-            <th>Condicion</th>
-          </tr>
-        </tfoot>
+      </thead>
+      <tbody>
+        <tr>
+        </tr>
+      </tbody>
       </table>
     `);
 
@@ -690,7 +853,52 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      select: true,
+      // fixedHeader: true,
+      dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      buttons: [{
+        extend: 'excelHtml5',
+        text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+        titleAttr: 'Excel',
+        className: 'btn-excel',
+        filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
+        title: `Lista de placas del cliente ${clientId}`,
+        customize: function(xlsx) {
+          var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+          // 1. Cambiar el color del Título (Celda A1)
+          // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
+          $('row c[r^="A1"]', sheet).attr('s', '51');
+
+          // 2. Personalizar los Headers (Fila de encabezados)
+          // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
+          // El estilo '2' es negrita, '42' es fondo azul claro, etc.
+          $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
+
+          // 3. Si quieres colores manuales más específicos (estilos personalizados)
+          // Tienes que editar el diccionario de estilos de JSZip (más complejo)
+          // Pero DataTables trae estilos incorporados del 0 al 60:
+          // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
+        },
+      }],
+      initComplete: function() {
+        $(".leyendas").html(`
+          <div class="w-full flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-yellow-400"></span>
+              <p class="text-xs !m-0">Unidad</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-green-400"></span>
+              <p class="text-xs !m-0">Leasing</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-blue-400"></span>
+              <p class="text-xs !m-0">Contrato</p>
+            </div>
+          </div>
+        `);
+      },
+      ordering: false,
       scrollX: true,
       data: vehicles,
       columns: [{
@@ -863,53 +1071,55 @@ require './templates/header.html';
   // SEVERO
   $("#view-sev").on("click", async () => {
     const param = new URLSearchParams(window.location.search)
+    const clientId = param.get("clienteId")
     const contratoId = param.get("contratoId")
 
-    if (!contratoId) {
-      toastr.info("Debes de seleccionar un contrato en la tabla", "Aviso")
+    if (!clientId) {
+      toastr.info("Debes de seleccionar un cliente en la tabla", "Aviso")
       return;
     }
 
-    const vehicles = await getVehByContract(contratoId, "SEVERO");
+    const vehicles = await getAssignVehActive(clientId, contratoId, null, 3);
 
     if (!Array.isArray(vehicles)) return;
+
+    if (vehicles.length == 0) {
+      toastr.info("No se encontraron registros del tipo de vehiculo Severo", "Aviso")
+      return;
+    }
 
     $("#modal-body-info").append(`
       <table id="listVehSev" class="display">
         <thead>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
-        </tfoot>
+        <tr>
+          <th class="text-gray-500 !font-medium">Item</th>
+          <th class="text-gray-500 !font-medium">Cliente</th>
+          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Año</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Color</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Marca</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Modelo</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Terreno</th>
+          <th class="bg-green-400 !text-white !font-medium">Leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
+          <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
+          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
+          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
+          <th class="text-gray-500 !font-medium">% de contrato</th>
+          <th class="text-gray-500 !font-medium">Condicion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+        </tr>
+      </tbody>
       </table>
     `);
 
@@ -917,7 +1127,53 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      select: true,
+      // fixedHeader: true,
+      dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      buttons: [{
+        extend: 'excelHtml5',
+        text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+        titleAttr: 'Excel',
+        className: 'btn-excel',
+        filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
+        title: `Lista de placas del cliente ${clientId}`,
+        customize: function(xlsx) {
+          var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+          // 1. Cambiar el color del Título (Celda A1)
+          // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
+          $('row c[r^="A1"]', sheet).attr('s', '51');
+
+          // 2. Personalizar los Headers (Fila de encabezados)
+          // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
+          // El estilo '2' es negrita, '42' es fondo azul claro, etc.
+          $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
+
+          // 3. Si quieres colores manuales más específicos (estilos personalizados)
+          // Tienes que editar el diccionario de estilos de JSZip (más complejo)
+          // Pero DataTables trae estilos incorporados del 0 al 60:
+          // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
+        },
+      }],
+      initComplete: function() {
+        $(".leyendas").html(`
+          <div class="w-full flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-yellow-400"></span>
+              <p class="text-xs !m-0">Unidad</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-green-400"></span>
+              <p class="text-xs !m-0">Leasing</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-blue-400"></span>
+              <p class="text-xs !m-0">Contrato</p>
+            </div>
+          </div>
+        `);
+      },
+      ordering: false,
+      scrollX: true,
       data: vehicles,
       columns: [{
           data: "item",
@@ -927,57 +1183,143 @@ require './templates/header.html';
           width: "5%",
         },
         {
-          data: "placa",
-        },
-        {
-          data: "modelo",
-        },
-        {
-          data: "marca",
-        },
-        {
-          data: "cantidad",
-        },
-        {
-          data: "año",
-        },
-        {
-          data: "color",
+          data: "cliente",
+          width: "200px"
         },
         {
           data: "operacion",
+          width: "150px"
         },
         {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              return convertirFecha(data);
-            } else {
-              return "--"
-            }
+          data: "placa",
+          width: "80px"
+        },
+        {
+          data: "año"
+        },
+        {
+          data: "color",
+          width: "100px"
+        },
+        {
+          data: "marca",
+          width: "80px"
+        },
+        {
+          data: "modelo",
+          width: "150px"
+        },
+        {
+          data: "terreno",
+          render: (data) => {
+            return transformType(data, {
+              0: "Superficie",
+              1: "Socavón",
+              2: "Ciudad",
+              3: "Severo"
+            })
+          },
+          width: "100px"
+        },
+        {
+          data: "leasing",
+          width: "120px"
+        },
+        {
+          data: "fechaIniLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "contrato",
+          width: "150px"
+        },
+        {
+          data: "fechaIniCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "plazo",
+          render: (data) => {
+            return data + ` meses`
+          },
+          width: "80px"
+        },
+        {
+          data: "tarifa",
+          render: (data) => {
+            return data.toFixed(2);
           }
         },
         {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              const fechaTsf = convertirFecha(data);
-              const dias = obtenerDiasVencimiento(fechaTsf);
-              if (dias > 0) {
-                return `${dias} dias`
-              } else if (dias < 0) {
-                return `Hace ${Math.abs(dias)} dias`
-              } else {
-                return `Vence hoy`
-              }
-            } else {
-              return "--"
-            }
-          }
+          data: "moneda"
         },
         {
-          data: "nroLeasing"
-        }
+          data: "fechaIni",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFin",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "porcentaje",
+          render: (data, type, row) => {
+
+            const fechaIni = dayjs(row.fechaIni).format("YYYY-MM-DD")
+            const fechaFin = dayjs(row.fechaFin).format("YYYY-MM-DD")
+
+            const result = calcularPorcentaje(fechaIni, fechaFin);
+
+            if (typeof result == "string") {
+              return `<span style="color: red;">${result}</span>`;
+            } else {
+              const color = result > 0 && result <= 25 ? "red-relleno" : result > 25 && result <= 60 ? "yellow-relleno" : "green-relleno";
+              const colorText = result > 0 && result <= 25 ? "black-porcentaje" : result > 25 && result <= 60 ? "black-porcentaje" : "white-porcentaje";
+              return `
+                <div class="contenedor-barra">
+                  <div class="progreso-relleno ${color}" style="width: ${result}%;"></div>
+                  <span class="numero-porcentaje ${colorText}">${result}%</span>
+                </div>
+              `
+            }
+          },
+          width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data, type, row) => {
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+
+            return `<span class="tag-estado ${color}">${status}</span>`
+          }
+        },
       ],
     })
 
@@ -988,53 +1330,55 @@ require './templates/header.html';
   // SOCAVON
   $("#view-soc").on("click", async () => {
     const param = new URLSearchParams(window.location.search)
+    const clientId = param.get("clienteId")
     const contratoId = param.get("contratoId")
 
-    if (!contratoId) {
-      toastr.info("Debes de seleccionar un contrato en la tabla", "Aviso")
+    if (!clientId) {
+      toastr.info("Debes de seleccionar un cliente en la tabla", "Aviso")
       return;
     }
 
-    const vehicles = await getVehByContract(contratoId, "SOCAVON");
+    const vehicles = await getAssignVehActive(clientId, contratoId, null, 1);
 
     if (!Array.isArray(vehicles)) return;
+
+    if (vehicles.length == 0) {
+      toastr.info("No se encontraron registros del tipo de vehiculo Socavón", "Aviso")
+      return;
+    }
 
     $("#modal-body-info").append(`
       <table id="listVehSoc" class="display">
         <thead>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
-        </tfoot>
+        <tr>
+          <th class="text-gray-500 !font-medium">Item</th>
+          <th class="text-gray-500 !font-medium">Cliente</th>
+          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Año</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Color</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Marca</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Modelo</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Terreno</th>
+          <th class="bg-green-400 !text-white !font-medium">Leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
+          <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
+          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
+          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
+          <th class="text-gray-500 !font-medium">% de contrato</th>
+          <th class="text-gray-500 !font-medium">Condicion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+        </tr>
+      </tbody>
       </table>
     `);
 
@@ -1042,7 +1386,53 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      select: true,
+      // fixedHeader: true,
+      dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      buttons: [{
+        extend: 'excelHtml5',
+        text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+        titleAttr: 'Excel',
+        className: 'btn-excel',
+        filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
+        title: `Lista de placas del cliente ${clientId}`,
+        customize: function(xlsx) {
+          var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+          // 1. Cambiar el color del Título (Celda A1)
+          // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
+          $('row c[r^="A1"]', sheet).attr('s', '51');
+
+          // 2. Personalizar los Headers (Fila de encabezados)
+          // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
+          // El estilo '2' es negrita, '42' es fondo azul claro, etc.
+          $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
+
+          // 3. Si quieres colores manuales más específicos (estilos personalizados)
+          // Tienes que editar el diccionario de estilos de JSZip (más complejo)
+          // Pero DataTables trae estilos incorporados del 0 al 60:
+          // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
+        },
+      }],
+      initComplete: function() {
+        $(".leyendas").html(`
+          <div class="w-full flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-yellow-400"></span>
+              <p class="text-xs !m-0">Unidad</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-green-400"></span>
+              <p class="text-xs !m-0">Leasing</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-blue-400"></span>
+              <p class="text-xs !m-0">Contrato</p>
+            </div>
+          </div>
+        `);
+      },
+      ordering: false,
+      scrollX: true,
       data: vehicles,
       columns: [{
           data: "item",
@@ -1052,57 +1442,143 @@ require './templates/header.html';
           width: "5%",
         },
         {
-          data: "placa",
-        },
-        {
-          data: "modelo",
-        },
-        {
-          data: "marca",
-        },
-        {
-          data: "cantidad",
-        },
-        {
-          data: "año",
-        },
-        {
-          data: "color",
+          data: "cliente",
+          width: "200px"
         },
         {
           data: "operacion",
+          width: "150px"
         },
         {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              return convertirFecha(data);
-            } else {
-              return "--"
-            }
+          data: "placa",
+          width: "80px"
+        },
+        {
+          data: "año"
+        },
+        {
+          data: "color",
+          width: "100px"
+        },
+        {
+          data: "marca",
+          width: "80px"
+        },
+        {
+          data: "modelo",
+          width: "150px"
+        },
+        {
+          data: "terreno",
+          render: (data) => {
+            return transformType(data, {
+              0: "Superficie",
+              1: "Socavón",
+              2: "Ciudad",
+              3: "Severo"
+            })
+          },
+          width: "100px"
+        },
+        {
+          data: "leasing",
+          width: "120px"
+        },
+        {
+          data: "fechaIniLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "contrato",
+          width: "150px"
+        },
+        {
+          data: "fechaIniCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "plazo",
+          render: (data) => {
+            return data + ` meses`
+          },
+          width: "80px"
+        },
+        {
+          data: "tarifa",
+          render: (data) => {
+            return data.toFixed(2);
           }
         },
         {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              const fechaTsf = convertirFecha(data);
-              const dias = obtenerDiasVencimiento(fechaTsf);
-              if (dias > 0) {
-                return `${dias} dias`
-              } else if (dias < 0) {
-                return `Hace ${Math.abs(dias)} dias`
-              } else {
-                return `Vence hoy`
-              }
-            } else {
-              return "--"
-            }
-          }
+          data: "moneda"
         },
         {
-          data: "nroLeasing"
-        }
+          data: "fechaIni",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFin",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "porcentaje",
+          render: (data, type, row) => {
+
+            const fechaIni = dayjs(row.fechaIni).format("YYYY-MM-DD")
+            const fechaFin = dayjs(row.fechaFin).format("YYYY-MM-DD")
+
+            const result = calcularPorcentaje(fechaIni, fechaFin);
+
+            if (typeof result == "string") {
+              return `<span style="color: red;">${result}</span>`;
+            } else {
+              const color = result > 0 && result <= 25 ? "red-relleno" : result > 25 && result <= 60 ? "yellow-relleno" : "green-relleno";
+              const colorText = result > 0 && result <= 25 ? "black-porcentaje" : result > 25 && result <= 60 ? "black-porcentaje" : "white-porcentaje";
+              return `
+                <div class="contenedor-barra">
+                  <div class="progreso-relleno ${color}" style="width: ${result}%;"></div>
+                  <span class="numero-porcentaje ${colorText}">${result}%</span>
+                </div>
+              `
+            }
+          },
+          width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data, type, row) => {
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+
+            return `<span class="tag-estado ${color}">${status}</span>`
+          }
+        },
       ],
     })
 
@@ -1113,53 +1589,55 @@ require './templates/header.html';
   // SUPERFICIE
   $("#view-sup").on("click", async () => {
     const param = new URLSearchParams(window.location.search)
+    const clientId = param.get("clienteId")
     const contratoId = param.get("contratoId")
 
-    if (!contratoId) {
-      toastr.info("Debes de seleccionar un contrato en la tabla", "Aviso")
+    if (!clientId) {
+      toastr.info("Debes de seleccionar un cliente en la tabla", "Aviso")
       return;
     }
 
-    const vehicles = await getVehByContract(contratoId, "SUPERFICIE");
+    const vehicles = await getAssignVehActive(clientId, contratoId, null, 0);
 
     if (!Array.isArray(vehicles)) return;
+
+    if (vehicles.length == 0) {
+      toastr.info("No se encontraron registros del tipo de vehiculo Superficie", "Aviso")
+      return;
+    }
 
     $("#modal-body-info").append(`
       <table id="listVehSup" class="display">
         <thead>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
-        </tfoot>
+        <tr>
+          <th class="text-gray-500 !font-medium">Item</th>
+          <th class="text-gray-500 !font-medium">Cliente</th>
+          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Año</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Color</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Marca</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Modelo</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Terreno</th>
+          <th class="bg-green-400 !text-white !font-medium">Leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
+          <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
+          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
+          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
+          <th class="text-gray-500 !font-medium">% de contrato</th>
+          <th class="text-gray-500 !font-medium">Condicion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+        </tr>
+      </tbody>
       </table>
     `);
 
@@ -1167,7 +1645,53 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      select: true,
+      // fixedHeader: true,
+      dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      buttons: [{
+        extend: 'excelHtml5',
+        text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+        titleAttr: 'Excel',
+        className: 'btn-excel',
+        filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
+        title: `Lista de placas del cliente ${clientId}`,
+        customize: function(xlsx) {
+          var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+          // 1. Cambiar el color del Título (Celda A1)
+          // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
+          $('row c[r^="A1"]', sheet).attr('s', '51');
+
+          // 2. Personalizar los Headers (Fila de encabezados)
+          // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
+          // El estilo '2' es negrita, '42' es fondo azul claro, etc.
+          $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
+
+          // 3. Si quieres colores manuales más específicos (estilos personalizados)
+          // Tienes que editar el diccionario de estilos de JSZip (más complejo)
+          // Pero DataTables trae estilos incorporados del 0 al 60:
+          // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
+        },
+      }],
+      initComplete: function() {
+        $(".leyendas").html(`
+          <div class="w-full flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-yellow-400"></span>
+              <p class="text-xs !m-0">Unidad</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-green-400"></span>
+              <p class="text-xs !m-0">Leasing</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-blue-400"></span>
+              <p class="text-xs !m-0">Contrato</p>
+            </div>
+          </div>
+        `);
+      },
+      ordering: false,
+      scrollX: true,
       data: vehicles,
       columns: [{
           data: "item",
@@ -1177,57 +1701,143 @@ require './templates/header.html';
           width: "5%",
         },
         {
-          data: "placa",
-        },
-        {
-          data: "modelo",
-        },
-        {
-          data: "marca",
-        },
-        {
-          data: "cantidad",
-        },
-        {
-          data: "año",
-        },
-        {
-          data: "color",
+          data: "cliente",
+          width: "200px"
         },
         {
           data: "operacion",
+          width: "150px"
         },
         {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              return convertirFecha(data);
-            } else {
-              return "--"
-            }
+          data: "placa",
+          width: "80px"
+        },
+        {
+          data: "año"
+        },
+        {
+          data: "color",
+          width: "100px"
+        },
+        {
+          data: "marca",
+          width: "80px"
+        },
+        {
+          data: "modelo",
+          width: "150px"
+        },
+        {
+          data: "terreno",
+          render: (data) => {
+            return transformType(data, {
+              0: "Superficie",
+              1: "Socavón",
+              2: "Ciudad",
+              3: "Severo"
+            })
+          },
+          width: "100px"
+        },
+        {
+          data: "leasing",
+          width: "120px"
+        },
+        {
+          data: "fechaIniLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "contrato",
+          width: "150px"
+        },
+        {
+          data: "fechaIniCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "plazo",
+          render: (data) => {
+            return data + ` meses`
+          },
+          width: "80px"
+        },
+        {
+          data: "tarifa",
+          render: (data) => {
+            return data.toFixed(2);
           }
         },
         {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              const fechaTsf = convertirFecha(data);
-              const dias = obtenerDiasVencimiento(fechaTsf);
-              if (dias > 0) {
-                return `${dias} dias`
-              } else if (dias < 0) {
-                return `Hace ${Math.abs(dias)} dias`
-              } else {
-                return `Vence hoy`
-              }
-            } else {
-              return "--"
-            }
-          }
+          data: "moneda"
         },
         {
-          data: "nroLeasing"
-        }
+          data: "fechaIni",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFin",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "porcentaje",
+          render: (data, type, row) => {
+
+            const fechaIni = dayjs(row.fechaIni).format("YYYY-MM-DD")
+            const fechaFin = dayjs(row.fechaFin).format("YYYY-MM-DD")
+
+            const result = calcularPorcentaje(fechaIni, fechaFin);
+
+            if (typeof result == "string") {
+              return `<span style="color: red;">${result}</span>`;
+            } else {
+              const color = result > 0 && result <= 25 ? "red-relleno" : result > 25 && result <= 60 ? "yellow-relleno" : "green-relleno";
+              const colorText = result > 0 && result <= 25 ? "black-porcentaje" : result > 25 && result <= 60 ? "black-porcentaje" : "white-porcentaje";
+              return `
+                <div class="contenedor-barra">
+                  <div class="progreso-relleno ${color}" style="width: ${result}%;"></div>
+                  <span class="numero-porcentaje ${colorText}">${result}%</span>
+                </div>
+              `
+            }
+          },
+          width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data, type, row) => {
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+
+            return `<span class="tag-estado ${color}">${status}</span>`
+          }
+        },
       ],
     })
 
@@ -1238,53 +1848,55 @@ require './templates/header.html';
   // CIUDAD
   $("#view-ciu").on("click", async () => {
     const param = new URLSearchParams(window.location.search)
+    const clientId = param.get("clienteId")
     const contratoId = param.get("contratoId")
 
-    if (!contratoId) {
-      toastr.info("Debes de seleccionar un contrato en la tabla", "Aviso")
+    if (!clientId) {
+      toastr.info("Debes de seleccionar un cliente en la tabla", "Aviso")
       return;
     }
 
-    const vehicles = await getVehByContract(contratoId, "CIUDAD");
+    const vehicles = await getAssignVehActive(clientId, contratoId, null, 2);
 
     if (!Array.isArray(vehicles)) return;
+
+    if (vehicles.length == 0) {
+      toastr.info("No se encontraron registros del tipo de vehiculo Ciudad", "Aviso")
+      return;
+    }
 
     $("#modal-body-info").append(`
       <table id="listVehCiu" class="display">
         <thead>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
-        </tfoot>
+        <tr>
+          <th class="text-gray-500 !font-medium">Item</th>
+          <th class="text-gray-500 !font-medium">Cliente</th>
+          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Año</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Color</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Marca</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Modelo</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Terreno</th>
+          <th class="bg-green-400 !text-white !font-medium">Leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
+          <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
+          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
+          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
+          <th class="text-gray-500 !font-medium">% de contrato</th>
+          <th class="text-gray-500 !font-medium">Condicion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+        </tr>
+      </tbody>
       </table>
     `);
 
@@ -1292,7 +1904,53 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      select: true,
+      // fixedHeader: true,
+      dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      buttons: [{
+        extend: 'excelHtml5',
+        text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+        titleAttr: 'Excel',
+        className: 'btn-excel',
+        filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
+        title: `Lista de placas del cliente ${clientId}`,
+        customize: function(xlsx) {
+          var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+          // 1. Cambiar el color del Título (Celda A1)
+          // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
+          $('row c[r^="A1"]', sheet).attr('s', '51');
+
+          // 2. Personalizar los Headers (Fila de encabezados)
+          // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
+          // El estilo '2' es negrita, '42' es fondo azul claro, etc.
+          $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
+
+          // 3. Si quieres colores manuales más específicos (estilos personalizados)
+          // Tienes que editar el diccionario de estilos de JSZip (más complejo)
+          // Pero DataTables trae estilos incorporados del 0 al 60:
+          // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
+        },
+      }],
+      initComplete: function() {
+        $(".leyendas").html(`
+          <div class="w-full flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-yellow-400"></span>
+              <p class="text-xs !m-0">Unidad</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-green-400"></span>
+              <p class="text-xs !m-0">Leasing</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-blue-400"></span>
+              <p class="text-xs !m-0">Contrato</p>
+            </div>
+          </div>
+        `);
+      },
+      ordering: false,
+      scrollX: true,
       data: vehicles,
       columns: [{
           data: "item",
@@ -1302,57 +1960,143 @@ require './templates/header.html';
           width: "5%",
         },
         {
-          data: "placa",
-        },
-        {
-          data: "modelo",
-        },
-        {
-          data: "marca",
-        },
-        {
-          data: "cantidad",
-        },
-        {
-          data: "año",
-        },
-        {
-          data: "color",
+          data: "cliente",
+          width: "200px"
         },
         {
           data: "operacion",
+          width: "150px"
         },
         {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              return convertirFecha(data);
-            } else {
-              return "--"
-            }
+          data: "placa",
+          width: "80px"
+        },
+        {
+          data: "año"
+        },
+        {
+          data: "color",
+          width: "100px"
+        },
+        {
+          data: "marca",
+          width: "80px"
+        },
+        {
+          data: "modelo",
+          width: "150px"
+        },
+        {
+          data: "terreno",
+          render: (data) => {
+            return transformType(data, {
+              0: "Superficie",
+              1: "Socavón",
+              2: "Ciudad",
+              3: "Severo"
+            })
+          },
+          width: "100px"
+        },
+        {
+          data: "leasing",
+          width: "120px"
+        },
+        {
+          data: "fechaIniLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "contrato",
+          width: "150px"
+        },
+        {
+          data: "fechaIniCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "plazo",
+          render: (data) => {
+            return data + ` meses`
+          },
+          width: "80px"
+        },
+        {
+          data: "tarifa",
+          render: (data) => {
+            return data.toFixed(2);
           }
         },
         {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              const fechaTsf = convertirFecha(data);
-              const dias = obtenerDiasVencimiento(fechaTsf);
-              if (dias > 0) {
-                return `${dias} dias`
-              } else if (dias < 0) {
-                return `Hace ${Math.abs(dias)} dias`
-              } else {
-                return `Vence hoy`
-              }
-            } else {
-              return "--"
-            }
-          }
+          data: "moneda"
         },
         {
-          data: "nroLeasing"
-        }
+          data: "fechaIni",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFin",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "porcentaje",
+          render: (data, type, row) => {
+
+            const fechaIni = dayjs(row.fechaIni).format("YYYY-MM-DD")
+            const fechaFin = dayjs(row.fechaFin).format("YYYY-MM-DD")
+
+            const result = calcularPorcentaje(fechaIni, fechaFin);
+
+            if (typeof result == "string") {
+              return `<span style="color: red;">${result}</span>`;
+            } else {
+              const color = result > 0 && result <= 25 ? "red-relleno" : result > 25 && result <= 60 ? "yellow-relleno" : "green-relleno";
+              const colorText = result > 0 && result <= 25 ? "black-porcentaje" : result > 25 && result <= 60 ? "black-porcentaje" : "white-porcentaje";
+              return `
+                <div class="contenedor-barra">
+                  <div class="progreso-relleno ${color}" style="width: ${result}%;"></div>
+                  <span class="numero-porcentaje ${colorText}">${result}%</span>
+                </div>
+              `
+            }
+          },
+          width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data, type, row) => {
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+
+            return `<span class="tag-estado ${color}">${status}</span>`
+          }
+        },
       ],
     })
 

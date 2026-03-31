@@ -81,6 +81,8 @@ document.addEventListener("DOMContentLoaded", async () => {
  * AGREGA UNA NUEVA FILA A LA TABLA DE VEHICULOS
  */
 $("#addVehicle").on("click", function (e) {
+  const checkbox = document.getElementById("especial"); 
+  
   cargarFilasRegistrar(checkbox);
 });
 

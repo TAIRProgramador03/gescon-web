@@ -55,7 +55,6 @@ require './templates/header.html';
             <option value="">Seleccione un cliente</option>
           </select>
 
-          <!-- El label DEBE estar después del select en el HTML -->
           <label
             for="combo-cliente"
             class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">

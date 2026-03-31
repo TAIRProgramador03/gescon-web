@@ -51,7 +51,6 @@ body {
   padding: 19px 2px;
   text-align: center;
   color: #fff;
-  background: #0e2e67;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   align-content: center;
@@ -99,16 +98,6 @@ body {
   padding: 0 20px;
 }
 
-.txt-description textarea {
-  height: 60px;
-  outline: none;
-  border: 1px solid #002141;
-  border-radius: 4px;
-  padding: 8px 12px;
-  background-color: #fdfdfd;
-  resize: none;
-}
-
 /* SELECT 2 ESTILOS */
 .select2-results__option {
   color: #000;
@@ -116,6 +105,99 @@ body {
 
 .select2-container--default .select2-results__option[aria-selected="true"] {
   color: #000;
+}
+
+.select2-container {
+  order: 2;
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__rendered {
+  color: #000000;
+  /* line-height: 28px; */
+}
+
+.select2-container .select2-selection--single {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+  padding: 0;
+}
+
+.select2-dropdown {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+/* Cambia la fuente de los elementos dentro del desplegable */
+.select2-results__option {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single {
+  height: 43.3px !important;
+  padding: 11px 10px;
+}
+
+.select2-selection__arrow {
+  top: 50% !important;
+  transform: translate(0, -50%);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: normal;
+}
+
+.select2-container--default .select2-selection--single {
+  outline: none;
+  border: 2px solid oklch(87.2% 0.01 258.338) !important;
+  border-radius: 5px;
+}
+
+.select2-container--default.select2-container--disabled .select2-selection--single {
+  background: #fff !important;
+  color: #eee !important;
+}
+
+.select2-container--default.select2-container--disabled ~ .label-select {
+  color: #eee !important;
+}
+
+/* Cuando el contenedor de Select2 tenga el foco, pinta el label que viene después */
+.select2-container--default.select2-container--focus ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* Cambia el color del borde cuando Select2 recibe el foco */
+.select2-container--default.select2-container--focus
+  .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* También cuando el menú desplegable está abierto */
+.select2-container--default.select2-container--open .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* OPCIONAL: Si quieres que también cambie cuando el menú está ABIERTO */
+.select2-container--default.select2-container--open ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
 }
 
 .text-form-col {
@@ -162,7 +244,7 @@ body {
 
 .terreno-form {
   text-align: center;
-  border: 1px solid;
+  border: 1px solid #d1d5db;
   border-radius: 7px;
   cursor: pointer;
 }
@@ -209,7 +291,7 @@ body {
 }
 
 .nom-tp {
-  background: #0e2e67;
+  background: #1e3a8a;
   color: white;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
@@ -690,400 +772,6 @@ h3 {
   }
 }
 
-#btn-edit-con {
-  --color: #fff;
-  --background: #234470;
-  --background-hover: #495e86;
-  --background-left: #2b3044;
-  --folder: #f3e9cb;
-  --folder-inner: #beb393;
-  --paper: #ffffff;
-  --paper-lines: #bbc1e1;
-  --paper-behind: #e1e6f9;
-  --pencil-cap: #fff;
-  --pencil-top: #275efe;
-  --pencil-middle: #fff;
-  --pencil-bottom: #5c86ff;
-  --shadow: rgba(13, 15, 25, 0.2);
-  display: none;
-  width: 100%;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  position: relative;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 19px;
-  -webkit-appearance: none;
-  -webkit-tap-highlight-color: transparent;
-  padding: 17px 29px 17px 69px;
-  transition: background 0.3s;
-  color: var(--color);
-  background: var(--bg, var(--background));
-  & > div {
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 53px;
-    position: absolute;
-    overflow: hidden;
-    border-radius: 10px 0 0 10px;
-    background: #102647; /*var(--background-left);*/
-    .folder {
-      width: 23px;
-      height: 27px;
-      position: absolute;
-      left: 15px;
-      top: 13px;
-      .top {
-        left: 0;
-        top: 0;
-        z-index: 2;
-        position: absolute;
-        transform: translateX(var(--fx, 0));
-        transition: transform 0.4s ease var(--fd, 0.3s);
-        svg {
-          width: 24px;
-          height: 27px;
-          display: block;
-          fill: var(--folder);
-          transform-origin: 0 50%;
-          transition: transform 0.3s ease var(--fds, 0.45s);
-          transform: perspective(120px) rotateY(var(--fr, 0deg));
-        }
-      }
-      &:before,
-      &:after,
-      .paper {
-        content: "";
-        position: absolute;
-        left: var(--l, 0);
-        top: var(--t, 0);
-        width: var(--w, 100%);
-        height: var(--h, 100%);
-        border-radius: 1px;
-        background: var(--b, var(--folder-inner));
-      }
-      &:before {
-        box-shadow:
-          0 1.5px 3px var(--shadow),
-          0 2.5px 5px var(--shadow),
-          0 3.5px 7px var(--shadow);
-        transform: translateX(var(--fx, 0));
-        transition: transform 0.4s ease var(--fd, 0.3s);
-      }
-      &:after,
-      .paper {
-        --l: 1px;
-        --t: 1px;
-        --w: 21px;
-        --h: 25px;
-        --b: var(--paper-behind);
-      }
-      &:after {
-        transform: translate(var(--pbx, 0), var(--pby, 0));
-        transition: transform 0.4s ease var(--pbd, 0s);
-      }
-      .paper {
-        z-index: 1;
-        --b: var(--paper);
-        &:before,
-        &:after {
-          content: "";
-          width: var(--wp, 14px);
-          height: 2px;
-          border-radius: 1px;
-          transform: scaleY(0.5);
-          left: 3px;
-          top: var(--tp, 3px);
-          position: absolute;
-          background: var(--paper-lines);
-          box-shadow:
-            0 12px 0 0 var(--paper-lines),
-            0 24px 0 0 var(--paper-lines);
-        }
-        &:after {
-          --tp: 6px;
-          --wp: 10px;
-        }
-      }
-    }
-    .pencil {
-      height: 2px;
-      width: 3px;
-      border-radius: 1px 1px 0 0;
-      top: 8px;
-      left: 105%;
-      position: absolute;
-      z-index: 3;
-      transform-origin: 50% 19px;
-      background: var(--pencil-cap);
-      transform: translateX(var(--pex, 0)) rotate(35deg);
-      transition: transform 0.4s ease var(--pbd, 0s);
-      &:before,
-      &:after {
-        content: "";
-        position: absolute;
-        display: block;
-        background: var(
-          --b,
-          linear-gradient(
-            var(--pencil-top) 55%,
-            var(--pencil-middle) 55.1%,
-            var(--pencil-middle) 60%,
-            var(--pencil-bottom) 60.1%
-          )
-        );
-        width: var(--w, 5px);
-        height: var(--h, 20px);
-        border-radius: var(--br, 2px 2px 0 0);
-        top: var(--t, 2px);
-        left: var(--l, -1px);
-      }
-      &:before {
-        clip-path: polygon(0 5%, 5px 5%, 5px 17px, 50% 20px, 0 17px);
-      }
-      &:after {
-        --b: none;
-        --w: 3px;
-        --h: 6px;
-        --br: 0 2px 1px 0;
-        --t: 3px;
-        --l: 3px;
-        border-top: 1px solid var(--pencil-top);
-        border-right: 1px solid var(--pencil-top);
-      }
-    }
-  }
-  &:before,
-  &:after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 2px;
-    border-radius: 1px;
-    background: var(--color);
-    transform-origin: 9px 1px;
-    transform: translateX(var(--cx, 0)) scale(0.5) rotate(var(--r, -45deg));
-    top: 26px;
-    right: 16px;
-    transition: transform 0.3s;
-  }
-  &:after {
-    --r: 45deg;
-  }
-  &:hover {
-    --cx: 2px;
-    --bg: var(--background-hover);
-    --fx: -40px;
-    --fr: -60deg;
-    --fd: 0.15s;
-    --fds: 0s;
-    --pbx: 3px;
-    --pby: -3px;
-    --pbd: 0.15s;
-    --pex: -24px;
-  }
-}
-
-.continue-pen {
-  --color: #fff;
-  --background: #4a256b;
-  --background-hover: #633090;
-  --background-left: #2b3044;
-  --folder: #f3e9cb;
-  --folder-inner: #beb393;
-  --paper: #ffffff;
-  --paper-lines: #bbc1e1;
-  --paper-behind: #e1e6f9;
-  --pencil-cap: #fff;
-  --pencil-top: #275efe;
-  --pencil-middle: #fff;
-  --pencil-bottom: #5c86ff;
-  --shadow: rgba(13, 15, 25, 0.2);
-  display: none;
-  width: 100%;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  position: relative;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 19px;
-  -webkit-appearance: none;
-  -webkit-tap-highlight-color: transparent;
-  padding: 17px 29px 17px 69px;
-  transition: background 0.3s;
-  color: var(--color);
-  background: var(--bg, var(--background));
-  & > div {
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 53px;
-    position: absolute;
-    overflow: hidden;
-    border-radius: 10px 0 0 10px;
-    background: #372647; /*var(--background-left);*/
-    .folder {
-      width: 23px;
-      height: 27px;
-      position: absolute;
-      left: 15px;
-      top: 13px;
-      .top {
-        left: 0;
-        top: 0;
-        z-index: 2;
-        position: absolute;
-        transform: translateX(var(--fx, 0));
-        transition: transform 0.4s ease var(--fd, 0.3s);
-        svg {
-          width: 24px;
-          height: 27px;
-          display: block;
-          fill: var(--folder);
-          transform-origin: 0 50%;
-          transition: transform 0.3s ease var(--fds, 0.45s);
-          transform: perspective(120px) rotateY(var(--fr, 0deg));
-        }
-      }
-      &:before,
-      &:after,
-      .paper {
-        content: "";
-        position: absolute;
-        left: var(--l, 0);
-        top: var(--t, 0);
-        width: var(--w, 100%);
-        height: var(--h, 100%);
-        border-radius: 1px;
-        background: var(--b, var(--folder-inner));
-      }
-      &:before {
-        box-shadow:
-          0 1.5px 3px var(--shadow),
-          0 2.5px 5px var(--shadow),
-          0 3.5px 7px var(--shadow);
-        transform: translateX(var(--fx, 0));
-        transition: transform 0.4s ease var(--fd, 0.3s);
-      }
-      &:after,
-      .paper {
-        --l: 1px;
-        --t: 1px;
-        --w: 21px;
-        --h: 25px;
-        --b: var(--paper-behind);
-      }
-      &:after {
-        transform: translate(var(--pbx, 0), var(--pby, 0));
-        transition: transform 0.4s ease var(--pbd, 0s);
-      }
-      .paper {
-        z-index: 1;
-        --b: var(--paper);
-        &:before,
-        &:after {
-          content: "";
-          width: var(--wp, 14px);
-          height: 2px;
-          border-radius: 1px;
-          transform: scaleY(0.5);
-          left: 3px;
-          top: var(--tp, 3px);
-          position: absolute;
-          background: var(--paper-lines);
-          box-shadow:
-            0 12px 0 0 var(--paper-lines),
-            0 24px 0 0 var(--paper-lines);
-        }
-        &:after {
-          --tp: 6px;
-          --wp: 10px;
-        }
-      }
-    }
-    .pencil {
-      height: 2px;
-      width: 3px;
-      border-radius: 1px 1px 0 0;
-      top: 8px;
-      left: 105%;
-      position: absolute;
-      z-index: 3;
-      transform-origin: 50% 19px;
-      background: var(--pencil-cap);
-      transform: translateX(var(--pex, 0)) rotate(35deg);
-      transition: transform 0.4s ease var(--pbd, 0s);
-      &:before,
-      &:after {
-        content: "";
-        position: absolute;
-        display: block;
-        background: var(
-          --b,
-          linear-gradient(
-            var(--pencil-top) 55%,
-            var(--pencil-middle) 55.1%,
-            var(--pencil-middle) 60%,
-            var(--pencil-bottom) 60.1%
-          )
-        );
-        width: var(--w, 5px);
-        height: var(--h, 20px);
-        border-radius: var(--br, 2px 2px 0 0);
-        top: var(--t, 2px);
-        left: var(--l, -1px);
-      }
-      &:before {
-        clip-path: polygon(0 5%, 5px 5%, 5px 17px, 50% 20px, 0 17px);
-      }
-      &:after {
-        --b: none;
-        --w: 3px;
-        --h: 6px;
-        --br: 0 2px 1px 0;
-        --t: 3px;
-        --l: 3px;
-        border-top: 1px solid var(--pencil-top);
-        border-right: 1px solid var(--pencil-top);
-      }
-    }
-  }
-  &:before,
-  &:after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 2px;
-    border-radius: 1px;
-    background: var(--color);
-    transform-origin: 9px 1px;
-    transform: translateX(var(--cx, 0)) scale(0.5) rotate(var(--r, -45deg));
-    top: 26px;
-    right: 16px;
-    transition: transform 0.3s;
-  }
-  &:after {
-    --r: 45deg;
-  }
-  &:hover {
-    --cx: 2px;
-    --bg: var(--background-hover);
-    --fx: -40px;
-    --fr: -60deg;
-    --fd: 0.15s;
-    --fds: 0s;
-    --pbx: 3px;
-    --pby: -3px;
-    --pbd: 0.15s;
-    --pex: -24px;
-  }
-}
-
 .continue-pen.alert {
   --background: #6b2525;
   --background-hover: #903030;
@@ -1103,8 +791,10 @@ h3 {
   height: 18px;
   background: red;
   color: white;
+  font-size: 14px;
   border-radius: 50%;
   animation: bounce 2s infinite;
+  z-index: 50;
 }
 
 @keyframes bounce {
@@ -1567,7 +1257,7 @@ button:disabled {
   list-style: none;
   color: black;
   height: 100%;
-  overflow: auto;
+  position: relative !important;
   font-family: "Fredoka Variable", sans-serif;
   overflow: auto;
 }
@@ -1666,9 +1356,9 @@ button:disabled {
 }
 
 /* TABLA ESTILOS */
-
-table {
+div.dt-scroll {
   border-radius: 8px !important;
+  border: 1px solid #e5e5e5;
   overflow: hidden;
 }
 
@@ -1676,17 +1366,17 @@ table thead {
   border: 0;
 }
 
-table thead tr {
-  background: #f8f9fa;
-}
-
 table thead th .dt-column-title {
-  color: #667085 !important;
+  /* color: #667085 !important; */
   font-size: 14px;
-  font-weight: 600;
+  /* font-weight: 600; */
 }
 
-table tbody tr {
+table.dataTable>thead>tr>th {
+  padding: 0px 8px;
+}
+
+#listContracts tbody tr {
   cursor: pointer;
 }
 
@@ -1695,7 +1385,7 @@ table tbody tr:hover {
 }
 
 table tbody tr td {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 table tfoot {
@@ -1730,6 +1420,86 @@ table.dataTable.display tbody tr:hover > .sorting_1 {
   box-shadow: none !important;
 }
 
-.selected-row {
-  box-shadow: inset 0 0 0 9999px #b3b3b375;
+.dt-container .superior {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.dt-container .inferior {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.dt-container .inferior .derecha-inferior {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+div.dt-container .dt-info {
+  color: oklch(0.556 0 0) !important;
+  font-size: 0.875rem;
+}
+
+.dt-container .inferior .derecha-inferior select {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current {
+  background: #2b5ce4 !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current:hover {
+  background: #3e68db !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button {
+  background: transparent !important;
+  color: rgb(139, 139, 139);
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button:hover {
+  background: #3e68db !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+.btn-excel {
+  border: 0 !important;
+  border-radius: 4px !important;
+  color: #fff !important;
+  transition: linear 200ms;
+  background-color: #077703 !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+  margin: 0 !important;
+}
+
+.btn-excel:hover {
+  box-shadow: 2px 2px 5px #0000002d !important;
+}
+
+.btn-excel span {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
 }

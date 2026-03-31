@@ -285,7 +285,7 @@ main {
   padding: min(30px, 7%);
 }
 main p {
-  color: var(--secondary-text-clr);
+  /* color: var(--secondary-text-clr); */
   margin-top: 5px;
   margin-bottom: 15px;
 }

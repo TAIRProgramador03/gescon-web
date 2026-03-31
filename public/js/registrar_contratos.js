@@ -42,13 +42,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       const isEdit = validNroContract(findContract.nroContrato);
       if (isEdit === "TEMP") {
         $("#title-form").text("Actualizar contrato");
-        $("#desc-form").text("Modifica la información del contrato temporal");
-        $(".btn-update").show();
-        $(".clear-action").hide();
-        $(".continue-application").hide();
+        $("#desc-form").text("Gestione la actualización de contratos temporales registrados para un cliente.");
+        $("#actualizarButton").removeClass("hidden");
+        $("#actualizarButton").addClass("flex");
+
+        $("#btnClear").addClass("hidden");
+        $("#btnClear").removeClass("flex");
+        $("#grabarButton").addClass("hidden");
+        $("#grabarButton").removeClass("flex");
         $("#combo-cliente").prop("disabled", true);
         await cargarCampos(findContract);
       } else {
+        params.delete("formUpd");
+        params.delete("contratoId");
+
+        const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+        window.history.replaceState({}, "", nuevaURL);
+
         toastr.warning(
           "El contrato solicitado no tiene permitido su modificación.",
           "¡Alto!",
@@ -81,8 +91,8 @@ document.addEventListener("DOMContentLoaded", async () => {
  * AGREGA UNA NUEVA FILA A LA TABLA DE VEHICULOS
  */
 $("#addVehicle").on("click", function (e) {
-  const checkbox = document.getElementById("especial"); 
-  
+  const checkbox = document.getElementById("especial");
+
   cargarFilasRegistrar(checkbox);
 });
 
@@ -1115,9 +1125,13 @@ function limpiarCampos() {
   window.history.replaceState({}, "", nuevaURL);
 
   $("#title-form").text("Registrar contrato");
-  $(".btn-update").hide();
-  $(".clear-action").show();
-  $(".continue-application").show();
+  $("#actualizarButton").addClass("hidden");
+  $("#actualizarButton").removeClass("flex");
+
+  $("#btnClear").addClass("flex");
+  $("#btnClear").removeClass("hidden");
+  $("#grabarButton").addClass("flex");
+  $("#grabarButton").removeClass("hidden");
 
   // Limpiar los campos de texto (inputs)
   console.log("Función limpiarCampos ejecutada");

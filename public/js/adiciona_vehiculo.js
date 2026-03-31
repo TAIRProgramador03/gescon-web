@@ -1,6 +1,42 @@
-// const IP_LOCAL = 'localhost';
+toastr.options = {
+  closeButton: false,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-bottom-right",
+  preventDuplicates: false,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "5000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
+
+let activeRequests = 0;
+
+function showLoader() {
+  activeRequests++;
+  $("#preloader-mini").css("opacity", "1");
+  $("#preloader-mini").css("z-index", "99999");
+}
+
+function hideLoader() {
+  activeRequests--;
+  if (activeRequests <= 0) {
+    setTimeout(() => {
+      $("#preloader-mini").css("opacity", "0");
+      $("#preloader-mini").css("z-index", "-99999");
+    }, 400);
+  }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
+  showLoader();
+
   const params = new URLSearchParams(window.location.search);
   const clientId = params.get("clienteId");
 
@@ -13,17 +49,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const btnFlotaTotal = document.getElementById("btn-flota-total");
 
-  document
-    .querySelector("#combo-box")
-    .addEventListener("change", () => limpiarSelect("#combo-box-leasing"));
+  $("#combo-box").select2({
+    placeholder: "Seleccione el cliente",
+    allowClear: false,
+  });
+
+  $("#combo-box-leasing").select2({
+    placeholder: "Seleccione el leasing",
+    allowClear: false,
+  });
+
+  $("#combo-box-asig").select2({
+    placeholder: "Seleccione el cliente asignado",
+    allowClear: false,
+    width: "65%",
+  });
+
+  $("#combo-box").on("select2:select", function () {
+    limpiarSelect("#combo-box-leasing");
+  });
   // document
   //   .querySelector("#combo-box-leasing")
   //   .addEventListener("change", () => limpiarSelect("#combo-box"));
   cargarClientes();
   // cargarLeasing();
 
-  const selectClientes = document.getElementById("combo-box");
-  const selectLeasingAnonim = document.getElementById("combo-box-leasing");
+  const selectClientes = $("#combo-box");
+  const selectLeasingAnonim = $("#combo-box-leasing");
 
   if (clientId) {
     cargarLeasingOfClient(clientId).then(() => {
@@ -31,19 +83,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  selectClientes.addEventListener("change", async (e) => {
-    params.set("clienteId", e.target.value)
+  selectClientes.on("select2:select", async function () {
+    const id = selectClientes.val();
+    params.set("clienteId", id);
     const nuevaURL = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", nuevaURL);
+
     // deshabilitarSelect();
     // btnSelectLeasing.setAttribute("disabled", "disabled");
-    cargarLeasingOfClient(e.target.value).then(() => {
-      listaVehiculosAsignables(e.target.value);
+
+    cargarLeasingOfClient(id).then(() => {
+      listaVehiculosAsignables(id);
     });
   });
 
-  selectLeasingAnonim.addEventListener("change", async (e) => {
-    listaVehiculosAsignables(clientId);
+  selectLeasingAnonim.on("select2:select", async function () {
+    const id = selectClientes.val();
+    await listaVehiculosAsignables(id);
   });
 
   cargarClientesAsig();
@@ -52,6 +108,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const checkboxes = document.querySelectorAll('input[name="item[]"]');
     checkboxes.forEach((cb) => (cb.checked = this.checked));
   });
+
+  hideLoader();
 });
 
 // Operacciones para el formulario de asignacion de vehiculos
@@ -87,7 +145,7 @@ async function cargarClientes() {
     const params = new URLSearchParams(window.location.search);
     const clientId = params.get("clienteId");
     if (clientId) {
-      comboBox.value = clientId;
+      $("#combo-box").val(clientId).trigger("change");
     }
   } catch (error) {
     console.error("Error al cargar clientes:", error);
@@ -179,15 +237,14 @@ async function cargarLeasing() {
 }
 
 function limpiarSelect(selector) {
-  const select = document.querySelector(selector);
-  select.selectedIndex = 0;
+  $(selector).val(null).trigger("change");
 }
 
 async function listaVehiculosAsignables(clientId) {
   // let id = "";
   let idCli = clientId;
-  if(!clientId) idCli = document.getElementById("combo-box").value;
-  const idLea = document.getElementById("combo-box-leasing").value;
+  if (!clientId) idCli = $("#combo-box").val();
+  const idLea = $("#combo-box-leasing").val();
 
   console.log({ idCli, idLea });
 
@@ -211,7 +268,7 @@ async function listaVehiculosAsignables(clientId) {
     const vehiLeasing = await response.json();
 
     if (!vehiLeasing.success || vehiLeasing.data.length === 0) {
-      document.querySelector(".table-container table tbody").innerHTML = `
+      document.querySelector(".tabla-form-adi table tbody").innerHTML = `
                 <tr>
                     <td colspan="12">No hay vehículos disponibles</td>
                 </tr>
@@ -219,7 +276,7 @@ async function listaVehiculosAsignables(clientId) {
       return;
     }
 
-    const tbody = document.querySelector(".table-container table tbody");
+    const tbody = document.querySelector(".tabla-form-adi table tbody");
     tbody.innerHTML = ""; // Limpia las filas existentes
     let contador = 0;
     vehiLeasing.data.forEach((vehi, index) => {
@@ -240,17 +297,15 @@ async function listaVehiculosAsignables(clientId) {
                 <td><input type="text" name="modelo[]" value="${
                   vehi.modelo
                 }" disabled></td>
-                <td><input type="text" name="leasing[]" value="${
-                  vehi.nro_leasing
-                }" disabled></td>
-                <td><input type="text" name="tarifa[]" value=""></td>
-                <td><input type="date" name="fechaIni[]" value=""></td>
-                <td><input type="date" name="fechaFin[]" value=""></td>
+                <td><input type="text" name="leasing[]" value="${vehi.nro_leasing.trim()}" disabled></td>
+                <td><input type="text" name="tarifa[]" value="" placeholder="0" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+                <td><input type="date" name="fechaIni[]" value="" placeholder="dd/mm/aaaa" class="dte-ini text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+                <td><input type="date" name="fechaFin[]" value="" placeholder="dd/mm/aaaa" class="dte-fin text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
                 <td><select name="operacion[]" class="combo-operacion cbo-form-cliente">
                     </select></td>
                 <td><select name="contrato[]" class="combo-contrato cbo-form-cliente">
                     </select></td>
-                <td><select name="tipo_terreno[]" class="cbo-form-cliente">
+                <td class="overflow-hidden"><select name="tipo_terreno[]" class="combo-tip-terreno cbo-form-cliente">
                         <option value="4">Seleccione el tipo</option>
                         <option value="0">Superficie</option>
                         <option value="1">Socavon</option>
@@ -260,13 +315,76 @@ async function listaVehiculosAsignables(clientId) {
             `;
       tbody.appendChild(row);
 
-      document.getElementById("combo-box-asig").removeAttribute("disabled");
+      $(row)
+        .find(".combo-operacion")
+        .select2({
+          placeholder: "Seleccione la operacion",
+          allowClear: false,
+        })
+        .next(".select2-container")
+        .css({
+          "font-family": "Fredoka Variable, sans-serif",
+          "font-size": "13px",
+          "font-optical-sizing": "auto",
+          "font-style": "normal",
+          "font-weight": "400",
+        });
+
+      $(row)
+        .find(".combo-contrato")
+        .select2({
+          placeholder: "Seleccione el contrato",
+          allowClear: false,
+        })
+        .next(".select2-container")
+        .css({
+          "font-family": "Fredoka Variable, sans-serif",
+          "font-size": "13px",
+          "font-optical-sizing": "auto",
+          "font-style": "normal",
+          "font-weight": "400",
+        });
+
+      $(row)
+        .find(".combo-tip-terreno")
+        .select2({
+          placeholder: "Seleccione el terreno",
+          allowClear: false,
+        })
+        .next(".select2-container")
+        .css({
+          "font-family": "Fredoka Variable, sans-serif",
+          "font-size": "13px",
+          "font-optical-sizing": "auto",
+          "font-style": "normal",
+          "font-weight": "400",
+        });
+
+      $(row)
+        .find(".dte-ini")
+        .each(function () {
+          flatpickr(this, {
+            dateFormat: "d/m/Y",
+            locale: "es",
+          });
+        });
+
+      $(row)
+        .find(".dte-fin")
+        .each(function () {
+          flatpickr(this, {
+            dateFormat: "d/m/Y",
+            locale: "es",
+          });
+        });
+
+      $("#combo-box-asig").prop("disabled", false);
       document.getElementById("checkAll").removeAttribute("disabled");
       document.getElementById("repeticion").removeAttribute("disabled");
     });
   } catch (error) {
     console.error("Error al enviar los datos:", error);
-    mostrarNotificacion("Ocurrió un error al procesar la solicitud", "#C70039");
+    toastr.warning("No se pudo cargar la lista de vehiculos", "Oops...");
   }
 }
 
@@ -305,23 +423,27 @@ async function cargarClientesAsig() {
 }
 
 function deshabilitarSelect() {
-  document.getElementById("combo-box-asig").setAttribute("disabled", "true");
+  const params = new URLSearchParams(window.location.search);
+  params.delete("clienteId");
+
+  const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+  window.history.replaceState({}, "", nuevaURL);
+
+  $("#combo-box-asig").prop("disabled", true);
   document.getElementById("checkAll").setAttribute("disabled", "true");
   document.getElementById("repeticion").setAttribute("disabled", "true");
-  document.querySelector(".table-container table tbody").innerHTML = `
+  document.querySelector(".tabla-form-adi table tbody").innerHTML = `
         <tr>
             <td colspan="12">Seleccione un cliente para ver los vehiculos por asignar</td>
         </tr>
     `;
 
-  const comboBox = document.getElementById("combo-box");
-  comboBox.value = ""; // Restablece el valor al predeterminado
+  $("#combo-box").val(null).trigger("change"); // Restablece el valor al predeterminado
 
   const comboBox2 = document.getElementById("combo-box-leasing");
   comboBox2.value = ""; // Restablece el valor al predeterminado
 
-  const comboBox3 = document.getElementById("combo-box-asig");
-  comboBox3.value = ""; // Restablece el valor al predeterminado
+  $("#combo-box-asig").val(null).trigger("change"); // Restablece el valor al predeterminado
 
   document.getElementById("checkAll").checked = false;
   document.getElementById("repeticion").checked = false;
@@ -338,126 +460,115 @@ function deshabilitarSelect() {
 }
 
 async function cargarOperaciones() {
-  document
-    .getElementById("combo-box-asig")
-    .addEventListener("change", async function () {
-      const idCli = this.value; // Obtiene el ID del cliente seleccionado
+  $("#combo-box-asig").on("select2:select", async function () {
+    const idCli = this.value; // Obtiene el ID del cliente seleccionado
 
-      if (!idCli) {
-        // Si no hay cliente seleccionado, limpia todos los combos de operación en la tabla
+    if (!idCli) {
+      // Si no hay cliente seleccionado, limpia todos los combos de operación en la tabla
+      document.querySelectorAll(".combo-operacion").forEach((select) => {
+        select.innerHTML = '<option value="">Seleccione una Operacion</option>';
+      });
+      return;
+    }
+    try {
+      // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
+      const response = await fetch(
+        `http://${IP_LOCAL}:3000/operacionesAsig?idCli=${idCli}`,
+        {
+          method: "GET",
+          credentials: "include", // Asegura que las cookies se envíen con la solicitud
+        },
+      );
+      const operaciones = await response.json();
+
+      // Si no hay operaciones, limpiar todos los selects
+      if (operaciones.length === 0) {
         document.querySelectorAll(".combo-operacion").forEach((select) => {
           select.innerHTML =
-            '<option value="">Seleccione una Operacion</option>';
+            '<option value="">No hay operaciones disponibles</option>';
         });
         return;
       }
-      try {
-        // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
-        const response = await fetch(
-          `http://${IP_LOCAL}:3000/operacionesAsig?idCli=${idCli}`,
-          {
-            method: "GET",
-            credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          },
-        );
-        const operaciones = await response.json();
 
-        // Si no hay operaciones, limpiar todos los selects
-        if (operaciones.length === 0) {
-          document.querySelectorAll(".combo-operacion").forEach((select) => {
-            select.innerHTML =
-              '<option value="">No hay operaciones disponibles</option>';
-          });
-          return;
-        }
-
-        // Recorre todos los selects en las filas de la tabla y los llena con las operaciones disponibles
-        document.querySelectorAll(".combo-operacion").forEach((select) => {
-          select.innerHTML =
-            '<option value="">Seleccione una operacion</option>'; // Opción por defecto
-          operaciones.forEach((operacion) => {
-            const option = document.createElement("option");
-            option.value = operacion.ID; // Valor del contrato
-            option.textContent = operacion.DESCRIPCION; // Descripción del contrato
-            select.appendChild(option);
-          });
+      // Recorre todos los selects en las filas de la tabla y los llena con las operaciones disponibles
+      document.querySelectorAll(".combo-operacion").forEach((select) => {
+        select.innerHTML = '<option value="">Seleccione una operacion</option>'; // Opción por defecto
+        operaciones.forEach((operacion) => {
+          const option = document.createElement("option");
+          option.value = operacion.ID; // Valor del contrato
+          option.textContent = operacion.DESCRIPCION; // Descripción del contrato
+          select.appendChild(option);
         });
-      } catch (error) {
-        console.error("Error al obtener las operaciones:", error);
-        alert(
-          "Error al obtener las operaciones. Inténtelo de nuevo más tarde.",
-        );
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error al obtener las operaciones:", error);
+      alert("Error al obtener las operaciones. Inténtelo de nuevo más tarde.");
+    }
+  });
 }
 
 async function cargarContrato() {
-  document
-    .getElementById("combo-box-asig")
-    .addEventListener("change", async function () {
-      const idCli = this.value; // Obtiene el ID del cliente seleccionado
+  $("#combo-box-asig").on("select2:select", async function () {
+    const idCli = this.value; // Obtiene el ID del cliente seleccionado
 
-      if (!idCli) {
-        // Si no hay cliente seleccionado, limpia todos los combos de operación en la tabla
+    if (!idCli) {
+      // Si no hay cliente seleccionado, limpia todos los combos de operación en la tabla
+      document.querySelectorAll(".combo-contrato").forEach((select) => {
+        select.innerHTML = '<option value="">Seleccione un contrato</option>';
+      });
+      return;
+    }
+    try {
+      // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
+      const response = await fetch(
+        `http://${IP_LOCAL}:3000/contratosNroAdi?idCli=${idCli}`,
+        {
+          method: "GET",
+          credentials: "include", // Asegura que las cookies se envíen con la solicitud
+        },
+      );
+      const contratos = await response.json();
+
+      // Si no hay operaciones, limpiar todos los selects
+      if (contratos.length === 0) {
         document.querySelectorAll(".combo-contrato").forEach((select) => {
-          select.innerHTML = '<option value="">Seleccione un contrato</option>';
+          select.innerHTML =
+            '<option value="">No hay contratos disponibles</option>';
         });
         return;
       }
-      try {
-        // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
-        const response = await fetch(
-          `http://${IP_LOCAL}:3000/contratosNroAdi?idCli=${idCli}`,
-          {
-            method: "GET",
-            credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          },
-        );
-        const contratos = await response.json();
 
-        // Si no hay operaciones, limpiar todos los selects
-        if (contratos.length === 0) {
-          document.querySelectorAll(".combo-contrato").forEach((select) => {
-            select.innerHTML =
-              '<option value="">No hay contratos disponibles</option>';
-          });
-          return;
-        }
-
-        // Recorre todos los selects en las filas de la tabla y los llena con las operaciones disponibles
-        document.querySelectorAll(".combo-contrato").forEach((select) => {
-          select.innerHTML = '<option value="">Seleccione un contrato</option>'; // Opción por defecto
-          contratos.forEach((contrato) => {
-            const option = document.createElement("option");
-            option.value = contrato.ID; // Valor del contrato
-            option.textContent = contrato.DESCRIPCION; // Descripción del contrato
-            select.appendChild(option);
-          });
+      // Recorre todos los selects en las filas de la tabla y los llena con las operaciones disponibles
+      document.querySelectorAll(".combo-contrato").forEach((select) => {
+        select.innerHTML = '<option value="">Seleccione un contrato</option>'; // Opción por defecto
+        contratos.forEach((contrato) => {
+          const option = document.createElement("option");
+          option.value = contrato.ID; // Valor del contrato
+          option.textContent = contrato.DESCRIPCION; // Descripción del contrato
+          select.appendChild(option);
         });
-      } catch (error) {
-        console.error("Error al obtener las operaciones:", error);
-        alert(
-          "Error al obtener las operaciones. Inténtelo de nuevo más tarde.",
-        );
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error al obtener las operaciones:", error);
+      alert("Error al obtener las operaciones. Inténtelo de nuevo más tarde.");
+    }
+  });
 }
 
 async function guardaAsignacion() {
   // Obtener valores de los campos del formulario
   let formData = {
-    idCliente: document.querySelector("#combo-box-asig").value,
+    idCliente: $("#combo-box-asig").val(),
     valorRepe: document.getElementById("checkAll").checked,
   };
-  console.log(formData);
+
   // Validación de campos obligatorios
   if (!formData.idCliente) {
-    mostrarNotificacion(
-      "Por favor, completa todos los campos obligatorios.",
-      "#C70039",
-    );
+    toastr.info("Por favor, completa todos los campos obligatorios.", "Aviso");
     return;
   }
+
+  const invalidDates = [];
 
   // Filtrar solo los checkboxes seleccionados
   const detalles = Array.from(document.querySelectorAll("#asignacion-tbody tr"))
@@ -468,8 +579,14 @@ async function guardaAsignacion() {
       let marca = fila.querySelector('input[name="marca[]"]').value;
       let modelo = fila.querySelector('input[name="modelo[]"]').value;
       let tarifa = fila.querySelector('input[name="tarifa[]"]').value;
-      let fechaIni = fila.querySelector('input[name="fechaIni[]"]').value;
-      let fechaFin = fila.querySelector('input[name="fechaFin[]"]').value;
+      let fechaIni = dayjs(
+        fila.querySelector('input[name="fechaIni[]"]').value,
+        "DD/MM/YYYY",
+      ).format("YYYY-MM-DD");
+      let fechaFin = dayjs(
+        fila.querySelector('input[name="fechaFin[]"]').value,
+        "DD/MM/YYYY",
+      ).format("YYYY-MM-DD");
       let idOperacion = fila.querySelector('select[name="operacion[]"]').value; // Cambié de input a select
       let idContrato = fila.querySelector('select[name="contrato[]"]').value;
       let leasing = fila.querySelector('input[name="leasing[]"]').value;
@@ -487,13 +604,7 @@ async function guardaAsignacion() {
         const fechaFinal = new Date(fechaFin);
 
         if (fechaFinal <= fechaInicio) {
-          mostrarNotificacion(
-            "La fecha de finalización debe ser mayor que la fecha de inicio",
-            "#C70039",
-          );
-          return;
-        } else {
-          console.log("Fechas válidas");
+          invalidDates.push(index + 1);
         }
       }
 
@@ -514,16 +625,22 @@ async function guardaAsignacion() {
     });
 
   if (detalles.length === 0) {
-    mostrarNotificacion("Debe seleccionar al menos un vehículo.", "#C70039");
+    toastr.info("Debe seleccionar al menos un vehículo.", "Aviso");
+    return;
+  }
+
+  if (invalidDates.length > 0) {
+    const itmDate = invalidDates.join(", ")
+    toastr.info(
+      `La fecha de devolución debe ser mayor que la fecha de entrega. (Item: ${itmDate})`,
+      "Aviso",
+    );
     return;
   }
 
   const validacionResult = await validarAsignacion(detalles);
   if (!validacionResult.success) {
-    mostrarNotificacion(
-      validacionResult.mensaje || "Validación fallida",
-      "#C70039",
-    );
+    toastr.warning(validacionResult.mensaje || "Validación fallida", "Oops...");
     return false;
   }
 
@@ -539,35 +656,21 @@ async function guardaAsignacion() {
 
     const result = await response.json();
     if (result.success) {
-      mostrarNotificacion("Asignación guardada exitosamente", "#067e28");
+      toastr.success("Asignación guardada exitosamente", "¡Éxito!");
       deshabilitarSelect();
     } else {
-      mostrarNotificacion("Hubo un error al guardar la asignación", "#C70039");
+      toastr.warning(result.message, "Oops...");
     }
   } catch (error) {
     const mensaje =
       error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
     console.error("Error al enviar los datos:", error);
-    mostrarNotificacion(`Error al guardar: ${mensaje}`, "#C70039");
+    toastr.warning(`No se puedo procesar la asignación: ${mensaje}`, "Oops...");
   }
-}
-
-function mostrarNotificacion(mensaje, color) {
-  const notification = document.getElementById("notification");
-  notification.textContent = mensaje;
-  notification.style.backgroundColor = color || "#d4edda"; // Verde suave por defecto
-  notification.classList.add("show");
-
-  // Mostrar la notificación con el efecto
-  setTimeout(() => {
-    notification.classList.remove("show");
-  }, 3000);
 }
 
 const validarAsignacion = async (detalles) => {
   if (!detalles || detalles.length === 0) return { success: true };
-
-  console.log(detalles);
 
   const validacionResponse = await fetch(
     `http://${IP_LOCAL}:3000/validaContratoCantidad`,

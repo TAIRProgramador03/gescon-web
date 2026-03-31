@@ -1,20 +1,24 @@
 .main-register {
-  align-content: center;
-  justify-items: center;
+  width: 100%;
+  height: calc(100vh - 64px);
   color: #000;
   font-family: "Fredoka Variable", serif;
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
   font-style: normal;
+  overflow: auto;
 }
 
 .contenedor {
   width: 100%;
+  background: #fff;
+  border-radius: 12px;
 }
 
 body {
   background: rgb(228, 228, 228);
+  overflow: hidden;
 }
 
 .form-adicionar {
@@ -45,26 +49,39 @@ body {
 
 .tabla-form-adi {
   width: 100%;
-  overflow: auto;
-  max-height: 580px; /* Altura máxima del contenedor */
-  overflow-y: auto;
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 580px;
+  padding-bottom: 8px;
+  box-sizing: border-box;
 }
 
 /* Contenedor de la tabla 
-    .table-container {
+    .tabla-form-adi {
         width: 100%;  
         overflow-x: auto; 
     }*/
 
 /* Estilo para la tabla */
+.tabla-form-adi table::-webkit-scrollbar {
+  width: 15px;
+}
+
+.tabla-form-adi table::-webkit-scrollbar-track {
+  background: rgb(123, 152, 196);
+  border-radius: 50px;
+}
+
+.tabla-form-adi table::-webkit-scrollbar-thumb {
+  background: rgb(185, 185, 185);
+  border-radius: 50px;
+}
+
 table {
   border-collapse: collapse;
-  width: 100%; /* La tabla debe ocupar todo el ancho disponible */
-  table-layout: fixed; /* Permite que la tabla tenga un diseño fijo y se adapte mejor al tamaño */
+  width: max-content;
+  white-space: nowrap;
   color: #000;
-  font-family: "Fredoka Variable", serif;
-  font-size: 13px;
 }
 
 th,
@@ -76,9 +93,13 @@ td {
 
 th {
   color: white;
-  background-color: #0e2e67;
+  background-color: #a16207;
   font-family: "Fredoka Variable", serif;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 td {
@@ -87,78 +108,73 @@ td {
 }
 
 /* Ajustar el color de fondo de los encabezados */
-.tabla-form-adi th {
-  background-color: #c59315;
-}
+/* .tabla-form-adi th {
+  background-color: #a16207;
+} */
 
 /* Evitar que las celdas se colapsen demasiado */
-th,
-td {
-  width: auto; /* Asegura que las celdas se adapten al contenido */
-  min-width: 80px; /* Añadir un valor mínimo para las celdas */
-}
 
 /* Añadir un ancho mínimo a las celdas de la tabla */
 th:nth-child(1),
 td:nth-child(1) {
-  width: 7%;
-  min-width: 80px;
+  /* width: 9%; */
+  width: 20px;
+  /* min-width: 80px; */
 }
 th:nth-child(2),
 td:nth-child(2) {
-  width: 5%;
-  min-width: 80px;
+  /* min-width: 80px; */
   display: none;
 }
 th:nth-child(3),
 td:nth-child(3) {
-  width: 6%;
-  min-width: 80px;
+  width: 120px;
+  /* min-width: 80px; */
 }
 th:nth-child(4),
 td:nth-child(4) {
-  width: 8%;
-  min-width: 100px;
+  width: 120px;
+  /* min-width: 100px; */
 }
 th:nth-child(5),
 td:nth-child(5) {
-  width: 12%;
-  min-width: 100px;
+  width: 200px;
+  /* min-width: 100px; */
 }
 th:nth-child(6),
 td:nth-child(6) {
-  width: 8%;
-  min-width: 100px;
+  width: 180px;
+  /* min-width: 100px; */
 }
 th:nth-child(7),
 td:nth-child(7) {
-  width: 5%;
-  min-width: 80px;
+  width: 150px;
+  /* min-width: 80px; */
 }
 th:nth-child(8),
 td:nth-child(8) {
-  width: 8%;
-  min-width: 80px;
+  width: 150px;
+  /* min-width: 80px; */
 }
 th:nth-child(9),
 td:nth-child(9) {
-  width: 8%;
-  min-width: 100px;
+  width: 150px;
+  /* min-width: 100px; */
 }
 th:nth-child(10),
 td:nth-child(10) {
-  width: 8%;
-  min-width: 100px;
+  width: 200px;
+  /* min-wdth: 80px; */
 }
 th:nth-child(11),
 td:nth-child(11) {
-  width: 8%;
-  min-width: 100px;
+  width: 200px;
+  /* min-width: 80px; */
 }
 th:nth-child(12),
 td:nth-child(12) {
-  width: 8%;
-  min-width: 80px;
+  width: 200px;
+  /* min-width: 80px; */
 }
 
 /* Estilo para la fila al pasar el mouse */
@@ -199,7 +215,7 @@ table td:nth-child(11) select,
 table th:nth-child(12) select,
 table td:nth-child(12) select {
   width: 100%;
-  height: 30px;
+  /* height: 30px; */
   text-align: center;
 }
 
@@ -243,7 +259,7 @@ td td:nth-child(1) input {
   font-size: 25px;
 }
 
-.table-container tr:hover {
+.tabla-form-adi tr:hover {
   background-color: #fffaed;
   color: black;
 }
@@ -286,7 +302,7 @@ td td:nth-child(1) input {
 }
 
 .cbo-form-adiciona label {
-  width: 13%;
+  /* width: 13%; */
   align-content: center;
 }
 
@@ -345,27 +361,27 @@ td td:nth-child(1) input {
   gap: 10px;
 }
 
-@media screen and (max-width: 1600px) {
+/* @media screen and (max-width: 1600px) {
   table {
-    width: 120%;
+    width: 100%;
   }
 }
 
 @media screen and (max-width: 1200px) {
   table {
-    width: 150%;
+    width: 100%;
   }
 }
 
 @media screen and (max-width: 1000px) {
   table {
-    width: 200%;
+    width: 100%;
   }
 }
 
 @media screen and (max-width: 800px) {
   table {
-    width: 300%;
+    width: 100%;
   }
 
   .contenedor {
@@ -420,7 +436,7 @@ td td:nth-child(1) input {
   .hidden {
     left: 20px;
   }
-}
+} */
 
 input.check-xtodo[type="checkbox"] {
   border: 2px solid #5eb300;
@@ -429,4 +445,99 @@ input.check-xtodo[type="checkbox"] {
 input.check-xtodo[type="checkbox"]:checked {
   background-color: #3fff00;
   border-color: #5eb300;
+}
+
+
+/* SELECT2 ESTILOS */
+.select2-container {
+  order: 2;
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__rendered {
+  color: #000000;
+  /* line-height: 28px; */
+}
+
+.select2-container .select2-selection--single {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+  padding: 0;
+}
+
+.select2-dropdown {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+/* Cambia la fuente de los elementos dentro del desplegable */
+.select2-results__option {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single {
+  height: 43.3px !important;
+  padding: 11px 10px;
+}
+
+.select2-selection__arrow {
+  top: 50% !important;
+  transform: translate(0, -50%);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: normal;
+}
+
+.select2-container--default .select2-selection--single {
+  outline: none;
+  border: 2px solid oklch(87.2% 0.01 258.338) !important;
+  border-radius: 5px;
+}
+
+.select2-container--default.select2-container--disabled .select2-selection--single {
+  background: #fff !important;
+  color: #eee !important;
+}
+
+.select2-container--default.select2-container--disabled ~ .label-select {
+  color: #eee !important;
+}
+
+/* Cuando el contenedor de Select2 tenga el foco, pinta el label que viene después */
+.select2-container--default.select2-container--focus ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* Cambia el color del borde cuando Select2 recibe el foco */
+.select2-container--default.select2-container--focus
+  .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* También cuando el menú desplegable está abierto */
+.select2-container--default.select2-container--open .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* OPCIONAL: Si quieres que también cambie cuando el menú está ABIERTO */
+.select2-container--default.select2-container--open ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
 }

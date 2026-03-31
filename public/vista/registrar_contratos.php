@@ -12,6 +12,7 @@ require './templates/header.html';
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <!-- JS de Flatpickr -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
 <!-- TOASTR -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
@@ -24,13 +25,23 @@ require './templates/header.html';
 </style>
 
 <!-- MAQUETACIÓN DE LA VISTA -->
-<div id="preloader-mini">
-  <div class="gif-container">
-    <img src="../img/carpeta.gif" alt="Cargando...">
+<div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
+  <div class="flex-col gap-4 w-full flex items-center justify-center relative">
+    <div class="w-28 h-28 border-8 text-blue-600 text-4xl animate-spin border-gray-300 flex items-center justify-center border-t-blue-600 rounded-full"></div>
+    <div class="gif-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <img src="../img/carpeta.gif">
+    </div>
   </div>
-  <div class="welcome-message">
-    <p>¡Cargando!.....</p>
-  </div>
+  <p class="m-0 font-medium text-gray-400 text-xl flex gap-1"><span class="animate-wave" style="animation-delay:0s"></span>
+    <span class="animate-wave" style="animation-delay:0.1s">C</span>
+    <span class="animate-wave" style="animation-delay:0.2s">a</span>
+    <span class="animate-wave" style="animation-delay:0.3s">r</span>
+    <span class="animate-wave" style="animation-delay:0.4s">g</span>
+    <span class="animate-wave" style="animation-delay:0.5s">a</span>
+    <span class="animate-wave" style="animation-delay:0.6s">n</span>
+    <span class="animate-wave" style="animation-delay:0.7s">d</span>
+    <span class="animate-wave" style="animation-delay:0.8s">o</span>
+  </p>
 </div>
 
 <main class="main-register">
@@ -40,7 +51,7 @@ require './templates/header.html';
   <div class="contenedor border border-gray-300 px-9 py-7">
     <div class="w-full flex flex-col justify-center gap-2">
       <h3 id="title-form" class="text-5xl text-[#002141] font-semibold">Registrar Contrato</h3>
-      <p id="desc-form" class="!m-0 text-base font-normal text-gray-500">Crear un nuevo contrato para un cliente</p>
+      <p id="desc-form" class="!m-0 text-base font-normal text-gray-500">Gestione el registro de un nuevo contrato vinculado a un cliente.</p>
     </div>
     <div class="form-registrar">
       <div class="form-cliente-cbo">
@@ -435,7 +446,7 @@ require './templates/header.html';
       </div>
       <div class="form-cliente-cbo">
         <div class="cbo-registrar body">
-          <button class="clear-action" id="btnClear">
+          <!-- <button class="clear-action" id="btnClear">
             <div>
               <div class="broom"></div>
               <div class="trash">
@@ -448,8 +459,29 @@ require './templates/header.html';
               </div>
             </div>
             Limpiar
+          </button> -->
+          <button
+            type="button"
+            id="btnClear"
+            class="cursor-pointer bg-yellow-700 text-center w-1/4 rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
+            <div
+              class="bg-yellow-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+              <i class="bi bi-stars"></i>
+            </div>
+            <p class="translate-x-4 !m-0 !text-white text-base font-medium">Limpiar</p>
           </button>
-          <button class="continue-application" id="grabarButton">
+          <button
+            type="button"
+            id="grabarButton"
+            class="cursor-pointer bg-green-700 text-center w-1/4 rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
+            <div
+              class="bg-green-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+              <i class="bi bi-floppy-fill"></i>
+            </div>
+            <p class="translate-x-4 !m-0 !text-white text-base font-medium">Registrar</p>
+          </button>
+
+          <!-- <button class="continue-application" id="grabarButton">
             <div>
               <div class="pencil"></div>
               <div class="folder">
@@ -462,8 +494,18 @@ require './templates/header.html';
               </div>
             </div>
             Grabar
+          </button> -->
+          <button
+            type="button"
+            id="actualizarButton"
+            class="cursor-pointer bg-blue-700 text-center w-1/4 rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
+            <div
+              class="bg-blue-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+              <i class="bi bi-pencil-fill"></i>
+            </div>
+            <p class="translate-x-4 !m-0 !text-white text-base font-medium">Actualizar</p>
           </button>
-          <button class="btn-update" id="actualizarButton">
+          <!-- <button class="btn-update" id="actualizarButton">
             <div>
               <div class="pencil"></div>
               <div class="folder">
@@ -476,7 +518,7 @@ require './templates/header.html';
               </div>
             </div>
             Actualizar
-          </button>
+          </button> -->
         </div>
       </div>
     </div>
@@ -728,7 +770,8 @@ require './templates/header.html';
   });
 
   flatpickr("#firma", {
-    dateFormat: "d/m/Y"
+    dateFormat: "d/m/Y",
+    locale: "es"
   });
 </script>
 <script type="module" src="../js/registrar_contratos.js"></script>

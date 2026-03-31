@@ -220,7 +220,6 @@ td {
 th {
   background-color: #0e2e67;
   color: white;
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-size: 12px;
   /* font-weight: <weight>; */
@@ -228,7 +227,6 @@ th {
 }
 
 td {
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-size: 12px;
   /* font-weight: <weight>; */

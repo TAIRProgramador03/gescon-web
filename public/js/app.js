@@ -112,3 +112,19 @@ function closeAllSubMenusSec() {
     ul.previousElementSibling.classList.remove("rotate");
   });
 }
+
+function useState(initialValue) {
+  let state = initialValue;
+  const listeners = [];
+
+  const getState = () => state;
+
+  const setState = (value) => {
+    state = typeof value === "function" ? value(state) : value;
+    listeners.forEach(fn => fn(state));
+  };
+
+  const subscribe = (fn) => listeners.push(fn);
+
+  return [getState, setState, subscribe];
+}

@@ -45,22 +45,15 @@ require './templates/header.html';
 </div>
 
 <main class="main-register">
-  <!-- <div id="notification" class="hidden"></div> -->
-
-
-  <div class="contenedor border border-gray-300 px-9 py-7">
+  <div class="contenedor border border-gray-300 px-9 py-7 relative overflow-hidden">
+    <div class="w-full h-3 bg-blue-700 absolute top-0 left-0"></div>
     <div class="w-full flex flex-col justify-center gap-2">
       <h3 id="title-form" class="text-5xl text-[#002141] font-semibold">Registrar Contrato</h3>
       <p id="desc-form" class="!m-0 text-base font-normal text-gray-500">Gestione el registro de un nuevo contrato vinculado a un cliente.</p>
     </div>
-    <div class="form-registrar">
-      <div class="form-cliente-cbo">
-        <!-- <div class="cbo-registrar">
-          <label for="combo-cliente">Razon Social(*):</label>
-          <select id="combo-cliente" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente">
-            <option value="">Seleccione un cliente</option>
-          </select>
-        </div> -->
+    <div class="form-registrar flex flex-col gap-2">
+      <div class="form-one">
+        <!-- CLIENTE -->
         <div class="flex flex-col w-full relative">
           <select id="combo-cliente" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente">
             <option value="">Seleccione un cliente</option>
@@ -69,13 +62,9 @@ require './templates/header.html';
           <label
             for="combo-cliente"
             class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-            Razon Social(*)
+            Razón Social(*)
           </label>
         </div>
-      </div>
-      <!--<div id="tooltip"></div>-->
-      <div class="form-one">
-
         <!-- NRO CONTRATO -->
         <div class="input flex flex-col w-full relative">
           <input
@@ -89,24 +78,6 @@ require './templates/header.html';
             for="contrato"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             N° de Contrato(*)
-          </label>
-        </div>
-
-        <!-- CANTIDAD VEHICULOS -->
-        <div class="input flex flex-col w-full relative">
-          <input
-            id="vehiculos"
-            name="Vehiculos"
-            type="number"
-            min="0"
-            placeholder="Ingrese la cantidad de vehiculos"
-            value="0"
-            data-tooltip="Cantidad de vehiculos contratados"
-            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
-          <label
-            for="vehiculos"
-            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
-            Cant. de Vehiculos(*)
           </label>
         </div>
 
@@ -131,24 +102,16 @@ require './templates/header.html';
           <input
             id="duracion"
             name="Duracion"
-            type="text"
+            type="number"
             placeholder="Ingrese la duración"
             data-tooltip="Duracion del contrato en meses"
-            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
+            class="no-negative peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
           <label
             for="duracion"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             Duracion (Meses)(*)
           </label>
         </div>
-        <!-- <div class="form-cliente">
-          <label for="combo-box">N° de Contrato(*):</label>
-          <input id="contrato" name="Contrato" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="El número del contrato debe ser un correlativo (CLIENTE-MM-AAAA-0001)">
-        </div> -->
-        <!-- <div class="form-cliente">
-          <label for="combo-box">Cant. Vehiculos(*):</label>
-          <input id="vehiculos" name="Vehiculos" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" value="0" data-tooltip="Cantidad de vehiculos contratados">
-        </div> -->
       </div>
       <div class="form-two">
         <!-- TIPO MONEDA -->
@@ -190,16 +153,6 @@ require './templates/header.html';
           </label>
         </div>
 
-        <!-- <div class="form-cliente custom-date">
-          <label for="combo-box">Fecha Firma(*):</label>
-          <input id="firma" name="Firma" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm dta tooltip-input" data-tooltip="Fecha de la firma del contrato">
-        </div> -->
-        <!-- <div class="form-cliente">
-          <label for="combo-box">Duracion (Meses):</label>
-          <input id="duracion" name="Duracion" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="Duracion del contrato en meses">
-        </div> -->
-      </div>
-      <div class="form-three">
         <!-- KM ADICIONAL -->
         <div class="input flex flex-col w-full relative">
           <input
@@ -234,34 +187,34 @@ require './templates/header.html';
           </label>
         </div>
 
-
-        <!-- <div class="form-cliente">
-          <label for="combo-box">Tipo Moneda(*):</label>
-          <select id="combo-moneda" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Tipo de moneda soles o dolares">
-            <option value="">Seleccione una moneda</option>
-            <option value="0">Soles</option>
-            <option value="1">Dolares</option>
-          </select>
+        <!-- <div class="form-cliente custom-date">
+          <label for="combo-box">Fecha Firma(*):</label>
+          <input id="firma" name="Firma" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm dta tooltip-input" data-tooltip="Fecha de la firma del contrato">
         </div> -->
         <!-- <div class="form-cliente">
-          <label for="combo-box">Rubro de empresa:</label>
-          <select id="combo-tipo" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el rubro del cliente">
-            <option value="">Seleccione un tipo</option>
-            <option value="1">AVICOLA</option>
-            <option value="2">CONTRATISTA MINERA</option>
-            <option value="3">ENERGIA</option>
-            <option value="4">GOBIERNO</option>
-            <option value="5">INMOBILIARIA</option>
-            <option value="6">MINERIA</option>
-            <option value="7">PESQUERA</option>
-            <option value="8">SEGURIDAD</option>
-            <option value="9">TELEFONIA</option>
-            <option value="10">TRANSPORTES</option>
-            <option value="11">OTROS</option>
-          </select>
+          <label for="combo-box">Duracion (Meses):</label>
+          <input id="duracion" name="Duracion" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="Duracion del contrato en meses">
         </div> -->
       </div>
       <div class="form-four">
+        <!-- CANTIDAD VEHICULOS -->
+        <div class="input flex flex-col w-full relative">
+          <input
+            id="vehiculos"
+            name="Vehiculos"
+            type="number"
+            min="0"
+            placeholder="Ingrese la cantidad de vehiculos"
+            value="0"
+            data-tooltip="Cantidad de vehiculos contratados"
+            class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
+          <label
+            for="vehiculos"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+            Cant. de Vehiculos(*)
+          </label>
+        </div>
+
         <!-- VEH SUP -->
         <div class="input flex flex-col w-full relative">
           <input
@@ -342,28 +295,27 @@ require './templates/header.html';
           <input id="bolsa" name="Bolsa" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="Km total a recorrer por unidad">
         </div> -->
       </div>
-      <div class="form-five">
-        <!-- <div class="form-cliente">
-          <label for="combo-box"># Veh. Sup(*):</label>
-          <input id="sup" name="Sup" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input " value="0" data-tooltip="Cantidad de vehículos en Superficie">
-        </div>
-        <div class="form-cliente">
-          <label for="combo-box"># Veh. Soc(*):</label>
-          <input id="soc" name="Soc" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" value="0" data-tooltip="Cantidad de vehículos en Socavon">
-        </div>
-      </div>
       <div class="form-six">
-        <div class="form-cliente">
-          <label for="combo-box"># Veh. Ciu(*):</label>
-          <input id="ciu" name="Ciu" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" value="0" data-tooltip="Cantidad de vehículos en Ciudad">
+        <!-- SUBIR ARCHIVO -->
+        <div class="flex flex-col w-full relative">
+          <label class="text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors z-[1]">Adjunta archivo(*)</label>
+          <div class="file-adjunta">
+            <label class="file-upload tooltip-input" id="dropZone" data-tooltip="Arrastra o sube tu archivo PDF">
+              <div id="uploadMessage" class="flex flex-col gap-1 justify-center items-center text-[#b2b2bb]">
+                <i class="bi bi-cloud-upload-fill text-3xl"></i>
+                <span>Haz clic o arrastra un archivo aquí</span>
+              </div>
+              <input type="file" id="fileInput" accept=".pdf">
+              <div class="file-info" id="fileInfo">
+                <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF Icon">
+                <span id="fileName"></span>
+                <button class="view-file" id="viewFile">👁️</button>
+                <button class="remove-file" id="removeFile">X</button>
+              </div>
+            </label>
+          </div>
         </div>
-        <div class="form-cliente">
-          <label for="combo-box"># Veh. Sev(*):</label>
-          <input id="sev" name="Sev" type="number" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" value="0" data-tooltip="Cantidad de vehículos en Severo">
-        </div> -->
-      </div>
-      <div class="form-six">
-        <div class="form-cliente adjunto-pdf py-3">
+        <!-- <div class="form-cliente adjunto-pdf py-3">
           <label for="combo-box" class="text-gray-500 text-xs font-semibold">Adjuntar pdf:</label>
           <div class="file-adjunta h-fit">
             <label class="file-upload tooltip-input !h-36" id="dropZone" data-tooltip="Arrastra o seleccione un archivo en pdf">
@@ -377,11 +329,19 @@ require './templates/header.html';
               </div>
             </label>
           </div>
+        </div> -->
+
+        <!-- CONTRATO ESPECIAL -->
+        <div class="w-full flex flex-col gap-2">
+          <label for="combo-box" class="text-gray-500 text-xs font-semibold">Contrato Especial</label>
+          <!-- <input id="especial" name="especial" type="checkbox" class="check-form-contrato tooltip-input" data-tooltip="Contrato especial, Cuando un contrato tiene varios periodos de finalización."> -->
+          <label class="relative inline-flex w-fit items-center cursor-pointer">
+            <input class="sr-only peer" value="" type="checkbox" id="especial" name="especial">
+            <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 bg-blue-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 after:content-['No'] after:absolute after:outline-none after:rounded-[50%] after:h-8 after:w-8 after:bg-white after:top-1 after:left-1 after:flex after:justify-center after:items-center  after:text-sky-800 after:font-bold peer-checked:after:translate-x-6 peer-checked:after:content-['Si'] peer-checked:after:border-white">
+            </div>
+          </label>
         </div>
-        <div class="form-cliente form-especial">
-          <label for="combo-box" class="text-gray-500 text-xs font-semibold">Contrato Especial:</label>
-          <input id="especial" name="especial" type="checkbox" class="check-form-contrato tooltip-input" data-tooltip="Contrato especial, Cuando un contrato tiene varios periodos de finalización.">
-        </div>
+
       </div>
 
       <!--agregar una columna mas-->
@@ -389,7 +349,7 @@ require './templates/header.html';
         <div class="tabla-form">
           <div class="tabla-add-vehicle flex gap-3">
             <button id="addVehicle" class="btn bg-blue-600 text-white">
-              <span>Agregar vehiculo</span>
+              <span>Agregar modelo</span>
               <span>
                 <i class="bi bi-car-front"></i>
                 <i class="bi bi-plus"></i>
@@ -601,7 +561,7 @@ require './templates/header.html';
   const dropZone = document.getElementById('dropZone');
   const fileInfo = document.getElementById('fileInfo');
   const fileNameDisplay = document.getElementById('fileName');
-  const uploadMessage = document.getElementById('uploadMessage');
+  const uploadMessage = $('#uploadMessage');
   const removeFileButton = document.getElementById('removeFile');
 
   window.onload = function() {
@@ -610,7 +570,8 @@ require './templates/header.html';
       document.getElementById('preloader-mini').style.display = 'none';
     }, 2000);
     fileInfo.style.display = 'none'; // Asegúrate de que la información del archivo no aparezca.
-    uploadMessage.style.display = 'block'; // Muestra el mensaje inicial.
+    uploadMessage.addClass("flex"); // Muestra el mensaje inicial.
+    uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial.
     fileInput.value = ''; // Limpia el campo de archivo si existe algo previamente.
   };
 
@@ -679,7 +640,8 @@ require './templates/header.html';
   function handleFile() {
     const file = fileInput.files[0];
     if (file) {
-      uploadMessage.style.display = 'none'; // Ocultar mensaje de carga
+      uploadMessage.addClass("hidden"); // Muestra el mensaje inicial.
+      uploadMessage.removeClass("flex"); // Muestra el mensaje inicial.
       fileInfo.style.display = 'flex'; // Mostrar el área con el archivo
       fileNameDisplay.textContent = truncateFileName(file.name); // Mostrar el nombre truncado del archivo
     }
@@ -730,7 +692,8 @@ require './templates/header.html';
   removeFileButton.addEventListener('click', () => {
     fileInput.value = ''; // Limpiar input
     fileInfo.style.display = 'none'; // Ocultar el área del archivo
-    uploadMessage.style.display = 'block'; // Mostrar mensaje de carga
+    uploadMessage.addClass("flex"); // Muestra el mensaje inicial.
+    uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial. // Mostrar mensaje de carga
     pdfPreview.src = '';
     pdfPreviewContainer.style.display = 'none';
   });

@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
-
 .main-register {
   align-content: center;
   justify-items: center;
@@ -17,7 +15,6 @@ body:not(.loaded) .home-section {
 
 body {
   background: #f5f5f5;
-  color: #b2b2bb;
 }
 
 .contenedor {
@@ -64,7 +61,6 @@ body {
   flex-direction: row;
   align-items: center;
   padding: 10px 20px;
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -91,7 +87,6 @@ body {
   border: none;
   background: #fff;
   cursor: pointer;
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-size: 12px;
   /* font-weight: <weight>; */
@@ -146,7 +141,6 @@ table {
   max-height: 422px;
   border-collapse: collapse;
   overflow-y: auto;
-  padding: 10px 22px;
   min-width: 800px;
 }
 
@@ -160,7 +154,6 @@ td {
 th {
   /*background-color: #0e2e67;*/
   color: white;
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-size: 12px;
   /* font-weight: <weight>; */
@@ -180,7 +173,6 @@ th {
 }
 
 td {
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-size: 12px;
   /* font-weight: <weight>; */
@@ -274,7 +266,6 @@ td:nth-child(7) {
   /*background-color: rgb(0,0,0);  Color de fondo */
   background-color: rgba(0, 0, 0, 0.4);
   /* Negro con opacidad */
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-size: 12px;
   /* font-weight: <weight>; */
@@ -369,6 +360,7 @@ td:nth-child(7) {
 
 input {
   outline: none;
+  color: black;
 }
 
 .tabla-form-vehi table::-webkit-scrollbar {
@@ -412,11 +404,6 @@ input {
 .tabla-form table::-webkit-scrollbar-thumb {
   background: rgb(185, 185, 185);
   border-radius: 50px;
-}
-
-input:focus {
-  border: 1px solid #007bff;
-  /* Cambia el color del borde cuando se enfoca */
 }
 
 .icono-seleccion i {
@@ -474,7 +461,6 @@ input:focus {
   flex-direction: row;
   align-items: center;
   padding: 10px 20px;
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -494,21 +480,20 @@ input:focus {
 }
 
 .file-adjunta {
-  width: 68%;
-  height: 92px;
+  width: 100%;
+  height: fit-content;
   display: flex;
 }
 
 .file-adjunta label {
   display: flex;
   width: 100%;
-  height: 48px;
+  height: 200px;
   justify-content: center;
   align-items: center;
 }
 
 .file-upload {
-  background-color: #f3f4f6;
   padding: 20px;
   border: 2px dashed #d1d5db;
   border-radius: 12px;
@@ -1145,7 +1130,6 @@ tbody td:nth-child(7) input {
   width: 32%;
   position: relative;
 
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -1238,7 +1222,6 @@ tbody td:nth-child(7) input {
     color: #000;
     flex-direction: column;
     padding: 10px 20px;
-    font-family: "Montserrat", serif;
     font-optical-sizing: auto;
     font-size: 13px;
     /* font-weight: <weight>; */
@@ -1349,4 +1332,98 @@ tbody td:nth-child(7) input {
   background: none;
   border: none;
   font-size: 27px;
+}
+
+/* SELECT2 ESTILOS */
+.select2-container {
+  order: 2;
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__rendered {
+  color: #000000;
+  /* line-height: 28px; */
+}
+
+.select2-container .select2-selection--single {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+  padding: 0;
+}
+
+.select2-dropdown {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+/* Cambia la fuente de los elementos dentro del desplegable */
+.select2-results__option {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single {
+  height: 43.3px !important;
+  padding: 11px 10px;
+}
+
+.select2-selection__arrow {
+  top: 50% !important;
+  transform: translate(0, -50%);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: normal;
+}
+
+.select2-container--default .select2-selection--single {
+  outline: none;
+  border: 2px solid oklch(87.2% 0.01 258.338) !important;
+  border-radius: 5px;
+}
+
+.select2-container--default.select2-container--disabled .select2-selection--single {
+  background: #fff !important;
+  color: #eee !important;
+}
+
+.select2-container--default.select2-container--disabled ~ .label-select {
+  color: #eee !important;
+}
+
+/* Cuando el contenedor de Select2 tenga el foco, pinta el label que viene después */
+.select2-container--default.select2-container--focus ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* Cambia el color del borde cuando Select2 recibe el foco */
+.select2-container--default.select2-container--focus
+  .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* También cuando el menú desplegable está abierto */
+.select2-container--default.select2-container--open .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* OPCIONAL: Si quieres que también cambie cuando el menú está ABIERTO */
+.select2-container--default.select2-container--open ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
 }

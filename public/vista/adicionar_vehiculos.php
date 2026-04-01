@@ -48,7 +48,8 @@ require './templates/header.html';
 </div>
 
 <main class="main-register">
-    <div class="contenedor border border-gray-300 px-9 py-7">
+    <div class="contenedor border border-gray-300 px-9 py-7 relative overflow-hidden">
+        <div class="w-full h-3 bg-yellow-700 absolute top-0 left-0"></div>
         <div class="w-full flex flex-col justify-center gap-2">
             <h3 class="text-5xl text-[#002141] font-semibold">Asignar unidades</h3>
             <p class="!m-0 text-base font-normal text-gray-500">Gestione la transferencia de vehículos entre clientes, seleccionando el destino al cual serán asignados.</p>

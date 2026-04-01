@@ -1,6 +1,39 @@
-// const IP_LOCAL = 'localhost';
+toastr.options = {
+  closeButton: false,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-bottom-right",
+  preventDuplicates: false,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "5000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
+
+let [listVehicles, setListVehicles] = useState([]);
+let [clientId, setClientId] = useState(null);
+let [clientAsocId, setClientAsocId] = useState(null);
+let [clientAsocName, setClientAsocName] = useState("");
 
 document.addEventListener("DOMContentLoaded", () => {
+  $("#combo-box-asig").select2({
+    placeholder: "Seleccione un contrato",
+    allowClear: false,
+    width: "100%",
+  });
+
+  $("#banco").select2({
+    placeholder: "Seleccione un contrato",
+    allowClear: false,
+    width: "100%",
+  });
+
   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
   document
     .getElementById("grabarButton")
@@ -11,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   localStorage.setItem("clienteSeleccionadoID", "");
   localStorage.setItem("clienteSeleccionadoNombre", "");
   cargartablaClienteLeas();
+  cargartablaClienteLeasAsoc();
   cargartablaVehiculo();
 
   // Manejo de cierre de modal de cliente
@@ -43,13 +77,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Buscador para la tabla de vehículos
-  const buscadorVehi = document.getElementById("buscadorTablaVehi");
-  if (buscadorVehi) {
-    buscadorVehi.addEventListener("input", function () {
+  // Buscador para la tabla de clientes
+  const buscadorAsoc = document.getElementById("buscadorTablaAsoc");
+  if (buscadorAsoc) {
+    buscadorAsoc.addEventListener("input", function () {
       const filtro = this.value.toLowerCase();
       const filas = document.querySelectorAll(
-        ".tabla-form-vehi table tbody tr"
+        ".tabla-form-cli-asoc table tbody tr",
       );
 
       filas.forEach((fila) => {
@@ -58,9 +92,54 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
+
+  // Buscador para la tabla de vehículos
+  const buscadorVehi = document.getElementById("buscadorTablaVehi");
+  if (buscadorVehi) {
+    buscadorVehi.addEventListener("input", function () {
+      const filtro = this.value.toLowerCase();
+      const filas = document.querySelectorAll(
+        ".tabla-form-vehi table tbody tr",
+      );
+
+      filas.forEach((fila) => {
+        const textoFila = fila.textContent.toLowerCase();
+        fila.style.display = textoFila.includes(filtro) ? "" : "none";
+      });
+    });
+  }
+
+  $("#useAssociatedClient").change(function () {
+    const clientID = localStorage.getItem("clienteSeleccionadoID");
+    const inputClient = $("#inputClienteSeleccionado");
+    const inputAsociate = $("#inputClienteAsociado");
+
+    const btnAsociate = $("#openModalCliAsoc");
+    if ($(this).is(":checked")) {
+      btnAsociate.prop("disabled", false);
+      inputAsociate.val("");
+      setClientAsocId(null);
+      setClientAsocName("");
+    } else {
+      btnAsociate.prop("disabled", true);
+      inputAsociate.val(inputClient.val());
+      setClientAsocId(clientID);
+      setClientAsocName(inputClient.val());
+    }
+  });
+
+  flatpickr("#fechaIni", {
+    dateFormat: "d/m/Y",
+    locale: "es",
+  });
+
+  flatpickr("#fechaFin", {
+    dateFormat: "d/m/Y",
+    locale: "es",
+  });
 });
 
-document.addEventListener("DOMContentLoaded", cargarSeleccionados);
+// document.addEventListener("DOMContentLoaded", cargarSeleccionados);
 
 async function cargartablaClienteLeas() {
   document
@@ -72,7 +151,7 @@ async function cargartablaClienteLeas() {
           {
             method: "GET",
             credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          }
+          },
         );
         const contratos = await response.json();
         const tbody = document.querySelector(".tabla-form-cli table tbody");
@@ -86,8 +165,9 @@ async function cargartablaClienteLeas() {
         contratos.forEach((cliente, index) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-                    <td class="icono-seleccion" data-id="${cliente.IDCLI
-            }" data-nombre="${cliente.CLINOM}">
+                    <td class="icono-seleccion" data-id="${
+                      cliente.IDCLI
+                    }" data-nombre="${cliente.CLINOM}">
                         <i class="fas fa-check-circle" style="color: green; font-size: 22px;"></i>
                     </td>
                     <td>${cliente.CLIRUC}</td>
@@ -130,7 +210,49 @@ async function cargartablaClienteLeas() {
     });
 }
 
+async function cargartablaClienteLeasAsoc() {
+  $("#openModalCliAsoc").on("click", async function () {
+    try {
+      const response = await fetch(`http://${IP_LOCAL}:3000/tablaClienteLeas`, {
+        method: "GET",
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
+      });
+      const contratos = await response.json();
+      const tbody = document.querySelector(".tabla-form-cli-asoc table tbody");
+
+      tbody.innerHTML = ""; // Limpiar tabla
+      if (contratos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6">No hay clientes disponibles</td></tr>`;
+        return;
+      }
+
+      contratos.forEach((cliente, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+                    <td class="icono-seleccion-asoc" data-id="${
+                      cliente.IDCLI
+                    }" data-nombre="${cliente.CLINOM}">
+                        <i class="fas fa-check-circle" style="color: green; font-size: 22px;"></i>
+                    </td>
+                    <td>${cliente.CLIRUC}</td>
+                    <td>${cliente.CLINOM || "Sin nombre"}</td>
+                    <td>${cliente.CLIDIR || "Sin dirección"}</td>
+                    <td>${cliente.IDCLI || "0"}</td>
+                    <td>${cliente.CLIABR || "0"}</td>
+                `;
+        tbody.appendChild(row);
+      });
+
+      agregarEventosSeleccionAsoc();
+      restaurarSeleccionClienteAsoc(); // Restaurar selección después de cargar datos
+    } catch (error) {
+      toastr.warning("No se pudo listar los clientes", "Oops...");
+    }
+  });
+}
+
 function agregarEventosSeleccion() {
+  const checked = $("#useAssociatedClient");
   const filas = document.querySelectorAll(".icono-seleccion");
 
   filas.forEach((fila) => {
@@ -151,6 +273,10 @@ function agregarEventosSeleccion() {
         localStorage.removeItem("clienteSeleccionadoID");
         localStorage.removeItem("clienteSeleccionadoNombre");
         document.getElementById("inputClienteSeleccionado").value = "";
+        if (!checked.prop("checked")) {
+          setClientAsocId(null)
+          document.getElementById("inputClienteAsociado").value = "";
+        }
       } else {
         filas.forEach((f) => f.classList.remove("seleccionado"));
         this.classList.add("seleccionado");
@@ -160,22 +286,29 @@ function agregarEventosSeleccion() {
 
         const clienteID = this.dataset.id;
         const clienteNombre = this.dataset.nombre;
-        document.getElementById(
-          "inputClienteSeleccionado"
-        ).value = `${clienteNombre}`;
+        document.getElementById("inputClienteSeleccionado").value =
+          `${clienteNombre}`;
+        if (!checked.prop("checked")) {
+          setClientAsocName(clienteNombre);
+          document.getElementById("inputClienteAsociado").value =
+            `${clienteNombre}`;
+        }
         const seleccionado = document.querySelector(
-          ".icono-seleccion.seleccionado"
+          ".icono-seleccion.seleccionado",
         );
 
         if (!seleccionado) {
-          mostrarNotificacion("Por favor, seleccione un cliente.", "#C70039");
+          toastr.info("Por favor, seleccione un cliente.", "Aviso");
         } else {
-          mostrarNotificacion("Se agrego el cliente seleccionado", "#01b204");
+          toastr.success("Se agrego el cliente seleccionado", "¡Excelente!");
           cargarContratosPorCliente(clienteID);
         }
         // Guardar en localStorage
         localStorage.setItem("clienteSeleccionadoID", clienteID);
         localStorage.setItem("clienteSeleccionadoNombre", clienteNombre);
+        if (!checked.prop("checked")) {
+          setClientAsocId(clienteID);
+        }
       }
     });
   });
@@ -205,9 +338,71 @@ function restaurarSeleccionCliente() {
   if (clienteID && clienteNombre) {
     // Solo restaurar la selección del cliente
     const fila = document.querySelector(
-      `.icono-seleccion[data-id="${clienteID}"]`
+      `.icono-seleccion[data-id="${clienteID}"]`,
     );
     cargarContratosPorCliente(clienteID);
+    if (fila) {
+      fila.classList.add("seleccionado");
+      const icono = fila.querySelector("i");
+      icono.classList.replace("fa-check-circle", "fa-times-circle");
+      icono.style.color = "red";
+    }
+  }
+}
+
+function agregarEventosSeleccionAsoc() {
+  const filas = document.querySelectorAll(".icono-seleccion-asoc");
+
+  filas.forEach((fila) => {
+    fila.addEventListener("click", function () {
+      document.querySelectorAll(".icono-seleccion-asoc i").forEach((icono) => {
+        icono.classList.remove("fa-times-circle");
+        icono.classList.add("fa-check-circle");
+        icono.style.color = "green";
+      });
+
+      if (this.classList.contains("seleccionado")) {
+        this.classList.remove("seleccionado");
+        this.querySelector("i").classList.remove("fa-times-circle");
+        this.querySelector("i").classList.add("fa-check-circle");
+        this.querySelector("i").style.color = "green";
+
+        // Limpiar selección
+        $("#inputClienteAsociado").val("");
+      } else {
+        filas.forEach((f) => f.classList.remove("seleccionado"));
+        this.classList.add("seleccionado");
+        this.querySelector("i").classList.remove("fa-check-circle");
+        this.querySelector("i").classList.add("fa-times-circle");
+        this.querySelector("i").style.color = "red";
+
+        // Guardamos el cliente asociado
+        setClientAsocId(this.dataset.id);
+        setClientAsocName(this.dataset.nombre);
+        $("#inputClienteAsociado").val(`${this.dataset.nombre}`);
+        const seleccionado = document.querySelector(
+          ".icono-seleccion-asoc.seleccionado",
+        );
+
+        if (!seleccionado) {
+          toastr.info("Por favor, seleccione un cliente asociado.", "Aviso");
+        } else {
+          toastr.success("Se agrego el cliente asociado", "¡Excelente!");
+        }
+      }
+    });
+  });
+}
+
+function restaurarSeleccionClienteAsoc() {
+  const clienteIDAsoc = clientAsocId();
+  console.log(clienteIDAsoc);
+  if (clienteIDAsoc) {
+    // Solo restaurar la selección del cliente
+    const fila = document.querySelector(
+      `.icono-seleccion-asoc[data-id="${clienteIDAsoc}"]`,
+    );
+
     if (fila) {
       fila.classList.add("seleccionado");
       const icono = fila.querySelector("i");
@@ -246,30 +441,32 @@ async function cargartablaVehiculo() {
         contratos.forEach((tablaVehiculo, index) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-                    <td class="icono-seleccion" data-id="${tablaVehiculo.ID
-            }" data-nombre="${tablaVehiculo.PLACA}">
+                    <td class="icono-seleccion" data-id="${
+                      tablaVehiculo.ID
+                    }" data-nombre="${tablaVehiculo.PLACA}">
                         <i class="fas fa-check-circle" style="color: green; font-size: 22px;"></i>
                     </td>
                     <td>${tablaVehiculo.CODINI}</td> <!-- Número de contrato -->
                     <td>${tablaVehiculo.PLACA}</td> <!-- Número de contrato -->
-                    <td>${tablaVehiculo.MARCA || "Sin marca"
-            }</td> <!-- Fecha de firma -->
-                    <td>${tablaVehiculo.MODELO || "Sin modelo"
-            }</td> <!-- Periodo -->
-                    <td>${tablaVehiculo.GENERICO || "Sin generico"
-            }</td> <!-- Cantidad total -->
-                    <td>${tablaVehiculo.TERRENO || "Sin terreno"
-            }</td> <!-- Cantidad total -->
+                    <td>${
+                      tablaVehiculo.MARCA || "Sin marca"
+                    }</td> <!-- Fecha de firma -->
+                    <td>${
+                      tablaVehiculo.MODELO || "Sin modelo"
+                    }</td> <!-- Periodo -->
+                    <td>${
+                      tablaVehiculo.GENERICO || "Sin generico"
+                    }</td> <!-- Cantidad total -->
+                    <td>${
+                      tablaVehiculo.TERRENO || "Sin terreno"
+                    }</td> <!-- Cantidad total -->
                 `;
           tbody.appendChild(row);
         });
         agregarEventosSeleccionVehi();
         restaurarSeleccionVehi();
       } catch (error) {
-        mostrarNotificacion(
-          "Error al obtener los datos. Inténtelo de nuevo más tarde.",
-          "#C70039"
-        );
+        toastr.warning("No se pudo obtener la lista de vehiculos", "Oops...");
       }
     });
 }
@@ -277,7 +474,7 @@ async function cargartablaVehiculo() {
 function agregarEventosSeleccionVehi() {
   const filas = document.querySelectorAll(".icono-seleccion");
   const tablaSeleccionados = document.querySelector(
-    "#tablaSeleccionados tbody"
+    "#tablaSeleccionados tbody",
   );
 
   filas.forEach((fila) => {
@@ -289,15 +486,15 @@ function agregarEventosSeleccionVehi() {
       const codini = this.parentElement.children[1].textContent; // Columna 3 (Cliente)
 
       // Asegurarse de que localStorage tiene un valor válido antes de hacer JSON.parse()
-      let seleccionados = localStorage.getItem("vehiculosSeleccionados");
-      seleccionados = seleccionados ? JSON.parse(seleccionados) : [];
+      let seleccionados = listVehicles();
+      seleccionados = seleccionados.length > 0 ? seleccionados : [];
 
       if (this.classList.contains("seleccionado")) {
         // Quitar selección
         this.classList.remove("seleccionado");
         this.querySelector("i").classList.replace(
           "fa-times-circle",
-          "fa-check-circle"
+          "fa-check-circle",
         );
         this.querySelector("i").style.color = "green";
 
@@ -318,13 +515,13 @@ function agregarEventosSeleccionVehi() {
         this.classList.add("seleccionado");
         this.querySelector("i").classList.replace(
           "fa-check-circle",
-          "fa-times-circle"
+          "fa-times-circle",
         );
         this.querySelector("i").style.color = "red";
 
         if (
           ![...tablaSeleccionados.children].some(
-            (row) => row.dataset.id === placaID
+            (row) => row.dataset.id === placaID,
           )
         ) {
           const nuevaFila = document.createElement("tr");
@@ -332,8 +529,9 @@ function agregarEventosSeleccionVehi() {
           const contador = 0;
 
           nuevaFila.innerHTML = `
-                        <td><input type="text" name="item[]" value="${contador + 1
-            }" disabled></td>
+                        <td><input type="text" name="item[]" value="${
+                          contador + 1
+                        }" disabled></td>
                         <td><input type="text" name="id[]" value="${placaID}" disabled></td>
                         <td><input type="text" name="modelo[]" value="${modelo}" disabled></td>
                         <td><input type="text" name="tipo_terreno[]" value="${terreno}" disabled></td>
@@ -343,7 +541,7 @@ function agregarEventosSeleccionVehi() {
                     `;
 
           tablaSeleccionados.appendChild(nuevaFila);
-          mostrarNotificacion("Se agregó el vehículo seleccionado", "#01b204");
+          toastr.success("Se agregó el vehículo seleccionado.", "¡Excelente!");
           actualizarContador();
         }
 
@@ -351,18 +549,17 @@ function agregarEventosSeleccionVehi() {
         seleccionados.push({ id: placaID, modelo, terreno, placa, codini });
       }
 
-      // Guardar el array corregido en localStorage
-      localStorage.setItem(
-        "vehiculosSeleccionados",
-        JSON.stringify(seleccionados)
-      );
+      // Guardar el array en un estado
+      setListVehicles(seleccionados);
+
+      console.log(listVehicles());
     });
   });
 }
 
 function cargarSeleccionados() {
   const tablaSeleccionados = document.querySelector(
-    "#tablaSeleccionados tbody"
+    "#tablaSeleccionados tbody",
   );
 
   // Asegurarse de que localStorage tiene un valor antes de hacer JSON.parse()
@@ -377,18 +574,24 @@ function cargarSeleccionados() {
     nuevaFila.dataset.id = vehiculo.id;
 
     nuevaFila.innerHTML = `
-            <td><input type="text" name="item[]" value="${index + 1
-      }" disabled></td>
-            <td><input type="text" name="id[]" value="${vehiculo.id
-      }" disabled></td>
-            <td><input type="text" name="modelo[]" value="${vehiculo.modelo
-      }" disabled></td>
-            <td><input type="text" name="tipo_terreno[]" value="${vehiculo.terreno
-      }" disabled></td>
-            <td><input type="text" name="placa[]" value="${vehiculo.placa
-      }" disabled></td>
-            <td><input type="text" name="codini[]" value="${vehiculo.codini
-      }" disabled></td>
+            <td><input type="text" name="item[]" value="${
+              index + 1
+            }" disabled></td>
+            <td><input type="text" name="id[]" value="${
+              vehiculo.id
+            }" disabled></td>
+            <td><input type="text" name="modelo[]" value="${
+              vehiculo.modelo
+            }" disabled></td>
+            <td><input type="text" name="tipo_terreno[]" value="${
+              vehiculo.terreno
+            }" disabled></td>
+            <td><input type="text" name="placa[]" value="${
+              vehiculo.placa
+            }" disabled></td>
+            <td><input type="text" name="codini[]" value="${
+              vehiculo.codini
+            }" disabled></td>
             <td><input type="number" name="cantidad[]" value="1" disabled></td>
         `;
 
@@ -401,8 +604,7 @@ function cargarSeleccionados() {
 // Llamar a la función al cargar la página para restaurar la selección
 
 function restaurarSeleccionVehi() {
-  const seleccionados =
-    JSON.parse(localStorage.getItem("vehiculosSeleccionados")) || [];
+  const seleccionados = listVehicles();
   seleccionados.forEach(({ id, modelo, terreno }) => {
     const icono = document.querySelector(`.icono-seleccion[data-id="${id}"] i`);
     if (icono) {
@@ -445,26 +647,28 @@ async function guardaLeasing() {
   let formData = {
     //idCliente: document.querySelector("#combo-cliente").value,
     idCliente: localStorage.getItem("clienteSeleccionadoID"),
-    nroLeasing: document.querySelector("#NroLeasing").value,
-    banco: document.querySelector("#banco").value,
+    idClienteAsoc: clientAsocId(),
+    nroLeasing: textoAGuiones(document.querySelector("#NroLeasing").value),
+    banco: $("#banco").val(),
     cantVehiculos: document.querySelector("#cantVehi").value,
-    fechaIni: document.querySelector("#fechaIni").value || "0",
-    fechaFin: document.querySelector("#fechaFin").value || "0",
+    fechaIni: document.querySelector("#fechaIni").value ? dayjs(document.querySelector("#fechaIni").value, "DD/MM/YYYY").format("YYYY-MM-DD") : null,
+    fechaFin: document.querySelector("#fechaFin").value ? dayjs(document.querySelector("#fechaFin").value, "DD/MM/YYYY").format("YYYY-MM-DD") : null,
     periGracia: document.querySelector("#periGracia").value || "0",
-    idContrato: document.querySelector("#combo-box-asig").value,
+    idContrato: $("#combo-box-asig").val(),
     //story: document.querySelector("#fileInput").value
   };
 
   if (!formData.fechaIni || !formData.fechaFin) {
-    console.log("Ambas fechas son obligatorias");
+    toastr.info("Las fechas son obligatorias", "Aviso");
+    return;
   } else {
     const fechaInicio = new Date(formData.fechaIni);
     const fechaFinal = new Date(formData.fechaFin);
 
     if (fechaFinal <= fechaInicio) {
-      mostrarNotificacion(
-        "La fecha de finalización debe ser mayor que la fecha de inicio",
-        "#C70039"
+      toastr.info(
+        "La fecha de finalización debe ser mayor que la fecha de inicio.",
+        "Aviso",
       );
       return;
     } else {
@@ -476,9 +680,9 @@ async function guardaLeasing() {
     if (formData.cantVehiculos[i] < 10) {
       console.log("Todo conforme.");
     } else {
-      mostrarNotificacion(
+      toastr.info(
         "La cantidad de vehiculo no es inválido, solo debe contener números",
-        "#C70039"
+        "Aviso",
       );
       return;
     }
@@ -488,9 +692,9 @@ async function guardaLeasing() {
     if (formData.periGracia[i] < 10) {
       console.log("Todo conforme.");
     } else {
-      mostrarNotificacion(
-        "el periodo de gracia no es inválido, solo debe contener números",
-        "#C70039"
+      toastr.info(
+        "El periodo de gracia no es inválido, solo debe contener números",
+        "Aviso",
       );
       return;
     }
@@ -499,6 +703,7 @@ async function guardaLeasing() {
   // Validación de campos obligatorios
   if (
     !formData.idCliente ||
+    !formData.idClienteAsoc ||
     !formData.nroLeasing ||
     !formData.banco ||
     !formData.cantVehiculos ||
@@ -506,10 +711,7 @@ async function guardaLeasing() {
     !formData.fechaFin ||
     !formData.idContrato
   ) {
-    mostrarNotificacion(
-      "Por favor, completa todos los campos obligatorios.",
-      "#C70039"
-    );
+    toastr.info("Por favor, completa todos los campos obligatorios.", "Aviso");
     return;
   }
 
@@ -519,7 +721,7 @@ async function guardaLeasing() {
     .map((fila, index) => {
       let modelo = fila.querySelector('input[name="modelo[]"]').value;
       let tipoTerreno = fila.querySelector(
-        'input[name="tipo_terreno[]"]'
+        'input[name="tipo_terreno[]"]',
       ).value;
       let numpla = fila.querySelector('input[name="placa[]"]').value;
       let codini = fila.querySelector('input[name="codini[]"]').value;
@@ -532,14 +734,14 @@ async function guardaLeasing() {
       conta = conta + 1;
       return modelo && numpla && cantidad
         ? {
-          secCon: index + 1,
-          modelo,
-          tipoTerreno,
-          numpla,
-          codini,
-          cantidad,
-          idpla,
-        }
+            secCon: index + 1,
+            modelo,
+            tipoTerreno,
+            numpla,
+            codini,
+            cantidad,
+            idpla,
+          }
         : null;
     })
     .filter(Boolean);
@@ -547,9 +749,9 @@ async function guardaLeasing() {
   if (formData.cantVehiculos == conta) {
     console.log("Todo conforme.");
   } else {
-    mostrarNotificacion(
+    toastr.info(
       "Debe coincidir la cantidad de vehiculos con los vehiculos seleccionados.",
-      "#C70039"
+      "Aviso",
     );
     return;
   }
@@ -568,7 +770,7 @@ async function guardaLeasing() {
       await subirArchivo(fileInput.files[0]); // Aquí mandas el archivo como tal (tipo File)
     } else {
       console.warn("El archivo ya existe, no se sube.");
-      mostrarNotificacion("El archivo PDF ya existe en el servidor", "#C70039");
+      toastr.info("El archivo PDF ya existe en el servidor", "Aviso");
       return;
     }
   }
@@ -576,28 +778,30 @@ async function guardaLeasing() {
   // Construcción del objeto final de datos
   const contratoData = { ...formData, detalles, archivoPdf: nombreArchivo };
 
-  try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/insertaLeasing`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(contratoData),
-      credentials: "include", // Asegura que las cookies se envíen con la solicitud
-    });
+  console.log(contratoData);
 
-    const result = await response.json();
-    if (result.success) {
-      mostrarNotificacion("Leasing guardado exitosamente", "#01b204");
-      await subirArchivo(fileInput.files[0]);
-      limpiarCampos();
-    } else {
-      mostrarNotificacion("Hubo un error al guardar el Leasing", "#C70039");
-    }
-  } catch (error) {
-    const mensaje =
-      error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
-    console.error("Error al enviar los datos:", error);
-    mostrarNotificacion(`Error al guardar: ${mensaje}`, "#C70039");
-  }
+  // try {
+  //   const response = await fetch(`http://${IP_LOCAL}:3000/insertaLeasing`, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify(contratoData),
+  //     credentials: "include", // Asegura que las cookies se envíen con la solicitud
+  //   });
+
+  //   const result = await response.json();
+  //   if (result.success) {
+  //     toastr.success("Leasing guardado exitosamente", "¡Excelente!");
+  //     await subirArchivo(fileInput.files[0]);
+  //     limpiarCampos();
+  //   } else {
+  //     toastr.warning("No se pudo guardar el leasing", "Oops...");
+  //   }
+  // } catch (error) {
+  //   const mensaje =
+  //     error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
+  //   console.error("Error al enviar los datos:", error);
+  //   toastr.warning(`Ocurrio algo al guardar: ${mensaje}`, "Oops...");
+  // }
 }
 
 async function subirArchivo(archivo) {
@@ -615,11 +819,14 @@ async function subirArchivo(archivo) {
 
     const result = await response.json();
     if (!result.success) {
-      mostrarNotificacion("Error al subir el archivo PDF", "#C70039");
+      toastr.warning("No se pudo subir el archivo PDF", "Oops...");
     }
   } catch (error) {
     console.error("Error al subir el archivo:", error);
-    mostrarNotificacion("Ocurrió un error al subir el archivo", "#C70039");
+    toastr.warning(
+      "Sucedio algo inesperado al intentar subir el archivo",
+      "Oops...",
+    );
   }
 }
 
@@ -630,19 +837,19 @@ async function validarArchivo(nombreArchivo) {
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
-      }
+      },
     );
     const result = await response.json();
 
     if (result.existe) {
-      mostrarNotificacion("El archivo PDF ya existe en el servidor", "#C70039");
+      toastr.info("El archivo PDF ya existe en el servidor", "Aviso");
       return true;
     } else {
       return false;
     }
   } catch (error) {
     console.error("Error al validar archivo PDF:", error);
-    mostrarNotificacion("Error al validar archivo PDF", "#C70039");
+    toastr.warning("No se pudo validar el archivo PDF", "Oops...");
     return false;
   }
 }
@@ -664,9 +871,9 @@ function limpiarCampos() {
   document.getElementById("fileInput").value = ""; // Esto limpia el archivo seleccionado
   document.getElementById("fileName").textContent = ""; // Esto limpia el nombre del archivo mostrado
   document.getElementById("fileInfo").style.display = "none"; // Oculta el área de información del archivo
-  const uploadMessage = document.getElementById("uploadMessage");
-  uploadMessage.textContent = "Haz clic o arrastra un archivo aquí"; // Restablece el mensaje
-  uploadMessage.style.display = "block";
+  const uploadMessage = $("#uploadMessage");
+  uploadMessage.addClass("flex");
+  uploadMessage.removeClass("hidden");
 
   // Limpiar el checkbox
   localStorage.setItem("clienteSeleccionadoID", "");
@@ -677,7 +884,7 @@ function limpiarCampos() {
   tbodyContratos.innerHTML = ""; // Vaciar la tabla de contratos
 
   // **LIMPIAR LA TABLA DE VEHÍCULOS SELECCIONADOS**
-  localStorage.removeItem("vehiculosSeleccionados"); // Eliminar los vehículos guardados en localStorage
+  setListVehicles([]); // Eliminar los vehículos guardados en estado
   const tbodyVehiculos = document.querySelector("#tablaSeleccionados tbody");
   tbodyVehiculos.innerHTML = ""; // Vaciar la tabla de vehículos seleccionados
 
@@ -716,7 +923,7 @@ async function cargarContratosPorCliente(idCli) {
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
-      }
+      },
     );
     const contratos = await response.json();
 
@@ -738,4 +945,8 @@ async function cargarContratosPorCliente(idCli) {
     console.error("Error al obtener los contratos:", error);
     alert("Error al obtener los contratos. Inténtelo de nuevo más tarde.");
   }
+}
+
+function textoAGuiones(texto) {
+  return texto.trim().replace(/\s+/g, "-").toUpperCase();
 }

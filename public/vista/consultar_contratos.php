@@ -831,7 +831,16 @@ require './templates/header.html';
       },
       ordering: false,
       scrollX: true,
+      scrollY: '300px',
+      scrollCollapse: true,
       data: vehicles,
+      "columnDefs": [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          "className": "dt-center",
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+        }
+      ],
       columns: [{
           data: "item",
           render: function(data, type, row, meta) {
@@ -1105,7 +1114,16 @@ require './templates/header.html';
       },
       ordering: false,
       scrollX: true,
+      scrollY: '300px',
+      scrollCollapse: true,
       data: vehicles,
+      "columnDefs": [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          "className": "dt-center",
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+        }
+      ],
       columns: [{
           data: "item",
           render: function(data, type, row, meta) {
@@ -1364,7 +1382,16 @@ require './templates/header.html';
       },
       ordering: false,
       scrollX: true,
+      scrollY: '300px',
+      scrollCollapse: true,
       data: vehicles,
+      "columnDefs": [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          "className": "dt-center",
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+        }
+      ],
       columns: [{
           data: "item",
           render: function(data, type, row, meta) {
@@ -1623,6 +1650,15 @@ require './templates/header.html';
       },
       ordering: false,
       scrollX: true,
+      scrollY: '300px',
+      scrollCollapse: true,
+      "columnDefs": [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          "className": "dt-center",
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+        }
+      ],
       data: vehicles,
       columns: [{
           data: "item",
@@ -1882,7 +1918,16 @@ require './templates/header.html';
       },
       ordering: false,
       scrollX: true,
+      scrollY: '300px',
+      scrollCollapse: true,
       data: vehicles,
+      "columnDefs": [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          "className": "dt-center",
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+        }
+      ],
       columns: [{
           data: "item",
           render: function(data, type, row, meta) {

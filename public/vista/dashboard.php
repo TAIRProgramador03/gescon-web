@@ -174,17 +174,17 @@ require './templates/header.html';
       </div>
 
       <div class="dashboard-doughnut-section">
-        <div class="dashboard-item item-large">
-          <h3>Vehiculos con leasings Vencidos</h3>
-          <div id="data-value-veh-exp" class="data-value"></div>
+        <div class="dashboard-item item-large !bg-red-100 !border-red-600">
+          <h3 class="!text-red-500">Vehiculos con leasings Vencidos</h3>
+          <div id="data-value-veh-exp" class="data-value !text-red-800"></div>
           <div style="width: 100%; height: 220px;">
             <canvas id="donutLeasingA" class="can-barra"></canvas>
           </div>
         </div>
 
-        <div class="dashboard-item item-large">
-          <h3>Vehiculos con leasings Por Vencer</h3>
-          <div id="data-value-veh-to-exp" class="data-value"></div>
+        <div class="dashboard-item item-large !bg-green-100 !border-green-600">
+          <h3 class="!text-green-500">Vehiculos con leasings Por Vencer</h3>
+          <div id="data-value-veh-to-exp" class="data-value !text-green-800"></div>
           <div style="width: 100%; height: 220px;">
             <canvas id="donutLeasingB" class="can-barra"></canvas>
           </div>
@@ -504,6 +504,7 @@ require './templates/header.html';
                     <th class="!font-medium text-gray-500">Cliente Inicial</th>
                     <th class="!font-medium text-gray-500">Cliente Actual</th>
                     <th class="!font-medium text-gray-500">Fecha Fin</th>
+                    <th class="!font-medium text-gray-500">% de leasing</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -600,6 +601,13 @@ require './templates/header.html';
                   console.error("Error en fetch:", error);
                 }
               },
+              "columnDefs": [
+                // Centrar contenido y cabecera en las columnas 0, 1 y 2
+                {
+                  "className": "dt-center",
+                  "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                }
+              ],
               columns: [{
                   data: "item",
                   render: function(data, type, row, meta) {
@@ -630,6 +638,29 @@ require './templates/header.html';
                   render: (data) => {
                     return dayjs(data).format("DD/MM/YYYY")
                   }
+                },
+                {
+                  data: "porcentaje",
+                  render: (data, type, row) => {
+
+                    const fechaIni = dayjs(row.fechaIni).format("YYYY-MM-DD")
+                    const fechaFin = dayjs(row.fechaFin).format("YYYY-MM-DD")
+
+                    const result = calcularPorcentaje(fechaIni, fechaFin);
+
+                    if (typeof result == "string") {
+                      return `<span style="color: red;">${result}</span>`;
+                    } else {
+                      const color = result > 0 && result <= 25 ? "red-relleno" : result > 25 && result <= 60 ? "yellow-relleno" : "green-relleno";
+                      const colorText = result > 0 && result <= 25 ? "black-porcentaje" : result > 25 && result <= 60 ? "black-porcentaje" : "white-porcentaje";
+                      return `
+                        <div class="contenedor-barra">
+                          <div class="progreso-relleno ${color}" style="width: ${result}%;"></div>
+                          <span class="numero-porcentaje ${colorText}">${result}%</span>
+                        </div>
+                      `
+                    }
+                  },
                 }
               ],
             })
@@ -708,6 +739,7 @@ require './templates/header.html';
                     <th class="!font-medium text-gray-500">Cliente Inicial</th>
                     <th class="!font-medium text-gray-500">Cliente Actual</th>
                     <th class="!font-medium text-gray-500">Fecha Fin</th>
+                    <th class="!font-medium text-gray-500 ">% de leasing</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -804,6 +836,13 @@ require './templates/header.html';
                   console.error("Error en fetch:", error);
                 }
               },
+              "columnDefs": [
+                // Centrar contenido y cabecera en las columnas 0, 1 y 2
+                {
+                  "className": "dt-center",
+                  "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                }
+              ],
               columns: [{
                   data: "item",
                   render: function(data, type, row, meta) {
@@ -834,6 +873,29 @@ require './templates/header.html';
                   render: (data) => {
                     return dayjs(data).format("DD/MM/YYYY")
                   }
+                },
+                {
+                  data: "porcentaje",
+                  render: (data, type, row) => {
+
+                    const fechaIni = dayjs(row.fechaIni).format("YYYY-MM-DD")
+                    const fechaFin = dayjs(row.fechaFin).format("YYYY-MM-DD")
+
+                    const result = calcularPorcentaje(fechaIni, fechaFin);
+
+                    if (typeof result == "string") {
+                      return `<span style="color: red;">${result}</span>`;
+                    } else {
+                      const color = result > 0 && result <= 25 ? "red-relleno" : result > 25 && result <= 60 ? "yellow-relleno" : "green-relleno";
+                      const colorText = result > 0 && result <= 25 ? "black-porcentaje" : result > 25 && result <= 60 ? "black-porcentaje" : "white-porcentaje";
+                      return `
+                        <div class="contenedor-barra">
+                          <div class="progreso-relleno ${color}" style="width: ${result}%;"></div>
+                          <span class="numero-porcentaje ${colorText}">${result}%</span>
+                        </div>
+                      `
+                    }
+                  },
                 }
               ],
             })

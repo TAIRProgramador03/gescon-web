@@ -65,6 +65,7 @@ require './templates/header.html';
             Razón Social(*)
           </label>
         </div>
+
         <!-- NRO CONTRATO -->
         <div class="input flex flex-col w-full relative">
           <input
@@ -112,8 +113,7 @@ require './templates/header.html';
             Duracion (Meses)(*)
           </label>
         </div>
-      </div>
-      <div class="form-two">
+
         <!-- TIPO MONEDA -->
         <div class="flex flex-col w-full relative">
           <select id="combo-moneda" name="opciones" class="tooltip-input">
@@ -152,7 +152,8 @@ require './templates/header.html';
             Rubro de empresa
           </label>
         </div>
-
+      </div>
+      <div class="form-two">
         <!-- KM ADICIONAL -->
         <div class="input flex flex-col w-full relative">
           <input
@@ -187,16 +188,6 @@ require './templates/header.html';
           </label>
         </div>
 
-        <!-- <div class="form-cliente custom-date">
-          <label for="combo-box">Fecha Firma(*):</label>
-          <input id="firma" name="Firma" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm dta tooltip-input" data-tooltip="Fecha de la firma del contrato">
-        </div> -->
-        <!-- <div class="form-cliente">
-          <label for="combo-box">Duracion (Meses):</label>
-          <input id="duracion" name="Duracion" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="Duracion del contrato en meses">
-        </div> -->
-      </div>
-      <div class="form-four">
         <!-- CANTIDAD VEHICULOS -->
         <div class="input flex flex-col w-full relative">
           <input
@@ -286,14 +277,6 @@ require './templates/header.html';
             # Veh. Sev(*)
           </label>
         </div>
-        <!-- <div class="form-cliente">
-          <label for="combo-box">$ KM Adicional:</label>
-          <input id="adicional" name="Adicional" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="Tarifa por km adicional de recorrido 0.000">
-        </div> -->
-        <!-- <div class="form-cliente">
-          <label for="combo-box">Bolsa KM Total:</label>
-          <input id="bolsa" name="Bolsa" type="text" class="w-[60%] px-1 py-2 border border-gray-300 rounded focus:outline-1 focus:outline-blue-500 focus:shadow-sm tooltip-input" data-tooltip="Km total a recorrer por unidad">
-        </div> -->
       </div>
       <div class="form-six">
         <!-- SUBIR ARCHIVO -->
@@ -331,34 +314,36 @@ require './templates/header.html';
           </div>
         </div> -->
 
-        <!-- CONTRATO ESPECIAL -->
-        <div class="w-full flex flex-col gap-2">
-          <label for="combo-box" class="text-gray-500 text-xs font-semibold">Contrato Especial</label>
-          <!-- <input id="especial" name="especial" type="checkbox" class="check-form-contrato tooltip-input" data-tooltip="Contrato especial, Cuando un contrato tiene varios periodos de finalización."> -->
-          <label class="relative inline-flex w-fit items-center cursor-pointer">
-            <input class="sr-only peer" value="" type="checkbox" id="especial" name="especial">
-            <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 bg-blue-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 after:content-['No'] after:absolute after:outline-none after:rounded-[50%] after:h-8 after:w-8 after:bg-white after:top-1 after:left-1 after:flex after:justify-center after:items-center  after:text-sky-800 after:font-bold peer-checked:after:translate-x-6 peer-checked:after:content-['Si'] peer-checked:after:border-white">
-            </div>
-          </label>
-        </div>
-
       </div>
 
       <!--agregar una columna mas-->
       <div class="form-seven">
         <div class="tabla-form">
-          <div class="tabla-add-vehicle flex gap-3">
-            <button id="addVehicle" class="btn bg-blue-600 text-white">
-              <span>Agregar modelo</span>
-              <span>
-                <i class="bi bi-car-front"></i>
-                <i class="bi bi-plus"></i>
-              </span>
-            </button>
-            <button id="exportVehicle" class="btn bg-green-600 text-white">
-              <span>Exportar</span>
-              <i class="bi bi-file-earmark-excel"></i>
-            </button>
+          <div class="tabla-add-vehicle w-full flex justify-between items-end">
+            <div class="flex gap-3 items-center">
+              <button id="addVehicle" class="btn bg-blue-600 text-white h-fit">
+                <span>Agregar modelo</span>
+                <span>
+                  <i class="bi bi-car-front"></i>
+                  <i class="bi bi-plus"></i>
+                </span>
+              </button>
+              <button id="exportVehicle" class="btn bg-green-600 text-white h-fit">
+                <span>Exportar</span>
+                <i class="bi bi-file-earmark-excel"></i>
+              </button>
+            </div>
+
+            <!-- CONTRATO ESPECIAL -->
+            <div class="flex flex-col justify-end items-end gap-2">
+              <label for="combo-box" class="text-gray-500 text-xs font-semibold">Contrato Especial</label>
+              <!-- <input id="especial" name="especial" type="checkbox" class="check-form-contrato tooltip-input" data-tooltip="Contrato especial, Cuando un contrato tiene varios periodos de finalización."> -->
+              <label class="relative inline-flex w-fit items-center cursor-pointer">
+                <input class="sr-only peer" value="" type="checkbox" id="especial" name="especial">
+                <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 bg-blue-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 after:content-['No'] after:absolute after:outline-none after:rounded-[50%] after:h-8 after:w-8 after:bg-white after:top-1 after:left-1 after:flex after:justify-center after:items-center  after:text-sky-800 after:font-bold peer-checked:after:translate-x-6 peer-checked:after:content-['Si'] peer-checked:after:border-white">
+                </div>
+              </label>
+            </div>
           </div>
           <table id="tabla-dinamica" class="w-full">
             <thead>

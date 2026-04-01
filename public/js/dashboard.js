@@ -247,6 +247,31 @@ function generarColor() {
   const r = Math.floor(Math.random() * 256);
   const g = Math.floor(Math.random() * 256);
   const b = Math.floor(Math.random() * 256);
-  
+
   return [`rgba(${r}, ${g}, ${b}, 0.2)`, `rgba(${r}, ${g}, ${b})`];
+}
+
+function calcularPorcentaje(fechaIni, fechaFinal) {
+  const fechaInicio = new Date(fechaIni);
+  const fechaFin = new Date(fechaFinal);
+  const fechaActual = new Date();
+
+  if (fechaActual > fechaFin) {
+    const diffMs = fechaActual - fechaFin;
+    const diasVencidos = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    return `Vencido hace ${diasVencidos} días`;
+  }
+
+  const tiempoTotal = fechaFin - fechaInicio;
+
+  // INVERSIÓN: Restamos la fecha actual de la fecha fin
+  // para obtener cuánto "camino" queda por recorrer.
+  const tiempoRestante = fechaFin - fechaActual;
+
+  let porcentaje = Math.round((tiempoRestante / tiempoTotal) * 100);
+
+  // Aseguramos que no baje de 0 ni suba de 100
+  porcentaje = Math.min(Math.max(porcentaje, 0), 100);
+
+  return porcentaje;
 }

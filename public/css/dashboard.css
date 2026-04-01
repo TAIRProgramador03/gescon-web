@@ -225,7 +225,7 @@ body {
 }
 #sidebar .sub-menu.show {
   grid-template-rows: 1fr;
-  left: 10px;
+  /* left: 10px; */
   position: relative;
 }
 /*aquiii*/
@@ -249,7 +249,7 @@ body {
   rotate: 180deg;
 }
 #sidebar .sub-menu a {
-  padding-left: 2em;
+  /* padding-left: 2em; */
   font-weight: 500;
 }
 /*aquiii*/

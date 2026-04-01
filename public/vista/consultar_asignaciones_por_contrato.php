@@ -15,13 +15,23 @@ require './templates/header.html';
 <!--BOOTSTRAP CSS-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
-<div id="preloader-mini">
-  <div class="gif-container">
-    <img src="../img/carpeta.gif" alt="Cargando...">
+<div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
+  <div class="flex-col gap-4 w-full flex items-center justify-center relative">
+    <div class="w-28 h-28 border-8 text-blue-600 text-4xl animate-spin border-gray-300 flex items-center justify-center border-t-blue-600 rounded-full"></div>
+    <div class="gif-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <img src="../img/carpeta.gif">
+    </div>
   </div>
-  <div class="welcome-message">
-    <p>¡Cargando!.....</p>
-  </div>
+  <p class="m-0 font-medium text-gray-400 text-xl flex gap-1"><span class="animate-wave" style="animation-delay:0s"></span>
+    <span class="animate-wave" style="animation-delay:0.1s">C</span>
+    <span class="animate-wave" style="animation-delay:0.2s">a</span>
+    <span class="animate-wave" style="animation-delay:0.3s">r</span>
+    <span class="animate-wave" style="animation-delay:0.4s">g</span>
+    <span class="animate-wave" style="animation-delay:0.5s">a</span>
+    <span class="animate-wave" style="animation-delay:0.6s">n</span>
+    <span class="animate-wave" style="animation-delay:0.7s">d</span>
+    <span class="animate-wave" style="animation-delay:0.8s">o</span>
+  </p>
 </div>
 
 <main class="main-query-lea">
@@ -124,7 +134,7 @@ require './templates/header.html';
     if (!clienteId) toastr.error("No se encontraron los parametros necesarios")
 
     $("#paramClient").text(clienteId);
-    if(contratoId) {
+    if (contratoId) {
       $("#paramContText").removeClass("hidden");
       $("#paramContract").text(contratoId);
     }
@@ -185,6 +195,13 @@ require './templates/header.html';
       ordering: false,
       scrollX: true,
       data: assigns,
+      "columnDefs": [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          "className": "dt-center",
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+        }
+      ],
       columns: [{
           data: "item",
           render: function(data, type, row, meta) {

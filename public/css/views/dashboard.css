@@ -736,3 +736,47 @@ div.dt-container.dt-empty-footer .dt-scroll-body {
     height: 10px;
   }
 }
+
+.contenedor-barra {
+  width: 100%;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progreso-relleno {
+  height: 20px;
+  text-align: center;
+  border-radius: 24px;
+  /* La transición suaviza el cambio de porcentaje */
+  transition: width 0.5s ease-in-out; 
+}
+
+.numero-porcentaje {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%)
+}
+
+.white-porcentaje {
+  color: white;
+}
+
+.black-porcentaje {
+  color: black;
+}
+
+.green-relleno {
+  background-color: #01e009;
+}
+
+.yellow-relleno {
+  background-color: #f8d406;
+}
+
+.red-relleno {
+  background-color: #f80707;
+}

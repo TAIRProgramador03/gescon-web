@@ -5,17 +5,35 @@ require './templates/header.html';
 <!-- JQUERY -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- DATATABLE CSS -->
+<link
+  href="https://cdn.datatables.net/v/dt/dt-2.3.7/fh-4.0.6/datatables.min.css"
+  rel="stylesheet"
+  integrity="sha384-7Hrw81H4xX5hYX7S8L0eMfpG12eNpu/o/EJa19nQ3b9LlwFZ+knIhQdpUWrM1GG0"
+  crossorigin="anonymous" />
+<link
+  rel="stylesheet"
+  href="https://cdn.datatables.net/buttons/3.2.6/css/buttons.dataTables.css" />
+
+<!-- DATATABLE JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script
+  src="https://cdn.datatables.net/v/dt/dt-2.3.7/fh-4.0.6/datatables.min.js"
+  integrity="sha384-CNOVKT615Y5C0jlUJ8NQOcckxgpoWtMsl4+LFWMwh/asaMKYPG8K0hlZayw/GSa+"
+  crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.print.min.js"></script>
+
 <!-- CSS de Select2 -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
 
 <!-- JS de Select2 -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
-<!-- CSS DATATABLE -->
-<link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.css" />
-
-<!-- JS DATATABLE -->
-<script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
 
 <!--BOOTSTRAP CSS-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -30,82 +48,156 @@ require './templates/header.html';
   <?php include '../css/views/query_leasing.css' ?>
 </style>
 
-<div id="preloader-mini">
-  <div class="gif-container">
-    <img src="../img/carpeta.gif" alt="Cargando...">
+<div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
+  <div class="flex-col gap-4 w-full flex items-center justify-center relative">
+    <div class="w-28 h-28 border-8 text-blue-600 text-4xl animate-spin border-gray-300 flex items-center justify-center border-t-blue-600 rounded-full"></div>
+    <div class="gif-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <img src="../img/carpeta.gif">
+    </div>
   </div>
-  <div class="welcome-message">
-    <p>¡Cargando!.....</p>
-  </div>
+  <p class="m-0 font-medium text-gray-400 text-xl flex gap-1"><span class="animate-wave" style="animation-delay:0s"></span>
+    <span class="animate-wave" style="animation-delay:0.1s">C</span>
+    <span class="animate-wave" style="animation-delay:0.2s">a</span>
+    <span class="animate-wave" style="animation-delay:0.3s">r</span>
+    <span class="animate-wave" style="animation-delay:0.4s">g</span>
+    <span class="animate-wave" style="animation-delay:0.5s">a</span>
+    <span class="animate-wave" style="animation-delay:0.6s">n</span>
+    <span class="animate-wave" style="animation-delay:0.7s">d</span>
+    <span class="animate-wave" style="animation-delay:0.8s">o</span>
+  </p>
 </div>
 
 <main class="main-container">
-  <div class="header">
-    <h1>Administración de Leasings</h1>
-  </div>
-
   <div class="container-info">
-    <div class="container-table">
+    <!-- <div class="container-filter justify-center items-center px-6 py-4">
+      <div class="w-3 h-full bg-blue-700 absolute top-0 left-0"></div>
+      <h3 class="w-[10%]">Filtrar por</h3>
+      <div class="w-full grid grid-cols-4 gap-6">
+        <div class="row-filter">
+          <div class="flex flex-col w-full relative">
+            <select id="filter-bank" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
+
+            <label
+              for="filter-bank"
+              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+              Bancos
+            </label>
+          </div>
+        </div>
+        <div id="row-client" class="row-filter filter-hidden">
+          <div class="flex flex-col w-full relative">
+            <select id="filter-client" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
+
+            <label
+              for="filter-client"
+              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+              Clientes
+            </label>
+          </div>
+        </div>
+        <div id="row-contract" class="row-filter filter-hidden">
+          <div class="flex flex-col w-full relative">
+            <select id="filter-contract" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
+
+            <label
+              for="filter-contract"
+              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+              Contratos
+            </label>
+          </div>
+        </div>
+        <div id="row-document" class="row-filter filter-hidden">
+          <div class="flex flex-col w-full relative">
+            <select id="filter-document" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
+
+            <label
+              for="filter-document"
+              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+              Documentos
+            </label>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <div class="container-table flex flex-col gap-4 px-9 py-7">
+      <div class="w-full h-3 bg-cyan-700 absolute top-0 left-0"></div>
+      <div class="w-full flex flex-col justify-center gap-2">
+        <h3 id="title-form" class="text-5xl text-[#002141] font-semibold">Consulta de Leasing</h3>
+        <p id="desc-form" class="!m-0 text-base font-normal text-gray-500">Visualice y consulte la información de los leasing registrados en el sistema.</p>
+      </div>
+      <div class="w-full grid grid-cols-4 gap-6">
+        <div class="row-filter">
+          <div class="flex flex-col w-full relative">
+            <select id="filter-bank" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
+
+            <label
+              for="filter-bank"
+              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+              Bancos
+            </label>
+          </div>
+        </div>
+        <div id="row-client" class="row-filter filter-hidden">
+          <div class="flex flex-col w-full relative">
+            <select id="filter-client" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
+
+            <label
+              for="filter-client"
+              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+              Clientes
+            </label>
+          </div>
+        </div>
+        <div id="row-contract" class="row-filter filter-hidden">
+          <div class="flex flex-col w-full relative">
+            <select id="filter-contract" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
+
+            <label
+              for="filter-contract"
+              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+              Contratos
+            </label>
+          </div>
+        </div>
+        <div id="row-document" class="row-filter filter-hidden">
+          <div class="flex flex-col w-full relative">
+            <select id="filter-document" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
+
+            <label
+              for="filter-document"
+              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+              Documentos
+            </label>
+          </div>
+        </div>
+      </div>
       <table id="listLeasing" class="display">
         <thead>
           <tr>
-            <th>Item</th>
-            <th>Nro Leasing</th>
-            <th>Banco</th>
-            <th>Cantidad</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Fin</th>
-            <th>Periodo</th>
-            <th>Tipo</th>
-            <th>Archivo</th>
+            <th class="!font-medium text-gray-500">Item</th>
+            <th class="!font-medium text-gray-500">Nro Leasing</th>
+            <th class="!font-medium text-gray-500">Banco</th>
+            <th class="!font-medium text-gray-500">Cantidad</th>
+            <th class="!font-medium text-gray-500">Fecha Inicio</th>
+            <th class="!font-medium text-gray-500">Fecha Fin</th>
+            <th class="!font-medium text-gray-500">Periodo</th>
+            <th class="!font-medium text-gray-500">Asociado a</th>
+            <th class="!font-medium text-gray-500">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr></tr>
         </tbody>
-        <tfoot>
-          <tr>
-            <th>Item</th>
-            <th>Nro Leasing</th>
-            <th>Banco</th>
-            <th>Cantidad</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Fin</th>
-            <th>Periodo</th>
-            <th>Tipo</th>
-            <th>Archivo</th>
-          </tr>
-        </tfoot>
       </table>
-    </div>
-    <div class="container-filter">
-      <h3>Segmentación</h3>
-      <hr>
-      <div class="row-filter">
-        <label for="filter-bank">Bancos</label>
-        <select id="filter-bank"></select>
-      </div>
-      <div id="row-client" class="row-filter filter-hidden">
-        <label for="filter-client">Clientes</label>
-        <select id="filter-client"></select>
-      </div>
-      <div id="row-contract" class="row-filter filter-hidden">
-        <label for="filter-contract">Contratos</label>
-        <select id="filter-contract"></select>
-      </div>
-      <div id="row-document" class="row-filter filter-hidden">
-        <label for="filter-document">Documentos</label>
-        <select id="filter-document"></select>
-      </div>
     </div>
   </div>
 </main>
 
 <div id="modal-leasing">
   <div class="modal-container">
-    <div class="modal-header">
+    <div class="modal-header text-white">
       <i class="bi bi-info-circle"></i>
-      <h2>Detalles</h2>
+      <h2 class="font-medium">Unidades del leasing</h2>
     </div>
     <div class="modal-body" id="modal-body-info">
 
@@ -126,9 +218,10 @@ require './templates/header.html';
     }, 2000);
 
     $("#filter-bank").select2({
+      allowClear: false,
       data: [{
           id: 0,
-          text: "Seleccione un banco"
+          text: "Todos"
         },
         {
           id: 1,
@@ -162,25 +255,34 @@ require './templates/header.html';
           id: 8,
           text: "SANTANDER"
         },
-      ]
+      ],
+      width: "100%"
     });
 
     const clients = await getClients();
 
     $("#filter-client").select2({
+      allowClear: false,
       data: [{
           id: 0,
-          text: "Seleccione un cliente"
+          text: "Todos"
         },
         ...clients.map(cli => ({
           id: cli.IDCLI,
           text: cli.CLINOM
         }))
-      ]
+      ],
+      width: "100%"
     });
 
-    $("#filter-contract").select2();
-    $("#filter-document").select2();
+    $("#filter-contract").select2({
+      allowClear: false,
+      width: "100%"
+    });
+    $("#filter-document").select2({
+      allowClear: false,
+      width: "100%"
+    });
 
     const params = new URLSearchParams(window.location.search)
     const bank = params.get("banco")
@@ -199,7 +301,7 @@ require './templates/header.html';
 
 
         const contracts = await getContractsByClient(clientId);
-        $('#filter-contract').append(new Option("Seleccione un contrato", 0, false, false)).trigger('change')
+        $('#filter-contract').append(new Option("Todos", 0, false, false)).trigger('change')
 
         contracts.forEach((cont) => {
           var newContract = {
@@ -217,7 +319,7 @@ require './templates/header.html';
           $("#filter-contract").val(contractId).trigger("change")
 
           const documents = await getDocumentsByContract(contractId, clientId);
-          $('#filter-document').append(new Option("Seleccione un documento", 0, false, false)).trigger('change')
+          $('#filter-document').append(new Option("Todos", 0, false, false)).trigger('change')
 
           documents.forEach((doc) => {
             var newDocument = {
@@ -252,42 +354,69 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
+      scrollX: true,
+      scrollY: "500px",
+      scrollCollapse: true,
+      dom: '<"superior"fB>rt<"inferior"i<"derecha-inferior"lp>>',
+      buttons: [{
+        extend: 'excelHtml5',
+        text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+        titleAttr: 'Excel',
+        className: 'btn-excel',
+        filename: 'Reporte_Placas_Leasing_Vencidos_' + new Date().toLocaleDateString(),
+        title: 'Lista de placas de los Leasings Vencidos',
+      }],
       data: leasings,
+      "columnDefs": [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          "className": "dt-center",
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        }
+      ],
       columns: [{
           data: "item",
           render: function(data, type, row, meta) {
             return meta.row + 1;
           },
-          width: "5%",
+          width: "70px",
         },
         {
-          data: "nroLeasing"
+          data: "nroLeasing",
+          width: "150px",
         },
         {
-          data: "banco"
+          data: "banco",
+          width: "100px",
         },
         {
-          data: "cantidad"
+          data: "cantidad",
+          render: (data) => {
+            return `${data} und.`
+          },
+          width: "90px",
         },
         {
           data: "fechaIni",
           render: (data) => {
             if (data) {
-              return convertirFecha(data.toString())
+              return dayjs(convertirFecha(data.toString())).format("DD/MM/YYYY")
             } else {
               return "--";
             }
-          }
+          },
+          width: "120px",
         },
         {
           data: "fechaFin",
           render: (data) => {
             if (data) {
-              return convertirFecha(data.toString())
+              return dayjs(convertirFecha(data.toString())).format("DD/MM/YYYY")
             } else {
               return "--";
             }
-          }
+          },
+          width: "120px",
         },
         {
           data: "perGracia",
@@ -301,21 +430,30 @@ require './templates/header.html';
             } else {
               return "--";
             }
-          }
+          },
+          width: "120px",
         },
         {
-          data: "tipoCon"
+          data: "tipoCon",
+          width: "120px",
         },
         {
           data: "archivoPdf",
-          render: (data) => {
+          render: (data, type, row) => {
             return `
-              <button class="btn-file" id="btn-file" onClick="verPdf('${data}')">
-                <i class="bi bi-file-earmark-pdf-fill"></i>
-                <span>Ver PDF</span>
-              </button>
+              <div class="w-full flex justify-center items-center gap-2">
+                <button class="btn-view" onClick="verFlota('${row.id}')">
+                  <i class="bi bi-car-front-fill"></i>
+                  <span>Ver Flota</span>
+                </button>
+                <button class="btn-file" onClick="verPdf('${data}')">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                  <span>Ver PDF</span>
+                </button>
+              </div>
             `
-          }
+          },
+          width: "200px",
         },
       ],
     })
@@ -323,127 +461,6 @@ require './templates/header.html';
     table.on("page.dt", () => {
       $('tr').removeClass("selected-row");
     })
-  })
-
-  $("#listLeasing tbody").on("click", "tr", async function(e) {
-    const data = table.row(this).data();
-
-    const vehicles = await getVehByLeasing(data.id);
-
-    $("#modal-body-info").append(`
-      <table id="listVeh" class="display">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Terreno</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Terreno</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
-        </tfoot>
-      </table>
-    `);
-
-    $("#listVeh").DataTable({
-      language: {
-        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
-      },
-      select: true,
-      data: vehicles,
-      columns: [{
-          data: "item",
-          render: function(data, type, row, meta) {
-            return meta.row + 1;
-          },
-          width: "5%",
-        },
-        {
-          data: "placa",
-        },
-        {
-          data: "modelo",
-        },
-        {
-          data: "marca",
-        },
-        {
-          data: "terreno",
-        },
-        {
-          data: "cantidad",
-        },
-        {
-          data: "año",
-        },
-        {
-          data: "color",
-        },
-        {
-          data: "operacion",
-        },
-        {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              return convertirFecha(data.toString())
-            } else {
-              return "--"
-            }
-          }
-        },
-        {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              const fechaTsf = convertirFecha(data);
-              const dias = obtenerDiasVencimiento(fechaTsf);
-              if(dias > 0) {
-                return `${dias} dias`
-              } else if(dias < 0) {
-                return `Hace ${Math.abs(dias)} dias`
-              } else {
-                return `Vence hoy`
-              }
-            } else {
-              return "--"
-            }
-          }
-        },
-        {
-          data: "nroLeasing"
-        }
-      ],
-    })
-
-    const modal = document.getElementById("modal-leasing");
-    modal.style.display = "flex";
   })
 
   $("#filter-bank").on("select2:select", async () => {
@@ -515,7 +532,7 @@ require './templates/header.html';
 
       const contracts = await getContractsByClient(clientId);
       $('#filter-contract').empty();
-      $('#filter-contract').append(new Option("Seleccione un contrato", 0, false, false)).trigger('change')
+      $('#filter-contract').append(new Option("Todos", 0, false, false)).trigger('change')
 
       contracts.forEach((cont) => {
         var newContract = {
@@ -567,7 +584,7 @@ require './templates/header.html';
 
       const documents = await getDocumentsByContract(contractId, clientId);
       $('#filter-document').empty();
-      $('#filter-document').append(new Option("Seleccione un documento", 0, false, false)).trigger('change')
+      $('#filter-document').append(new Option("Todos", 0, false, false)).trigger('change')
 
       documents.forEach((doc) => {
         var newDocument = {

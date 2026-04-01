@@ -381,9 +381,9 @@ i {
 }
 
 /* TABLA ESTILOS */
-
-table {
+div.dt-scroll {
   border-radius: 8px !important;
+  border: 1px solid #e5e5e5;
   overflow: hidden;
 }
 
@@ -391,17 +391,17 @@ table thead {
   border: 0;
 }
 
-table thead tr {
-  background: #f8f9fa;
-}
-
 table thead th .dt-column-title {
-  color: #667085 !important;
+  /* color: #667085 !important; */
   font-size: 14px;
-  font-weight: 600;
+  /* font-weight: 600; */
 }
 
-/* table tbody tr {
+table.dataTable > thead > tr > th {
+  padding: 4px 8px;
+}
+
+/* #listContracts tbody tr {
   cursor: pointer;
 } */
 
@@ -506,6 +506,10 @@ div.dt-container .dt-paging .dt-paging-button:hover {
   color: #fff !important;
   border: 0;
   border-radius: 4px;
+}
+
+div.dt-container.dt-empty-footer .dt-scroll-body {
+  border-bottom: 0;
 }
 
 .btn-excel {

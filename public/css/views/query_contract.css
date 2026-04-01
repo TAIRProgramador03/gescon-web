@@ -19,8 +19,8 @@ body {
 
 .contenedor {
   width: 100%;
-  max-width: 1234px;
-  margin: auto;
+  /* max-width: 1234px;
+  margin: auto; */
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 20px;
@@ -59,7 +59,6 @@ body {
 .cbo-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  padding: 0 20px;
   gap: 20px;
 }
 
@@ -201,9 +200,9 @@ body {
 }
 
 .text-form-col {
-  padding: 20px 20px;
   display: flex;
   flex-direction: row;
+  gap: 12px;
   justify-content: space-evenly;
   align-items: center;
   color: #000;
@@ -215,12 +214,10 @@ body {
 }
 
 .text-form-col label {
-  padding: 0 20px;
   width: 120px;
 }
 
 .button-action-col {
-  padding: 20px 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -240,6 +237,7 @@ body {
 .contenedor-col-2 {
   display: flex;
   flex-direction: column;
+  gap: 20px;
 }
 
 .terreno-form {
@@ -302,7 +300,6 @@ body {
 }
 
 .salio-form {
-  padding: 20px 20px;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -314,18 +311,6 @@ body {
   /* font-weight: <weight>; */
   font-style: normal;
   gap: 10px;
-}
-
-h3 {
-  font-family: "Fredoka Variable", serif;
-  font-optical-sizing: auto;
-  font-size: 18px;
-  /* font-weight: <weight>; */
-  font-style: normal;
-}
-
-.tabla-form {
-  padding: 0 20px;
 }
 
 .add-action {
@@ -1372,8 +1357,8 @@ table thead th .dt-column-title {
   /* font-weight: 600; */
 }
 
-table.dataTable>thead>tr>th {
-  padding: 0px 8px;
+table.dataTable > thead > tr > th {
+  padding: 4px 8px;
 }
 
 #listContracts tbody tr {
@@ -1481,6 +1466,10 @@ div.dt-container .dt-paging .dt-paging-button:hover {
   color: #fff !important;
   border: 0;
   border-radius: 4px;
+}
+
+div.dt-container.dt-empty-footer .dt-scroll-body {
+  border-bottom: 0;
 }
 
 .btn-excel {

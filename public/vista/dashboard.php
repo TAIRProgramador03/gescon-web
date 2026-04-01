@@ -44,41 +44,6 @@ require './templates/header.html';
 </style>
 
 <!-- MAQUETACIÓN DE LA VISTA -->
-<!-- <div class="banner" id="banner">
-  <div id="preloader">
-    <div class="presentation">
-      <div class="rotating-wheel"></div>
-      <div class="small-white-bg"></div>
-      <div class="logo-ta"></div>
-    </div>
-  </div>
-
-  <div class="carousel-container">
-    <div class="carousel">
-      <img src="../img/COMBUSTIBLE.png" alt="Imagen 1">
-      <img src="../img/CONTRATOS.png" alt="Imagen 2">
-      <img src="../img/MANTENIMIENTO.png" alt="Imagen 3">
-      <img src="../img/NEUMATICOS.png" alt="Imagen 4">
-      <img src="../img/OPERACIONES.png" alt="Imagen 5">
-      <img src="../img/LOGISTICA.png" alt="Imagen 6">
-
-      <img src="../img/COMBUSTIBLE.png" alt="Imagen 1">
-      <img src="../img/CONTRATOS.png" alt="Imagen 2">
-      <img src="../img/MANTENIMIENTO.png" alt="Imagen 3">
-      <img src="../img/NEUMATICOS.png" alt="Imagen 4">
-      <img src="../img/OPERACIONES.png" alt="Imagen 5">
-      <img src="../img/LOGISTICA.png" alt="Imagen 6">
-    </div>
-  </div>
-
-  <div class="content">
-    <div class="author">
-      <h3><em>GES 360 - Transformación Digital</em></h3>
-      <p><b>TECNOLOGIA DE INFORMACION - GRUPO IBARCENA</b></p>
-    </div>
-  </div>
-</div> -->
-
 <div id="banner" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
   <!-- <h3 class="!text-7xl !font-semibold !text-blue-600 uppercase">Gescon</h3> -->
   <h3 class="!text-7xl !font-semibold !text-blue-600 uppercase flex gap-1">
@@ -187,18 +152,18 @@ require './templates/header.html';
         <table id="listLeasings" class="display">
           <thead>
             <tr>
-              <th>Item</th>
-              <th>Placa</th>
-              <th>Modelo</th>
-              <th>Nro Leasing</th>
-              <th>Tipo</th>
-              <th>F. Acta Entrega.</th>
-              <th>F. Devolucion.</th>
-              <th>Años Contrato</th>
-              <th>F. Ini. Lea.</th>
-              <th>F. Fin Lea.</th>
-              <th>Años Leasing</th>
-              <th>Estado (Diferencia)</th>
+              <th class="!font-medium text-gray-500">Item</th>
+              <th class="!font-medium text-gray-500">Placa</th>
+              <th class="!font-medium text-gray-500">Modelo</th>
+              <th class="!font-medium text-gray-500">Tipo</th>
+              <th class="!font-medium text-gray-500">F. Acta Entrega.</th>
+              <th class="!font-medium text-gray-500">F. Devolucion.</th>
+              <th class="!font-medium text-gray-500">Años Contrato</th>
+              <th class="!font-medium text-gray-500">Nro Leasing</th>
+              <th class="!font-medium text-gray-500">F. Ini. Lea.</th>
+              <th class="!font-medium text-gray-500">F. Fin Lea.</th>
+              <th class="!font-medium text-gray-500">Años Leasing</th>
+              <th class="!font-medium text-gray-500">Estado (Diferencia)</th>
             </tr>
           </thead>
           <tbody>
@@ -488,7 +453,7 @@ require './templates/header.html';
           'Entre 30 y 45 dias',
           'Entre 45 y 60 dias',
           'Entre 60 y 90 dias',
-          'Mayor 90 dias'
+          'Entre 90 y 120 dias'
         ],
         datasets: [{
           label: 'Vehiculos',
@@ -531,13 +496,14 @@ require './templates/header.html';
               <table id="listVehExpires" class="display">
                 <thead>
                   <tr>
-                    <th>Item</th>
-                    <th>Placa</th>
-                    <th>Modelo</th>
-                    <th>Marca</th>
-                    <th>Leasing</th>
-                    <th>Cliente</th>
-                    <th>Fecha Fin</th>
+                    <th class="!font-medium text-gray-500">Item</th>
+                    <th class="!font-medium text-gray-500">Placa</th>
+                    <th class="!font-medium text-gray-500">Modelo</th>
+                    <th class="!font-medium text-gray-500">Marca</th>
+                    <th class="!font-medium text-gray-500">Leasing</th>
+                    <th class="!font-medium text-gray-500">Cliente Inicial</th>
+                    <th class="!font-medium text-gray-500">Cliente Actual</th>
+                    <th class="!font-medium text-gray-500">Fecha Fin</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -551,6 +517,62 @@ require './templates/header.html';
               language: {
                 url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
               },
+              dom: '<"superior"fB>rt<"inferior"i<"derecha-inferior"lp>>',
+              buttons: [{
+                extend: 'excelHtml5',
+                text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+                titleAttr: 'Excel',
+                className: 'btn-excel',
+                filename: 'Reporte_Placas_Leasing_Vencidos_' + new Date().toLocaleDateString(),
+                title: 'Lista de placas de los Leasings Vencidos',
+                customize: function(xlsx) {
+                  var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                  // 1. Cambiar el color del Título (Celda A1)
+                  // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
+                  $('row c[r^="A1"]', sheet).attr('s', '51');
+
+                  // 2. Personalizar los Headers (Fila de encabezados)
+                  // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
+                  // El estilo '2' es negrita, '42' es fondo azul claro, etc.
+                  $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
+
+                  // 3. Si quieres colores manuales más específicos (estilos personalizados)
+                  // Tienes que editar el diccionario de estilos de JSZip (más complejo)
+                  // Pero DataTables trae estilos incorporados del 0 al 60:
+                  // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
+                },
+                action: function(e, dt, button, config) {
+                  var self = this;
+                  var oldStart = dt.settings()._iDisplayStart;
+
+                  // Mostrar un mensaje de "Procesando" manual
+                  dt.buttons.info('Generando archivo', 'Por favor espere...', 3000);
+
+                  dt.one('preXhr', function(e, s, data) {
+                    data.start = 0;
+                    data.length = 2147483647; // Tu número máximo para DB2
+
+                    dt.one('preDraw', function(e, settings) {
+                      // Ejecutar la exportación original
+                      $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+
+                      // IMPORTANTE: Decirle a DataTables que ya terminó el proceso visual
+                      dt.processing(false);
+
+                      // Restaurar paginación original
+                      settings._iDisplayStart = oldStart;
+                      setTimeout(function() {
+                        dt.ajax.reload(null, false); // Recargar la vista original sin resetear paginado
+                      }, 200);
+
+                      return false; // Evitar renderizar miles de filas
+                    });
+                  });
+
+                  dt.ajax.reload();
+                }
+              }],
               ordering: false,
               scrollY: '300px',
               scrollCollapse: true,
@@ -601,6 +623,9 @@ require './templates/header.html';
                   data: "cliente"
                 },
                 {
+                  data: "clienteAsoc"
+                },
+                {
                   data: "fechaFin",
                   render: (data) => {
                     return dayjs(data).format("DD/MM/YYYY")
@@ -632,7 +657,7 @@ require './templates/header.html';
           'Entre 30 y 45 dias',
           'Entre 45 y 60 dias',
           'Entre 60 y 90 dias',
-          'Mayor 90 dias'
+          'Entre 90 y 120 dias'
         ],
         datasets: [{
           label: 'Vehiculos',
@@ -675,13 +700,14 @@ require './templates/header.html';
               <table id="listVehToExpires" class="display">
                 <thead>
                   <tr>
-                    <th>Item</th>
-                    <th>Placa</th>
-                    <th>Modelo</th>
-                    <th>Marca</th>
-                    <th>Leasing</th>
-                    <th>Cliente</th>
-                    <th>Fecha Fin</th>
+                    <th class="!font-medium text-gray-500">Item</th>
+                    <th class="!font-medium text-gray-500">Placa</th>
+                    <th class="!font-medium text-gray-500">Modelo</th>
+                    <th class="!font-medium text-gray-500">Marca</th>
+                    <th class="!font-medium text-gray-500">Leasing</th>
+                    <th class="!font-medium text-gray-500">Cliente Inicial</th>
+                    <th class="!font-medium text-gray-500">Cliente Actual</th>
+                    <th class="!font-medium text-gray-500">Fecha Fin</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -695,6 +721,62 @@ require './templates/header.html';
               language: {
                 url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
               },
+              dom: '<"superior"fB>rt<"inferior"i<"derecha-inferior"lp>>',
+              buttons: [{
+                extend: 'excelHtml5',
+                text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+                titleAttr: 'Excel',
+                className: 'btn-excel',
+                filename: 'Reporte_Placas_Leasing_Por_Vencer_' + new Date().toLocaleDateString(),
+                title: 'Lista de placas de los Leasings por vencer',
+                customize: function(xlsx) {
+                  var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                  // 1. Cambiar el color del Título (Celda A1)
+                  // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
+                  $('row c[r^="A1"]', sheet).attr('s', '51');
+
+                  // 2. Personalizar los Headers (Fila de encabezados)
+                  // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
+                  // El estilo '2' es negrita, '42' es fondo azul claro, etc.
+                  $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
+
+                  // 3. Si quieres colores manuales más específicos (estilos personalizados)
+                  // Tienes que editar el diccionario de estilos de JSZip (más complejo)
+                  // Pero DataTables trae estilos incorporados del 0 al 60:
+                  // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
+                },
+                action: function(e, dt, button, config) {
+                  var self = this;
+                  var oldStart = dt.settings()._iDisplayStart;
+
+                  // Mostrar un mensaje de "Procesando" manual
+                  dt.buttons.info('Generando archivo', 'Por favor espere...', 3000);
+
+                  dt.one('preXhr', function(e, s, data) {
+                    data.start = 0;
+                    data.length = 2147483647; // Tu número máximo para DB2
+
+                    dt.one('preDraw', function(e, settings) {
+                      // Ejecutar la exportación original
+                      $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+
+                      // IMPORTANTE: Decirle a DataTables que ya terminó el proceso visual
+                      dt.processing(false);
+
+                      // Restaurar paginación original
+                      settings._iDisplayStart = oldStart;
+                      setTimeout(function() {
+                        dt.ajax.reload(null, false); // Recargar la vista original sin resetear paginado
+                      }, 200);
+
+                      return false; // Evitar renderizar miles de filas
+                    });
+                  });
+
+                  dt.ajax.reload();
+                }
+              }],
               ordering: false,
               scrollY: '300px',
               scrollCollapse: true,
@@ -743,6 +825,9 @@ require './templates/header.html';
                 },
                 {
                   data: "cliente"
+                },
+                {
+                  data: "clienteAsoc"
                 },
                 {
                   data: "fechaFin",
@@ -947,7 +1032,7 @@ require './templates/header.html';
         language: {
           url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
         },
-        dom: '<"superior"Bf>rt<"inferior"i<"derecha-inferior"lp>>',
+        dom: '<"superior"fB>rt<"inferior"i<"derecha-inferior"lp>>',
         buttons: [{
           extend: 'excelHtml5',
           text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
@@ -1004,7 +1089,8 @@ require './templates/header.html';
           }
         }],
         ordering: false,
-        scrollY: '300px',
+        scrollY: '438px',
+        scrollX: true,
         scrollCollapse: true,
         serverSide: true, // Activa el procesamiento en servidor
         processing: true,
@@ -1039,54 +1125,74 @@ require './templates/header.html';
             $($(row).find("td")[11]).css("background-color", "#006be6").css("color", "#fff");
           }
         },
+        "columnDefs": [
+          // Centrar contenido y cabecera en las columnas 0, 1 y 2
+          {
+            "className": "dt-center",
+            "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+          }
+        ],
         columns: [{
             data: "item",
             render: function(data, type, row, meta) {
               return meta.row + 1;
             },
-            width: "5%",
+            width: "52px",
           },
           {
-            data: 'placa'
+            data: 'placa',
+            width: "100px",
           },
           {
-            data: 'modelo'
+            data: 'modelo',
+            width: "200px"
           },
           {
-            data: 'nroLeasing'
+            data: 'tipoCont',
+            render: (data) => {
+              return data == "P" ? "Contrato" : "Adenda";
+            },
+            width: "100px"
           },
           {
-            data: 'tipoCont'
-          },
-          {
-            data: 'fechaIniCont',
+            data: 'fechaIniActa',
             render: (data) => {
               return dayjs(data).format("DD/MM/YYYY")
-            }
+            },
+            width: "100px"
           },
           {
-            data: 'fechaFinCont',
+            data: 'fechaFinActa',
             render: (data) => {
               return dayjs(data).format("DD/MM/YYYY")
-            }
+            },
+            width: "100px"
           },
           {
-            data: 'añosContrato'
+            data: 'añosContrato',
+            width: "100px"
+          },
+          {
+            data: 'nroLeasing',
+            width: "100px"
           },
           {
             data: 'fechaIniLea',
             render: (data) => {
               return dayjs(data).format("DD/MM/YYYY")
-            }
+            },
+            width: "100px"
           },
           {
             data: 'fechaFinLea',
             render: (data) => {
               return dayjs(data).format("DD/MM/YYYY")
-            }
+            },
+            width: "100px"
           },
           {
-            data: 'añosLeasing'
+            data: 'añosLeasing',
+            width: "100px"
           },
           {
             data: 'diferenciaDias',
@@ -1098,7 +1204,8 @@ require './templates/header.html';
               } else {
                 return `Vencen a la vez`;
               }
-            }
+            },
+            width: "200px"
           }
         ]
       })

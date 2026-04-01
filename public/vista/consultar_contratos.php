@@ -71,41 +71,35 @@ require './templates/header.html';
 
 <main class="main-query">
   <div class="contenedor">
-    <div class="form-col-1 contenedor-col-1">
-      <div class="tittle-form-col bg-blue-900">
-        <h3 class="text-3xl font-medium">Administracion de Contratos</h3>
+    <div class="form-col-1 contenedor-col-1 relative px-9 py-7 overflow-hidden">
+      <div class="w-full h-3 bg-blue-700 absolute top-0 left-0"></div>
+      <div class="w-full flex flex-col justify-center gap-2">
+        <h3 class="text-5xl text-[#002141] font-semibold">Administración de contratos</h3>
+        <p class="!m-0 text-base font-normal text-gray-500">Visualice y consulte la información de los contratos registrados en el sistema.</p>
       </div>
-      <div class="cbo-row">
-        <div class="flex flex-col w-full relative">
-          <select id="combo-box" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente">
-          </select>
+      <div class="tabla-form flex flex-col gap-3">
+        <div class="cbo-row">
+          <div class="flex flex-col w-full relative">
+            <select id="combo-box" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente">
+            </select>
 
-          <label
-            for="combo-cliente"
-            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-            Seleccione el cliente
-          </label>
-        </div>
-        <div class="flex flex-col w-full relative">
-          <select id="combo-contrato" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el contrato">
-          </select>
+            <label
+              for="combo-cliente"
+              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+              Seleccione el cliente
+            </label>
+          </div>
+          <div class="flex flex-col w-full relative">
+            <select id="combo-contrato" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el contrato">
+            </select>
 
-          <label
-            for="combo-cliente"
-            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-            Seleccione el Contrato
-          </label>
+            <label
+              for="combo-cliente"
+              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+              Seleccione el Contrato
+            </label>
+          </div>
         </div>
-        <!-- <div class="cbo-form-col">
-          <label for="combo-box">Seleccione el Cliente:</label>
-          <select id="combo-box" name="opciones" class="cbo-form-cliente"></select>
-        </div> -->
-        <!-- <div class="cbo-form-col">
-          <label for="combo-contrato">Seleccione el Contrato:</label>
-          <select id="combo-contrato" name="opciones" class="cbo-form-cliente"></select>
-        </div> -->
-      </div>
-      <div class="tabla-form">
         <table id="listContracts" class="display">
           <thead>
             <tr>
@@ -122,11 +116,7 @@ require './templates/header.html';
           </tbody>
         </table>
       </div>
-      <!-- <div class="txt-description">
-        <label for="combo-box area-text">Descripcion</label>
-        <textarea id="story" name="story" class="px-[10px] py-[11px] h-24 text-sm rounded-[5px] border-2 border-gray-300 bg-gray-100 text-gray-800 resize-none outline-none" readonly></textarea>
-      </div> -->
-      <div class="input flex flex-col w-full relative px-5">
+      <div class="input flex flex-col w-full relative">
         <textarea
           id="story" name="story"
           type="text"
@@ -169,65 +159,24 @@ require './templates/header.html';
           </div>
           <p class="translate-x-4 !m-0 !text-white text-base font-medium">Limpiar</p>
         </button>
-        <!-- <button class="add-action" onclick="registrarContrato()">
-          <div>
-            <div class="broom"></div>
-            <div class="trash">
-              <div class="trash-top">
-                <svg viewBox="0 0 24 27">
-                  <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
-                </svg>
-              </div>
-              <div class="paper-clear"></div>
-            </div>
-          </div>
-          Nuevo Doc.
-        </button> -->
-        <!-- <button class="continue-application" onclick="registrarDocumento()">
-          <div>
-            <div class="pencil"></div>
-            <div class="folder">
-              <div class="top">
-                <svg viewBox="0 0 24 27">
-                  <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
-                </svg>
-              </div>
-              <div class="paper"></div>
-            </div>
-          </div>
-          Doc. Asoc.
-        </button> -->
-        <!-- <button class="clear-action" id="btnClear">
-          <div>
-            <div class="broom"></div>
-            <div class="trash">
-              <div class="trash-top">
-                <svg viewBox="0 0 24 27">
-                  <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
-                </svg>
-              </div>
-              <div class="paper-clear"></div>
-            </div>
-          </div>
-          Limpiar
-        </button> -->
       </div>
     </div>
-    <div class="form-col-2 contenedor-col-2">
-      <div class="tittle-form-col bg-blue-900">
-        <h3 class="text-3xl font-medium">Resumen de Contrato</h3>
+    <div class="form-col-2 contenedor-col-2 relative px-9 py-7 overflow-hidden">
+      <div class="w-full h-3 bg-blue-700 absolute top-0 left-0"></div>
+      <div class="w-full">
+        <h3 class="text-2xl text-[#002141] font-semibold">Resumen</h3>
       </div>
-      <div id="skeleton-contract" class="w-[318px] hidden flex-col items-center">
-        <div class="p-5 w-full">
+      <div id="skeleton-contract" class="w-[250px] hidden flex-col gap-5 items-center">
+        <div class="w-full">
           <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
         </div>
-        <div class="p-5 w-full">
+        <div class="w-full">
           <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
         </div>
-        <div class="p-5 w-full">
+        <div class="w-full">
           <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
         </div>
-        <div class="p-5 w-full flex gap-2">
+        <div class="w-full flex gap-2">
           <div class="w-1/3 h-[47px] bg-slate-400 rounded animate-pulse"></div>
           <div class="w-full grid grid-cols-4 gap-1">
             <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
@@ -236,16 +185,16 @@ require './templates/header.html';
             <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
           </div>
         </div>
-        <div class="p-5 w-full grid grid-cols-2 gap-2">
+        <div class="w-full grid grid-cols-2 gap-2">
           <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
           <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
         </div>
-        <div class="p-5 w-full grid grid-cols-2 gap-2">
+        <div class="w-full grid grid-cols-2 gap-2">
           <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
           <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
         </div>
       </div>
-      <div id="data-contract" class="flex flex-col">
+      <div id="data-contract" class="flex flex-col gap-5">
         <div class="text-form-col">
           <label for="combo-box">Estado:</label>
           <input id="text-estado" name="estado" type="text" class="px-[10px] py-[11px] rounded-[5px] border-2 border-gray-300 bg-gray-50 text-gray-600" value="--" disabled>
@@ -318,35 +267,6 @@ require './templates/header.html';
             </div>
             <p class="translate-x-4 !m-0 !text-white text-base font-medium">Editar contrato</p>
           </button>
-          <!-- <button id="btn-edit-con">
-          <div>
-            <div class="pencil"></div>
-            <div class="folder">
-              <div class="top">
-                <svg viewBox="0 0 24 27">
-                  <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
-                </svg>
-              </div>
-              <div class="paper"></div>
-            </div>
-          </div>
-          Editar contrato
-        </button> -->
-          <!-- <button class="continue-pen btn-assign">
-          <span class="count-veh-alert"></span>
-          <div>
-            <div class="pencil"></div>
-            <div class="folder">
-              <div class="top">
-                <svg viewBox="0 0 24 27">
-                  <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
-                </svg>
-              </div>
-              <div class="paper"></div>
-            </div>
-          </div>
-          Pendientes
-        </button> -->
           <button
             id="btn-assign"
             type="button"
@@ -453,10 +373,19 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      ordering: false,
+      // ordering: false,
       searching: false,
-      dom: '<"superior"f>rt<"inferior"i<"derecha-inferior"lp>>',
+      scrollY: "500px",
+      scrollCollapse: true,
+      dom: 'rt<"inferior"i<"derecha-inferior"lp>>',
       data: [],
+      "columnDefs": [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          "className": "dt-center",
+          "targets": [0, 1, 2, 3, 4]
+        }
+      ],
       columns: [{
           data: "item",
           render: function(data, type, row, meta) {
@@ -498,11 +427,13 @@ require './templates/header.html';
     $("#combo-box").select2({
       placeholder: "Seleccione un cliente",
       allowClear: false, // Desactiva la "X"
+      width: "100%"
     });
 
     $("#combo-contrato").select2({
       placeholder: "Seleccione un contrato",
       allowClear: false, // Desactiva la "X"
+      width: "100%"
     });
 
     if (idClient) {

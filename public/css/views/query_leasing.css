@@ -7,45 +7,38 @@
   /* overflow: hidden; */
 }
 
-.main-container .header {
-  background: #002141;
-  /* border: 2px solid #0300cc; */
-  border-radius: 8px;
-  padding: 12px;
-}
-
-.main-container .header h1 {
-  font-weight: 600;
-  color: #fff;
-  font-size: 24px;
-  text-align: center;
-}
-
 .main-container .container-info {
   width: 100%;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: start;
+  align-items: start;
 }
 
 .main-container .container-info .container-table {
+  width: 100%;
   background-color: #fff;
   border-radius: 8px;
-  padding: 12px;
+  /* padding: 12px; */
+  position: relative;
+  overflow: hidden;
 }
 
 /* ESTILOS DE FILTROS */
 
 .main-container .container-info .container-filter {
-  position: sticky;
-  top: 12px;
+  width: 100%;
+  /* max-width: 360px; */
+  position: relative;
+  /* top: 12px; */
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   background-color: #fff;
   border-radius: 8px;
-  padding: 12px;
   gap: 12px;
   height: fit-content;
+  overflow: hidden;
 }
 
 .main-container .container-info .container-filter h3 {
@@ -57,6 +50,7 @@
 .main-container .container-info .container-filter .row-filter {
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: 4px;
 }
 
@@ -69,13 +63,14 @@
   justify-content: center;
   align-items: center;
   gap: 4px;
-  background: #daa8a8;
   padding: 8px 12px;
   border-radius: 4px;
-  color: #ce0101;
-  border: 1px solid #a01616;
   cursor: pointer;
   transition: linear 100ms;
+
+  background: #daa8a8;
+  color: #ce0101;
+  border: 1px solid #e20c0c;
 }
 
 .btn-file:hover {
@@ -83,13 +78,121 @@
   color: #fff;
 }
 
-/* SELECT 2 ESTILOS */
-.select2-results__option {
-  color: #000;
+.btn-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: linear 100ms;
+
+  background: #a8ccda;
+  color: #00445f;
+  border: 1px solid #1680a0;
 }
 
-.select2-container--default .select2-results__option[aria-selected=true] {
-  color: #000;
+.btn-view:hover {
+  background: #1680a0;
+  color: #fff;
+}
+
+/* SELECT 2 ESTILOS */
+.select2-container {
+  order: 2;
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__rendered {
+  color: #000000;
+  /* line-height: 28px; */
+}
+
+.select2-container .select2-selection--single {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+  padding: 0;
+}
+
+.select2-dropdown {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+/* Cambia la fuente de los elementos dentro del desplegable */
+.select2-results__option {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single {
+  height: 43.3px !important;
+  padding: 11px 10px;
+}
+
+.select2-selection__arrow {
+  top: 50% !important;
+  transform: translate(0, -50%);
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__rendered {
+  line-height: normal;
+}
+
+.select2-container--default .select2-selection--single {
+  outline: none;
+  border: 2px solid oklch(87.2% 0.01 258.338) !important;
+  border-radius: 5px;
+}
+
+.select2-container--default.select2-container--disabled
+  .select2-selection--single {
+  background: #fff !important;
+  color: #eee !important;
+}
+
+.select2-container--default.select2-container--disabled ~ .label-select {
+  color: #eee !important;
+}
+
+/* Cuando el contenedor de Select2 tenga el foco, pinta el label que viene después */
+.select2-container--default.select2-container--focus ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* Cambia el color del borde cuando Select2 recibe el foco */
+.select2-container--default.select2-container--focus
+  .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* También cuando el menú desplegable está abierto */
+.select2-container--default.select2-container--open .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* OPCIONAL: Si quieres que también cambie cuando el menú está ABIERTO */
+.select2-container--default.select2-container--open ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
 }
 
 /* FILTROS ESTILOS */
@@ -239,11 +342,10 @@
   color: #fff;
 }
 
-
 /* TABLA ESTILOS */
-
-table {
+div.dt-scroll {
   border-radius: 8px !important;
+  border: 1px solid #e5e5e5;
   overflow: hidden;
 }
 
@@ -251,17 +353,17 @@ table thead {
   border: 0;
 }
 
-table thead tr {
-  background: #F8F9FA;
-}
-
 table thead th .dt-column-title {
-  color: #667085 !important;
+  /* color: #667085 !important; */
   font-size: 14px;
-  font-weight: 600
+  /* font-weight: 600; */
 }
 
-table tbody tr {
+table.dataTable > thead > tr > th {
+  padding: 4px 8px;
+}
+
+#listContracts tbody tr {
   cursor: pointer;
 }
 
@@ -270,7 +372,7 @@ table tbody tr:hover {
 }
 
 table tbody tr td {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 table tfoot {
@@ -278,7 +380,7 @@ table tfoot {
 }
 
 table tfoot tr {
-  background: #F8F9FA;
+  background: #f8f9fa;
 }
 
 table tfoot th .dt-column-title {
@@ -289,18 +391,106 @@ table tfoot th .dt-column-title {
 
 table.dataTable.stripe tbody tr.odd,
 table.dataTable.display tbody tr.odd {
-    background-color: #fff !important;
+  background-color: #fff !important;
 }
 table.dataTable.stripe tbody tr.even,
 table.dataTable.display tbody tr.even {
-    background-color: #fff !important;
+  background-color: #fff !important;
 }
 
 table.dataTable.display > tbody tr > .sorting_1,
 table.dataTable.display > tbody > tr:nth-child(odd) > .sorting_1,
-table.dataTable.hover > tbody > tr:hover > *, table.dataTable.display > tbody > tr:hover > * ,
+table.dataTable.hover > tbody > tr:hover > *,
+table.dataTable.display > tbody > tr:hover > *,
 table.dataTable.display > tbody > tr:nth-child(odd) > *,
-table.dataTable.display tbody tr:hover > .sorting_1
-{
-  box-shadow: none;
+table.dataTable.display tbody tr:hover > .sorting_1 {
+  box-shadow: none !important;
+}
+
+.dt-container .superior {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.dt-container .inferior {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.dt-container .inferior .derecha-inferior {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+div.dt-container .dt-info {
+  color: oklch(0.556 0 0) !important;
+  font-size: 0.875rem;
+}
+
+.dt-container .inferior .derecha-inferior select {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current {
+  background: #2b5ce4 !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current:hover {
+  background: #3e68db !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button {
+  background: transparent !important;
+  color: rgb(139, 139, 139);
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button:hover {
+  background: #3e68db !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container.dt-empty-footer .dt-scroll-body {
+  border-bottom: 0;
+}
+
+.btn-excel {
+  border: 0 !important;
+  border-radius: 4px !important;
+  color: #fff !important;
+  transition: linear 200ms;
+  background-color: #077703 !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+  margin: 0 !important;
+}
+
+.btn-excel:hover {
+  box-shadow: 2px 2px 5px #0000002d !important;
+}
+
+.btn-excel span {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
 }

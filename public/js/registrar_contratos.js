@@ -108,9 +108,17 @@ $("#exportVehicle").on("click", function () {
 
 function actualizarDuracionEstado() {
   const duracionCeldas = document.querySelectorAll('input[name="duracion[]"]');
+  const kmAdiCeldas = document.querySelectorAll('input[name="kmAdi[]"]');
   const checkbox = document.getElementById("especial"); // Reemplaza con el ID real del checkbox
 
   duracionCeldas.forEach(function (celda) {
+    if (!checkbox.checked) {
+      celda.value = "0"; // Establece el valor en 0 si el checkbox está desactivado
+    }
+    celda.disabled = !checkbox.checked;
+  });
+
+  kmAdiCeldas.forEach(function (celda) {
     if (!checkbox.checked) {
       celda.value = "0"; // Establece el valor en 0 si el checkbox está desactivado
     }
@@ -149,11 +157,23 @@ function cargarFilasRegistrar(checkbox) {
             <td><input type="text" name="cpk[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
             <td><input type="number" min="0" name="rm[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
             <td><input type="number" min="0" name="cantidad[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
+            <td><input type="text" min="0" name="kmAdi[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" ${
+              checkbox.checked ? "" : "disabled"
+            } data-tooltip="$KM Adicional"></td>
             <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"  value="0" ${
               checkbox.checked ? "" : "disabled"
             } data-tooltip="Duracion contrato"></td>
             <td><input type="text" name="compra_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
             <td><input type="text" name="precio_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+            <td>
+                <select name="condicion[]" class="cbo-form-cliente terreno-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
+                    <option value="4">Seleccione el tipo</option>
+                    <option value="0">Titular</option>
+                    <option value="1">Retén</option>
+                    <option value="2">Logística</option>
+                    <option value="3">Pendiente</option>
+                </select>
+            </td>
             <td>
               <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
             </td>
@@ -229,11 +249,23 @@ function cargarFilas(data, modelos) {
             <td><input type="text" name="cpk[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.cpk}" data-tooltip="Costo por kilometraje"></td>
             <td><input type="number" min="0" name="rm[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.rm}" data-tooltip="Recorrido mensual del vehiculo"></td>
             <td><input type="number" min="0" name="cantidad[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.cantidad}" data-tooltip="Cantidad de unidades"></td>
+            <td><input type="text" min="0" name="kmAdi[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.kmAdicional}" ${
+              checkbox.checked ? "" : "disabled"
+            } data-tooltip="$KM Adicional"></td>
             <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"  value="${data.duracion}" ${
               checkbox.checked ? "" : "disabled"
             } data-tooltip="Duracion contrato"></td>
             <td><input type="text" name="compra_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.compraVeh}" data-tooltip="Precio promedio de la compra del vehiculo"></td>
             <td><input type="text" name="precio_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="${data.precioVeh}" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+            <td>
+                <select name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
+                    <option value="4">Seleccione el tipo</option>
+                    <option value="0">Titular</option>
+                    <option value="1">Retén</option>
+                    <option value="2">Logística</option>
+                    <option value="3">Pendiente</option>
+                </select>
+            </td>
             <td>
               <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
             </td>
@@ -279,10 +311,27 @@ function cargarFilas(data, modelos) {
       "font-style": "normal",
     });
 
+  $(nuevaFila)
+    .find(".condicion-select")
+    .select2({
+      placeholder: "Seleccione la condicion",
+      allowClear: false,
+      width: "140px",
+    })
+    .next(".select2-container")
+    .css({
+      "font-family": "Fredoka Variable, sans-serif",
+      "font-size": "13px",
+      "font-optical-sizing": "auto",
+      "font-style": "normal",
+    });
+
   // Llenar el select de modelos en la nueva fila
   $(nuevaFila).find(".modelo-select").val(data.modelo).trigger("change");
 
   $(nuevaFila).find(".terreno-select").val(data.tipoTerreno).trigger("change");
+
+  $(nuevaFila).find(".condicion-select").val(data.condicion).trigger("change");
 }
 
 async function cargarContrato(id) {
@@ -352,8 +401,6 @@ async function cargarCampoPDF(key) {
       const response = await axios.get(viewPDF.data.url, {
         responseType: "blob",
       });
-
-      console.log(response);
 
       const blob = response.data;
 
@@ -666,6 +713,9 @@ async function guardarContrato() {
         let tipoTerreno = fila.querySelector(
           'select[name="tipo_terreno[]"]',
         ).value;
+        let condicion = fila.querySelector(
+          'select[name="condicion[]"]',
+        ).value;
         let tarifa =
           Number(fila.querySelector('input[name="tarifa[]"]').value) || 0;
         let cpk = Number(fila.querySelector('input[name="cpk[]"]').value) || 0;
@@ -674,6 +724,8 @@ async function guardarContrato() {
           Number(fila.querySelector('input[name="cantidad[]"]').value) || 0;
         let duracion =
           Number(fila.querySelector('input[name="duracion[]"]').value) || 0;
+        let kmAdi =
+          Number(fila.querySelector('input[name="kmAdi[]').value) || 0;
         let compraVeh =
           Number(fila.querySelector('input[name="compra_veh[]"]').value) || 0;
         let precioVeh =
@@ -710,6 +762,12 @@ async function guardarContrato() {
           console.log("valido carnal");
         }
 
+        if (kmAdi > 5) {
+          throw new Error(
+            `El KM Adicional del item ${index + 1} no debe ser mayor a 5`,
+          );
+        }
+
         return modelo && tarifa != null && cantidad
           ? {
               idDet: Number(idDet),
@@ -721,14 +779,14 @@ async function guardarContrato() {
               rm,
               cantidad,
               duracion,
+              kmAdicional: kmAdi,
               compraVeh,
               precioVeh,
+              condicion
             }
           : null;
       })
       .filter(Boolean);
-
-    console.log("Datos procesados correctamente:", detalles);
   } catch (error) {
     //  Si hay un error, se muestra la notificación y se detiene todo
     toastr.warning(error.message, "¡Oops...!");
@@ -797,6 +855,8 @@ async function guardarContrato() {
     if (!isExist) {
       const uploadFile = await subirArchivo(fileInput.files[0]);
       nameFile = uploadFile.key;
+    } else {
+      nameFile = `contracts/${nameFile}`;
     }
 
     const data = { ...contratoData, archivoPdf: nameFile };
@@ -930,7 +990,7 @@ async function subirArchivo(archivo) {
 async function validarArchivo(nombreArchivo) {
   try {
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`,
+      `http://${IP_LOCAL}:3000/validarArchivo?nombre=contracts/${nombreArchivo.trim()}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -938,15 +998,10 @@ async function validarArchivo(nombreArchivo) {
     );
     const result = await response.json();
 
-    if (result.existe) {
-      toastr.info("El archivo PDF ya existe en el servidor", "Aviso");
-      return true;
-    } else {
-      return false;
-    }
+    return result.success;
   } catch (error) {
     console.error("Error al validar archivo PDF:", error);
-    toastr.warning(error.message, "Oops...");
+    // toastr.warning(error.message, "Oops...");
     return false;
   }
 }

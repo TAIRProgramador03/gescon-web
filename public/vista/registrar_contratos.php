@@ -355,9 +355,11 @@ require './templates/header.html';
                 <th>CPK</th>
                 <th>RM</th>
                 <th>Cantidad</th>
+                <th>$ KM Adi.</th>
                 <th>Duracion</th>
                 <th>Compra Veh. ($)</th>
                 <th>Venta Veh. ($)</th>
+                <th>Condición</th>
                 <th>Accion</th>
               </tr>
             </thead>

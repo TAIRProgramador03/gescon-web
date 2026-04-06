@@ -112,6 +112,29 @@ document.addEventListener("DOMContentLoaded", () => {
   hideLoader();
 });
 
+document.addEventListener("change", function (e) {
+  if (!e.target.classList.contains("acta")) return;
+
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const container = e.target.closest("td");
+  const label = container.querySelector("label");
+
+  const span = label.querySelector("span");
+  const icon = label.querySelector("i");
+
+  // cambiar texto
+  span.textContent = file.name;
+
+  // cambiar icono
+  icon.className = "bi bi-check-circle";
+
+  // cambiar color
+  label.classList.remove("bg-blue-800");
+  label.classList.add("bg-green-600");
+});
+
 // Operacciones para el formulario de asignacion de vehiculos
 
 async function cargarClientes() {
@@ -280,6 +303,8 @@ async function listaVehiculosAsignables(clientId) {
     tbody.innerHTML = ""; // Limpia las filas existentes
     let contador = 0;
     vehiLeasing.data.forEach((vehi, index) => {
+      const fileId = `acta_${index}`;
+
       const row = document.createElement("tr");
       row.innerHTML = `
                 <td>${(contador =
@@ -312,6 +337,15 @@ async function listaVehiculosAsignables(clientId) {
                         <option value="2">Ciudad</option>
                         <option value="3">Severo</option>
                     </select></td>
+                <td>
+                  <div class="flex">
+                    <label for="${fileId}" class="btn-upload w-full flex justify-center items-center gap-1 cursor-pointer bg-blue-800 !rounded-md !text-white px-3 py-2">
+                      <i class="bi bi-file-earmark-arrow-up"></i>
+                      <span>Subir archivo</span>
+                    </label>
+                    <input id="${fileId}" type="file" name="acta[]" class="acta hidden">
+                  </div>
+                </td>
             `;
       tbody.appendChild(row);
 
@@ -569,6 +603,7 @@ async function guardaAsignacion() {
   }
 
   const invalidDates = [];
+  const tarifasAltas = [];
 
   // Filtrar solo los checkboxes seleccionados
   const detalles = Array.from(document.querySelectorAll("#asignacion-tbody tr"))
@@ -591,6 +626,7 @@ async function guardaAsignacion() {
       let idContrato = fila.querySelector('select[name="contrato[]"]').value;
       let leasing = fila.querySelector('input[name="leasing[]"]').value;
       let idTerreno = fila.querySelector('select[name="tipo_terreno[]"]').value;
+      let file = fila.querySelector('input[name="acta[]"]').files[0];
 
       // Validación y asignación de valores predeterminados
       idveh = idveh === "" ? 0 : idveh;
@@ -608,6 +644,10 @@ async function guardaAsignacion() {
         }
       }
 
+      if (tarifa >= 100) {
+        tarifasAltas.push(tarifa);
+      }
+
       return {
         secCon: index + 1,
         idveh,
@@ -621,6 +661,7 @@ async function guardaAsignacion() {
         idContrato,
         leasing,
         idTerreno,
+        archivoPdf: file,
       };
     });
 
@@ -630,11 +671,47 @@ async function guardaAsignacion() {
   }
 
   if (invalidDates.length > 0) {
-    const itmDate = invalidDates.join(", ")
+    const itmDate = invalidDates.join(", ");
     toastr.info(
       `La fecha de devolución debe ser mayor que la fecha de entrega. (Item: ${itmDate})`,
       "Aviso",
     );
+    return;
+  }
+
+  if (tarifasAltas.length > 0) {
+    $("#alert-modal").removeClass("hidden");
+    $("#alert-modal").addClass("flex");
+
+    $("#listTarifa").text(`Tarifas observadas: ${tarifasAltas.join(", ")}`)
+
+    $("#btn-save")
+      .off("click")
+      .on("click", async function () {
+        const validacionResult = await validarAsignacion(detalles);
+        if (!validacionResult.success) {
+          toastr.warning(
+            validacionResult.mensaje || "Validación fallida",
+            "Oops...",
+          );
+          return false;
+        }
+
+        const asignacionData = { ...formData, detalles };
+
+        await registrar(asignacionData);
+
+        $("#alert-modal").addClass("hidden");
+        $("#alert-modal").removeClass("flex");
+      });
+
+    $("#btn-cancel")
+      .off("click")
+      .on("click", function () {
+        $("#alert-modal").addClass("hidden");
+        $("#alert-modal").removeClass("flex");
+      });
+
     return;
   }
 
@@ -646,14 +723,31 @@ async function guardaAsignacion() {
 
   const asignacionData = { ...formData, detalles };
 
+  await registrar(asignacionData);
+}
+
+const registrar = async (asignacionData) => {
   try {
+    await Promise.all(
+      asignacionData.detalles.map(async (detalle) => {
+        if (!detalle.archivoPdf) return;
+        const formData = new FormData();
+        formData.append("archivoPdf", detalle.archivoPdf);
+        formData.append("documentType", "acta");
+        const res = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        detalle.archivoPdf = data.key;
+      }),
+    );
     const response = await fetch(`http://${IP_LOCAL}:3000/insertaAsignacion`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(asignacionData),
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     });
-
     const result = await response.json();
     if (result.success) {
       toastr.success("Asignación guardada exitosamente", "¡Éxito!");
@@ -667,7 +761,7 @@ async function guardaAsignacion() {
     console.error("Error al enviar los datos:", error);
     toastr.warning(`No se puedo procesar la asignación: ${mensaje}`, "Oops...");
   }
-}
+};
 
 const validarAsignacion = async (detalles) => {
   if (!detalles || detalles.length === 0) return { success: true };

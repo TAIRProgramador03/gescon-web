@@ -166,7 +166,9 @@ async function cargarDatosContrato(clienteId, contratoId) {
     // Convertir fecha firma a formato yyyy-mm-dd
     const fechaInicio = convertirFecha(fechaFirma);
     document.getElementById("text-inicio").value =
-      data.data.fechaFirma != "" ? dayjs(fechaInicio).format("DD/MM/YYYY") : "--"; // Asignar FECHA_FIRMA
+      data.data.fechaFirma != ""
+        ? dayjs(fechaInicio).format("DD/MM/YYYY")
+        : "--"; // Asignar FECHA_FIRMA
 
     // Calcular fecha de fin
     const fechaFin = calcularFechaFin(fechaInicio, data.data.duracion);
@@ -201,6 +203,37 @@ async function cargarDatosContrato(clienteId, contratoId) {
     console.error("Error al obtener los datos del contrato:", error);
   }
 }
+
+const getFile = async (key) => {
+  try {
+    const viewPDF = await fetch(
+      `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
+      {
+        credentials: "include",
+      },
+    );
+
+    const result = await viewPDF.json();
+
+    console.log(result);
+
+    if (result.success) {
+      return result.url;
+    } else {
+      toastr.warning(result.message, "Oops...");
+    }
+  } catch (error) {
+    console.error(error);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+};
+
+const verPdf = async (key) => {
+  const link = await getFile(key);
+
+  console.log("LINK", link);
+  window.open(link, "_blank");
+};
 
 function limpia() {
   // Limpiar los campos de texto (inputs)

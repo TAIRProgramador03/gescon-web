@@ -771,6 +771,7 @@ require './templates/header.html';
           <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
           <th class="text-gray-500 !font-medium">% de contrato</th>
           <th class="text-gray-500 !font-medium">Condicion</th>
+          <th class="text-gray-500 !font-medium">Acta</th>
         </tr>
       </thead>
       <tbody>
@@ -986,6 +987,23 @@ require './templates/header.html';
             return `<span class="tag-estado ${color}">${status}</span>`
           }
         },
+        {
+          data: "archivoPdf",
+          render: (data) => {
+            if (data) {
+              return `
+              <div class="w-full flex justify-center items-center">
+                <button class="w-full flex justify-center items-center gap-1 bg-red-100 text-red-700 border border-red-700 rounded outline-none px-4 py-2 cursor-pointer" onClick="verPdf('${data}')">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                  <span>Ver PDF</span>
+                </button>
+              </div>`
+            } else {
+              return `<p class="!text-red-700">Sin acta</p>`
+            }
+          },
+          width: "120px"
+        }
       ],
     })
 
@@ -1054,6 +1072,7 @@ require './templates/header.html';
           <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
           <th class="text-gray-500 !font-medium">% de contrato</th>
           <th class="text-gray-500 !font-medium">Condicion</th>
+          <th class="text-gray-500 !font-medium">Acta</th>
         </tr>
       </thead>
       <tbody>
@@ -1269,6 +1288,23 @@ require './templates/header.html';
             return `<span class="tag-estado ${color}">${status}</span>`
           }
         },
+        {
+          data: "archivoPdf",
+          render: (data) => {
+            if (data) {
+              return `
+              <div class="w-full flex justify-center items-center">
+                <button class="w-full flex justify-center items-center gap-1 bg-red-100 text-red-700 border border-red-700 rounded outline-none px-4 py-2 cursor-pointer" onClick="verPdf('${data}')">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                  <span>Ver PDF</span>
+                </button>
+              </div>`
+            } else {
+              return `<p class="!text-red-700">Sin acta</p>`
+            }
+          },
+          width: "120px"
+        }
       ],
     })
 
@@ -1322,6 +1358,7 @@ require './templates/header.html';
           <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
           <th class="text-gray-500 !font-medium">% de contrato</th>
           <th class="text-gray-500 !font-medium">Condicion</th>
+          <th class="text-gray-500 !font-medium">Acta</th>
         </tr>
       </thead>
       <tbody>
@@ -1537,6 +1574,23 @@ require './templates/header.html';
             return `<span class="tag-estado ${color}">${status}</span>`
           }
         },
+        {
+          data: "archivoPdf",
+          render: (data) => {
+            if (data) {
+              return `
+              <div class="w-full flex justify-center items-center">
+                <button class="w-full flex justify-center items-center gap-1 bg-red-100 text-red-700 border border-red-700 rounded outline-none px-4 py-2 cursor-pointer" onClick="verPdf('${data}')">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                  <span>Ver PDF</span>
+                </button>
+              </div>`
+            } else {
+              return `<p class="!text-red-700">Sin acta</p>`
+            }
+          },
+          width: "120px"
+        }
       ],
     })
 
@@ -1590,6 +1644,7 @@ require './templates/header.html';
           <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
           <th class="text-gray-500 !font-medium">% de contrato</th>
           <th class="text-gray-500 !font-medium">Condicion</th>
+          <th class="text-gray-500 !font-medium">Acta</th>
         </tr>
       </thead>
       <tbody>
@@ -1805,6 +1860,23 @@ require './templates/header.html';
             return `<span class="tag-estado ${color}">${status}</span>`
           }
         },
+        {
+          data: "archivoPdf",
+          render: (data) => {
+            if (data) {
+              return `
+              <div class="w-full flex justify-center items-center">
+                <button class="w-full flex justify-center items-center gap-1 bg-red-100 text-red-700 border border-red-700 rounded outline-none px-4 py-2 cursor-pointer" onClick="verPdf('${data}')">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                  <span>Ver PDF</span>
+                </button>
+              </div>`
+            } else {
+              return `<p class="!text-red-700">Sin acta</p>`
+            }
+          },
+          width: "120px"
+        }
       ],
     })
 
@@ -1858,6 +1930,7 @@ require './templates/header.html';
           <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
           <th class="text-gray-500 !font-medium">% de contrato</th>
           <th class="text-gray-500 !font-medium">Condicion</th>
+          <th class="text-gray-500 !font-medium">Acta</th>
         </tr>
       </thead>
       <tbody>
@@ -2073,6 +2146,23 @@ require './templates/header.html';
             return `<span class="tag-estado ${color}">${status}</span>`
           }
         },
+        {
+          data: "archivoPdf",
+          render: (data) => {
+            if (data) {
+              return `
+              <div class="w-full flex justify-center items-center">
+                <button class="w-full flex justify-center items-center gap-1 bg-red-100 text-red-700 border border-red-700 rounded outline-none px-4 py-2 cursor-pointer" onClick="verPdf('${data}')">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                  <span>Ver PDF</span>
+                </button>
+              </div>`
+            } else {
+              return `<p class="!text-red-700">Sin acta</p>`
+            }
+          },
+          width: "120px"
+        }
       ],
     })
 

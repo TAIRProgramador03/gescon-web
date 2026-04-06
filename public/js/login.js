@@ -1,16 +1,27 @@
+toastr.options = {
+  closeButton: false,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-bottom-right",
+  preventDuplicates: false,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "5000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
+
+
 const IP_LOCAL = '192.168.5.95';
 
 const container = document.querySelector(".container");
 const registerBtn = document.querySelector(".register-btn");
 const loginBtn = document.querySelector(".login-btn");
-
-registerBtn.addEventListener("click", () => {
-  container.classList.add("active");
-});
-
-loginBtn.addEventListener("click", () => {
-  container.classList.remove("active");
-});
 
 document.addEventListener("DOMContentLoaded", async () => {
   await authenticateValid();
@@ -27,6 +38,6 @@ async function authenticateValid() {
   });
 
   if (response.ok) {
-    window.location.replace("./public/vista/dashboard.php"); // replace no guarda la página en el historial
+    window.location.replace("./public/vista/dashboard"); // replace no guarda la página en el historial
   }
 }

@@ -1,5 +1,8 @@
     
     </main>
+    <!-- TOASTR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- END TOASTR -->
     <script>
         dayjs.extend(dayjs_plugin_customParseFormat);
         
@@ -16,21 +19,11 @@
                     localStorage.removeItem("dbUser");
                     window.location.href = "/gescon-web/index.html";
                 } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: "No se pudo cerrar sesión",
-                        confirmButtonColor: "#004f83",
-                    });
+                    toastr("No se pudo cerrar sesión", "Oops...")
                 }
             } catch (error) {
                 console.error("Error al hacer la solicitud:", error);
-                Swal.fire({
-                icon: "error",
-                title: "Error de conexión",
-                text: "No se pudo conectar con el servidor",
-                confirmButtonColor: "#004f83",
-                });
+                toastr("Sucedio un error desconocido en la solicitud", "Oops...")
             }
         });
     </script>

@@ -762,46 +762,36 @@ async function guardaLeasing() {
   // Construcción del objeto final de datos
   //const contratoData = { ...formData, detalles, archivoPdf: fileData };
 
-  const nombreArchivo = fileInput.files[0].name;
-
-  if (nombreArchivo) {
-    const yaExiste = await validarArchivo(nombreArchivo); // Solo el nombre, ya es string
-    if (!yaExiste) {
-      await subirArchivo(fileInput.files[0]); // Aquí mandas el archivo como tal (tipo File)
-    } else {
-      console.warn("El archivo ya existe, no se sube.");
-      toastr.info("El archivo PDF ya existe en el servidor", "Aviso");
-      return;
-    }
-  }
+  const uploadFile = await subirArchivo(fileInput.files[0]);
+  const nombreArchivo = uploadFile.key;
 
   // Construcción del objeto final de datos
   const contratoData = { ...formData, detalles, archivoPdf: nombreArchivo };
 
   console.log(contratoData);
 
-  // try {
-  //   const response = await fetch(`http://${IP_LOCAL}:3000/insertaLeasing`, {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(contratoData),
-  //     credentials: "include", // Asegura que las cookies se envíen con la solicitud
-  //   });
+  try {
+    const response = await fetch(`http://${IP_LOCAL}:3000/insertaLeasing`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(contratoData),
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    });
 
-  //   const result = await response.json();
-  //   if (result.success) {
-  //     toastr.success("Leasing guardado exitosamente", "¡Excelente!");
-  //     await subirArchivo(fileInput.files[0]);
-  //     limpiarCampos();
-  //   } else {
-  //     toastr.warning("No se pudo guardar el leasing", "Oops...");
-  //   }
-  // } catch (error) {
-  //   const mensaje =
-  //     error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
-  //   console.error("Error al enviar los datos:", error);
-  //   toastr.warning(`Ocurrio algo al guardar: ${mensaje}`, "Oops...");
-  // }
+    const result = await response.json();
+    if (result.success) {
+      toastr.success("Leasing guardado exitosamente", "¡Excelente!");
+      // await subirArchivo(fileInput.files[0]);
+      limpiarCampos();
+    } else {
+      toastr.warning("No se pudo guardar el leasing", "Oops...");
+    }
+  } catch (error) {
+    const mensaje =
+      error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
+    console.error("Error al enviar los datos:", error);
+    toastr.warning(`Ocurrio algo al guardar: ${mensaje}`, "Oops...");
+  }
 }
 
 async function subirArchivo(archivo) {

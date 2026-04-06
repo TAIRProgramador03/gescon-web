@@ -42,7 +42,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       const isEdit = validNroContract(findContract.nroContrato);
       if (isEdit === "TEMP") {
         $("#title-form").text("Actualizar contrato");
-        $("#desc-form").text("Gestione la actualización de contratos temporales registrados para un cliente.");
+        $("#desc-form").text(
+          "Gestione la actualización de contratos temporales registrados para un cliente.",
+        );
         $("#actualizarButton").removeClass("hidden");
         $("#actualizarButton").addClass("flex");
 
@@ -337,34 +339,49 @@ async function cargarCampos(data) {
   });
 }
 
-async function cargarCampoPDF(url) {
+async function cargarCampoPDF(key) {
   try {
-    const response = await axios.get(url, {
-      withCredentials: true,
-      responseType: "blob",
-    });
+    const viewPDF = await axios.get(
+      `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
+      {
+        withCredentials: true,
+      },
+    );
 
-    const blob = response.data;
+    if (viewPDF.data.success) {
+      const response = await axios.get(viewPDF.data.url, {
+        responseType: "blob",
+      });
 
-    const name = url.split("/");
+      console.log(response);
 
-    const file = new File([blob], name[name.length - 1], {
-      type: blob.type,
-    });
+      const blob = response.data;
 
-    const dt = new DataTransfer();
-    dt.items.add(file);
+      const name = viewPDF.data.url.split("/");
+      const realName = name[name.length - 1].split("?");
 
-    $("#fileInput")[0].files = dt.files;
+      const file = new File([blob], realName[0], {
+        type: blob.type,
+      });
 
-    if (file) {
-      $("#uploadMessage").hide(); // Ocultar mensaje de carga
-      $("#fileInfo").css("display", "flex"); // Mostrar el área con el archivo
-      $("#fileName").text(truncateFileName(file.name)); // Mostrar el nombre truncado del archivo
+      const dt = new DataTransfer();
+      dt.items.add(file);
+
+      $("#fileInput")[0].files = dt.files;
+
+      if (file) {
+        $("#uploadMessage").hide(); // Ocultar mensaje de carga
+        $("#fileInfo").css("display", "flex"); // Mostrar el área con el archivo
+        $("#fileName").text(file.name); // Mostrar el nombre truncado del archivo
+      }
+    } else {
+      $("#uploadMessage").show(); // Ocultar mensaje de carga
+      $("#fileInfo").css("display", "none"); // Mostrar el área con el archivo
+      // $("#fileName").text(truncateFileName(file.name));
     }
   } catch (error) {
     console.error(error);
-    toastr.error(error, "Oops...");
+    toastr.warning(error.response.data.message, "Oops...");
   }
 }
 
@@ -738,39 +755,29 @@ async function guardarContrato() {
     return;
   }
 
-  // Obtener archivo adjunto si existe
-  const nombreArchivo = fileInput.files[0].name;
-
-  if (nombreArchivo) {
-    const yaExiste = await validarArchivo(nombreArchivo); // Solo el nombre, ya es string
-    if (!yaExiste) {
-      await subirArchivo(fileInput.files[0]); // Aquí mandas el archivo como tal (tipo File)
-    } else {
-      console.warn("El archivo ya existe, no se sube.");
-      toastr.warning("El archivo PDF ya existe en el servidor", "Atención");
-      return;
-    }
-  }
-
   // Construcción del objeto final de datos
-  const contratoData = { ...formData, detalles, archivoPdf: nombreArchivo };
+  const contratoData = { ...formData, detalles };
 
   const params = new URLSearchParams(window.location.search);
   const isUpd = params.get("formUpd");
   const contractId = params.get("contratoId");
 
   async function registrar() {
+    const uploadFile = await subirArchivo(fileInput.files[0]);
+    const nombreArchivo = uploadFile.key;
+
+    const data = { ...contratoData, archivoPdf: nombreArchivo };
+
     try {
       const response = await fetch(`http://${IP_LOCAL}:3000/insertarContrato`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(contratoData),
+        body: JSON.stringify(data),
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
       });
       const result = await response.json();
       if (result.success) {
         toastr.success("Contrato guardado exitosamente", "¡Exitó!");
-        await subirArchivo(fileInput.files[0]);
         limpiarCampos();
       } else {
         toastr.warning(result.message, "¡Alto!");
@@ -784,20 +791,30 @@ async function guardarContrato() {
   }
 
   async function actualizar(contractId) {
+    let nameFile = fileInput.files[0].name;
+
+    const isExist = await validarArchivo(nameFile);
+    if (!isExist) {
+      const uploadFile = await subirArchivo(fileInput.files[0]);
+      nameFile = uploadFile.key;
+    }
+
+    const data = { ...contratoData, archivoPdf: nameFile };
+
     try {
       const response = await fetch(
         `http://${IP_LOCAL}:3000/actualizarContrato/${contractId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(contratoData),
+          body: JSON.stringify(data),
           credentials: "include", // Asegura que las cookies se envíen con la solicitud
         },
       );
       const result = await response.json();
       if (result.success) {
         toastr.success("Contrato actualizado exitosamente", "¡Exitó!");
-        await subirArchivo(fileInput.files[0]);
+        // await subirArchivo(fileInput.files[0]);
         limpiarCampos();
       } else {
         toastr.warning(result.message, "¡Alto!");
@@ -902,6 +919,8 @@ async function subirArchivo(archivo) {
     if (!result.success) {
       toastr.warning(result.message, "Oops...");
     }
+
+    return result;
   } catch (error) {
     console.error("Error al subir el archivo:", error);
     toastr.warning(error.message, "Oops...");

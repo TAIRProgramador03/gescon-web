@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }*/
   function actualizarDuracionEstado() {
     const duracionCeldas = document.querySelectorAll(
-      'input[name="duracion[]"]'
+      'input[name="duracion[]"]',
     );
     const checkbox = document.getElementById("especial"); // Reemplaza con el ID real del checkbox
 
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function agregarFila() {
     const lastRow = tabla.querySelector("tbody tr:last-child");
     const lastRowIndex = Array.from(tabla.querySelectorAll("tbody tr")).indexOf(
-      lastRow
+      lastRow,
     );
 
     const nuevaFila = document.createElement("tr");
@@ -229,7 +229,7 @@ async function cargarContrato() {
           {
             method: "GET",
             credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          }
+          },
         );
         const contratos = await response.json();
 
@@ -292,7 +292,7 @@ async function guardarDocumento() {
     } else {
       mostrarNotificacion(
         "La cantidad es inválido, solo debe contener números",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -304,7 +304,7 @@ async function guardarDocumento() {
     } else {
       mostrarNotificacion(
         "La duración es inválido, solo debe contener números",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -316,7 +316,7 @@ async function guardarDocumento() {
     } else {
       mostrarNotificacion(
         "el km total es inválido, solo debe contener números",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -328,7 +328,7 @@ async function guardarDocumento() {
     } else {
       mostrarNotificacion(
         "valor inválido, solo debe contener números enteros",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -340,7 +340,7 @@ async function guardarDocumento() {
     } else {
       mostrarNotificacion(
         "valor inválido, solo debe contener números enteros",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -352,7 +352,7 @@ async function guardarDocumento() {
     } else {
       mostrarNotificacion(
         "valor inválido, solo debe contener números enteros",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -364,7 +364,7 @@ async function guardarDocumento() {
     } else {
       mostrarNotificacion(
         "valor inválido, solo debe contener números enteros",
-        "#C70039"
+        "#C70039",
       );
       return;
     }
@@ -381,7 +381,7 @@ async function guardarDocumento() {
   } else {
     mostrarNotificacion(
       "Total de vehiculos no coincide con la cantidad de vehiculos",
-      "#C70039"
+      "#C70039",
     );
     return;
   }
@@ -390,7 +390,7 @@ async function guardarDocumento() {
   if (!formData.idCliente || !formData.nroContrato || !formData.fechaFirma) {
     mostrarNotificacion(
       "Por favor, completa todos los campos obligatorios.",
-      "#C70039"
+      "#C70039",
     );
     return;
   }
@@ -407,7 +407,7 @@ async function guardarDocumento() {
       .map((fila, index) => {
         let modelo = fila.querySelector('select[name="tipo_modelo[]"]').value;
         let tipoTerreno = fila.querySelector(
-          'select[name="tipo_terreno[]"]'
+          'select[name="tipo_terreno[]"]',
         ).value;
         let tarifa =
           Number(fila.querySelector('input[name="tarifa[]"]').value) || 0;
@@ -441,12 +441,12 @@ async function guardarDocumento() {
         }
         if (!Number.isInteger(cantidad) || cantidad < 0) {
           throw new Error(
-            "Cantidad inválida, solo debe contener números enteros"
+            "Cantidad inválida, solo debe contener números enteros",
           );
         }
         if (!Number.isInteger(duracion) || duracion < 0) {
           throw new Error(
-            "Duración inválida, solo debe contener números enteros"
+            "Duración inválida, solo debe contener números enteros",
           );
         }
 
@@ -504,19 +504,19 @@ async function guardarDocumento() {
     return;
   }
 
-  // Obtener archivo adjunto si existe
-  const nombreArchivo = fileInput.files[0].name;
+  // if (nombreArchivo) {
+  //   const yaExiste = await validarArchivo(nombreArchivo); // Solo el nombre, ya es string
+  //   if (!yaExiste) {
+  //     await subirArchivo(fileInput.files[0]); // Aquí mandas el archivo como tal (tipo File)
+  //   } else {
+  //     console.warn("El archivo ya existe, no se sube.");
+  //     mostrarNotificacion("El archivo PDF ya existe en el servidor", "#C70039");
+  //     return;
+  //   }
+  // }
 
-  if (nombreArchivo) {
-    const yaExiste = await validarArchivo(nombreArchivo); // Solo el nombre, ya es string
-    if (!yaExiste) {
-      await subirArchivo(fileInput.files[0]); // Aquí mandas el archivo como tal (tipo File)
-    } else {
-      console.warn("El archivo ya existe, no se sube.");
-      mostrarNotificacion("El archivo PDF ya existe en el servidor", "#C70039");
-      return;
-    }
-  }
+  const uploadFile = await subirArchivo(fileInput.files[0]);
+  const nombreArchivo = uploadFile.key;
 
   // Construcción del objeto final de datos
   const contratoData = { ...formData, detalles, archivoPdf: nombreArchivo };
@@ -534,7 +534,7 @@ async function guardarDocumento() {
     const result = await response.json();
     if (result.success) {
       mostrarNotificacion("Documento guardado exitosamente", "#01b204");
-      await subirArchivo(fileInput.files[0]);
+      // await subirArchivo(fileInput.files[0]);
       limpiarCampos();
     } else {
       mostrarNotificacion("Hubo un error al guardar el documento", "#C70039");
@@ -577,7 +577,7 @@ async function validarArchivo(nombreArchivo) {
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
-      }
+      },
     );
     const result = await response.json();
 

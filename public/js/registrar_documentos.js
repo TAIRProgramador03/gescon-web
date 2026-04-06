@@ -264,7 +264,7 @@ async function guardarDocumento() {
     idCliente: document.querySelector("#combo-cliente").value,
     idContrato: document.querySelector("#combo-contrato").value,
     tipoContrato: document.querySelector("#combo-raz").value,
-    nroContrato: document.querySelector("#text-nro-contra").value,
+    nroContrato: textoAGuiones(document.querySelector("#text-nro-contra").value),
     vehiculo: document.querySelector("#text-veh").value,
     duracion: document.querySelector("#text-dura").value || "0",
     kmAdicional: document.querySelector("#text-adic").value || "0",
@@ -694,4 +694,8 @@ function limpiarSelect(idSelect) {
 
 function adicionaVeh() {
   window.location = "adicionar_vehiculos.php";
+}
+
+function textoAGuiones(texto) {
+  return texto.trim().replace(/\s+/g, "-").toUpperCase();
 }

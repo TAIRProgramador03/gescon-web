@@ -193,7 +193,7 @@ require './templates/header.html';
           </div>
         `);
       },
-      ordering: false,
+      // ordering: false,
       scrollX: true,
       data: assigns,
       "columnDefs": [

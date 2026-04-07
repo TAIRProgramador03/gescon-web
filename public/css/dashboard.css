@@ -434,7 +434,7 @@ main p {
   opacity: 1 !important;
   transition: linear 200ms;
   padding: 8px 12px !important;
-  animation: pulse 1s ease-in-out infinite;
+  animation: toast-pulse 1s ease-in-out infinite;
 }
 
 #toast-container > div:hover {
@@ -446,7 +446,7 @@ main p {
   background-image: none !important;
 }
 
-@keyframes pulse {
+@keyframes toast-pulse {
   0% {
     transform: scale(1);
   }

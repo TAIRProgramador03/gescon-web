@@ -587,83 +587,85 @@ require './templates/header.html';
 
   $("#listContracts tbody")
     .on("click", "tr", async function(e) {
-      showSkeleton();
+      if (table.row(this).data()) {
+        showSkeleton();
 
-      $('tr').removeClass("selected-row");
+        $('tr').removeClass("selected-row");
 
-      $(this).addClass("selected-row");
+        $(this).addClass("selected-row");
 
-      const data = table.row(this).data();
+        const data = table.row(this).data();
 
-      const contratoId = data.ID;
+        const contratoId = data.ID;
 
-      const params = new URLSearchParams(window.location.search);
-      params.set("contratoId", contratoId);
+        const params = new URLSearchParams(window.location.search);
+        params.set("contratoId", contratoId);
 
-      const clienteId = params.get("clienteId");
+        const clienteId = params.get("clienteId");
 
-      if (!clienteId) return;
+        if (!clienteId) return;
 
-      const nuevaURL = `${window.location.pathname}?${params.toString()}`;
-      window.history.replaceState({}, "", nuevaURL);
+        const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+        window.history.replaceState({}, "", nuevaURL);
 
-      // Realizar la solicitud AJAX al backend para obtener los detalles del contrato
-      try {
-        const response = await fetch(
-          `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}&clienteId=${clienteId}`, {
-            method: "GET",
-            credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          },
-        );
-        const data = await response.json();
+        // Realizar la solicitud AJAX al backend para obtener los detalles del contrato
+        try {
+          const response = await fetch(
+            `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}&clienteId=${clienteId}`, {
+              method: "GET",
+              credentials: "include", // Asegura que las cookies se envíen con la solicitud
+            },
+          );
+          const data = await response.json();
 
-        if (!data.success) {
-          console.error("Error al obtener los detalles del contrato");
-          return;
+          if (!data.success) {
+            console.error("Error al obtener los detalles del contrato");
+            return;
+          }
+
+          // Asignar valores a los campos de entrada con los datos obtenidos
+          const fechaFirma = data.data.fechaFirma; // Se espera en formato yyyymmdd
+
+          // Convertir fecha firma a formato yyyy-mm-dd
+          const fechaInicio = convertirFecha(fechaFirma);
+          document.getElementById("text-inicio").value = dayjs(fechaInicio).format("DD/MM/YYYY"); // Asignar FECHA_FIRMA
+
+          // Calcular fecha de fin
+          const fechaFin = calcularFechaFin(fechaInicio, data.data.duracion);
+          document.getElementById("text-fin").value = dayjs(fechaFin).format("DD/MM/YYYY"); // Asignar fecha de fin
+
+          const estado = obtenerEstado(fechaFin);
+          document.getElementById("text-estado").value = estado; // Asignar DESCRIPCION
+          // Establecer el estado según la fecha actual y la fecha de fin
+          document.getElementById("story").value = data.data.descripcion; // Asignar estado
+
+          // Aquí asignamos los valores de los vehículos a los campos correspondientes
+          document.getElementById("txt-sev").textContent =
+            data.data.vehiculoSev || "0";
+          document.getElementById("txt-soc").textContent =
+            data.data.vehiculoSoc || "0";
+          document.getElementById("txt-sup").textContent =
+            data.data.vehiculoSup || "0";
+          document.getElementById("txt-ciu").textContent =
+            data.data.vehiculoCiu || "0";
+          document.getElementById("txt-aso").textContent =
+            data.data.cantidadDocumentos || "0"; // Asignar texto al div
+          document.getElementById("txt-leas").textContent =
+            data.data.cantidadLeasing || "0"; // Asignar texto al div
+          document.getElementById("txt-vehic").textContent =
+            data.data.cantidadVehiculos || "0";
+          document.getElementById("txt-assign").textContent =
+            data.data.cantidadAsignados || "0";
+
+          $("#btn-edit-con").addClass("flex")
+          $("#btn-edit-con").removeClass("hidden")
+
+        } catch (error) {
+          console.error("Error al obtener los datos del contrato:", error);
         }
 
-        // Asignar valores a los campos de entrada con los datos obtenidos
-        const fechaFirma = data.data.fechaFirma; // Se espera en formato yyyymmdd
-
-        // Convertir fecha firma a formato yyyy-mm-dd
-        const fechaInicio = convertirFecha(fechaFirma);
-        document.getElementById("text-inicio").value = dayjs(fechaInicio).format("DD/MM/YYYY"); // Asignar FECHA_FIRMA
-
-        // Calcular fecha de fin
-        const fechaFin = calcularFechaFin(fechaInicio, data.data.duracion);
-        document.getElementById("text-fin").value = dayjs(fechaFin).format("DD/MM/YYYY"); // Asignar fecha de fin
-
-        const estado = obtenerEstado(fechaFin);
-        document.getElementById("text-estado").value = estado; // Asignar DESCRIPCION
-        // Establecer el estado según la fecha actual y la fecha de fin
-        document.getElementById("story").value = data.data.descripcion; // Asignar estado
-
-        // Aquí asignamos los valores de los vehículos a los campos correspondientes
-        document.getElementById("txt-sev").textContent =
-          data.data.vehiculoSev || "0";
-        document.getElementById("txt-soc").textContent =
-          data.data.vehiculoSoc || "0";
-        document.getElementById("txt-sup").textContent =
-          data.data.vehiculoSup || "0";
-        document.getElementById("txt-ciu").textContent =
-          data.data.vehiculoCiu || "0";
-        document.getElementById("txt-aso").textContent =
-          data.data.cantidadDocumentos || "0"; // Asignar texto al div
-        document.getElementById("txt-leas").textContent =
-          data.data.cantidadLeasing || "0"; // Asignar texto al div
-        document.getElementById("txt-vehic").textContent =
-          data.data.cantidadVehiculos || "0";
-        document.getElementById("txt-assign").textContent =
-          data.data.cantidadAsignados || "0";
-
-        $("#btn-edit-con").addClass("flex")
-        $("#btn-edit-con").removeClass("hidden")
-
-      } catch (error) {
-        console.error("Error al obtener los datos del contrato:", error);
+        hideSkeleton();
       }
-
-      hideSkeleton();
     });
 
 

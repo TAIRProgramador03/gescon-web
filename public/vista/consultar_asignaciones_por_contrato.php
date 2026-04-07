@@ -57,9 +57,7 @@ require './templates/header.html';
     <table id="listAssign" class="display rounded-md">
       <thead>
         <tr>
-          <th class="text-gray-500 !font-medium">Item</th>
-          <th class="text-gray-500 !font-medium">Cliente</th>
-          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Item</th>
           <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
           <th class="bg-yellow-400 !text-white !font-medium">Año</th>
           <th class="bg-yellow-400 !text-white !font-medium">Color</th>
@@ -69,17 +67,19 @@ require './templates/header.html';
           <th class="bg-green-400 !text-white !font-medium">Leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Cliente</th>
+          <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
           <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
           <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
           <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
           <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
-          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
-          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
-          <th class="text-gray-500 !font-medium">% de contrato</th>
-          <th class="text-gray-500 !font-medium">Condicion</th>
-          <th class="text-gray-500 !font-medium">Acta</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
+          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
+          <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
+          <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
       <tbody>
@@ -190,6 +190,10 @@ require './templates/header.html';
               <span class="size-5 bg-blue-400"></span>
               <p class="text-xs !m-0">Contrato</p>
             </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-taupe-600"></span>
+              <p class="text-xs !m-0">Acta</p>
+            </div>
           </div>
         `);
       },
@@ -209,14 +213,6 @@ require './templates/header.html';
             return meta.row + 1;
           },
           width: "5%",
-        },
-        {
-          data: "cliente",
-          width: "200px"
-        },
-        {
-          data: "operacion",
-          width: "150px"
         },
         {
           data: "placa",
@@ -266,6 +262,14 @@ require './templates/header.html';
             return dayjs(data).format("DD/MM/YYYY")
           },
           width: "120px"
+        },
+        {
+          data: "cliente",
+          width: "200px"
+        },
+        {
+          data: "operacion",
+          width: "150px"
         },
         {
           data: "contrato",

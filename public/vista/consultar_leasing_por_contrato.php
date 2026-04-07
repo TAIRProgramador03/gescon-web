@@ -9,11 +9,29 @@ require './templates/header.html';
 <!-- JQUERY -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- CSS DATATABLE -->
-<link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.css" />
+<!-- DATATABLE CSS -->
+<link
+  href="https://cdn.datatables.net/v/dt/dt-2.3.7/fh-4.0.6/datatables.min.css"
+  rel="stylesheet"
+  integrity="sha384-7Hrw81H4xX5hYX7S8L0eMfpG12eNpu/o/EJa19nQ3b9LlwFZ+knIhQdpUWrM1GG0"
+  crossorigin="anonymous" />
+<link
+  rel="stylesheet"
+  href="https://cdn.datatables.net/buttons/3.2.6/css/buttons.dataTables.css" />
 
-<!-- JS DATATABLE -->
-<script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
+<!-- DATATABLE JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script
+  src="https://cdn.datatables.net/v/dt/dt-2.3.7/fh-4.0.6/datatables.min.js"
+  integrity="sha384-CNOVKT615Y5C0jlUJ8NQOcckxgpoWtMsl4+LFWMwh/asaMKYPG8K0hlZayw/GSa+"
+  crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.print.min.js"></script>
 
 <!--BOOTSTRAP CSS-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -24,97 +42,149 @@ require './templates/header.html';
 <!-- TOASTR JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<div id="preloader-mini">
-  <div class="gif-container">
-    <img src="../img/carpeta.gif" alt="Cargando...">
+<div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
+  <div class="flex-col gap-4 w-full flex items-center justify-center relative">
+    <div class="w-28 h-28 border-8 text-blue-600 text-4xl animate-spin border-gray-300 flex items-center justify-center border-t-blue-600 rounded-full"></div>
+    <div class="gif-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <img src="../img/carpeta.gif">
+    </div>
   </div>
-  <div class="welcome-message">
-    <p>¡Cargando!.....</p>
-  </div>
+  <p class="m-0 font-medium text-gray-400 text-xl flex gap-1"><span class="animate-wave" style="animation-delay:0s"></span>
+    <span class="animate-wave" style="animation-delay:0.1s">C</span>
+    <span class="animate-wave" style="animation-delay:0.2s">a</span>
+    <span class="animate-wave" style="animation-delay:0.3s">r</span>
+    <span class="animate-wave" style="animation-delay:0.4s">g</span>
+    <span class="animate-wave" style="animation-delay:0.5s">a</span>
+    <span class="animate-wave" style="animation-delay:0.6s">n</span>
+    <span class="animate-wave" style="animation-delay:0.7s">d</span>
+    <span class="animate-wave" style="animation-delay:0.8s">o</span>
+  </p>
 </div>
 
 <main class="main-query-lea">
-  <div class="header-title">
-    <h1>Leasing's de contrato</h1>
-    <p>Id contrato: <span id="parametroPintado"></span></p>
+  <div class="w-full flex gap-2 items-center p-2 rounded-xl border border-gray-300 bg-white">
+    <a id="crumb-first" href="" class="px-3 py-1 flex justify-center items-center gap-1 rounded-md text-blue-800 hover:bg-blue-800 hover:text-white transition-colors">
+      <i class="bi bi-archive-fill"></i>
+      Contratos
+    </a>
+    <span>/</span>
+    <a id="crumb-active" class="px-3 py-1 flex justify-center items-center bg-blue-800 text-white rounded-md">
+      Leasing
+    </a>
   </div>
 
-  <div class="container-data">
-    <div class="column-table">
+  <div class="w-full grid grid-cols-[1fr_auto] gap-6">
+    <div class="w-full flex flex-col gap-3 relative px-9 py-7 bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <div class="w-full h-3 bg-cyan-700 absolute top-0 left-0"></div>
+      <div class="w-full flex flex-col justify-center gap-2">
+        <h3 class="text-5xl text-[#002141] font-semibold">Administración de leasings</h3>
+        <p class="!m-0 text-base font-normal text-gray-500">Visualice y consulte la información de los leasing asociados un contrato.</p>
+      </div>
       <table id="listLeasing" class="display">
         <thead>
           <tr>
-            <th>Item</th>
-            <th>N° Leasing</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Fin</th>
-            <th>Cantidad</th>
+            <th class="text-gray-500 !font-medium">Item</th>
+            <th class="text-gray-500 !font-medium">N° Leasing</th>
+            <th class="text-gray-500 !font-medium">Fecha Inicio</th>
+            <th class="text-gray-500 !font-medium">Fecha Fin</th>
+            <th class="text-gray-500 !font-medium">Cantidad</th>
           </tr>
         </thead>
         <tbody>
           <tr>
           </tr>
         </tbody>
-        <tfoot>
-          <tr>
-            <th>Item</th>
-            <th>N° Leasing</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Fin</th>
-            <th>Cantidad</th>
-          </tr>
-        </tfoot>
       </table>
-      <div class="item-result">
+      <!-- <div class="item-result">
         <label for="descripcion-result">Descripción</label>
         <textarea id="descripcion-result" readonly></textarea>
+      </div> -->
+      <div class="input flex flex-col w-full relative">
+        <textarea
+          id="descripcion-result" name="story"
+          type="text"
+          placeholder="Vacío"
+          class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 h-24 text-sm resize-none" disabled></textarea>
+        <label
+          for="descripcion-result"
+          class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+          Descripción
+        </label>
       </div>
     </div>
 
-    <div class="result-search">
-      <h3>Resumen</h3>
-      <hr />
-      <div class="item-result">
-        <label for="vence-result">Vencimiento</label>
-        <input id="vence-result" readonly>
+    <div class="flex flex-col gap-5 px-9 py-7 bg-white border border-gray-200 rounded-xl relative overflow-hidden">
+      <div class="w-full h-3 bg-cyan-700 absolute top-0 left-0"></div>
+      <div class="w-full">
+        <h3 class="text-2xl text-[#002141] font-semibold">Resumen</h3>
       </div>
-      <div class="item-result">
-        <label for="estado-result">Estado</label>
-        <input id="estado-result" readonly>
-      </div>
-      <div class="item-result">
-        <label for="per-gra-result">Periodo de gracia</label>
-        <input id="per-gra-result" readonly>
-      </div>
-      <div class="card-view">
-        <div id="view-vehicle" class="card-result">
-          <span>N° Vehiculos</span>
-          <div class="card-info">
-            <i class="fa fa-cars" style="color: #0e2e67;"></i>
-            <p id="vehicle-result">0</p>
-          </div>
+      <div id="skeleton-contract" class="w-[302px] hidden flex-col gap-5 items-center">
+        <div class="w-full">
+          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
         </div>
-        <div id="view-assign" class="card-result">
-          <span>Veh. Asignados</span>
-          <div class="card-info">
-            <i class="fa fa-cars" style="color: #0e2e67;"></i>
-            <p id="assign-result">0</p>
-          </div>
+        <div class="w-full">
+          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+        </div>
+        <div class="w-full">
+          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+        </div>
+        <div class="w-full grid grid-cols-2 gap-2">
+          <div class="w-full h-[114px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[114px] bg-slate-400 rounded animate-pulse"></div>
+        </div>
+        <div class="w-full">
+          <div class="w-full h-[64px] bg-slate-400 rounded animate-pulse"></div>
         </div>
       </div>
-      <button class="btn-success" id="btn-leasing">
-        Ver leasing
-        <i class="bi bi-file-earmark-arrow-down-fill"></i>
-      </button>
+      <div id="data-leasing" class="flex flex-col gap-5">
+        <div class="w-full flex items-center gap-3 justify-evenly text-sm">
+          <label for="vence-result" class="w-1/2">Vencimiento:</label>
+          <input id="vence-result" type="text" class="px-[10px] py-[11px] rounded-[5px] border-2 border-gray-300 bg-gray-50 text-gray-600" value="--" disabled>
+        </div>
+        <div class="w-full flex items-center gap-3 justify-evenly text-sm">
+          <label for="estado-result" class="w-1/2">Estado:</label>
+          <input id="estado-result" type="text" class="px-[10px] py-[11px] rounded-[5px] border-2 border-gray-300 bg-gray-50 text-gray-600" value="--" disabled>
+        </div>
+        <div class="w-full flex items-center gap-3 justify-evenly text-sm">
+          <label for="per-gra-result" class="w-1/2">Periodo de Gracia:</label>
+          <input id="per-gra-result" type="text" class="px-[10px] py-[11px] rounded-[5px] border-2 border-gray-300 bg-gray-50 text-gray-600" value="--" disabled>
+        </div>
+        <div class="w-full grid grid-cols-2 gap-4">
+          <div id="view-vehicle" class="flex flex-col border border-gray-200 rounded-md overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+            <span class="w-full bg-cyan-800 flex justify-center items-center px-2 py-2 text-white text-sm font-medium">N° Vehiculos</span>
+            <div class="w-full px-2 py-3 flex flex-col justify-center items-center text-black">
+              <i class="bi bi-car-front-fill text-cyan-800 text-2xl"></i>
+              <p id="vehicle-result" class="!m-0 text-sm">0</p>
+            </div>
+          </div>
+          <div id="view-assign" class="flex flex-col border border-gray-200 rounded-md overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+            <span class="w-full bg-cyan-800 flex justify-center items-center px-2 py-2 text-white text-sm font-medium">Veh. Asignados</span>
+            <div class="w-full px-2 py-3 flex flex-col justify-center items-center text-black">
+              <i class="bi bi-check-circle-fill text-cyan-800 text-2xl"></i>
+              <p id="assign-result" class="!m-0 text-sm">0</p>
+            </div>
+          </div>
+        </div>
+        <button
+          type="button"
+          id="btn-leasing"
+          class="cursor-pointer bg-indigo-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
+          <div
+            class="bg-indigo-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+            <i class="bi bi-box-arrow-up-right"></i>
+          </div>
+          <p class="translate-x-4 !m-0 !text-white text-base font-medium">Ver archivo</p>
+        </button>
+      </div>
     </div>
   </div>
 </main>
 
 <div id="modal-leasing">
   <div class="modal-container">
-    <div class="modal-header">
-      <i class="bi bi-info-circle"></i>
-      <h2>Detalles</h2>
+    <div class="modal-header text-white">
+      <i class="bi bi-info-circle text-base"></i>
+      <h2 id="modal-title" class="font-medium">Detalles</h2>
     </div>
     <div class="modal-body" id="modal-body-info">
 
@@ -127,6 +197,30 @@ require './templates/header.html';
 
 <script src="../js/consulta_leasing_por_contrato.js"></script>
 <script type="module">
+  let activeSkeleton = 0;
+
+  function showSkeleton() {
+    activeSkeleton++;
+    $('#skeleton-contract').addClass("flex");
+    $('#skeleton-contract').removeClass("hidden");
+
+    $('#data-leasing').addClass("hidden");
+    $('#data-leasing').removeClass("flex");
+  }
+
+  function hideSkeleton() {
+    activeSkeleton--;
+    if (activeSkeleton <= 0) {
+      setTimeout(() => {
+        $('#skeleton-contract').addClass("hidden");
+        $('#skeleton-contract').removeClass("flex");
+
+        $('#data-leasing').addClass("flex");
+        $('#data-leasing').removeClass("hidden");
+      }, 400)
+    }
+  }
+
   window.onload = function() {
     setTimeout(() => {
       document.body.classList.add('loaded');
@@ -147,16 +241,17 @@ require './templates/header.html';
     const clienteId = param.get("clienteId");
     const contratoId = param.get("contratoId");
 
+    $('#crumb-first').prop('href', `consultar_contratos.php?clienteId=${clienteId}&contratoId=${contratoId}`);
+
     if (!contratoId || !clienteId) {
       toastr.warning("Faltan parametros obligatorios para realizar la consulta", "Advertencia");
     }
 
-    const textSpan = document.getElementById("parametroPintado");
-    textSpan.innerHTML = contratoId;
-
     table = await getLeasings(contratoId, clienteId);
 
     if (leasingId && nroLeasing && clienteId && contratoId) {
+      $("#crumb-active").text(`${nroLeasing}`);
+
       const detailLeasing = await getDetailLeasing(leasingId, nroLeasing, clienteId, contratoId)
 
       const fechaFin = convertirFecha(detailLeasing.fechaFin);
@@ -179,6 +274,9 @@ require './templates/header.html';
       $("#vehicle-result").text(detailLeasing.cantVehi);
       $("#assign-result").text(detailLeasing.cantAsign);
 
+      $("#btn-leasing").addClass("flex");
+      $("#btn-leasing").removeClass("hidden");
+
       $("#btn-leasing").off("click").on("click", () => {
         window.open(detailLeasing.archivoPdf, '_blank');
       })
@@ -190,49 +288,63 @@ require './templates/header.html';
   })
 
   $("#listLeasing tbody").on("click", "tr", async function(e) {
-    $('tr').removeClass("selected-row");
+    if (table.row(this).data()) {
+      showSkeleton();
 
-    $(this).addClass("selected-row");
-    const data = table.row(this).data();
+      $('tr').removeClass("selected-row");
 
-    const param = new URLSearchParams(window.location.search);
-    const clienteId = param.get("clienteId");
-    const contratoId = param.get("contratoId");
+      $(this).addClass("selected-row");
+      const data = table.row(this).data();
 
-    param.set("nroLeasing", data.nroLeasing)
-    param.set("leasingId", data.id)
+      const param = new URLSearchParams(window.location.search);
+      const clienteId = param.get("clienteId");
+      const contratoId = param.get("contratoId");
 
-    const nuevaURL = `${window.location.pathname}?${param.toString()}`;
-    window.history.replaceState({}, "", nuevaURL);
+      param.set("nroLeasing", data.nroLeasing)
+      param.set("leasingId", data.id)
 
-    const detaiLeasing = await getDetailLeasing(data.id, data.nroLeasing, clienteId, contratoId);
+      $("#crumb-active").text(`${data.nroLeasing}`);
 
-    const fechaFin = convertirFecha(detaiLeasing.fechaFin);
-    const diasVencer = obtenerDiasVencimiento(fechaFin);
-    const estado = obtenerEstado(fechaFin);
+      const nuevaURL = `${window.location.pathname}?${param.toString()}`;
+      window.history.replaceState({}, "", nuevaURL);
 
-    // INPUTS DE DATOS
-    if (diasVencer > 0) {
-      $("#vence-result").val(`Faltan ${diasVencer} dias`);
-    } else if (diasVencer < 0) {
-      $("#vence-result").val(`Vencio hace ${Math.abs(diasVencer)} dias`);
-    } else {
-      $("#vence-result").val(`Vence hoy`);
+      const detaiLeasing = await getDetailLeasing(data.id, data.nroLeasing, clienteId, contratoId);
+
+      const fechaFin = convertirFecha(detaiLeasing.fechaFin);
+      const diasVencer = obtenerDiasVencimiento(fechaFin);
+      const estado = obtenerEstado(fechaFin);
+
+      // INPUTS DE DATOS
+      if (diasVencer > 0) {
+        $("#vence-result").val(`Faltan ${diasVencer} dias`);
+      } else if (diasVencer < 0) {
+        $("#vence-result").val(`Vencio hace ${Math.abs(diasVencer)} dias`);
+      } else {
+        $("#vence-result").val(`Vence hoy`);
+      }
+
+      $("#estado-result").val(estado);
+      $("#per-gra-result").val(`${detaiLeasing.periGracia.toString()} meses`);
+
+      // CANTIDAD VEHICULOS
+      $("#vehicle-result").text(detaiLeasing.cantVehi);
+      $("#assign-result").text(detaiLeasing.cantAsign);
+
+      $("#btn-leasing").addClass("flex");
+      $("#btn-leasing").removeClass("hidden");
+
+      // $("#btn-leasing").off("click").on("click", () => {
+      //   window.open(detaiLeasing.archivoPdf, '_blank');
+      // })
+
+      hideSkeleton();
     }
-
-    $("#estado-result").val(estado);
-    $("#per-gra-result").val(`${detaiLeasing.periGracia.toString()} meses`);
-
-    // CANTIDAD VEHICULOS
-    $("#vehicle-result").text(detaiLeasing.cantVehi);
-    $("#assign-result").text(detaiLeasing.cantAsign);
-
-    $("#btn-leasing").off("click").on("click", () => {
-      window.open(detaiLeasing.archivoPdf, '_blank');
-    })
   })
 
   $("#view-vehicle").on("click", async () => {
+
+    $("#modal-title").text("N° de vehiculos detallados");
+
     const param = new URLSearchParams(window.location.search);
     const leasingId = param.get("leasingId");
 
@@ -247,40 +359,24 @@ require './templates/header.html';
       <table id="listVeh" class="display">
         <thead>
           <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Terreno</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
+            <th class="text-gray-500 !font-medium">Item</th>
+            <th class="text-gray-500 !font-medium">Placa</th>
+            <th class="text-gray-500 !font-medium">Modelo</th>
+            <th class="text-gray-500 !font-medium">Marca</th>
+            <th class="text-gray-500 !font-medium">Terreno</th>
+            <th class="text-gray-500 !font-medium">Cantidad</th>
+            <th class="text-gray-500 !font-medium">Año</th>
+            <th class="text-gray-500 !font-medium">Color</th>
+            <th class="text-gray-500 !font-medium">Operación</th>
+            <th class="text-gray-500 !font-medium">Fecha Fin</th>
+            <th class="text-gray-500 !font-medium">Vence en</th>
+            <th class="text-gray-500 !font-medium">Leasing</th>
           </tr>
         </thead>
         <tbody>
           <tr>
           </tr>
         </tbody>
-        <tfoot>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Terreno</th>
-            <th>Cantidad</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Fecha Fin</th>
-            <th>Vence en</th>
-            <th>Leasing</th>
-          </tr>
-        </tfoot>
       </table>
     `);
 
@@ -288,8 +384,42 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      select: true,
+      scrollY: "300px",
+      scrollCollapse: true,
+      dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      buttons: [{
+        extend: 'excelHtml5',
+        text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+        titleAttr: 'Excel',
+        className: 'btn-excel',
+        filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
+        title: `Lista de placas del leasing ${leasingId}`,
+        customize: function(xlsx) {
+          var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+          // 1. Cambiar el color del Título (Celda A1)
+          // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
+          $('row c[r^="A1"]', sheet).attr('s', '51');
+
+          // 2. Personalizar los Headers (Fila de encabezados)
+          // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
+          // El estilo '2' es negrita, '42' es fondo azul claro, etc.
+          $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
+
+          // 3. Si quieres colores manuales más específicos (estilos personalizados)
+          // Tienes que editar el diccionario de estilos de JSZip (más complejo)
+          // Pero DataTables trae estilos incorporados del 0 al 60:
+          // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
+        },
+      }],
       data: vehicles,
+      columnDefs: [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          className: "dt-center",
+          targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        },
+      ],
       columns: [{
           data: "item",
           render: function(data, type, row, meta) {
@@ -360,6 +490,9 @@ require './templates/header.html';
   })
 
   $("#view-assign").on("click", async () => {
+
+    $("#modal-title").text("Placas asignadas");
+
     const param = new URLSearchParams(window.location.search);
     const nroLeasing = param.get("nroLeasing");
     const clienteId = param.get("clienteId");
@@ -376,34 +509,21 @@ require './templates/header.html';
       <table id="listVehAssign" class="display">
         <thead>
           <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Terreno</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Leasing</th>
+            <th class="text-gray-500 !font-medium">Item</th>
+            <th class="text-gray-500 !font-medium">Placa</th>
+            <th class="text-gray-500 !font-medium">Modelo</th>
+            <th class="text-gray-500 !font-medium">Marca</th>
+            <th class="text-gray-500 !font-medium">Terreno</th>
+            <th class="text-gray-500 !font-medium">Año</th>
+            <th class="text-gray-500 !font-medium">Color</th>
+            <th class="text-gray-500 !font-medium">Operación</th>
+            <th class="text-gray-500 !font-medium">Leasing</th>
           </tr>
         </thead>
         <tbody>
           <tr>
           </tr>
         </tbody>
-        <tfoot>
-          <tr>
-            <th>Item</th>
-            <th>Placa</th>
-            <th>Modelo</th>
-            <th>Marca</th>
-            <th>Terreno</th>
-            <th>Año</th>
-            <th>Color</th>
-            <th>Operación</th>
-            <th>Leasing</th>
-          </tr>
-        </tfoot>
       </table>
     `);
 
@@ -411,8 +531,42 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      select: true,
+      scrollY: "300px",
+      scrollCollapse: true,
+      dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      buttons: [{
+        extend: 'excelHtml5',
+        text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+        titleAttr: 'Excel',
+        className: 'btn-excel',
+        filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
+        title: `Lista de placas del leasing ${nroLeasing}`,
+        customize: function(xlsx) {
+          var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+          // 1. Cambiar el color del Título (Celda A1)
+          // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
+          $('row c[r^="A1"]', sheet).attr('s', '51');
+
+          // 2. Personalizar los Headers (Fila de encabezados)
+          // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
+          // El estilo '2' es negrita, '42' es fondo azul claro, etc.
+          $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
+
+          // 3. Si quieres colores manuales más específicos (estilos personalizados)
+          // Tienes que editar el diccionario de estilos de JSZip (más complejo)
+          // Pero DataTables trae estilos incorporados del 0 al 60:
+          // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
+        },
+      }],
       data: vehicles,
+      columnDefs: [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          className: "dt-center",
+          targets: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        },
+      ],
       columns: [{
           data: "item",
           render: function(data, type, row, meta) {

@@ -288,204 +288,175 @@ require './templates/header.html';
         </div>
       </div>
       <div class="butto-form">
-        <!--<input type="checkbox" id="c">
-                    <label for="c" id="upload_app">
-                        <div id="app">
-                            <div id="arrow"></div>
-                            <div id="success">
-                            <i class="fas fa-check-circle"></i>
-                            </div>
-                        </div>
-                    </label>-->
-        <button class="add-action" id="btnClear">
-          <div>
-            <div class="broom"></div>
-            <div class="trash">
-              <div class="trash-top">
-                <svg viewBox="0 0 24 27">
-                  <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
-                </svg>
-              </div>
-              <div class="paper-clear"></div>
-            </div>
+        <button
+          type="button"
+          id="btnClear"
+          class="cursor-pointer bg-yellow-700 text-center w-1/4 rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
+          <div
+            class="bg-yellow-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+            <i class="bi bi-stars"></i>
           </div>
-          Limpiar
+          <p class="translate-x-4 !m-0 !text-white text-base font-medium">Limpiar</p>
         </button>
-        <button class="continue-application" id="grabarButton">
-          <div>
-            <div class="pencil"></div>
-            <div class="folder">
-              <div class="top">
-                <svg viewBox="0 0 24 27">
-                  <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
-                </svg>
-              </div>
-              <div class="paper"></div>
-            </div>
+        <button
+          type="button"
+          id="grabarButton"
+          class="cursor-pointer bg-green-700 text-center w-1/4 rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
+          <div
+            class="bg-green-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+            <i class="bi bi-floppy-fill"></i>
           </div>
-          Grabar
+          <p class="translate-x-4 !m-0 !text-white text-base font-medium">Registrar</p>
         </button>
-        <button class="add-action" onclick="asignacionVehicular()">
-          <div>
-            <div class="broom"></div>
-            <div class="trash">
-              <div class="trash-top">
-                <svg viewBox="0 0 24 27">
-                  <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
-                </svg>
-              </div>
-              <div class="paper-clear"></div>
-            </div>
+        <button
+
           </div>
-          Asignacion
-        </button>
       </div>
     </div>
-  </div>
 
-  <div id="myModalCli" class="modal">
-    <div class="main">
-      <!-- Header del modal -->
-      <div class="modal-header header-cliente">
-        <h3>Listado de clientes</h3>
-        <span class="closeCli">&times;</span> <!-- Botón de cerrar -->
-      </div>
-
-      <!-- Body del modal -->
-      <div class="modal-body">
-        <div class="buscador" style="padding: 10px 25px; color: #000000;">
-          <label for="buscadorTabla">Buscar Cliente:</label>
-          <input type="text" id="buscadorTabla" placeholder="Ingrese un término...">
+    <div id="myModalCli" class="modal">
+      <div class="main">
+        <!-- Header del modal -->
+        <div class="modal-header header-cliente">
+          <h3>Listado de clientes</h3>
+          <span class="closeCli">&times;</span> <!-- Botón de cerrar -->
         </div>
-        <div class="form-seven">
-          <div class="tabla-form-cli">
-            <table>
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>RUC</th>
-                  <th>Cliente</th>
-                  <th>Direccion</th>
-                  <th>ID</th>
-                  <th>Abrev.</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colspan="6">Seleccione un cliente para ver los contratos</td>
-                </tr>
-              </tbody>
-            </table>
+
+        <!-- Body del modal -->
+        <div class="modal-body">
+          <div class="buscador" style="padding: 10px 25px; color: #000000;">
+            <label for="buscadorTabla">Buscar Cliente:</label>
+            <input type="text" id="buscadorTabla" placeholder="Ingrese un término...">
+          </div>
+          <div class="form-seven">
+            <div class="tabla-form-cli">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>RUC</th>
+                    <th>Cliente</th>
+                    <th>Direccion</th>
+                    <th>ID</th>
+                    <th>Abrev.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="6">Seleccione un cliente para ver los contratos</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Footer del modal -->
-      <div class="modal-footer">
-        <!--<button class="btn-acepta" id="btnAceptar">Aceptar</button>
+        <!-- Footer del modal -->
+        <div class="modal-footer">
+          <!--<button class="btn-acepta" id="btnAceptar">Aceptar</button>
                 <button class="btn-cancelar" id="btnCancelar">Cancelar</button>-->
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="myModalCliAsoc" class="modal">
-    <div class="main">
-      <!-- Header del modal -->
-      <div class="modal-header header-cliente">
-        <h3>Listado de clientes Asociados</h3>
-        <span class="closeCliAsoc">&times;</span> <!-- Botón de cerrar -->
-      </div>
-
-      <!-- Body del modal -->
-      <div class="modal-body">
-        <div class="buscador" style="padding: 10px 25px; color: #000000;">
-          <label for="buscadorTabla">Buscar Cliente:</label>
-          <input type="text" id="buscadorTablaAsoc" placeholder="Ingrese un término...">
+    <div id="myModalCliAsoc" class="modal">
+      <div class="main">
+        <!-- Header del modal -->
+        <div class="modal-header header-cliente">
+          <h3>Listado de clientes Asociados</h3>
+          <span class="closeCliAsoc">&times;</span> <!-- Botón de cerrar -->
         </div>
-        <div class="form-seven">
-          <div class="tabla-form-cli-asoc">
-            <table>
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>RUC</th>
-                  <th>Cliente</th>
-                  <th>Direccion</th>
-                  <th>ID</th>
-                  <th>Abrev.</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colspan="6">Seleccione un cliente para ver los contratos</td>
-                </tr>
-              </tbody>
-            </table>
+
+        <!-- Body del modal -->
+        <div class="modal-body">
+          <div class="buscador" style="padding: 10px 25px; color: #000000;">
+            <label for="buscadorTabla">Buscar Cliente:</label>
+            <input type="text" id="buscadorTablaAsoc" placeholder="Ingrese un término...">
+          </div>
+          <div class="form-seven">
+            <div class="tabla-form-cli-asoc">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>RUC</th>
+                    <th>Cliente</th>
+                    <th>Direccion</th>
+                    <th>ID</th>
+                    <th>Abrev.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="6">Seleccione un cliente para ver los contratos</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Footer del modal -->
-      <div class="modal-footer">
-        <!--<button class="btn-acepta" id="btnAceptar">Aceptar</button>
+        <!-- Footer del modal -->
+        <div class="modal-footer">
+          <!--<button class="btn-acepta" id="btnAceptar">Aceptar</button>
                 <button class="btn-cancelar" id="btnCancelar">Cancelar</button>-->
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="myModal" class="modal">
-    <!-- Contenido de la ventana modal -->
-    <div class="main">
-      <!-- Header del modal -->
-      <div class="modal-header header-vehiculo">
-        <h3>Listado de Vehiculos</h3>
-        <span class="close">&times;</span> <!-- Botón de cerrar -->
-      </div>
-
-      <!-- Body del modal -->
-      <div class="modal-body">
-        <div class="buscador" style="padding: 10px 25px; color: #000;">
-          <label for="buscadorTabla">Buscar Vehiculo:</label>
-          <input type="text" id="buscadorTablaVehi" placeholder="Ingrese un término...">
+    <div id="myModal" class="modal">
+      <!-- Contenido de la ventana modal -->
+      <div class="main">
+        <!-- Header del modal -->
+        <div class="modal-header header-vehiculo">
+          <h3>Listado de Vehiculos</h3>
+          <span class="close">&times;</span> <!-- Botón de cerrar -->
         </div>
-        <div class="form-seven">
-          <div class="tabla-form-vehi">
-            <table>
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>Codini</th>
-                  <th>Placa</th>
-                  <th>Marca</th>
-                  <th>Modelo</th>
-                  <th>Generico</th>
-                  <th>Tipo Terreno</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colspan="7">Seleccione un vehiculo para ver los contratos</td>
-                </tr>
-              </tbody>
-            </table>
+
+        <!-- Body del modal -->
+        <div class="modal-body">
+          <div class="buscador" style="padding: 10px 25px; color: #000;">
+            <label for="buscadorTabla">Buscar Vehiculo:</label>
+            <input type="text" id="buscadorTablaVehi" placeholder="Ingrese un término...">
+          </div>
+          <div class="form-seven">
+            <div class="tabla-form-vehi">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Codini</th>
+                    <th>Placa</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Generico</th>
+                    <th>Tipo Terreno</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="7">Seleccione un vehiculo para ver los contratos</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Footer del modal -->
-      <div class="modal-footer">
-        <!--<button class="btn-acepta" id="btnVehiculo">Aceptar</button>
+        <!-- Footer del modal -->
+        <div class="modal-footer">
+          <!--<button class="btn-acepta" id="btnVehiculo">Aceptar</button>
                 <button class="btn-cancelar">Cancelar</button>-->
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="pdfModal" class="modal-pdf">
-    <div class="modal-content-pdf">
-      <span class="close-modal-pdf" id="closeModal">&times;</span>
-      <iframe id="modalPdfViewer" width="100%" height="500px"></iframe>
+    <div id="pdfModal" class="modal-pdf">
+      <div class="modal-content-pdf">
+        <span class="close-modal-pdf" id="closeModal">&times;</span>
+        <iframe id="modalPdfViewer" width="100%" height="500px"></iframe>
+      </div>
     </div>
-  </div>
 </main>
 
 <!-- SCRIPTS -->

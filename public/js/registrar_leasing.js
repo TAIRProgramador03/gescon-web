@@ -848,14 +848,15 @@ function limpiarCampos() {
   // Limpiar los campos de texto (inputs)
   console.log("Función limpiarCampos ejecutada");
   document.getElementById("inputClienteSeleccionado").value = "";
+  document.getElementById("inputClienteAsociado").value = "";
   document.getElementById("NroLeasing").value = "";
   document.getElementById("banco").value = "";
   //document.getElementById('banco').value = "";
   resetSelect("combo-box-asig", "Seleccione un contrato");
-  document.getElementById("cantVehi").value = "";
+  document.getElementById("cantVehi").value = "0";
   document.getElementById("fechaIni").value = "";
   document.getElementById("fechaFin").value = "";
-  document.getElementById("periGracia").value = "";
+  document.getElementById("periGracia").value = "0";
 
   // Limpiar los valores de los divs (contenidos de texto)
   document.getElementById("fileInput").value = ""; // Esto limpia el archivo seleccionado

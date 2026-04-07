@@ -298,22 +298,6 @@ require './templates/header.html';
             </label>
           </div>
         </div>
-        <!-- <div class="form-cliente adjunto-pdf py-3">
-          <label for="combo-box" class="text-gray-500 text-xs font-semibold">Adjuntar pdf:</label>
-          <div class="file-adjunta h-fit">
-            <label class="file-upload tooltip-input !h-36" id="dropZone" data-tooltip="Arrastra o seleccione un archivo en pdf">
-              <span id="uploadMessage">Haz clic o arrastra un archivo aquí</span>
-              <input type="file" id="fileInput" accept=".pdf" data-tooltip="Arrastra o seleccione un archivo en pdf">
-              <div class="file-info" id="fileInfo">
-                <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF Icon">
-                <span id="fileName"></span>
-                <button class="view-file" id="viewFile">👁️</button>
-                <button class="remove-file" id="removeFile">X</button>
-              </div>
-            </label>
-          </div>
-        </div> -->
-
       </div>
 
       <!--agregar una columna mas-->
@@ -393,20 +377,6 @@ require './templates/header.html';
       </div>
       <div class="form-cliente-cbo">
         <div class="cbo-registrar body">
-          <!-- <button class="clear-action" id="btnClear">
-            <div>
-              <div class="broom"></div>
-              <div class="trash">
-                <div class="trash-top">
-                  <svg viewBox="0 0 24 27">
-                    <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
-                  </svg>
-                </div>
-                <div class="paper-clear"></div>
-              </div>
-            </div>
-            Limpiar
-          </button> -->
           <button
             type="button"
             id="btnClear"
@@ -427,21 +397,6 @@ require './templates/header.html';
             </div>
             <p class="translate-x-4 !m-0 !text-white text-base font-medium">Registrar</p>
           </button>
-
-          <!-- <button class="continue-application" id="grabarButton">
-            <div>
-              <div class="pencil"></div>
-              <div class="folder">
-                <div class="top">
-                  <svg viewBox="0 0 24 27">
-                    <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
-                  </svg>
-                </div>
-                <div class="paper"></div>
-              </div>
-            </div>
-            Grabar
-          </button> -->
           <button
             type="button"
             id="actualizarButton"
@@ -452,20 +407,6 @@ require './templates/header.html';
             </div>
             <p class="translate-x-4 !m-0 !text-white text-base font-medium">Actualizar</p>
           </button>
-          <!-- <button class="btn-update" id="actualizarButton">
-            <div>
-              <div class="pencil"></div>
-              <div class="folder">
-                <div class="top">
-                  <svg viewBox="0 0 24 27">
-                    <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
-                  </svg>
-                </div>
-                <div class="paper"></div>
-              </div>
-            </div>
-            Actualizar
-          </button> -->
         </div>
       </div>
     </div>

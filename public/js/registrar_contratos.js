@@ -713,9 +713,7 @@ async function guardarContrato() {
         let tipoTerreno = fila.querySelector(
           'select[name="tipo_terreno[]"]',
         ).value;
-        let condicion = fila.querySelector(
-          'select[name="condicion[]"]',
-        ).value;
+        let condicion = fila.querySelector('select[name="condicion[]"]').value;
         let tarifa =
           Number(fila.querySelector('input[name="tarifa[]"]').value) || 0;
         let cpk = Number(fila.querySelector('input[name="cpk[]"]').value) || 0;
@@ -782,7 +780,7 @@ async function guardarContrato() {
               kmAdicional: kmAdi,
               compraVeh,
               precioVeh,
-              condicion
+              condicion,
             }
           : null;
       })
@@ -1043,6 +1041,9 @@ async function exportVehicle() {
       let tipoTerreno = fila.querySelector('select[name="tipo_terreno[]"]');
       let tipoTerrenoText = tipoTerreno.options[tipoTerreno.selectedIndex].text;
 
+      let condicion = fila.querySelector('select[name="condicion[]"]');
+      let condicionText = condicion.options[condicion.selectedIndex].text;
+
       let tarifa =
         Number(fila.querySelector('input[name="tarifa[]"]').value) || 0;
       let cpk = Number(fila.querySelector('input[name="cpk[]"]').value) || 0;
@@ -1051,6 +1052,7 @@ async function exportVehicle() {
         Number(fila.querySelector('input[name="cantidad[]"]').value) || 0;
       let duracion =
         Number(fila.querySelector('input[name="duracion[]"]').value) || 0;
+      let kmAdi = Number(fila.querySelector('input[name="kmAdi[]').value) || 0;
       let compraVeh =
         Number(fila.querySelector('input[name="compra_veh[]"]').value) || 0;
       let precioVeh =
@@ -1077,8 +1079,10 @@ async function exportVehicle() {
             rm,
             cantidad,
             duracion,
+            kmAdicional: kmAdi,
             compraVeh,
             precioVeh,
+            condicion: condicionText
           }
         : null;
     })
@@ -1101,8 +1105,10 @@ async function exportVehicle() {
     { header: "RM", key: "rm", width: 10 },
     { header: "Cantidad", key: "cantidad", width: 12 },
     { header: "Duracion", key: "duracion", width: 12 },
+    { header: "Km Adicional", key: "kmAdicional", width: 12 },
     { header: "Precio Compra", key: "compraVeh", width: 18 },
     { header: "Precio Venta", key: "precioVeh", width: 18 },
+    { header: "Condicion", key: "condicion", width: 18 },
   ];
 
   worksheet.addRows(
@@ -1115,8 +1121,10 @@ async function exportVehicle() {
       rm: row.rm,
       cantidad: row.cantidad,
       duracion: row.duracion,
+      kmAdicional: row.kmAdicional,
       comprarVeh: row.compraVeh,
       precioVeh: row.precioVeh,
+      condicion: row.condicion
     })),
   );
 
@@ -1159,8 +1167,10 @@ async function exportVehicle() {
       { name: "RM" },
       { name: "Cantidad" },
       { name: "Duracion" },
+      { name: "Km Adicional" },
       { name: "Precio Compra" },
       { name: "Precio Venta" },
+      { name: "Condicion" },
     ],
     rows: detalles.map((r, i) => [
       i + 1,
@@ -1171,8 +1181,10 @@ async function exportVehicle() {
       r.rm,
       r.cantidad,
       r.duracion,
+      r.kmAdicional,
       r.compraVeh,
       r.precioVeh,
+      r.condicion
     ]),
   });
 

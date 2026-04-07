@@ -59,14 +59,14 @@ body {
 .form-seven {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  align-content: space-around;
-  justify-content: space-around;
-  align-items: stretch;
+  /* flex-wrap: wrap; */
+  /* align-content: space-around; */
+  /* justify-content: space-around; */
+  /* align-items: stretch; */
   width: 100%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  gap: 20px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  gap: 12px;
 }
 
 .form-cliente-cbo {
@@ -83,15 +83,8 @@ body {
 }
 
 .cbo-form-cliente {
-  height: 30px;
-  border-radius: 5px;
-  width: 60%;
-  position: relative;
-  font-family: "Montserrat", serif;
-  font-optical-sizing: auto;
-  font-size: 13px;
-  /* font-weight: <weight>; */
-  font-style: normal;
+  font-family: "Fredoka Variable", sans-serif;
+  font-weight: 700;
 }
 
 .cbo-form-cliente-deta {
@@ -169,22 +162,9 @@ body {
 
 .tabla-form {
   width: 100%;
-  display: grid;
-  justify-items: start;
-}
-
-.tabla-form::-webkit-scrollbar {
-  width: 15px;
-}
-
-.tabla-form::-webkit-scrollbar-track {
-  background: rgb(123, 152, 196);
-  border-radius: 50px;
-}
-
-.tabla-form::-webkit-scrollbar-thumb {
-  background: rgb(185, 185, 185);
-  border-radius: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .area-campo {
@@ -200,7 +180,7 @@ table {
   overflow-x: auto;
   white-space: nowrap;
   color: #000;
-  padding: 10px 22px;
+  padding-bottom: 8px;
 }
 
 th,
@@ -211,17 +191,16 @@ td {
 }
 
 th {
-  background-color: #525252;
+  background-color: #473C39;
   color: white;
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-size: 12px;
   /* font-weight: <weight>; */
   font-style: normal;
+  font-weight: 500;
 }
 
 td {
-  font-family: "Montserrat", serif;
   font-optical-sizing: auto;
   font-size: 12px;
   /* font-weight: <weight>; */
@@ -315,21 +294,11 @@ td:nth-child(10) input {
   width: 100px;
 }
 
-tr:hover {
+/* tr:hover {
   background-color: #f3f3f3;
   color: #fff;
   cursor: pointer;
-}
-
-.table-detalle input {
-  height: 25px;
-  border-radius: 5px;
-  border: 1px solid;
-}
-
-td select {
-  width: 156px;
-}
+} */
 
 .tabla-form table::-webkit-scrollbar {
   width: 15px;
@@ -345,22 +314,31 @@ td select {
   border-radius: 50px;
 }
 
+/* .table-detalle input {
+  height: 25px;
+  border-radius: 5px;
+  border: 1px solid;
+} */
+
+td select {
+  width: 156px;
+}
+
 .file-adjunta {
-  width: 60%;
-  height: 92px;
+  width: 100%;
+  height: fit-content;
   display: flex;
 }
 
 .file-adjunta label {
   display: flex;
   width: 100%;
-  height: 48px;
+  height: 100px;
   justify-content: center;
   align-items: center;
 }
 
 .file-upload {
-  background-color: #f3f4f6;
   padding: 20px;
   border: 2px dashed #d1d5db;
   border-radius: 12px;
@@ -607,9 +585,42 @@ input[type="file"] {
   }
 }
 
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  gap: 4px;
+  outline: none;
+}
+
+.btn.btn-error {
+  background: rgb(199, 0, 0);
+  color: white;
+  transition: background 150ms ease-in;
+}
+
+.btn.btn-error:hover {
+  background: rgb(228, 16, 16);
+}
+
+.btn.btn-success {
+  background: rgb(0, 184, 16);
+  color: white;
+  transition: background 150ms ease-in;
+}
+
+.btn.btn-success:hover {
+  background: rgb(45, 233, 70);
+}
+
 input {
-  text-align: center;
-  font-family: "Montserrat", serif;
+  /* text-align: center;
+  font-family: "Montserrat", serif; */
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -892,15 +903,19 @@ td select {
   width: 156px;
 }
 
+.select2-container {
+  order: 2;
+}
+
 .select2-container--default
   .select2-selection--single
   .select2-selection__rendered {
   color: #000000;
-  line-height: 28px;
+  /* line-height: 28px; */
 }
 
 .select2-container .select2-selection--single {
-  font-family: "Montserrat", serif;
+  /* font-family: "Montserrat", serif; */
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -908,8 +923,12 @@ td select {
   color: black;
 }
 
+.select2-container .select2-selection--single .select2-selection__rendered {
+  padding: 0;
+}
+
 .select2-dropdown {
-  font-family: "Montserrat", serif;
+  /* font-family: "Montserrat", serif; */
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
@@ -919,12 +938,62 @@ td select {
 
 /* Cambia la fuente de los elementos dentro del desplegable */
 .select2-results__option {
-  font-family: "Montserrat", serif;
+  /* font-family: "Montserrat", serif; */
   font-optical-sizing: auto;
   font-size: 13px;
   /* font-weight: <weight>; */
   font-style: normal;
   color: black;
+}
+
+.select2-container .select2-selection--single {
+  height: 43.3px !important;
+  padding: 11px 10px;
+}
+
+.select2-selection__arrow {
+  top: 50% !important;
+  transform: translate(0, -50%);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: normal;
+}
+
+.select2-container--default .select2-selection--single {
+  outline: none;
+  border: 2px solid oklch(87.2% 0.01 258.338) !important;
+  border-radius: 5px;
+}
+
+.select2-container--default.select2-container--disabled .select2-selection--single {
+  background: #fff !important;
+  color: #eee !important;
+}
+
+.select2-container--default.select2-container--disabled ~ .label-select {
+  color: #eee !important;
+}
+
+/* Cuando el contenedor de Select2 tenga el foco, pinta el label que viene después */
+.select2-container--default.select2-container--focus ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* Cambia el color del borde cuando Select2 recibe el foco */
+.select2-container--default.select2-container--focus
+  .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* También cuando el menú desplegable está abierto */
+.select2-container--default.select2-container--open .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* OPCIONAL: Si quieres que también cambie cuando el menú está ABIERTO */
+.select2-container--default.select2-container--open ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
 }
 
 @media screen and (max-width: 1400px) {
@@ -991,8 +1060,9 @@ td select {
   .form-five,
   .form-six,
   .form-seven {
-    justify-content: flex-end;
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     width: 100%;
     gap: 0px;
     padding-top: 0px;
@@ -1118,4 +1188,86 @@ td select {
   background: none;
   border: none;
   font-size: 27px;
+}
+
+/* MODAL DE ALERTA */
+#alert-modal {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9990;
+}
+
+#alert-modal .alert-bg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9990;
+}
+
+#alert-modal .alert-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 12px;
+  width: 30%;
+  max-height: 90%;
+  overflow: hidden !important;
+  z-index: 9999;
+  padding: 20px;
+}
+
+#alert-modal .btn-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#alert-modal h2 {
+  color: #e0a501;
+  font-weight: 500;
+}
+
+#alert-modal .btn-group a {
+  padding: 8px 4px;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+#alert-modal .btn-group .btn {
+  padding: 8px 16px;
+  color: white;
+  outline: none;
+  cursor: pointer;
+  border: 0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+#alert-modal .btn-group .btn-info {
+  background-color: #005ad9;
+  transition: background 150ms ease-in;
+}
+
+#alert-modal .btn-group .btn-info:hover {
+  background-color: #0d72ff;
+}
+
+#alert-modal .btn-group .btn-dark {
+  background-color: #292929;
+  transition: background 150ms ease-in;
+}
+
+#alert-modal .btn-group .btn-dark:hover {
+  background-color: #464646;
 }

@@ -1,10 +1,28 @@
 // const IP_LOCAL = 'localhost';
 
+toastr.options = {
+  closeButton: false,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-top-right",
+  preventDuplicates: false,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "5000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   cargarClientes();
   cargarModelos();
   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
-  document.getElementById("btnAddVeh").addEventListener("click", adicionaVeh);
+  // document.getElementById("btnAddVeh").addEventListener("click", adicionaVeh);
   document
     .getElementById("grabarButton")
     .addEventListener("click", guardarDocumento);
@@ -12,51 +30,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", function () {
   const checkbox = document.getElementById("especial");
-  const tabla = document.getElementById("tabla-dinamica");
+  // const tabla = document.getElementById("tabla-dinamica");
 
   checkbox.addEventListener("change", function () {
     actualizarDuracionEstado();
   });
+});
 
-  /*function actualizarDuracionEstado() {
-        const duracionCeldas = document.querySelectorAll('input[name="duracion[]"]');
-        duracionCeldas.forEach(function(celda) {
-            celda.disabled = !checkbox.checked;
-        });
-    }*/
-  function actualizarDuracionEstado() {
-    const duracionCeldas = document.querySelectorAll(
-      'input[name="duracion[]"]',
-    );
-    const checkbox = document.getElementById("especial"); // Reemplaza con el ID real del checkbox
+function actualizarDuracionEstado() {
+  const duracionCeldas = document.querySelectorAll('input[name="duracion[]"]');
+  const kmAdiCeldas = document.querySelectorAll('input[name="kmAdi[]"]');
+  const checkbox = document.getElementById("especial"); // Reemplaza con el ID real del checkbox
 
-    duracionCeldas.forEach(function (celda) {
-      if (!checkbox.checked) {
-        celda.value = "0"; // Establece el valor en 0 si el checkbox está desactivado
-      }
-      celda.disabled = !checkbox.checked;
-    });
-  }
+  duracionCeldas.forEach(function (celda) {
+    if (!checkbox.checked) {
+      celda.value = "0"; // Establece el valor en 0 si el checkbox está desactivado
+    }
+    celda.disabled = !checkbox.checked;
+  });
 
-  function agregarFila() {
-    const lastRow = tabla.querySelector("tbody tr:last-child");
-    const lastRowIndex = Array.from(tabla.querySelectorAll("tbody tr")).indexOf(
-      lastRow,
-    );
+  kmAdiCeldas.forEach(function (celda) {
+    if (!checkbox.checked) {
+      celda.value = "0"; // Establece el valor en 0 si el checkbox está desactivado
+    }
+    celda.disabled = !checkbox.checked;
+  });
+}
 
-    const nuevaFila = document.createElement("tr");
+function agregarFila(checkbox) {
+  const tabla = document.getElementById("tabla-dinamica");
+  const lastRow = tabla.querySelector("tbody tr:last-child");
+  const lastRowIndex = Array.from(tabla.querySelectorAll("tbody tr")).indexOf(
+    lastRow,
+  );
 
-    nuevaFila.innerHTML = `
+  const nuevaFila = document.createElement("tr");
+
+  nuevaFila.innerHTML = `
             <td><input type="text" name="item[]" value="${
               lastRowIndex + 2
-            }" disabled></td>
+            }" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
             <td>
                 <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
                     <option value="">Seleccione un modelo</option>
                 </select>
             </td>
             <td>
-                <select name="tipo_terreno[]" class="cbo-form-cliente-deta tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
+                <select name="tipo_terreno[]" class="cbo-form-cliente-deta terreno-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
                     <option value="4">Seleccione el tipo</option>
                     <option value="0">Superficie</option>
                     <option value="1">Socavon</option>
@@ -64,48 +84,99 @@ document.addEventListener("DOMContentLoaded", function () {
                     <option value="3">Severo</option>
                 </select>
             </td>
-            <td><input type="text" name="tarifa[]" class="tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
-            <td><input type="text" name="cpk[]" class="tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
-            <td><input type="number" name="rm[]" class="tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
-            <td><input type="number" name="cantidad[]" class="tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
-            <td><input type="text" name="duracion[]" class="tooltip-input" value="0" ${
+            <td><input type="text" name="tarifa[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
+            <td><input type="text" name="cpk[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
+            <td><input type="number" name="rm[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
+            <td><input type="number" name="cantidad[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
+            <td><input type="text" min="0" name="kmAdi[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" ${
+              checkbox.checked ? "" : "disabled"
+            } data-tooltip="$KM Adicional"></td>
+            <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" ${
               checkbox.checked ? "" : "disabled"
             }  data-tooltip="Duracion contrato"></td>
-            <td><input type="text" name="compra_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
-            <td><input type="text" name="precio_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+            <td><input type="text" name="compra_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
+            <td><input type="text" name="precio_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+            <td>
+                <select name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
+                    <option value="4">Seleccione el tipo</option>
+                    <option value="0">Titular</option>
+                    <option value="1">Retén</option>
+                    <option value="2">Logística</option>
+                    <option value="3">Pendiente</option>
+                </select>
+            </td>
+            <td>
+              <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
+            </td>
         `;
 
-    // Agregar la nueva fila a la tabla
-    tabla.querySelector("tbody").appendChild(nuevaFila);
-    actualizarDuracionEstado();
+  // Agregar la nueva fila a la tabla
+  tabla.querySelector("tbody").appendChild(nuevaFila);
+  actualizarDuracionEstado();
 
-    cargarModelosFila(nuevaFila.querySelector(".modelo-select"));
+  cargarModelosFila(nuevaFila.querySelector(".modelo-select"));
 
-    $(nuevaFila)
-      .find(".modelo-select")
-      .select2({
-        placeholder: "Seleccione el tipo",
-        allowClear: false,
-      })
-      .next(".select2-container")
-      .css({
-        "font-family": "Montserrat, serif",
-        "font-size": "13px",
-        "font-optical-sizing": "auto",
-        "font-style": "normal",
-        color: "black",
-      });
-  }
+  $(nuevaFila)
+    .find(".modelo-select")
+    .select2({
+      placeholder: "Seleccione el modelo",
+      allowClear: false,
+    })
+    .next(".select2-container")
+    .css({
+      "font-family": "Fredoka Variable, sans-serif",
+      "font-size": "13px",
+      "font-optical-sizing": "auto",
+      "font-style": "normal",
+      "font-weight": "400",
+    });
 
-  tabla.addEventListener("click", function (e) {
-    // Verifica si se hace clic en la última fila
-    if (
-      e.target.closest("tr") &&
-      e.target.closest("tr") === tabla.querySelector("tbody tr:last-child")
-    ) {
-      agregarFila();
-    }
-  });
+  $(nuevaFila)
+    .find(".terreno-select")
+    .select2({
+      placeholder: "Seleccione el terreno",
+      allowClear: false,
+      width: "140px",
+    })
+    .next(".select2-container")
+    .css({
+      "font-family": "Fredoka Variable, sans-serif",
+      "font-size": "13px",
+      "font-optical-sizing": "auto",
+      "font-style": "normal",
+    });
+
+  $(nuevaFila)
+    .find(".condicion-select")
+    .select2({
+      placeholder: "Seleccione la condicion",
+      allowClear: false,
+      width: "140px",
+    })
+    .next(".select2-container")
+    .css({
+      "font-family": "Fredoka Variable, sans-serif",
+      "font-size": "13px",
+      "font-optical-sizing": "auto",
+      "font-style": "normal",
+    });
+}
+
+/**
+ * AGREGA UNA NUEVA FILA A LA TABLA DE VEHICULOS
+ */
+$("#addVehicle").on("click", function () {
+  const checkbox = document.getElementById("especial");
+
+  agregarFila(checkbox);
+});
+
+$("#tabla-dinamica").on("click", ".btn-remove-vehicle", function () {
+  $(this).closest("tr").remove();
+});
+
+$("#exportVehicle").on("click", function () {
+  exportVehicle();
 });
 
 async function cargarClientes() {
@@ -211,51 +282,49 @@ async function cargarModelosFila(selectElement) {
 }
 
 async function cargarContrato() {
-  document
-    .getElementById("combo-cliente")
-    .addEventListener("change", async function () {
-      const idCli = this.value; // Obtiene el ID del cliente seleccionado
+  $("#combo-cliente").on("select2:select", async function () {
+    const idCli = this.value; // Obtiene el ID del cliente seleccionado
 
-      if (!idCli) {
-        // Si no hay cliente seleccionado, limpia el combo de contratos
+    if (!idCli) {
+      // Si no hay cliente seleccionado, limpia el combo de contratos
+      document.getElementById("combo-contrato").innerHTML =
+        '<option value="">Seleccione un contrato</option>';
+      return;
+    }
+    try {
+      // Realiza una solicitud al servidor para obtener los contratos del cliente
+      const response = await fetch(
+        `http://${IP_LOCAL}:3000/contratosNro?idCli=${idCli}`,
+        {
+          method: "GET",
+          credentials: "include", // Asegura que las cookies se envíen con la solicitud
+        },
+      );
+      const contratos = await response.json();
+
+      // Verifica si hay contratos disponibles
+      if (contratos.length === 0) {
         document.getElementById("combo-contrato").innerHTML =
-          '<option value="">Seleccione un contrato</option>';
+          '<option value="">No hay contratos disponibles</option>';
         return;
       }
-      try {
-        // Realiza una solicitud al servidor para obtener los contratos del cliente
-        const response = await fetch(
-          `http://${IP_LOCAL}:3000/contratosNro?idCli=${idCli}`,
-          {
-            method: "GET",
-            credentials: "include", // Asegura que las cookies se envíen con la solicitud
-          },
-        );
-        const contratos = await response.json();
 
-        // Verifica si hay contratos disponibles
-        if (contratos.length === 0) {
-          document.getElementById("combo-contrato").innerHTML =
-            '<option value="">No hay contratos disponibles</option>';
-          return;
-        }
+      // Llena el combo de contratos con los datos devueltos
+      const contratoSelect = document.getElementById("combo-contrato");
+      contratoSelect.innerHTML =
+        '<option value="">Seleccione un contrato</option>'; // Limpia y añade la opción por defecto
 
-        // Llena el combo de contratos con los datos devueltos
-        const contratoSelect = document.getElementById("combo-contrato");
-        contratoSelect.innerHTML =
-          '<option value="">Seleccione un contrato</option>'; // Limpia y añade la opción por defecto
-
-        contratos.forEach((contrato) => {
-          const option = document.createElement("option");
-          option.value = contrato.ID; // Valor del contrato
-          option.textContent = contrato.DESCRIPCION; // Descripción del contrato
-          contratoSelect.appendChild(option);
-        });
-      } catch (error) {
-        console.error("Error al obtener los contratos:", error);
-        alert("Error al obtener los contratos. Inténtelo de nuevo más tarde.");
-      }
-    });
+      contratos.forEach((contrato) => {
+        const option = document.createElement("option");
+        option.value = contrato.ID; // Valor del contrato
+        option.textContent = contrato.DESCRIPCION; // Descripción del contrato
+        contratoSelect.appendChild(option);
+      });
+    } catch (error) {
+      console.error("Error al obtener los contratos:", error);
+      alert("Error al obtener los contratos. Inténtelo de nuevo más tarde.");
+    }
+  });
 }
 
 async function guardarDocumento() {
@@ -264,7 +333,9 @@ async function guardarDocumento() {
     idCliente: document.querySelector("#combo-cliente").value,
     idContrato: document.querySelector("#combo-contrato").value,
     tipoContrato: document.querySelector("#combo-raz").value,
-    nroContrato: textoAGuiones(document.querySelector("#text-nro-contra").value),
+    nroContrato: textoAGuiones(
+      document.querySelector("#text-nro-contra").value,
+    ),
     vehiculo: document.querySelector("#text-veh").value,
     duracion: document.querySelector("#text-dura").value || "0",
     kmAdicional: document.querySelector("#text-adic").value || "0",
@@ -273,14 +344,17 @@ async function guardarDocumento() {
     vehSoc: document.querySelector("#text-soc").value,
     vehSev: document.querySelector("#text-sev").value,
     vehCiu: document.querySelector("#text-ciu").value,
-    fechaFirma: document.querySelector("#text-firma").value,
+    fechaFirma: dayjs(
+      document.querySelector("#text-firma").value,
+      "DD/MM/YYYY",
+    ).format("YYYY-MM-DD"),
     Especial: document.querySelector("#especial").checked ? 1 : 0,
     motivo: document.querySelector("#combo-motivo").value,
     story: document.querySelector("#story").value,
   };
 
   if (formData.kmAdicional > 5) {
-    mostrarNotificacion("El Km adicional no debe ser mayor a 5", "#C70039");
+    toastr.info("El Km adicional no debe ser mayor a 5", "Aviso");
     return;
   } else {
     console.log("valido carnal");
@@ -290,9 +364,9 @@ async function guardarDocumento() {
     if (formData.vehiculo[i] < 10) {
       console.log("Todo conforme.");
     } else {
-      mostrarNotificacion(
+      toastr.info(
         "La cantidad es inválido, solo debe contener números",
-        "#C70039",
+        "Aviso",
       );
       return;
     }
@@ -302,9 +376,9 @@ async function guardarDocumento() {
     if (formData.duracion[i] < 10) {
       console.log("Todo conforme.");
     } else {
-      mostrarNotificacion(
+      toastr.info(
         "La duración es inválido, solo debe contener números",
-        "#C70039",
+        "Aviso",
       );
       return;
     }
@@ -314,9 +388,9 @@ async function guardarDocumento() {
     if (formData.kmTotal[i] < 10) {
       console.log("Todo conforme.");
     } else {
-      mostrarNotificacion(
-        "el km total es inválido, solo debe contener números",
-        "#C70039",
+      toastr.info(
+        "El km total es inválido, solo debe contener números",
+        "Aviso",
       );
       return;
     }
@@ -326,9 +400,9 @@ async function guardarDocumento() {
     if (formData.vehSup[i] < 10) {
       console.log("Todo conforme.");
     } else {
-      mostrarNotificacion(
+      toastr.info(
         "valor inválido, solo debe contener números enteros",
-        "#C70039",
+        "Aviso",
       );
       return;
     }
@@ -338,9 +412,9 @@ async function guardarDocumento() {
     if (formData.vehSoc[i] < 10) {
       console.log("Todo conforme.");
     } else {
-      mostrarNotificacion(
-        "valor inválido, solo debe contener números enteros",
-        "#C70039",
+      toastr.info(
+        "Valor inválido, solo debe contener números enteros",
+        "Aviso",
       );
       return;
     }
@@ -350,9 +424,9 @@ async function guardarDocumento() {
     if (formData.vehSev[i] < 10) {
       console.log("Todo conforme.");
     } else {
-      mostrarNotificacion(
-        "valor inválido, solo debe contener números enteros",
-        "#C70039",
+      toastr.info(
+        "Valor inválido, solo debe contener números enteros",
+        "Aviso",
       );
       return;
     }
@@ -362,9 +436,9 @@ async function guardarDocumento() {
     if (formData.vehCiu[i] < 10) {
       console.log("Todo conforme.");
     } else {
-      mostrarNotificacion(
+      toastr.info(
         "valor inválido, solo debe contener números enteros",
-        "#C70039",
+        "Aviso",
       );
       return;
     }
@@ -379,19 +453,16 @@ async function guardarDocumento() {
   ) {
     console.log("Conforme Dr. Fili");
   } else {
-    mostrarNotificacion(
+    toastr.info(
       "Total de vehiculos no coincide con la cantidad de vehiculos",
-      "#C70039",
+      "Aviso",
     );
     return;
   }
 
   // Validación de campos obligatorios
   if (!formData.idCliente || !formData.nroContrato || !formData.fechaFirma) {
-    mostrarNotificacion(
-      "Por favor, completa todos los campos obligatorios.",
-      "#C70039",
-    );
+    toastr.info("Por favor, completa todos los campos obligatorios.", "Aviso");
     return;
   }
 
@@ -409,6 +480,7 @@ async function guardarDocumento() {
         let tipoTerreno = fila.querySelector(
           'select[name="tipo_terreno[]"]',
         ).value;
+        let condicion = fila.querySelector('select[name="condicion[]"]').value;
         let tarifa =
           Number(fila.querySelector('input[name="tarifa[]"]').value) || 0;
         let cpk = Number(fila.querySelector('input[name="cpk[]"]').value) || 0;
@@ -417,6 +489,8 @@ async function guardarDocumento() {
           Number(fila.querySelector('input[name="cantidad[]"]').value) || 0;
         let duracion =
           Number(fila.querySelector('input[name="duracion[]"]').value) || 0;
+        let kmAdi =
+          Number(fila.querySelector('input[name="kmAdi[]').value) || 0;
         let compraVeh =
           Number(fila.querySelector('input[name="compra_veh[]"]').value) || 0;
         let precioVeh =
@@ -470,8 +544,10 @@ async function guardarDocumento() {
               rm,
               cantidad,
               duracion,
+              kmAdicional: kmAdi,
               compraVeh,
               precioVeh,
+              condicion,
             }
           : null;
       })
@@ -480,29 +556,116 @@ async function guardarDocumento() {
     console.log("Datos procesados correctamente:", detalles);
   } catch (error) {
     //  Si hay un error, se muestra la notificación y se detiene todo
-    mostrarNotificacion(error.message, "#C70039");
+    toastr.warning(error.message, "Oops...");
     return;
   }
 
   if (formData.vehSup != supVe) {
-    mostrarNotificacion("la cantidad de superficies no coinciden", "#C70039");
+    toastr.info("La cantidad de superficies no coinciden", "Aviso");
     return;
   }
 
   if (formData.vehSoc != socVe) {
-    mostrarNotificacion("la cantidad de socavon no coinciden", "#C70039");
+    toastr.info("La cantidad de socavon no coinciden", "Aviso");
     return;
   }
 
   if (formData.vehSev != sevVe) {
-    mostrarNotificacion("la cantidad de severo no coinciden", "#C70039");
+    toastr.info("La cantidad de severo no coinciden", "Aviso");
     return;
   }
 
   if (formData.vehCiu != ciuVe) {
-    mostrarNotificacion("la cantidad de ciudad no coinciden", "#C70039");
+    toastr.info("La cantidad de ciudad no coinciden", "Aviso");
     return;
   }
+
+  // Construcción del objeto final de datos
+  const contratoData = { ...formData, detalles };
+
+  // console.log("DOCUMENTOS=====>", contratoData);
+
+  async function registrar() {
+    try {
+      const uploadFile = await subirArchivo(fileInput.files[0]);
+      const nombreArchivo = uploadFile.key;
+      const data = {...contratoData, archivoPdf: nombreArchivo}
+      const response = await fetch(`http://${IP_LOCAL}:3000/insertarDocumento`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
+      });
+      const result = await response.json();
+      if (result.success) {
+        toastr.success("Documento guardado exitosamente", "¡Excelente!");
+        limpiarCampos();
+      } else {
+        toastr.warning(result.message, "Oops...");
+      }
+    } catch (error) {
+      const mensaje =
+        error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
+      console.error("Error al enviar los datos:", error);
+      toastr.warning(`Error al guardar: ${mensaje}`, "Oops...");
+    }
+  }
+
+  // CON TARIFA ALTA
+  const tarifasAltas = [];
+
+  detalles.forEach((det) => {
+    const tarifaDet = det.tarifa;
+    if (tarifaDet >= 100) {
+      tarifasAltas.push(tarifaDet);
+    }
+  });
+
+  if (tarifasAltas.length > 0) {
+    $("#alert-modal").css("display", "flex");
+
+    $("#alert-modal .alert-container")
+      .css("background-color", "#ffeab0")
+      .css("border", "2px solid #ffbb00");
+
+    $("#alert-modal .alert-container").html(
+      `
+        <h2>¡Tarifas excesivas!</h2>
+        <p style="color: black !important">Hemos detectado que estas colocando <b>tarifas</b> mayor a dos cifras.</p>
+        <p style="color: black !important">Tarifas observadas: ${tarifasAltas.join(", ")}</p>
+        <p style="color: black !important">¿Estas seguro de continuar?</p>
+        <div class="btn-group">
+          <button id="btn-save" class="btn btn-info">Si, guardar contrato</button>
+          <button id="btn-cancel" class="btn btn-dark">No, cancelar proceso</button>
+        </div>
+      `,
+    );
+
+    $("#alert-modal")
+      .off("click", "#btn-save")
+      .on("click", "#btn-save", async function () {
+        await registrar();
+
+        const modal = document.getElementById("alert-modal");
+        modal.style.display = "none";
+
+        $("#alert-modal .alert-container").empty();
+      });
+
+    $("#alert-modal")
+      .off("click", "#btn-cancel")
+      .on("click", "#btn-cancel", function () {
+        const modal = document.getElementById("alert-modal");
+        modal.style.display = "none";
+
+        $("#alert-modal .alert-container").empty();
+      });
+
+    return;
+  }
+
+  // SIN TARIFA ALTA
+  await registrar();
 
   // if (nombreArchivo) {
   //   const yaExiste = await validarArchivo(nombreArchivo); // Solo el nombre, ya es string
@@ -514,37 +677,6 @@ async function guardarDocumento() {
   //     return;
   //   }
   // }
-
-  const uploadFile = await subirArchivo(fileInput.files[0]);
-  const nombreArchivo = uploadFile.key;
-
-  // Construcción del objeto final de datos
-  const contratoData = { ...formData, detalles, archivoPdf: nombreArchivo };
-
-  // console.log("DOCUMENTOS=====>", contratoData);
-
-  try {
-    const response = await fetch(`http://${IP_LOCAL}:3000/insertarDocumento`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(contratoData),
-      credentials: "include", // Asegura que las cookies se envíen con la solicitud
-    });
-
-    const result = await response.json();
-    if (result.success) {
-      mostrarNotificacion("Documento guardado exitosamente", "#01b204");
-      // await subirArchivo(fileInput.files[0]);
-      limpiarCampos();
-    } else {
-      mostrarNotificacion("Hubo un error al guardar el documento", "#C70039");
-    }
-  } catch (error) {
-    const mensaje =
-      error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
-    console.error("Error al enviar los datos:", error);
-    mostrarNotificacion(`Error al guardar: ${mensaje}`, "#C70039");
-  }
 }
 
 async function subirArchivo(archivo) {
@@ -562,11 +694,11 @@ async function subirArchivo(archivo) {
 
     const result = await response.json();
     if (!result.success) {
-      mostrarNotificacion("Error al subir el archivo PDF", "#C70039");
+      toastr.warning("Error al subir el archivo PDF", "Oops...");
     }
   } catch (error) {
     console.error("Error al subir el archivo:", error);
-    mostrarNotificacion("Ocurrió un error al subir el archivo", "#C70039");
+    toastr.warning("Ocurrió un error al subir el archivo", "Oops...");
   }
 }
 
@@ -582,14 +714,14 @@ async function validarArchivo(nombreArchivo) {
     const result = await response.json();
 
     if (result.existe) {
-      mostrarNotificacion("El archivo PDF ya existe en el servidor", "#C70039");
+      toastr.warning("El archivo PDF ya existe en el servidor", "Oops...");
       return true;
     } else {
       return false;
     }
   } catch (error) {
     console.error("Error al validar archivo PDF:", error);
-    mostrarNotificacion("Error al validar archivo PDF", "#C70039");
+    toastr.warning("Error al validar archivo PDF", "Oops...");
     return false;
   }
 }
@@ -603,16 +735,177 @@ function leerArchivoBase64(file) {
   });
 }
 
-function mostrarNotificacion(mensaje, color) {
-  const notification = document.getElementById("notification");
-  notification.textContent = mensaje;
-  notification.style.backgroundColor = color || "#d4edda"; // Verde suave por defecto
-  notification.classList.add("show");
+async function exportVehicle() {
+  let socVe = 0;
+  let supVe = 0;
+  let sevVe = 0;
+  let ciuVe = 0;
+  const detalles = Array.from(document.querySelectorAll("#contratos-tbody tr"))
+    .map((fila, index) => {
+      let modelo = fila.querySelector('select[name="tipo_modelo[]"]');
+      let modeloText = modelo.options[modelo.selectedIndex].text;
 
-  // Mostrar la notificación con el efecto
-  setTimeout(() => {
-    notification.classList.remove("show");
-  }, 3000);
+      let tipoTerreno = fila.querySelector('select[name="tipo_terreno[]"]');
+      let tipoTerrenoText = tipoTerreno.options[tipoTerreno.selectedIndex].text;
+
+      let condicion = fila.querySelector('select[name="condicion[]"]');
+      let condicionText = condicion.options[condicion.selectedIndex].text;
+
+      let tarifa =
+        Number(fila.querySelector('input[name="tarifa[]"]').value) || 0;
+      let cpk = Number(fila.querySelector('input[name="cpk[]"]').value) || 0;
+      let rm = Number(fila.querySelector('input[name="rm[]"]').value) || 0;
+      let cantidad =
+        Number(fila.querySelector('input[name="cantidad[]"]').value) || 0;
+      let duracion =
+        Number(fila.querySelector('input[name="duracion[]"]').value) || 0;
+      let kmAdi = Number(fila.querySelector('input[name="kmAdi[]').value) || 0;
+      let compraVeh =
+        Number(fila.querySelector('input[name="compra_veh[]"]').value) || 0;
+      let precioVeh =
+        Number(fila.querySelector('input[name="precio_veh[]"]').value) || 0;
+
+      if (tipoTerreno == 0) {
+        supVe = supVe + cantidad;
+      } else if (tipoTerreno == 1) {
+        socVe = socVe + cantidad;
+      } else if (tipoTerreno == 2) {
+        ciuVe = ciuVe + cantidad;
+      } else if (tipoTerreno == 3) {
+        sevVe = sevVe + cantidad;
+      }
+
+      return modelo && tarifa != null && cantidad
+        ? {
+            secCon: index + 1,
+            modelo: modeloText,
+            tipoTerreno: tipoTerrenoText,
+            tarifa,
+            cpk,
+            rm,
+            cantidad,
+            duracion,
+            kmAdicional: kmAdi,
+            compraVeh,
+            precioVeh,
+            condicion: condicionText,
+          }
+        : null;
+    })
+    .filter(Boolean);
+
+  if (detalles.length == 0) {
+    toastr.info("No puedes exportar una tabla vacia", "Aviso");
+    return;
+  }
+
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Modelos");
+
+  worksheet.columns = [
+    { header: "Item", key: "item", width: 8 },
+    { header: "Modelo", key: "modelo", width: 35 },
+    { header: "Tipo Terreno", key: "tipoTerreno", width: 15 },
+    { header: "Tarifa", key: "tarifa", width: 15 },
+    { header: "CPK", key: "cpk", width: 10 },
+    { header: "RM", key: "rm", width: 10 },
+    { header: "Cantidad", key: "cantidad", width: 12 },
+    { header: "Duracion", key: "duracion", width: 12 },
+    { header: "Km Adicional", key: "kmAdicional", width: 12 },
+    { header: "Precio Compra", key: "compraVeh", width: 18 },
+    { header: "Precio Venta", key: "precioVeh", width: 18 },
+    { header: "Condicion", key: "condicion", width: 18 },
+  ];
+
+  worksheet.addRows(
+    detalles.map((row, i) => ({
+      item: i + 1,
+      modelo: row.modelo,
+      tipoTerreno: row.tipoTerreno,
+      tarifa: row.tarifa,
+      cpk: row.cpk,
+      rm: row.rm,
+      cantidad: row.cantidad,
+      duracion: row.duracion,
+      kmAdicional: row.kmAdicional,
+      comprarVeh: row.compraVeh,
+      precioVeh: row.precioVeh,
+      condicion: row.condicion,
+    })),
+  );
+
+  // estilo del header
+  worksheet.getRow(1).eachCell((cell) => {
+    cell.font = {
+      bold: true,
+      color: { argb: "FFFFFFFF" },
+    };
+
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "4472C4" },
+    };
+
+    cell.alignment = { horizontal: "center" };
+  });
+
+  // formato moneda
+  // worksheet.getColumn("tarifa").numFmt = '"S/" #,##0.00';
+  // worksheet.getColumn("compraVeh").numFmt = '"S/" #,##0.00';
+  // worksheet.getColumn("precioVeh").numFmt = '"S/" #,##0.00';
+
+  // crear tabla Excel real
+  worksheet.addTable({
+    name: "TablaVehiculos",
+    ref: "A1",
+    headerRow: true,
+    style: {
+      theme: "TableStyleMedium9",
+      showRowStripes: true,
+    },
+    columns: [
+      { name: "Item" },
+      { name: "Modelo" },
+      { name: "Tipo Terreno" },
+      { name: "Tarifa" },
+      { name: "CPK" },
+      { name: "RM" },
+      { name: "Cantidad" },
+      { name: "Duracion" },
+      { name: "Km Adicional" },
+      { name: "Precio Compra" },
+      { name: "Precio Venta" },
+      { name: "Condicion" },
+    ],
+    rows: detalles.map((r, i) => [
+      i + 1,
+      r.modelo,
+      r.tipoTerreno,
+      r.tarifa,
+      r.cpk,
+      r.rm,
+      r.cantidad,
+      r.duracion,
+      r.kmAdicional,
+      r.compraVeh,
+      r.precioVeh,
+      r.condicion,
+    ]),
+  });
+
+  const buffer = await workbook.xlsx.writeBuffer();
+
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "Modelos_vehiculos_export.xlsx";
+  a.click();
 }
 
 function limpiarCampos() {
@@ -636,44 +929,78 @@ function limpiarCampos() {
   const uploadMessage = document.getElementById("uploadMessage");
   uploadMessage.textContent = "Haz clic o arrastra un archivo aquí"; // Restablece el mensaje
   uploadMessage.style.display = "block";
+
+  $("#combo-cliente").val(null).trigger("change");
+  $("#combo-contrato").val(null).trigger("change");
+  $("#combo-raz").val(null).trigger("change");
+  $("#combo-motivo").val(null).trigger("change");
+  $("#tipoTerreno").val(null).trigger("change");
+  $("#modelo").val(null).trigger("change");
+  $("#condicion").val(null).trigger("change");
+
   // Limpiar el checkbox
   document.getElementById("especial").checked = false;
 
   const tbody = document.getElementById("contratos-tbody");
   // Eliminar todo el contenido del tbody
   tbody.innerHTML = ` <tr>
-                            <td><input type="text" name="item[]" value="1" disabled></td>
-                            <td>
-                                <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" id="tipoModelo" style="width: 100%;" data-tooltip="Selecciona el modelo">
-                                    <option value="">Seleccione un modelo</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select name="tipo_terreno[]" class="cbo-form-cliente-deta tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
-                                    <option value="4">Seleccione el tipo</option>
-                                    <option value="0">Superficie</option>
-                                    <option value="1">Socavon</option>
-                                    <option value="2">Ciudad</option>
-                                    <option value="3">Severo</option>
-                                </select>
-                            </td>
-                            <td><input type="text" name="tarifa[]" class="tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
-                            <td><input type="text" name="cpk[]" class="tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
-                            <td><input type="number" name="rm[]" class="tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
-                            <td><input type="number" name="cantidad[]" class="tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
-                            <td><input type="text" name="duracion[]" class="tooltip-input" value="0" data-tooltip="Duracion contrato" disabled></td>
-                            <td><input type="text" name="compra_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
-                            <td><input type="text" name="precio_veh[]" class="tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
-                        </td>`;
+                           <td><input type="text" name="item[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" disabled></td>
+                <td>
+                  <select id="tipoModelo" name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
+                    <option value="">Seleccione un modelo</option>
+                  </select>
+                </td>
+                <td>
+                  <select id="tipoTerreno" name="tipo_terreno[]" class="cbo-form-cliente-deta terreno-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
+                    <option value="4">Seleccione el tipo</option>
+                    <option value="0">Superficie</option>
+                    <option value="1">Socavon</option>
+                    <option value="2">Ciudad</option>
+                    <option value="3">Severo</option>
+                  </select>
+                </td>
+                <td><input type="text" name="tarifa[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
+                <td><input type="text" name="cpk[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
+                <td><input type="number" name="rm[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
+                <td><input type="number" name="cantidad[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
+                <td><input type="text" min="0" name="kmAdi[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="$KM Adicional" disabled></td>
+                <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Duracion contrato" disabled></td>
+                <td><input type="text" name="compra_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
+                <td><input type="text" name="precio_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+                <td>
+                  <select id="condicion" name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
+                    <option value="4">Seleccione el tipo</option>
+                    <option value="0">Titular</option>
+                    <option value="1">Retén</option>
+                    <option value="2">Logística</option>
+                    <option value="3">Pendiente</option>
+                  </select>
+                </td>
+                <td>
+                  <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
+                </td>
+                </tr>`;
   resetSelect("combo-cliente", "Seleccione un cliente");
   resetSelect("combo-contrato", "Seleccione un contrato");
   resetSelect("combo-motivo", "Seleccione un Motivo");
   resetSelect("combo-raz", "Seleccione un tipo");
   cargarModelos();
   $(document).ready(function () {
-    $("#tipoModelo").select2({
+    $("#tipoTerreno").select2({
       placeholder: "Seleccione el tipo",
       allowClear: false, // Desactiva la "X"
+      width: "140px",
+    });
+
+    $("#tipoModelo").select2({
+      placeholder: "Seleccione el modelo",
+      allowClear: false, // Desactiva la "X"
+    });
+
+    $("#condicion").select2({
+      placeholder: "Seleccione la condicion",
+      allowClear: false, // Desactiva la "X"
+      width: "140px",
     });
   });
 }

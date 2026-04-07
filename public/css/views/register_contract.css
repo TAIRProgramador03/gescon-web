@@ -908,20 +908,6 @@ input {
   --paper-y: -3px;
 }
 
-.tabla-form::-webkit-scrollbar {
-  width: 15px;
-}
-
-.tabla-form::-webkit-scrollbar-track {
-  background: rgb(123, 152, 196);
-  border-radius: 50px;
-}
-
-.tabla-form::-webkit-scrollbar-thumb {
-  background: rgb(185, 185, 185);
-  border-radius: 50px;
-}
-
 .file-adjunta {
   width: 100%;
   height: fit-content;

@@ -194,7 +194,7 @@ require './templates/header.html';
           <span class="w-full bg-taupe-800 flex justify-center items-center px-2 py-2 text-white text-sm font-medium">N° Leasings</span>
           <div class="card-lea w-full px-2 py-3 flex flex-col justify-center items-center text-black">
             <i class="fa fa fa-book text-taupe-800 text-2xl"></i>
-            <p id="!m-0 text-sm">0</p>
+            <p id="leasing-result" class="!m-0 text-sm">0</p>
           </div>
         </div>
         <button
@@ -330,7 +330,7 @@ require './templates/header.html';
       const estado = obtenerEstado(fechaFin);
 
       // INPUTS DE DATOS
-      $("#fec-fin-result").val(fechaFin);
+      $("#fec-fin-result").val(dayjs(fechaFin).format("DD/MM/YYYY"));
       $("#estado-result").val(estado);
       $("#tipo-result").val(detailDocument.tipoDocumento);
       $("#motivo-result").val(detailDocument.motivoDoc);
@@ -385,7 +385,7 @@ require './templates/header.html';
         const estado = obtenerEstado(fechaFin);
 
         // INPUTS DE DATOS
-        $("#fec-fin-result").val(fechaFin);
+        $("#fec-fin-result").val(dayjs(fechaFin).format("DD/MM/YYYY"));
         $("#estado-result").val(estado);
         $("#tipo-result").val(detailDocument.tipoDocumento);
         $("#motivo-result").val(detailDocument.motivoDoc);
@@ -986,10 +986,12 @@ require './templates/header.html';
     const params = new URLSearchParams(window.location.search);
     const clienteId = params.get("clienteId")
     const documentoId = params.get("documentoId")
+    const contratoId = params.get("contratoId")
+    const nroDoc = params.get("nroDoc")
 
     if (!documentoId || !clienteId) return;
 
-    window.location.href = `consultar_leasing_por_documento.php?documentoId=${documentoId}&clienteId=${clienteId}`;
+    window.location.href = `consultar_leasing_por_documento.php?documentoId=${documentoId}&clienteId=${clienteId}&contratoId=${contratoId}&nroDoc=${nroDoc}`;
   })
 </script>
 

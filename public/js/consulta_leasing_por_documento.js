@@ -32,7 +32,17 @@ const getLeasings = async (documentoId, clienteId) => {
     language: {
       url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
     },
+    scrollY: "500px",
+    scrollCollapse: true,
+    dom: 'rt<"inferior"i<"derecha-inferior"lp>>',
     data: lesaings,
+    columnDefs: [
+      // Centrar contenido y cabecera en las columnas 0, 1 y 2
+      {
+        className: "dt-center",
+        targets: [0, 1, 2, 3, 4],
+      },
+    ],
     columns: [
       {
         data: "item",
@@ -47,14 +57,14 @@ const getLeasings = async (documentoId, clienteId) => {
       {
         data: "fechaInicio",
         render: function (data) {
-          return convertirFecha(data);
+          return dayjs(convertirFecha(data)).format("DD/MM/YYYY");
         },
         width: "20%",
       },
       {
         data: "fechaFin",
         render: function (data) {
-          return convertirFecha(data);
+          return dayjs(convertirFecha(data)).format("DD/MM/YYYY");
         },
         width: "20%",
       },

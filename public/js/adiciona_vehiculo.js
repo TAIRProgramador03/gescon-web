@@ -817,40 +817,40 @@ async function guardaAsignacion() {
 }
 
 const registrar = async (asignacionData) => {
-  // try {
-  //   await Promise.all(
-  //     asignacionData.detalles.map(async (detalle) => {
-  //       if (!detalle.archivoPdf) return;
-  //       const formData = new FormData();
-  //       formData.append("archivoPdf", detalle.archivoPdf);
-  //       formData.append("documentType", "acta");
-  //       const res = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
-  //         method: "POST",
-  //         body: formData,
-  //       });
-  //       const data = await res.json();
-  //       detalle.archivoPdf = data.key;
-  //     }),
-  //   );
-  //   const response = await fetch(`http://${IP_LOCAL}:3000/insertaAsignacion`, {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(asignacionData),
-  //     credentials: "include", // Asegura que las cookies se envíen con la solicitud
-  //   });
-  //   const result = await response.json();
-  //   if (result.success) {
-  //     toastr.success("Asignación guardada exitosamente", "¡Éxito!");
-  //     deshabilitarSelect();
-  //   } else {
-  //     toastr.warning(result.message, "Oops...");
-  //   }
-  // } catch (error) {
-  //   const mensaje =
-  //     error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
-  //   console.error("Error al enviar los datos:", error);
-  //   toastr.warning(`No se puedo procesar la asignación: ${mensaje}`, "Oops...");
-  // }
+  try {
+    await Promise.all(
+      asignacionData.detalles.map(async (detalle) => {
+        if (!detalle.archivoPdf) return;
+        const formData = new FormData();
+        formData.append("archivoPdf", detalle.archivoPdf);
+        formData.append("documentType", "acta");
+        const res = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        detalle.archivoPdf = data.key;
+      }),
+    );
+    const response = await fetch(`http://${IP_LOCAL}:3000/insertaAsignacion`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(asignacionData),
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    });
+    const result = await response.json();
+    if (result.success) {
+      toastr.success("Asignación guardada exitosamente", "¡Éxito!");
+      deshabilitarSelect();
+    } else {
+      toastr.warning(result.message, "Oops...");
+    }
+  } catch (error) {
+    const mensaje =
+      error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
+    console.error("Error al enviar los datos:", error);
+    toastr.warning(`No se puedo procesar la asignación: ${mensaje}`, "Oops...");
+  }
 };
 
 const validarAsignacion = async (detalles) => {

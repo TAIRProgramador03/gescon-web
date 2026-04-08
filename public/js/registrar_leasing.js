@@ -1,3 +1,34 @@
+import { animate } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
+
+let activeRequests = 0;
+
+function showLoader() {
+  activeRequests++;
+  $("#preloader-mini").css("opacity", "1");
+  $("#preloader-mini").css("z-index", "99999");
+}
+
+function hideLoader() {
+  activeRequests--;
+  if (activeRequests <= 0) {
+    animate(
+      "#preloader-mini",
+      {
+        opacity: [1, 0],
+      },
+      {
+        duration: 0.45,
+        easing: "ease-in",
+      },
+    );
+
+    setTimeout(() => {
+      // $('#preloader-mini').css('opacity', '0');
+      $("#preloader-mini").css("z-index", "-99999");
+    }, 400);
+  }
+}
+
 toastr.options = {
   closeButton: false,
   debug: false,
@@ -22,6 +53,8 @@ let [clientAsocId, setClientAsocId] = useState(null);
 let [clientAsocName, setClientAsocName] = useState("");
 
 document.addEventListener("DOMContentLoaded", () => {
+  showLoader();
+
   $("#combo-box-asig").select2({
     placeholder: "Seleccione un contrato",
     allowClear: false,
@@ -137,6 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
     dateFormat: "d/m/Y",
     locale: "es",
   });
+
+  hideLoader();
 });
 
 // document.addEventListener("DOMContentLoaded", cargarSeleccionados);
@@ -274,7 +309,7 @@ function agregarEventosSeleccion() {
         localStorage.removeItem("clienteSeleccionadoNombre");
         document.getElementById("inputClienteSeleccionado").value = "";
         if (!checked.prop("checked")) {
-          setClientAsocId(null)
+          setClientAsocId(null);
           document.getElementById("inputClienteAsociado").value = "";
         }
       } else {
@@ -541,6 +576,20 @@ function agregarEventosSeleccionVehi() {
                     `;
 
           tablaSeleccionados.appendChild(nuevaFila);
+
+          animate(
+            nuevaFila,
+            {
+              opacity: [0, 1],
+              transform: ["translateY(10px)", "translateY(0px)"],
+              backgroundColor: ["#07E800", "#ffffff"],
+            },
+            {
+              duration: 0.5,
+              easing: "ease-out",
+            },
+          );
+
           toastr.success("Se agregó el vehículo seleccionado.", "¡Excelente!");
           actualizarContador();
         }
@@ -651,8 +700,16 @@ async function guardaLeasing() {
     nroLeasing: textoAGuiones(document.querySelector("#NroLeasing").value),
     banco: $("#banco").val(),
     cantVehiculos: document.querySelector("#cantVehi").value,
-    fechaIni: document.querySelector("#fechaIni").value ? dayjs(document.querySelector("#fechaIni").value, "DD/MM/YYYY").format("YYYY-MM-DD") : null,
-    fechaFin: document.querySelector("#fechaFin").value ? dayjs(document.querySelector("#fechaFin").value, "DD/MM/YYYY").format("YYYY-MM-DD") : null,
+    fechaIni: document.querySelector("#fechaIni").value
+      ? dayjs(document.querySelector("#fechaIni").value, "DD/MM/YYYY").format(
+          "YYYY-MM-DD",
+        )
+      : null,
+    fechaFin: document.querySelector("#fechaFin").value
+      ? dayjs(document.querySelector("#fechaFin").value, "DD/MM/YYYY").format(
+          "YYYY-MM-DD",
+        )
+      : null,
     periGracia: document.querySelector("#periGracia").value || "0",
     idContrato: $("#combo-box-asig").val(),
     //story: document.querySelector("#fileInput").value

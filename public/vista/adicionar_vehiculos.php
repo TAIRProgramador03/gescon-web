@@ -162,7 +162,7 @@ require './templates/header.html';
 <!-- ALERTA MODAL -->
 <div id="alert-modal" class="fixed w-full h-dvh top-0 left-0 hidden justify-center items-center z-[9990]">
   <div class="fixed top-0 left-0 w-full h-full bg-black/25 z-[9991]"></div>
-  <div class="w-[30%] max-w-[90%] bg-[#ffeab0] rounded-xl border-2 border-[#ffbb00] p-5 z-[9999]">
+  <div class="alert-container w-[30%] max-w-[90%] bg-[#ffeab0] rounded-xl border-2 border-[#ffbb00] flex flex-col gap-3 p-5 z-[9999]">
     <h3 class="font-medium text-[#e0a501] text-xl">¡Tarifas excesivas!</h3>
     <p>Hemos detectado que estas colocando <b>tarifas</b> mayor a dos cifras.</p>
     <p id="listTarifa"></p>

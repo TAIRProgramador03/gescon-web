@@ -308,6 +308,10 @@ require './templates/header.html';
 
 <script src="../js/consulta_contratos.js"></script>
 <script type="module">
+  import {
+    animate
+  } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
+
   let activeRequests = 0;
 
   function showLoader() {
@@ -319,8 +323,15 @@ require './templates/header.html';
   function hideLoader() {
     activeRequests--;
     if (activeRequests <= 0) {
+      animate("#preloader-mini", {
+        opacity: [1, 0],
+      }, {
+        duration: 0.45,
+        easing: "ease-in"
+      })
+
       setTimeout(() => {
-        $('#preloader-mini').css('opacity', '0');
+        // $('#preloader-mini').css('opacity', '0');
         $('#preloader-mini').css('z-index', '-99999');
       }, 400)
     }
@@ -447,6 +458,14 @@ require './templates/header.html';
 
       if (vehPending.data && vehPending.data.length > 0) {
         setTimeout(() => {
+          animate(".alert-container", {
+            opacity: [0, 1],
+            scale: [0.7, 1.05, 1]
+          }, {
+            duration: 0.45,
+            easing: "ease-out"
+          });
+
           $("#alert-modal").css("display", "flex");
 
           $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
@@ -511,7 +530,17 @@ require './templates/header.html';
     window.location.href = `adicionar_vehiculos.php?clienteId=${clienteId}`;
   })
 
-  $(document).on("click", "#btn-close-alert", () => {
+  $(document).on("click", "#btn-close-alert", async () => {
+    const anim = animate(".alert-container", {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.7]
+    }, {
+      duration: 0.45,
+      easing: "ease-in"
+    });
+
+    await anim.finished;
+
     const modal = document.getElementById("alert-modal");
     modal.style.display = "none";
 

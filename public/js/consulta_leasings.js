@@ -66,6 +66,21 @@ const verPdf = (link) => {
 };
 
 const verFlota = async (id) => {
+  const modal = document.getElementById("modal-leasing");
+  modal.style.display = "flex";
+
+  Motion.animate(
+    ".modal-container",
+    {
+      opacity: [0, 1],
+      scale: [0.7, 1.05, 1],
+    },
+    {
+      duration: 0.45,
+      easing: "ease-out",
+    },
+  );
+
   const vehicles = await getVehByLeasing(id);
 
   $("#modal-body-info").append(`
@@ -108,7 +123,8 @@ const verFlota = async (id) => {
         titleAttr: "Excel",
         className: "btn-excel",
         filename:
-          `Reporte_Placas_Leasing_${vehicles[0].nroLeasing}_` + new Date().toLocaleDateString(),
+          `Reporte_Placas_Leasing_${vehicles[0].nroLeasing}_` +
+          new Date().toLocaleDateString(),
         title: `Lista de placas de los Leasings ${vehicles[0].nroLeasing}`,
       },
     ],
@@ -188,9 +204,6 @@ const verFlota = async (id) => {
       },
     ],
   });
-
-  const modal = document.getElementById("modal-leasing");
-  modal.style.display = "flex";
 };
 
 function convertirFecha(fecha) {

@@ -44,6 +44,9 @@ require './templates/header.html';
 <!-- TOASTR JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+<!-- MOTION -->
+<script src="https://cdn.jsdelivr.net/npm/motion@10/dist/motion.min.js"></script>
+
 <style>
   <?php include '../css/views/query_leasing.css' ?>
 </style>
@@ -210,8 +213,36 @@ require './templates/header.html';
 
 <script src="../js/consulta_leasings.js"></script>
 <script>
+  let activeRequests = 0;
+
+  function showLoader() {
+    activeRequests++;
+    $('#preloader-mini').css('opacity', '1');
+    $('#preloader-mini').css('z-index', '99999');
+  }
+
+  function hideLoader() {
+    activeRequests--;
+    if (activeRequests <= 0) {
+      Motion.animate("#preloader-mini", {
+        opacity: [1, 0],
+      }, {
+        duration: 0.45,
+        easing: "ease-in"
+      })
+
+      setTimeout(() => {
+        // $('#preloader-mini').css('opacity', '0');
+        $('#preloader-mini').css('z-index', '-99999');
+      }, 400)
+    }
+  }
+
   let table;
+
   $(document).on("DOMContentLoaded", async () => {
+    showLoader();
+
     setTimeout(() => {
       document.body.classList.add('loaded');
       document.getElementById('preloader-mini').style.display = 'none';
@@ -461,6 +492,8 @@ require './templates/header.html';
     table.on("page.dt", () => {
       $('tr').removeClass("selected-row");
     })
+
+    hideLoader();
   })
 
   $("#filter-bank").on("select2:select", async () => {
@@ -643,7 +676,18 @@ require './templates/header.html';
     table.draw();
   })
 
-  $("#btn-close").on("click", function() {
+  $("#btn-close").on("click", async function() {
+    const anim = Motion.animate(
+      ".modal-container", {
+        opacity: [1, 0],
+      }, {
+        duration: 0.45,
+        easing: "ease-in",
+      },
+    );
+
+    await anim.finished;
+
     const modal = document.getElementById("modal-leasing");
     modal.style.display = "none";
 

@@ -463,7 +463,38 @@ require './templates/header.html';
 
 <!-- SCRIPTS -->
 <script type="module">
+  import {
+    animate
+  } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
+
+  let activeRequests = 0;
+
+  function showLoader() {
+    activeRequests++;
+    $('#preloader-mini').css('opacity', '1');
+    $('#preloader-mini').css('z-index', '99999');
+  }
+
+  function hideLoader() {
+    activeRequests--;
+    if (activeRequests <= 0) {
+      animate("#preloader-mini", {
+        opacity: [1, 0],
+      }, {
+        duration: 0.45,
+        easing: "ease-in"
+      })
+
+      setTimeout(() => {
+        // $('#preloader-mini').css('opacity', '0');
+        $('#preloader-mini').css('z-index', '-99999');
+      }, 400)
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", function() {
+    showLoader();
+
     const tooltip = document.createElement("div");
 
     tooltip.style.position = "fixed";
@@ -518,6 +549,8 @@ require './templates/header.html';
         }, 200);
       }
     }, true);
+
+    hideLoader();
   });
 
 
@@ -529,10 +562,10 @@ require './templates/header.html';
   const removeFileButton = document.getElementById('removeFile');
 
   window.onload = function() {
-    setTimeout(() => {
-      document.body.classList.add('loaded');
-      document.getElementById('preloader-mini').style.display = 'none';
-    }, 2000);
+    // setTimeout(() => {
+    //   document.body.classList.add('loaded');
+    //   document.getElementById('preloader-mini').style.display = 'none';
+    // }, 2000);
     fileInfo.style.display = 'none'; // Asegúrate de que la información del archivo no aparezca.
     uploadMessage.addClass("flex"); // Muestra el mensaje inicial.
     uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial.

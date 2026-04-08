@@ -38,6 +38,9 @@ require './templates/header.html';
 <!-- LUCID ICON -->
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
+<!-- MOTION -->
+<script src="https://cdn.jsdelivr.net/npm/motion@10/dist/motion.min.js"></script>
+
 <!-- CSS DE LA VISTA DASHBOARD -->
 <style>
   <?php include '../css/views/dashboard.css'; ?>
@@ -63,16 +66,17 @@ require './templates/header.html';
   </div>
 </div>
 
-<div class="loader-screen">
-  <div class="loading-wave">
-    <div class="loading-bar"></div>
-    <div class="loading-bar"></div>
-    <div class="loading-bar"></div>
-    <div class="loading-bar"></div>
-  </div>
-</div>
 
-<div class="dashboard-container">
+
+<div class="dashboard-container relative">
+  <div class="loader-screen">
+    <div class="loading-wave">
+      <div class="loading-bar"></div>
+      <div class="loading-bar"></div>
+      <div class="loading-bar"></div>
+      <div class="loading-bar"></div>
+    </div>
+  </div>
   <main class="dashboard-main">
     <section class="dashboard-section">
       <div class="dashboard-header">
@@ -233,9 +237,6 @@ require './templates/header.html';
     $('#banner').css('opacity', '1');
     $('#banner').css('z-index', '99999');
 
-    $('#preloader').css('opacity', '1');
-    $('#preloader').css('z-index', '99999');
-
     $(".carousel-container").css('opacity', '1');
     $(".carousel-container").css('z-index', '99999');
 
@@ -245,12 +246,18 @@ require './templates/header.html';
   function hideLoaderWindow() {
     onLoadWindow--;
     if (onLoadWindow <= 0) {
-      $('#banner').css('opacity', '0');
-      $('#preloader').css('opacity', '0');
-      $('#banner').css('z-index', '-99999');
-      $('#preloader').css('z-index', '-99999');
-      $(".carousel-container").css('opacity', '0');
-      $(".carousel-container").css('z-index', '-99999');
+      Motion.animate("#banner", {
+        opacity: [1, 0],
+      }, {
+        duration: 0.45,
+        easing: "ease-in"
+      })
+
+
+      // $('#banner').css('opacity', '0');
+      setTimeout(() => {
+        $('#banner').css('z-index', '-99999');
+      }, 400)
     }
   }
 
@@ -265,7 +272,14 @@ require './templates/header.html';
   function hideLoader() {
     activeRequests--;
     if (activeRequests <= 0) {
-      $('.loader-screen').css('opacity', '0');
+      Motion.animate(".loader-screen", {
+        opacity: [1, 0],
+      }, {
+        duration: 0.45,
+        easing: "ease-in"
+      })
+
+      // $('.loader-screen').css('opacity', '0');
       $('.loader-screen').css('z-index', '-99999');
     }
   }
@@ -484,6 +498,19 @@ require './templates/header.html';
           }
         },
         onClick: (evento, elementosActivos) => {
+          const modal = document.getElementById("modal-leasing");
+          modal.style.display = "flex";
+
+          $("#modal-title").text("Vehiculos vencidos")
+
+          Motion.animate(".modal-container", {
+            opacity: [0, 1],
+            scale: [0.7, 1.05, 1]
+          }, {
+            duration: 0.45,
+            easing: "ease-out"
+          })
+
           // Verificamos si se hizo clic en un segmento (y no en el espacio vacío)
           if (elementosActivos.length > 0) {
             const indice = elementosActivos[0].index;
@@ -664,11 +691,6 @@ require './templates/header.html';
                 }
               ],
             })
-
-            const modal = document.getElementById("modal-leasing");
-            modal.style.display = "flex";
-
-            $("#modal-title").text("Vehiculos vencidos")
           }
         }
       }
@@ -719,6 +741,19 @@ require './templates/header.html';
           }
         },
         onClick: (evento, elementosActivos) => {
+          const modal = document.getElementById("modal-leasing");
+          modal.style.display = "flex";
+
+          $("#modal-title").text("Vehiculos por vencer")
+
+          Motion.animate(".modal-container", {
+            opacity: [0, 1],
+            scale: [0.7, 1.05, 1]
+          }, {
+            duration: 0.45,
+            easing: "ease-out"
+          })
+
           // Verificamos si se hizo clic en un segmento (y no en el espacio vacío)
           if (elementosActivos.length > 0) {
             const indice = elementosActivos[0].index;
@@ -899,11 +934,6 @@ require './templates/header.html';
                 }
               ],
             })
-
-            const modal = document.getElementById("modal-leasing");
-            modal.style.display = "flex";
-
-            $("#modal-title").text("Vehiculos por vencer")
           }
         }
       }
@@ -1662,7 +1692,17 @@ require './templates/header.html';
     tableLea.table().container().getElementsByClassName('dt-scroll-body')[0].scrollTop = 0
   });
 
-  $("#btn-close").on("click", function() {
+  $("#btn-close").on("click", async function() {
+    const anim = Motion.animate(".modal-container", {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.7]
+    }, {
+      duration: 0.45,
+      easing: "ease-in"
+    })
+
+    await anim.finished;
+
     const modal = document.getElementById("modal-leasing");
     modal.style.display = "none";
 

@@ -1,3 +1,5 @@
+import { animate } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
+
 const instance = axios.create({
   baseURL: `http://${IP_LOCAL}:3000`,
   timeout: 3000,
@@ -180,6 +182,19 @@ function cargarFilasRegistrar(checkbox) {
         `;
 
   tabla.querySelector("tbody").appendChild(nuevaFila);
+
+  animate(
+    nuevaFila,
+    {
+      opacity: [0, 1],
+      transform: ["translateY(10px)", "translateY(0px)"],
+      backgroundColor: ["#07E800", "#ffffff"]
+    },
+    {
+      duration: 0.5,
+      easing: "ease-out",
+    },
+  );
   actualizarDuracionEstado();
 
   // Llenar el select de modelos en la nueva fila
@@ -272,6 +287,20 @@ function cargarFilas(data, modelos) {
         `;
 
   tabla.querySelector("tbody").appendChild(nuevaFila);
+
+  animate(
+    nuevaFila,
+    {
+      opacity: [0, 1],
+      transform: ["translateY(10px)", "translateY(0px)"],
+      backgroundColor: ["#07E800", "#ffffff"]
+    },
+    {
+      duration: 0.5,
+      easing: "ease-out",
+    },
+  );
+
   actualizarDuracionEstado();
 
   $(nuevaFila)
@@ -827,9 +856,7 @@ async function guardarContrato() {
   async function registrar() {
     const uploadFile = await subirArchivo(fileInput.files[0]);
     const nombreArchivo = uploadFile.key;
-
     const data = { ...contratoData, archivoPdf: nombreArchivo };
-
     try {
       const response = await fetch(`http://${IP_LOCAL}:3000/insertarContrato`, {
         method: "POST",
@@ -854,7 +881,6 @@ async function guardarContrato() {
 
   async function actualizar(contractId) {
     let nameFile = fileInput.files[0].name;
-
     const isExist = await validarArchivo(nameFile);
     if (!isExist) {
       const uploadFile = await subirArchivo(fileInput.files[0]);
@@ -862,9 +888,7 @@ async function guardarContrato() {
     } else {
       nameFile = `contracts/${nameFile}`;
     }
-
     const data = { ...contratoData, archivoPdf: nameFile };
-
     try {
       const response = await fetch(
         `http://${IP_LOCAL}:3000/actualizarContrato/${contractId}`,
@@ -908,6 +932,18 @@ async function guardarContrato() {
       .css("background-color", "#ffeab0")
       .css("border", "2px solid #ffbb00");
 
+    animate(
+      ".alert-container",
+      {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      },
+      {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
+
     $("#alert-modal .alert-container").html(
       `
         <h2>¡Tarifas excesivas!</h2>
@@ -935,6 +971,20 @@ async function guardarContrato() {
           await registrar();
         }
 
+        const anim = animate(
+          ".alert-container",
+          {
+            opacity: [1, 0],
+            scale: [1, 1.05, 0.7],
+          },
+          {
+            duration: 0.45,
+            easing: "ease-in",
+          },
+        );
+
+        await anim.finished;
+
         const modal = document.getElementById("alert-modal");
         modal.style.display = "none";
 
@@ -943,7 +993,21 @@ async function guardarContrato() {
 
     $("#alert-modal")
       .off("click", "#btn-cancel")
-      .on("click", "#btn-cancel", function () {
+      .on("click", "#btn-cancel", async function () {
+        const anim = animate(
+          ".alert-container",
+          {
+            opacity: [1, 0],
+            scale: [1, 1.05, 0.7],
+          },
+          {
+            duration: 0.45,
+            easing: "ease-in",
+          },
+        );
+
+        await anim.finished;
+
         const modal = document.getElementById("alert-modal");
         modal.style.display = "none";
 

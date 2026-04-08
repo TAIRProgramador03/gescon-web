@@ -1141,6 +1141,7 @@ button:disabled {
   display: flex;
   flex-direction: column;
   background-color: #fff;
+  gap: 12px;
   border-radius: 12px;
   width: 30%;
   max-height: 90%;
@@ -1158,6 +1159,7 @@ button:disabled {
 #alert-modal h2 {
   color: #e0a501;
   font-weight: 500;
+  font-size: 24px;
 }
 
 #alert-modal .btn-group a {

@@ -1,3 +1,5 @@
+import { animate } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
+
 toastr.options = {
   closeButton: false,
   debug: false,
@@ -27,8 +29,19 @@ function showLoader() {
 function hideLoader() {
   activeRequests--;
   if (activeRequests <= 0) {
+    animate(
+      "#preloader-mini",
+      {
+        opacity: [1, 0],
+      },
+      {
+        duration: 0.45,
+        easing: "ease-in",
+      },
+    );
+
     setTimeout(() => {
-      $("#preloader-mini").css("opacity", "0");
+      // $("#preloader-mini").css("opacity", "0");
       $("#preloader-mini").css("z-index", "-99999");
     }, 400);
   }
@@ -353,7 +366,7 @@ async function listaVehiculosAsignables(clientId) {
                       <i class="bi bi-file-earmark-arrow-up"></i>
                       <span>Subir archivo</span>
                     </label>
-                    <input id="${fileId}" type="file" name="acta[]" class="acta hidden">
+                    <input id="${fileId}" type="file" name="acta[]" class="acta hidden" accept="application/pdf">
                   </div>
                 </td>
             `;
@@ -659,9 +672,14 @@ async function guardaAsignacion() {
       numpla = numpla === "" ? 0 : numpla;
       tarifa = tarifa === "" ? 0 : tarifa;
 
-      if(condicion == '4') {
-        toastr.info(`Debes de seleccionar una condición a la placa ${numpla}`, "Aviso");
-        throw new Error(`Debes de seleccionar una condición a la placa ${numpla}`)
+      if (condicion == "4") {
+        toastr.info(
+          `Debes de seleccionar una condición a la placa ${numpla}`,
+          "Aviso",
+        );
+        throw new Error(
+          `Debes de seleccionar una condición a la placa ${numpla}`,
+        );
       }
 
       if (!fechaIni || !fechaFin) {
@@ -712,10 +730,22 @@ async function guardaAsignacion() {
   }
 
   if (tarifasAltas.length > 0) {
+    animate(
+      ".alert-container",
+      {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      },
+      {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
+
     $("#alert-modal").removeClass("hidden");
     $("#alert-modal").addClass("flex");
 
-    $("#listTarifa").text(`Tarifas observadas: ${tarifasAltas.join(", ")}`)
+    $("#listTarifa").text(`Tarifas observadas: ${tarifasAltas.join(", ")}`);
 
     $("#btn-save")
       .off("click")
@@ -733,13 +763,41 @@ async function guardaAsignacion() {
 
         await registrar(asignacionData);
 
+        const anim = animate(
+          ".alert-container",
+          {
+            opacity: [1, 0],
+            scale: [1, 1.05, 0.7],
+          },
+          {
+            duration: 0.45,
+            easing: "ease-in",
+          },
+        );
+
+        await anim.finished;
+
         $("#alert-modal").addClass("hidden");
         $("#alert-modal").removeClass("flex");
       });
 
     $("#btn-cancel")
       .off("click")
-      .on("click", function () {
+      .on("click", async function () {
+        const anim = animate(
+          ".alert-container",
+          {
+            opacity: [1, 0],
+            scale: [1, 1.05, 0.7],
+          },
+          {
+            duration: 0.45,
+            easing: "ease-in",
+          },
+        );
+
+        await anim.finished;
+
         $("#alert-modal").addClass("hidden");
         $("#alert-modal").removeClass("flex");
       });

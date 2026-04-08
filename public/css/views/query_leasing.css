@@ -224,6 +224,7 @@
   max-height: 90%;
   overflow: hidden !important;
   z-index: 9999;
+  opacity:0;
 }
 
 #modal-leasing .modal-header {

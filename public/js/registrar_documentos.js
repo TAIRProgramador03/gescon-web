@@ -1,4 +1,4 @@
-// const IP_LOCAL = 'localhost';
+import { animate } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 
 toastr.options = {
   closeButton: false,
@@ -112,6 +112,20 @@ function agregarFila(checkbox) {
 
   // Agregar la nueva fila a la tabla
   tabla.querySelector("tbody").appendChild(nuevaFila);
+
+  animate(
+    nuevaFila,
+    {
+      opacity: [0, 1],
+      transform: ["translateY(10px)", "translateY(0px)"],
+      backgroundColor: ["#07E800", "#ffffff"],
+    },
+    {
+      duration: 0.5,
+      easing: "ease-out",
+    },
+  );
+
   actualizarDuracionEstado();
 
   cargarModelosFila(nuevaFila.querySelector(".modelo-select"));
@@ -637,6 +651,18 @@ async function guardarDocumento() {
       .css("background-color", "#ffeab0")
       .css("border", "2px solid #ffbb00");
 
+    animate(
+      ".alert-container",
+      {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      },
+      {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
+
     $("#alert-modal .alert-container").html(
       `
         <h2>¡Tarifas excesivas!</h2>
@@ -655,6 +681,20 @@ async function guardarDocumento() {
       .on("click", "#btn-save", async function () {
         await registrar();
 
+        const anim = animate(
+          ".alert-container",
+          {
+            opacity: [1, 0],
+            scale: [1, 1.05, 0.7],
+          },
+          {
+            duration: 0.45,
+            easing: "ease-in",
+          },
+        );
+
+        await anim.finished;
+
         const modal = document.getElementById("alert-modal");
         modal.style.display = "none";
 
@@ -663,7 +703,21 @@ async function guardarDocumento() {
 
     $("#alert-modal")
       .off("click", "#btn-cancel")
-      .on("click", "#btn-cancel", function () {
+      .on("click", "#btn-cancel", async function () {
+        const anim = animate(
+          ".alert-container",
+          {
+            opacity: [1, 0],
+            scale: [1, 1.05, 0.7],
+          },
+          {
+            duration: 0.45,
+            easing: "ease-in",
+          },
+        );
+
+        await anim.finished;
+
         const modal = document.getElementById("alert-modal");
         modal.style.display = "none";
 

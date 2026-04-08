@@ -197,6 +197,35 @@ require './templates/header.html';
 
 <script src="../js/consulta_leasing_por_contrato.js"></script>
 <script type="module">
+    import {
+    animate
+  } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
+
+  let activeRequests = 0;
+
+  function showLoader() {
+    activeRequests++;
+    $('#preloader-mini').css('opacity', '1');
+    $('#preloader-mini').css('z-index', '99999');
+  }
+
+  function hideLoader() {
+    activeRequests = Math.max(0, activeRequests - 1);
+    if (activeRequests === 0) {
+      animate("#preloader-mini", {
+        opacity: [1, 0],
+      }, {
+        duration: 0.45,
+        easing: "ease-in"
+      })
+
+      setTimeout(() => {
+        // $('#preloader-mini').css('opacity', '0');
+        $('#preloader-mini').css('z-index', '-99999');
+      }, 400)
+    }
+  }
+
   let activeSkeleton = 0;
 
   function showSkeleton() {
@@ -221,12 +250,12 @@ require './templates/header.html';
     }
   }
 
-  window.onload = function() {
-    setTimeout(() => {
-      document.body.classList.add('loaded');
-      document.getElementById('preloader-mini').style.display = 'none';
-    }, 2000);
-  };
+  // window.onload = function() {
+  //   setTimeout(() => {
+  //     document.body.classList.add('loaded');
+  //     document.getElementById('preloader-mini').style.display = 'none';
+  //   }, 2000);
+  // };
 
   function transformType(value, object) {
     return object[value];
@@ -235,6 +264,8 @@ require './templates/header.html';
   let table;
 
   document.addEventListener("DOMContentLoaded", async () => {
+    showLoader();
+
     const param = new URLSearchParams(window.location.search);
     const leasingId = param.get("leasingId");
     const nroLeasing = param.get("nroLeasing");
@@ -285,6 +316,8 @@ require './templates/header.html';
     table.on("page.dt", () => {
       $('tr').removeClass("selected-row");
     })
+
+    hideLoader();
   })
 
   $("#listLeasing tbody").on("click", "tr", async function(e) {

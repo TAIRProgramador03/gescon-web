@@ -34,23 +34,36 @@ require './templates/header.html';
   </p>
 </div>
 
-<main class="main-query-lea">
-  <div class="header-title border border-gray-300 shadow-lg">
-    <h1 class="text-2xl font-bold">Vehiculos asignados</h1>
-    <p>Cliente ID: <span id="paramClient"></span></p>
-    <p id="paramContText" class="hidden">Contrato ID: <span id="paramContract"></span></p>
-  </div>
+<main class="w-full flex flex-col gap-4">
+  <div class="w-full bg-white px-9 py-7 rounded-md border border-gray-300 relative overflow-hidden">
+    <div class="w-full h-3 bg-orange-700 absolute top-0 left-0"></div>
+    <div class="w-full flex flex-col justify-center gap-2">
+      <h3 class="text-5xl text-[#002141] font-semibold">Vehiculos asignados</h3>
+      <p class="!m-0 text-base font-normal text-gray-500">Visualice y consulte la información de las placas asignadas a un contrato en el sistema.</p>
+    </div>
+    <div class="w-full grid grid-cols-2 items-center gap-4">
+      <!-- LEASING -->
+      <div class="flex flex-col w-full relative">
+        <select id="cbo-leasing" name="opciones">
+        </select>
 
-  <div class="container-data border border-gray-300">
-    <div class="filter-table">
-      <span>Buscar por</span>
-      <div class="contain-filter">
-        <label for="cbo-leasing">Leasing</label>
-        <select id="cbo-leasing" name="opciones" class="cbo-filter"></select>
+        <label
+          for="cbo-leasing"
+          class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+          Leasing
+        </label>
       </div>
-      <div class="contain-filter">
-        <label for="cbo-terreno">Tipo de terreno</label>
-        <select id="cbo-terreno" name="opciones" class="cbo-filter"></select>
+
+      <!-- TERRENO -->
+      <div class="flex flex-col w-full relative">
+        <select id="cbo-terreno" name="opciones">
+        </select>
+
+        <label
+          for="cbo-terreno"
+          class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+          Tipo de Terreno
+        </label>
       </div>
     </div>
 
@@ -111,21 +124,51 @@ require './templates/header.html';
 
 <script src="../js/consulta_asignacion_por_contrato.js"></script>
 <script type="module">
-  // const IP_LOCAL = "localhost";
+  import {
+    animate
+  } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
+
+  let activeRequests = 0;
+
+  function showLoader() {
+    activeRequests++;
+    $('#preloader-mini').css('opacity', '1');
+    $('#preloader-mini').css('z-index', '99999');
+  }
+
+  function hideLoader() {
+    activeRequests = Math.max(0, activeRequests - 1);
+    if (activeRequests === 0) {
+      animate("#preloader-mini", {
+        opacity: [1, 0],
+      }, {
+        duration: 0.45,
+        easing: "ease-in"
+      })
+
+      setTimeout(() => {
+        // $('#preloader-mini').css('opacity', '0');
+        $('#preloader-mini').css('z-index', '-99999');
+      }, 400)
+    }
+  }
+
   let table;
 
-  window.onload = function() {
-    setTimeout(() => {
-      document.body.classList.add('loaded');
-      document.getElementById('preloader-mini').style.display = 'none';
-    }, 2000);
-  };
+  // window.onload = function() {
+  //   setTimeout(() => {
+  //     document.body.classList.add('loaded');
+  //     document.getElementById('preloader-mini').style.display = 'none';
+  //   }, 2000);
+  // };
 
   function transformType(value, object) {
     return object[value];
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
+    showLoader();
+
     const param = new URLSearchParams(window.location.search);
     const clienteId = param.get("clienteId");
     const contratoId = param.get("contratoId");
@@ -387,7 +430,8 @@ require './templates/header.html';
           text: "Todos",
         },
         ...dataCleaned
-      ]
+      ],
+      width: "100%"
     });
 
     $("#cbo-terreno").select2({
@@ -413,12 +457,15 @@ require './templates/header.html';
           id: 3,
           text: "Severo"
         }
-      ]
+      ],
+      width: "100%"
     });
 
     if (leasingId) $('#cbo-leasing').val(`${leasingId}`).trigger("change");
 
     if (tipoTerr) $('#cbo-terreno').val(`${tipoTerr}`).trigger("change");
+
+    hideLoader();
   })
 
   $('#cbo-leasing').on('change', async function(e) {

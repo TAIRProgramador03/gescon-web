@@ -256,7 +256,7 @@ require './templates/header.html';
           id="btnClear"
           class="cursor-pointer bg-yellow-700 text-center w-1/4 rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
           <div
-            class="bg-yellow-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+            class="bg-yellow-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-[1] duration-500">
             <i class="bi bi-stars"></i>
           </div>
           <p class="translate-x-4 !m-0 !text-white text-base font-medium">Limpiar</p>
@@ -266,7 +266,7 @@ require './templates/header.html';
           id="grabarButton"
           class="cursor-pointer bg-green-700 text-center w-1/4 rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
           <div
-            class="bg-green-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+            class="bg-green-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-[1] duration-500">
             <i class="bi bi-floppy-fill"></i>
           </div>
           <p class="translate-x-4 !m-0 !text-white text-base font-medium">Registrar</p>
@@ -562,10 +562,10 @@ require './templates/header.html';
   const removeFileButton = document.getElementById('removeFile');
 
   window.onload = function() {
-    setTimeout(() => {
-      document.body.classList.add('loaded');
-      document.getElementById('preloader-mini').style.display = 'none';
-    }, 2000);
+    // setTimeout(() => {
+    //   document.body.classList.add('loaded');
+    //   document.getElementById('preloader-mini').style.display = 'none';
+    // }, 2000);
     fileInfo.style.display = 'none'; // Asegúrate de que la información del archivo no aparezca.
     uploadMessage.addClass("flex"); // Muestra el mensaje inicial.
     uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial.

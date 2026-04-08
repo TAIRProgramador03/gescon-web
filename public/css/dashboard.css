@@ -193,12 +193,14 @@ body {
 }
 
 .sub-menu .dropdown-btn {
-  width: 95%;
+  width: 100%;
+  padding-left: 2em !important;
   text-align: left;
   background: none;
   border: none;
   font: inherit;
   cursor: pointer;
+  
 }
 
 #sidebar svg {
@@ -249,12 +251,14 @@ body {
   rotate: 180deg;
 }
 #sidebar .sub-menu a {
-  /* padding-left: 2em; */
+  width: 100%;
+  padding-left: 2em;
   font-weight: 500;
 }
 /*aquiii*/
 #sidebar .sub-menu .sub-menu-sec a {
-  padding-left: 2em;
+  width: 100%;
+  padding-left: 4em !important;
   font-weight: 500;
 }
 /*aquiii*/

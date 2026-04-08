@@ -79,6 +79,7 @@ function toggleSubMenu(button) {
   }
 
   if (sidebar.classList.contains("close")) {
+    titleSide.classList.toggle("hidden")
     sidebar.classList.toggle("close");
     toggleButton.classList.toggle("rotate");
   }

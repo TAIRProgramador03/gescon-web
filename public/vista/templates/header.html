@@ -57,6 +57,7 @@
       rel="stylesheet"
       href="https://cdn.datatables.net/buttons/3.2.6/css/buttons.dataTables.css"
     />
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/3.1.3/css/select.dataTables.css"/>
 
     <!-- DATATABLE JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -72,6 +73,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/select/3.1.3/js/dataTables.select.js"></script>
+    <script src="https://cdn.datatables.net/select/3.1.3/js/select.dataTables.js"></script>
 
     <!-- EXCELJS -->
     <script
@@ -109,7 +112,7 @@
         </li>
         <!-- DASHBOARD -->
         <li>
-          <a href="dashboard.php">
+          <a href="dashboard">
             <!--<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M240-200h120v-200q0-17 11.5-28.5T400-440h160q17 0 28.5 11.5T600-400v200h120v-360L480-740 240-560v360Zm-80 0v-360q0-19 8.5-36t23.5-28l240-180q21-16 48-16t48 16l240 180q15 11 23.5 28t8.5 36v360q0 33-23.5 56.5T720-120H560q-17 0-28.5-11.5T520-160v-200h-80v200q0 17-11.5 28.5T400-120H240q-33 0-56.5-23.5T160-200Zm320-270Z"/></svg>-->
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -128,7 +131,7 @@
 
         <!-- REGISTRAR -->
         <li>
-          <button onclick="toggleSubMenuSec(this)" class="dropdown-btn">
+          <button onclick="toggleSubMenu(this)" class="dropdown-btn">
             <i class="fa-solid fa-pencil" style="font-size: 19px; padding-left: 2px"></i>
             <span style="padding-left: 3px">Registrar</span>
             <svg
@@ -146,20 +149,20 @@
           <ul class="sub-menu">
             <div>
               <li>
-                <a href="registrar_contratos.php">
+                <a href="registrar_contratos">
                   <i class="bi bi-file-earmark-fill" style="font-size: 19px; padding-left: 2px"></i>
                   Contratos
                 </a>
               </li>
-              <li><a href="registrar_documentos.php">
+              <li><a href="registrar_documentos">
                 <i class="bi bi-filetype-doc" style="font-size: 19px; padding-left: 2px"></i>
                 Documentos
               </a></li>
-              <li><a href="registrar_leasing.php">
+              <li><a href="registrar_leasing">
                 <i class="bi bi-file-earmark-spreadsheet-fill" style="font-size: 19px; padding-left: 2px"></i>
                 Leasing
               </a></li>
-              <li><a href="adicionar_vehiculos.php">
+              <li><a href="adicionar_vehiculos">
                 <i class="bi bi-car-front-fill" style="font-size: 19px; padding-left: 2px"></i>
                 Asignar
               </a></li>
@@ -169,7 +172,7 @@
 
         <!-- CONSULTAR -->
         <li>
-          <button onclick="toggleSubMenuSec(this)" class="dropdown-btn">
+          <button onclick="toggleSubMenu(this)" class="dropdown-btn">
             <i class="fa-solid fa-book-open" style="font-size: 19px; padding-left: 2px"></i>
             <span style="padding-left: 3px">Consultar</span>
             <svg
@@ -186,93 +189,42 @@
           </button>
           <ul class="sub-menu">
             <div>
-              <li><a href="consultar_contratos.php">
-                <i class="bi bi-file-earmark-fill" style="font-size: 19px; padding-left: 2px"></i>
-                Contratos
-              </a></li>
-              <li><a href="consultar_leasing.php">
+              <li>
+                <button onclick="toggleSubMenuSec(this)" class="dropdown-btn">
+                  <i class="bi bi-file-earmark-fill" style="font-size: 19px; padding-left: 2px"></i>
+                  <span style="padding-left: 3px">Contratos</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    width="24px"
+                    fill="#e8eaed"
+                  >
+                    <path
+                      d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"
+                    />
+                  </svg>
+                </button>
+                <ul class="sub-menu-sec">
+                  <div>
+                    <a href="consultar_contratos">
+                      <i class="bi bi-table" style="font-size: 19px; padding-left: 2px"></i>
+                      Administración
+                    </a>
+                    <a href="consultar_trazabilidad_placa">
+                      <i class="bi bi-badge-sd" style="font-size: 19px; padding-left: 2px"></i>
+                      Buscar placas
+                    </a>
+                  </div>
+                </ul>
+              </li>
+              <li><a href="consultar_leasing">
                 <i class="bi bi-file-earmark-spreadsheet-fill" style="font-size: 19px; padding-left: 2px"></i>
                 Leasing
               </a></li>
             </div>
           </ul>
         </li>
-
-        <!-- <li>
-          <button onclick="toggleSubMenu(this)" class="dropdown-btn">
-            <i
-              class="fa-solid fa-folder"
-              style="font-size: 19px; padding-left: 2px"
-            ></i>
-            <span style="padding-left: 3px">Contratos</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 -960 960 960"
-              width="24px"
-              fill="#e8eaed"
-            >
-              <path
-                d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"
-              />
-            </svg>
-          </button>
-          <ul class="sub-menu">
-            <div>
-              
-              <li>
-                <button onclick="toggleSubMenuSec(this)" class="dropdown-btn">
-                  <i class="fa-solid fa-pencil"></i>
-                  <span style="padding-left: 3px">Registrar</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="24px"
-                    viewBox="0 -960 960 960"
-                    width="24px"
-                    fill="#e8eaed"
-                  >
-                    <path
-                      d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"
-                    />
-                  </svg>
-                </button>
-                <ul class="sub-menu-sec">
-                  <div>
-                    <li><a href="registrar_contratos.php">Contratos</a></li>
-                    <li><a href="registrar_documentos.php">Documentos</a></li>
-                    <li><a href="registrar_leasing.php">Leasing</a></li>
-                    <li><a href="adicionar_vehiculos.php">Asignar</a></li>
-                  </div>
-                </ul>
-              </li>
-              
-              <li>
-                <button onclick="toggleSubMenuSec(this)" class="dropdown-btn">
-                  <i class="fa-solid fa-book-open"></i>
-                  <span style="padding-left: 3px">Consultar</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="24px"
-                    viewBox="0 -960 960 960"
-                    width="24px"
-                    fill="#e8eaed"
-                  >
-                    <path
-                      d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"
-                    />
-                  </svg>
-                </button>
-                <ul class="sub-menu-sec">
-                  <div>
-                    <li><a href="consultar_contratos.php">Contratos</a></li>
-                    <li><a href="consultar_leasing.php">Leasing</a></li>
-                  </div>
-                </ul>
-              </li>
-            </div>
-          </ul>
-        </li> -->
-
         <li>
           <a href="#">
             <i

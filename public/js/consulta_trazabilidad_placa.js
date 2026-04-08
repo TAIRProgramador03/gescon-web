@@ -88,8 +88,6 @@ const getFile = async (key) => {
 
     const result = await viewPDF.json();
 
-    console.log(result);
-
     if (result.success) {
       return result.url;
     } else {
@@ -104,16 +102,8 @@ const getFile = async (key) => {
 export const verPdf = async (key) => {
   const link = await getFile(key);
 
-  console.log("LINK", link);
   window.open(link, "_blank");
 };
-
-function convertirFecha(fecha) {
-  const anio = fecha.substring(0, 4);
-  const mes = fecha.substring(4, 6);
-  const dia = fecha.substring(6, 8);
-  return `${anio}-${mes}-${dia}`;
-}
 
 export function calcularPorcentaje(fechaIni, fechaFinal) {
   const fechaInicio = new Date(fechaIni);

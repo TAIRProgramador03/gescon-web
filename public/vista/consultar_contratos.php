@@ -168,30 +168,30 @@ require './templates/header.html';
       </div>
       <div id="skeleton-contract" class="w-[250px] hidden flex-col gap-5 items-center">
         <div class="w-full">
-          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[47px] bg-slate-100 rounded animate-pulse"></div>
         </div>
         <div class="w-full">
-          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[47px] bg-slate-100 rounded animate-pulse"></div>
         </div>
         <div class="w-full">
-          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[47px] bg-slate-100 rounded animate-pulse"></div>
         </div>
         <div class="w-full flex gap-2">
-          <div class="w-1/3 h-[47px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-1/3 h-[47px] bg-slate-100 rounded animate-pulse"></div>
           <div class="w-full grid grid-cols-4 gap-1">
-            <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
-            <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
-            <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
-            <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+            <div class="w-full h-[47px] bg-slate-100 rounded animate-pulse"></div>
+            <div class="w-full h-[47px] bg-slate-100 rounded animate-pulse"></div>
+            <div class="w-full h-[47px] bg-slate-100 rounded animate-pulse"></div>
+            <div class="w-full h-[47px] bg-slate-100 rounded animate-pulse"></div>
           </div>
         </div>
         <div class="w-full grid grid-cols-2 gap-2">
-          <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
-          <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[152px] bg-slate-100 rounded animate-pulse"></div>
+          <div class="w-full h-[152px] bg-slate-100 rounded animate-pulse"></div>
         </div>
         <div class="w-full grid grid-cols-2 gap-2">
-          <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
-          <div class="w-full h-[152px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[152px] bg-slate-100 rounded animate-pulse"></div>
+          <div class="w-full h-[152px] bg-slate-100 rounded animate-pulse"></div>
         </div>
       </div>
       <div id="data-contract" class="flex flex-col gap-5">
@@ -210,22 +210,22 @@ require './templates/header.html';
         <div class="text-form-col">
           <label for="combo-box tp-form">Tipo Terreno:</label>
           <div class="cuadradro">
-            <div id="view-sev" class="card terreno-form">
+            <div id="view-sev" class="card terreno-form hover:shadow-md transition-shadow">
               <div class="tdh nom-tp">Sev.</div>
 
               <div class="tdh" id="txt-sev">0</div>
             </div>
-            <div id="view-soc" class="card terreno-form">
+            <div id="view-soc" class="card terreno-form hover:shadow-md transition-shadow">
               <div class="tdh nom-tp">Soc.</div>
 
               <div class="tdh" id="txt-soc">0</div>
             </div>
-            <div id="view-sup" class="card terreno-form">
+            <div id="view-sup" class="card terreno-form hover:shadow-md transition-shadow">
               <div class="tdh nom-tp">Sup.</div>
 
               <div class="tdh" id="txt-sup">0</div>
             </div>
-            <div id="view-ciu" class="card terreno-form">
+            <div id="view-ciu" class="card terreno-form hover:shadow-md transition-shadow">
               <div class="tdh nom-tp">Ciu.</div>
 
               <div class="tdh" id="txt-ciu">0</div>
@@ -234,22 +234,22 @@ require './templates/header.html';
         </div>
         <div class="text-form-col">
           <div class="cuadradro-form">
-            <div class="card terreno-form doc-form" id="href-query-doc">
+            <div class="card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-doc">
               <div class="tda tti-form nom-tp">N° Documentos</div>
 
               <div class="tda can-form"><i class="fa fa fa-sheet-plastic" style="color: #1e3a8a;"></i><span id="txt-aso">0</span></div>
             </div>
-            <div class="card terreno-form doc-form" id="href-query-lea">
+            <div class="card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-lea">
               <div class="tda tti-form nom-tp">N° leasing</div>
 
               <div class="tda can-form"><i class="fa fa fa-book" style="color: #1e3a8a;"></i><span id="txt-leas">0</span></div>
             </div>
-            <div class="card terreno-form doc-form" id="href-query-veh">
+            <div class="card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-veh">
               <div class="tda tti-form nom-tp">Veh. Activos</div>
 
               <div class="tda can-form"><i class="fa-solid fa-car" style="color: #1e3a8a;"></i><span id="txt-vehic">0</span></div>
             </div>
-            <div class="card terreno-form doc-form" id="href-query-assign">
+            <div class="card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-assign">
               <div class="tda tti-form nom-tp" id="cab-href-query-assign">Veh. Asignados</div>
 
               <div class="tda can-form"><i class="fa-solid fa-check" style="color: #1e3a8a;"></i><span id="txt-assign">0</span></div>
@@ -690,7 +690,10 @@ require './templates/header.html';
     const clienteId = params.get("clienteId")
     const contratoId = params.get("contratoId")
 
-    if (!contratoId || !clienteId) return;
+    if (!contratoId || !clienteId) {
+      toastr.info("Debes de seleccionar un cliente y un contrato", "Aviso")
+      return;
+    }
 
     window.location.href = `consultar_documento_por_contrato.php?contratoId=${contratoId}&clienteId=${clienteId}`;
   }
@@ -700,7 +703,10 @@ require './templates/header.html';
     const clienteId = params.get("clienteId")
     const contratoId = params.get("contratoId")
 
-    if (!contratoId || !clienteId) return;
+    if (!contratoId || !clienteId) {
+      toastr.info("Debes de seleccionar un cliente y un contrato", "Aviso")
+      return;
+    }
 
     window.location.href = `consultar_leasing_por_contrato.php?contratoId=${contratoId}&clienteId=${clienteId}`;
   }
@@ -720,7 +726,10 @@ require './templates/header.html';
     const clienteId = params.get("clienteId")
     const contratoId = params.get("contratoId")
 
-    if (!clienteId) return;
+    if (!clienteId) {
+      toastr.info("Debes de seleccionar un cliente", "Aviso")
+      return;
+    }
 
     window.location.href = `consultar_asignaciones_por_contrato.php?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`;
   }
@@ -739,7 +748,7 @@ require './templates/header.html';
     const contratoId = param.get("contratoId")
 
     if (!clientId) {
-      toastr.info("Debes de seleccionar un cliente en la tabla", "Aviso")
+      toastr.info("Debes de seleccionar un cliente", "Aviso")
       return;
     }
 
@@ -1035,7 +1044,7 @@ require './templates/header.html';
     const contratoId = param.get("contratoId")
 
     if (!clientId) {
-      toastr.info("Debes de seleccionar un cliente en la tabla", "Aviso")
+      toastr.info("Debes de seleccionar un cliente", "Aviso")
       return;
     }
 
@@ -1321,7 +1330,7 @@ require './templates/header.html';
     const contratoId = param.get("contratoId")
 
     if (!clientId) {
-      toastr.info("Debes de seleccionar un cliente en la tabla", "Aviso")
+      toastr.info("Debes de seleccionar un cliente", "Aviso")
       return;
     }
 
@@ -1607,7 +1616,7 @@ require './templates/header.html';
     const contratoId = param.get("contratoId")
 
     if (!clientId) {
-      toastr.info("Debes de seleccionar un cliente en la tabla", "Aviso")
+      toastr.info("Debes de seleccionar un cliente", "Aviso")
       return;
     }
 
@@ -1893,7 +1902,7 @@ require './templates/header.html';
     const contratoId = param.get("contratoId")
 
     if (!clientId) {
-      toastr.info("Debes de seleccionar un cliente en la tabla", "Aviso")
+      toastr.info("Debes de seleccionar un cliente", "Aviso")
       return;
     }
 

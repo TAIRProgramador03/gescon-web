@@ -185,6 +185,13 @@ require './templates/header.html';
     return object[value];
   }
 
+  // FUNCION PARA VER EL PDF
+  $(document).on("click", ".btn-view-pdf", function() {
+    const key = $(this).data("key");
+
+    verPdf(key);
+  });
+
   document.addEventListener("DOMContentLoaded", async () => {
     const param = new URLSearchParams(window.location.search);
     const clienteId = param.get("clienteId");
@@ -432,7 +439,7 @@ require './templates/header.html';
             if (data) {
               return `
               <div class="w-full flex justify-center items-center">
-                <button class="w-full flex justify-center items-center gap-1 bg-red-100 text-red-700 border border-red-700 rounded outline-none px-4 py-2 cursor-pointer" onClick="verPdf('${data}')">
+                <button class="btn-view-pdf w-full flex justify-center items-center gap-1 bg-red-100 text-red-700 border border-red-700 rounded outline-none px-4 py-2 cursor-pointer" data-key="${data}">
                   <i class="bi bi-file-earmark-pdf-fill"></i>
                   <span>Ver PDF</span>
                 </button>

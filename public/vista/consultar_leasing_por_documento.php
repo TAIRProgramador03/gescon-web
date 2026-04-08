@@ -121,20 +121,20 @@ require './templates/header.html';
 
       <div id="skeleton-contract" class="w-[302px] hidden flex-col gap-5 items-center">
         <div class="w-full">
-          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[47px] bg-slate-100 rounded animate-pulse"></div>
         </div>
         <div class="w-full">
-          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[47px] bg-slate-100 rounded animate-pulse"></div>
         </div>
         <div class="w-full">
-          <div class="w-full h-[47px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[47px] bg-slate-100 rounded animate-pulse"></div>
         </div>
         <div class="w-full grid grid-cols-2 gap-2">
-          <div class="w-full h-[114px] bg-slate-400 rounded animate-pulse"></div>
-          <div class="w-full h-[114px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[114px] bg-slate-100 rounded animate-pulse"></div>
+          <div class="w-full h-[114px] bg-slate-100 rounded animate-pulse"></div>
         </div>
         <div class="w-full">
-          <div class="w-full h-[64px] bg-slate-400 rounded animate-pulse"></div>
+          <div class="w-full h-[64px] bg-slate-100 rounded animate-pulse"></div>
         </div>
       </div>
 

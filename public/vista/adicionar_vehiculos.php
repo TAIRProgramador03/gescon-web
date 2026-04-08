@@ -55,47 +55,6 @@ require './templates/header.html';
       <p class="!m-0 text-base font-normal text-gray-500">Gestione la transferencia de vehículos entre clientes, seleccionando el destino al cual serán asignados.</p>
     </div>
     <div class="body-adiciona">
-      <!-- <div class="cbo-form-dig">
-                <div class="w-full grid grid-cols-2 place-content-center gap-3 pb-3">
-                    <div class="flex flex-col w-full relative">
-                        <select id="combo-box" name="opciones" class="cbo-form-cliente select-form-clientes">
-                            <option value="">Seleccione un cliente</option>
-                        </select>
-
-                        <label
-                            for="combo-box"
-                            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-                            Cliente(*)
-                        </label>
-                    </div>
-                    <div class="flex flex-col w-full relative">
-                        <select id="combo-box-leasing" disabled name="opciones" class="cbo-form-leasing">
-                            <option value="" disabled selected>Seleccione un Leasing</option>
-                        </select>
-
-                        <label
-                            for="combo-box-leasing"
-                            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-                            N° De Leasing
-                        </label>
-                    </div>
-
-                    <div class="cbo-clau-te">
-                        <label for="combo-box-cliente">Cliente:</label>
-                        <select id="combo-box" name="opciones" class="cbo-form-cliente select-form-clientes"></select>
-                    </div>
-                    <div class="cbo-clau-te">
-                        <label for="combo-box-leasing">N° De Leasing:</label>
-                        <select id="combo-box-leasing" disabled name="opciones" class="cbo-form-leasing">
-                            <option value="" disabled selected>Seleccione un Leasing</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="cbo-form-adiciona">
-                    onclick="listaVehiculosAsignables()"
-                    <button id="btn-flota-total" class="btn-flota-adi" >Flota Total</button>
-                </div>
-            </div> -->
       <div class="w-full grid grid-cols-2 place-content-center gap-4 pt-6 pb-4">
         <!-- CLIENTE CBO -->
         <div class="flex flex-col w-full relative">
@@ -122,17 +81,6 @@ require './templates/header.html';
             N° De Leasing
           </label>
         </div>
-
-        <!-- <div class="cbo-clau-te">
-                        <label for="combo-box-cliente">Cliente:</label>
-                        <select id="combo-box" name="opciones" class="cbo-form-cliente select-form-clientes"></select>
-                    </div> -->
-        <!-- <div class="cbo-clau-te">
-                        <label for="combo-box-leasing">N° De Leasing:</label>
-                        <select id="combo-box-leasing" disabled name="opciones" class="cbo-form-leasing">
-                            <option value="" disabled selected>Seleccione un Leasing</option>
-                        </select>
-                    </div> -->
       </div>
       <div class="tabla-form-adi">
         <table>
@@ -150,6 +98,7 @@ require './templates/header.html';
               <th>Operacion</th>
               <th>Contrato</th>
               <th>Terreno</th>
+              <th>Condicion</th>
               <th>Acta</th>
             </tr>
           </thead>
@@ -158,8 +107,6 @@ require './templates/header.html';
               <td colspan="12">Seleccione un cliente para ver los vehiculos por asignar</td>
             </tr>
           </tbody>
-          <!--<tbody id="contratos-tbody" class="table-detalle">
-                            </tbody>-->
         </table>
       </div>
       <div class="modal-footer">

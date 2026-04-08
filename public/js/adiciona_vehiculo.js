@@ -336,7 +336,17 @@ async function listaVehiculosAsignables(clientId) {
                         <option value="1">Socavon</option>
                         <option value="2">Ciudad</option>
                         <option value="3">Severo</option>
-                    </select></td>
+                    </select>
+                </td>
+                <td>
+                  <select name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
+                    <option value="4">Seleccione el tipo</option>
+                    <option value="0">Titular</option>
+                    <option value="1">Retén</option>
+                    <option value="2">Logística</option>
+                    <option value="3">Pendiente</option>
+                  </select>
+                </td>
                 <td>
                   <div class="flex">
                     <label for="${fileId}" class="btn-upload w-full flex justify-center items-center gap-1 cursor-pointer bg-blue-800 !rounded-md !text-white px-3 py-2">
@@ -383,6 +393,21 @@ async function listaVehiculosAsignables(clientId) {
         .find(".combo-tip-terreno")
         .select2({
           placeholder: "Seleccione el terreno",
+          allowClear: false,
+        })
+        .next(".select2-container")
+        .css({
+          "font-family": "Fredoka Variable, sans-serif",
+          "font-size": "13px",
+          "font-optical-sizing": "auto",
+          "font-style": "normal",
+          "font-weight": "400",
+        });
+
+      $(row)
+        .find(".condicion-select")
+        .select2({
+          placeholder: "Seleccione condicion",
           allowClear: false,
         })
         .next(".select2-container")
@@ -624,6 +649,7 @@ async function guardaAsignacion() {
       ).format("YYYY-MM-DD");
       let idOperacion = fila.querySelector('select[name="operacion[]"]').value; // Cambié de input a select
       let idContrato = fila.querySelector('select[name="contrato[]"]').value;
+      let condicion = fila.querySelector('select[name="condicion[]"]').value;
       let leasing = fila.querySelector('input[name="leasing[]"]').value;
       let idTerreno = fila.querySelector('select[name="tipo_terreno[]"]').value;
       let file = fila.querySelector('input[name="acta[]"]').files[0];
@@ -632,6 +658,11 @@ async function guardaAsignacion() {
       idveh = idveh === "" ? 0 : idveh;
       numpla = numpla === "" ? 0 : numpla;
       tarifa = tarifa === "" ? 0 : tarifa;
+
+      if(condicion == '4') {
+        toastr.info(`Debes de seleccionar una condición a la placa ${numpla}`, "Aviso");
+        throw new Error(`Debes de seleccionar una condición a la placa ${numpla}`)
+      }
 
       if (!fechaIni || !fechaFin) {
         console.log("Ambas fechas son obligatorias");
@@ -661,6 +692,7 @@ async function guardaAsignacion() {
         idContrato,
         leasing,
         idTerreno,
+        condicion,
         archivoPdf: file,
       };
     });
@@ -727,40 +759,40 @@ async function guardaAsignacion() {
 }
 
 const registrar = async (asignacionData) => {
-  try {
-    await Promise.all(
-      asignacionData.detalles.map(async (detalle) => {
-        if (!detalle.archivoPdf) return;
-        const formData = new FormData();
-        formData.append("archivoPdf", detalle.archivoPdf);
-        formData.append("documentType", "acta");
-        const res = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
-          method: "POST",
-          body: formData,
-        });
-        const data = await res.json();
-        detalle.archivoPdf = data.key;
-      }),
-    );
-    const response = await fetch(`http://${IP_LOCAL}:3000/insertaAsignacion`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(asignacionData),
-      credentials: "include", // Asegura que las cookies se envíen con la solicitud
-    });
-    const result = await response.json();
-    if (result.success) {
-      toastr.success("Asignación guardada exitosamente", "¡Éxito!");
-      deshabilitarSelect();
-    } else {
-      toastr.warning(result.message, "Oops...");
-    }
-  } catch (error) {
-    const mensaje =
-      error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
-    console.error("Error al enviar los datos:", error);
-    toastr.warning(`No se puedo procesar la asignación: ${mensaje}`, "Oops...");
-  }
+  // try {
+  //   await Promise.all(
+  //     asignacionData.detalles.map(async (detalle) => {
+  //       if (!detalle.archivoPdf) return;
+  //       const formData = new FormData();
+  //       formData.append("archivoPdf", detalle.archivoPdf);
+  //       formData.append("documentType", "acta");
+  //       const res = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
+  //         method: "POST",
+  //         body: formData,
+  //       });
+  //       const data = await res.json();
+  //       detalle.archivoPdf = data.key;
+  //     }),
+  //   );
+  //   const response = await fetch(`http://${IP_LOCAL}:3000/insertaAsignacion`, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify(asignacionData),
+  //     credentials: "include", // Asegura que las cookies se envíen con la solicitud
+  //   });
+  //   const result = await response.json();
+  //   if (result.success) {
+  //     toastr.success("Asignación guardada exitosamente", "¡Éxito!");
+  //     deshabilitarSelect();
+  //   } else {
+  //     toastr.warning(result.message, "Oops...");
+  //   }
+  // } catch (error) {
+  //   const mensaje =
+  //     error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
+  //   console.error("Error al enviar los datos:", error);
+  //   toastr.warning(`No se puedo procesar la asignación: ${mensaje}`, "Oops...");
+  // }
 };
 
 const validarAsignacion = async (detalles) => {

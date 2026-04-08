@@ -510,6 +510,12 @@ async function guardarDocumento() {
           console.log("valido carnal");
         }
 
+        if (condicion == "4") {
+          throw new Error(
+            `Debes de seleccionar una condición al item ${index + 1}`,
+          );
+        }
+
         if (!Number.isInteger(rm) || rm < 0) {
           throw new Error("RM inválido, solo debe contener números enteros");
         }
@@ -589,13 +595,16 @@ async function guardarDocumento() {
     try {
       const uploadFile = await subirArchivo(fileInput.files[0]);
       const nombreArchivo = uploadFile.key;
-      const data = {...contratoData, archivoPdf: nombreArchivo}
-      const response = await fetch(`http://${IP_LOCAL}:3000/insertarDocumento`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-        credentials: "include", // Asegura que las cookies se envíen con la solicitud
-      });
+      const data = { ...contratoData, archivoPdf: nombreArchivo };
+      const response = await fetch(
+        `http://${IP_LOCAL}:3000/insertarDocumento`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+          credentials: "include", // Asegura que las cookies se envíen con la solicitud
+        },
+      );
       const result = await response.json();
       if (result.success) {
         toastr.success("Documento guardado exitosamente", "¡Excelente!");

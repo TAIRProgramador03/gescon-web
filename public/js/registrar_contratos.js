@@ -766,6 +766,12 @@ async function guardarContrato() {
           );
         }
 
+        if (condicion == "4") {
+          throw new Error(
+            `Debes de seleccionar una condición al item ${index + 1}`,
+          );
+        }
+
         return modelo && tarifa != null && cantidad
           ? {
               idDet: Number(idDet),
@@ -1082,7 +1088,7 @@ async function exportVehicle() {
             kmAdicional: kmAdi,
             compraVeh,
             precioVeh,
-            condicion: condicionText
+            condicion: condicionText,
           }
         : null;
     })
@@ -1124,7 +1130,7 @@ async function exportVehicle() {
       kmAdicional: row.kmAdicional,
       comprarVeh: row.compraVeh,
       precioVeh: row.precioVeh,
-      condicion: row.condicion
+      condicion: row.condicion,
     })),
   );
 
@@ -1184,7 +1190,7 @@ async function exportVehicle() {
       r.kmAdicional,
       r.compraVeh,
       r.precioVeh,
-      r.condicion
+      r.condicion,
     ]),
   });
 

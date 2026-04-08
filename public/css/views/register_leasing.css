@@ -109,6 +109,7 @@ body {
 
 .tabla-form,
 .tabla-form-cli,
+.tabla-form-cli-asoc,
 .tabla-form-vehi {
   width: 100%;
 }
@@ -120,6 +121,7 @@ body {
 }
 
 .tabla-form-cli,
+.tabla-form-cli-asoc,
 .tabla-form-vehi {
   max-height: 422px;
   /* Altura máxima del contenedor */
@@ -164,7 +166,8 @@ th {
   background-color: #007272;
 }
 
-.tabla-form-cli th {
+.tabla-form-cli th,
+.tabla-form-cli-asoc th {
   background-color: #4caf50;
 }
 
@@ -230,7 +233,8 @@ td:nth-child(7) {
   background-color: #f4ffff;
 }
 
-.tabla-form-cli tr:hover {
+.tabla-form-cli tr:hover,
+.tabla-form-cli-asoc tr:hover {
   background-color: rgb(240 255 240);
   color: #000000;
 }
@@ -334,7 +338,8 @@ td:nth-child(7) {
 
 /* Estilos para el botón de cerrar */
 .modal-header .close,
-.modal-header .closeCli {
+.modal-header .closeCli,
+.modal-header .closeCliAsoc {
   color: #ffffff;
   float: right;
   font-size: 28px;
@@ -343,14 +348,17 @@ td:nth-child(7) {
 
 .close:hover,
 .closeCli:hover,
+.closeCliAsic:hover, 
 .close:focus,
-.closeCli:focus {
+.closeCli:focus,
+.closeCliAsoc:focus {
   color: rgb(0 0 0);
   text-decoration: none;
   cursor: pointer;
 }
 
 #buscadorTabla,
+#buscadorTablaAsoc,
 #buscadorTablaVehi {
   width: 100%;
   padding: 8px;
@@ -387,6 +395,20 @@ input {
 }
 
 .tabla-form-cli table::-webkit-scrollbar-thumb {
+  background: rgb(185, 185, 185);
+  border-radius: 50px;
+}
+
+.tabla-form-cli-asoc table::-webkit-scrollbar {
+  width: 15px;
+}
+
+.tabla-form-cli-asoc table::-webkit-scrollbar-track {
+  background: rgb(123, 152, 196);
+  border-radius: 50px;
+}
+
+.tabla-form-cli-asoc table::-webkit-scrollbar-thumb {
   background: rgb(185, 185, 185);
   border-radius: 50px;
 }

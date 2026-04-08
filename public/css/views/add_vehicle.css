@@ -176,6 +176,11 @@ td:nth-child(12) {
   width: 200px;
   /* min-width: 80px; */
 }
+th:nth-child(13),
+td:nth-child(13) {
+  width: 200px;
+  /* min-width: 80px; */
+}
 
 /* Estilo para la fila al pasar el mouse */
 tr:hover {
@@ -213,7 +218,8 @@ table td:nth-child(10) select,
 table th:nth-child(11) input,
 table td:nth-child(11) select,
 table th:nth-child(12) select,
-table td:nth-child(12) select {
+table td:nth-child(12) select,
+table td:nth-child(13) select {
   width: 100%;
   /* height: 30px; */
   text-align: center;

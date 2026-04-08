@@ -228,43 +228,6 @@ require './templates/header.html';
           </label>
         </div>
       </div>
-
-      <!-- <div class="leasing-adenda">
-                <label for="combo-box">Contratos</label>
-                <select id="combo-box-asig" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el contrato" style="text-align: center;">
-                    <option value="">Seleccione un contrato</option>
-                </select>
-            </div> -->
-      <!-- <div class="leasing-adenda">
-                <label>Banco</label>
-                <select id="banco" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el banco" style="text-align: center;">
-                    <option value="">Seleccione un banco</option>
-                    <option value="1">BANBIF</option>
-                    <option value="2">BBVA</option>
-                    <option value="3">BCP</option>
-                    <option value="4">HSBC</option>
-                    <option value="5">INTERBANK</option>
-                    <option value="6">SCOTIABANK</option>
-                    <option value="7">TAIR</option>
-                    <option value="8">SANTANDER</option>
-                </select>
-            </div> -->
-      <!-- <div class="leasing-adenda">
-        <label>Cant. Vehiculos</label>
-        <input type="text" placeholder="" id="cantVehi" class="tooltip-input" data-tooltip="Cantidad de unidades adquiridas">
-      </div> -->
-      <!-- <div class="leasing-adenda">
-                <label>Fecha Inicio</label>
-                <input type="date" placeholder="" id="fechaIni" class="tooltip-input" data-tooltip="Fecha inicio del leasing">
-            </div>
-            <div class="leasing-adenda">
-                <label>Fecha Fin</label>
-                <input type="date" placeholder="" id="fechaFin" class="tooltip-input" data-tooltip="Fecha fin del leasing">
-            </div> -->
-      <!-- <div class="leasing-adenda">
-                <label>Periodo de Gracia</label>
-                <input type="text" placeholder="" id="periGracia" class="tooltip-input" data-tooltip="Periodo de gracia en meses">
-            </div> -->
       <div class="flex flex-col gap-3">
         <div class="w-full flex justify-end items-center">
           <button id="openModal" class="btn-vehi cart-dos tooltip-input" data-tooltip="Selecciona las unidades adquiridas"> <strong><i class="fa-solid fa-plus"></i> Vehiculos </strong><img src="../img/car-wash.png" alt="Freepik" width="30" height="30" style="position: relative; top: 01px;"></button>

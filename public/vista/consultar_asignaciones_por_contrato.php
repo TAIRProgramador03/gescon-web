@@ -71,8 +71,8 @@ require './templates/header.html';
           <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
           <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
           <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
-          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
           <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
           <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
@@ -283,18 +283,18 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "fechaFinCon",
-          render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
-          },
-          width: "120px"
-        },
-        {
           data: "plazo",
           render: (data) => {
             return data + ` meses`
           },
           width: "80px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
         },
         {
           data: "tarifa",

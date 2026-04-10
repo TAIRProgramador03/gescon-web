@@ -43,6 +43,7 @@ $(document).on("DOMContentLoaded", async () => {
   const user = await authenticateValid();
 
   $("#user-data").text(`${user.globalDbUser.toUpperCase()}`)
+  $("#user-role").text(`${user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}`)
 });
 
 window.addEventListener('pageshow', async function () {

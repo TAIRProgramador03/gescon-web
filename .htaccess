@@ -1,11 +1,18 @@
 RewriteEngine On
+Options -MultiViews
+
+# Si existe archivo o carpeta real, no hacer rewrite
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
 
 # Para archivos PHP
-RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteRule ^([^\.]+)$ $1.php [L]
+RewriteRule ^(.+)$ $1.php [L]
 
 # Para archivos HTML
-RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.html -f
-RewriteRule ^([^\.]+)$ $1.html [L]
+RewriteRule ^(.+)$ $1.html [L]
+
+# Si no existe nada → 404
+RewriteRule ^.*$ /404.php [L]

@@ -211,7 +211,7 @@ require './templates/header.html';
   </main>
 </div>
 
-<div id="modal-leasing">
+<div id="modal-leasing" data-route-permission="ver_dashboard">
   <div class="modal-container">
     <div class="modal-header">
       <i class="bi bi-info-circle"></i>

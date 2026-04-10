@@ -69,7 +69,7 @@ require './templates/header.html';
   </p>
 </div>
 
-<main class="main-query">
+<main class="main-query" data-route-permission="ver_contratos">
   <div class="contenedor">
     <div class="form-col-1 contenedor-col-1 relative px-9 py-7 overflow-hidden">
       <div class="w-full h-3 bg-blue-700 absolute top-0 left-0"></div>
@@ -132,6 +132,7 @@ require './templates/header.html';
         <button
           type="button"
           id="btnNewDoc"
+          data-permissions="insertar_documentos"
           class="cursor-pointer bg-cyan-800 text-center w-full rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
           <div
             class="bg-cyan-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
@@ -142,6 +143,7 @@ require './templates/header.html';
         <button
           type="button"
           id="btnNewLea"
+          data-permissions="insertar_leasing"
           class="cursor-pointer bg-green-800 text-center w-full rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
           <div
             class="bg-green-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
@@ -260,6 +262,7 @@ require './templates/header.html';
           <button
             type="button"
             id="btn-edit-con"
+            data-permissions="ver_contratos"
             class="cursor-pointer bg-blue-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
             <div
               class="bg-blue-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
@@ -270,6 +273,7 @@ require './templates/header.html';
           <button
             id="btn-assign"
             type="button"
+            data-permissions="insertar_asignacion"
             class="cursor-pointer bg-red-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group btn-assign">
             <span class="count-veh-alert"></span>
             <div
@@ -457,35 +461,39 @@ require './templates/header.html';
       const vehPending = await getPendingVeh(idClient);
 
       if (vehPending.data && vehPending.data.length > 0) {
-        setTimeout(() => {
-          animate(".alert-container", {
-            opacity: [0, 1],
-            scale: [0.7, 1.05, 1]
-          }, {
-            duration: 0.45,
-            easing: "ease-out"
-          });
+        const perm = isPermission("ver_placas");
 
-          $("#alert-modal").css("display", "flex");
+        if (perm) {
+          setTimeout(() => {
+            animate(".alert-container", {
+              opacity: [0, 1],
+              scale: [0.7, 1.05, 1]
+            }, {
+              duration: 0.45,
+              easing: "ease-out"
+            });
 
-          $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
+            $("#alert-modal").css("display", "flex");
 
-          $("#alert-modal .alert-container").html(
-            `
+            $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
+
+            $("#alert-modal .alert-container").html(
+              `
               <h2>¡Aviso de unidades pendientes!</h2>
-              <p style="color: black !important">El sistema ha detectado que este cliente cuenta con vehiculos sin asignar. Le sugerimos asignarlos para evitar irregularidades</p>
+              <p style="color: black !important">El sistema ha detectado que este cliente cuenta con ${vehPending.data.length} vehiculo(s) sin asignar. Le sugerimos asignarlos para evitar irregularidades</p>
               <p style="color: black !important">¿Deseas asignarlos ahora?</p>
               <div class="btn-group">
                 <button class="btn btn-info btn-assign">Si, quiero asignarlos</button>
                 <button id="btn-close-alert" class="btn btn-dark">Ignorar alerta</button>
               </div>
             `
-          )
-        }, 2000)
+            )
+          }, 2000)
 
-        $("#btn-assign").removeClass("hidden");
-        $("#btn-assign").addClass("flex");
-        $(".count-veh-alert").text(vehPending.data.length)
+          $("#btn-assign").removeClass("hidden");
+          $("#btn-assign").addClass("flex");
+          $(".count-veh-alert").text(vehPending.data.length)
+        }
       } else {
         $("#btn-assign").removeClass("flex");
         $("#btn-assign").addClass("hidden");
@@ -703,10 +711,22 @@ require './templates/header.html';
   };
 
   $("#btnNewDoc").on("click", function() {
+    const perm = isPermission("insertar_documentos");
+
+    if(!perm) {
+      return;
+    }
+
     window.location = 'registrar_documentos.php';
   });
 
   $("#btnNewLea").on("click", function() {
+    const perm = isPermission("insertar_leasing");
+
+    if(!perm) {
+      return;
+    }
+
     window.location = 'registrar_leasing.php';
   });
 
@@ -764,14 +784,32 @@ require './templates/header.html';
   }
 
   $("#href-query-doc").on("click", () => {
+    const perm = isPermission("ver_documentos");
+
+    if (!perm) {
+      return;
+    }
+
     queryDocument()
   })
 
   $("#href-query-lea").on("click", () => {
+    const perm = isPermission("ver_leasing");
+
+    if (!perm) {
+      return;
+    }
+
     queryLeasing()
   })
 
   $("#href-query-veh").on("click", async () => {
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
+
     const param = new URLSearchParams(window.location.search)
     const clientId = param.get("clienteId")
     const contratoId = param.get("contratoId")
@@ -1052,10 +1090,22 @@ require './templates/header.html';
   })
 
   $("#href-query-assign").on("click", () => {
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
+
     queryAssign()
   })
 
   $("#btn-edit-con").on("click", () => {
+    const perm = isPermission("editar_contratos");
+
+    if (!perm) {
+      return;
+    }
+
     const params = new URLSearchParams(window.location.search);
     const contratoId = params.get("contratoId")
 
@@ -1068,6 +1118,12 @@ require './templates/header.html';
 
   // SEVERO
   $("#view-sev").on("click", async () => {
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
+
     const param = new URLSearchParams(window.location.search)
     const clientId = param.get("clienteId")
     const contratoId = param.get("contratoId")
@@ -1354,6 +1410,12 @@ require './templates/header.html';
 
   // SOCAVON
   $("#view-soc").on("click", async () => {
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
+
     const param = new URLSearchParams(window.location.search)
     const clientId = param.get("clienteId")
     const contratoId = param.get("contratoId")
@@ -1640,6 +1702,12 @@ require './templates/header.html';
 
   // SUPERFICIE
   $("#view-sup").on("click", async () => {
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
+
     const param = new URLSearchParams(window.location.search)
     const clientId = param.get("clienteId")
     const contratoId = param.get("contratoId")
@@ -1926,6 +1994,12 @@ require './templates/header.html';
 
   // CIUDAD
   $("#view-ciu").on("click", async () => {
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
+
     const param = new URLSearchParams(window.location.search)
     const clientId = param.get("clienteId")
     const contratoId = param.get("contratoId")

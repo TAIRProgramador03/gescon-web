@@ -70,7 +70,7 @@ require './templates/header.html';
   </p>
 </div>
 
-<main class="main-container">
+<main class="main-container" data-route-permission="ver_leasing">
   <div class="container-info">
     <!-- <div class="container-filter justify-center items-center px-6 py-4">
       <div class="w-3 h-full bg-blue-700 absolute top-0 left-0"></div>
@@ -473,7 +473,7 @@ require './templates/header.html';
           render: (data, type, row) => {
             return `
               <div class="w-full flex justify-center items-center gap-2">
-                <button class="btn-view" onClick="verFlota('${row.id}')">
+                <button class="btn-view" data-permissions="ver_placas" onClick="verFlota('${row.id}')">
                   <i class="bi bi-car-front-fill"></i>
                   <span>Ver Flota</span>
                 </button>
@@ -492,6 +492,10 @@ require './templates/header.html';
     table.on("page.dt", () => {
       $('tr').removeClass("selected-row");
     })
+
+    table.on("draw.dt", function() {
+      aplicarPermisos();
+    });
 
     hideLoader();
   })

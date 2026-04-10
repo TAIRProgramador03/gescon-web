@@ -34,7 +34,7 @@ async function authenticateValid() {
     return;
   }
 
-  const data = response.json()
+  const data = response.json();
 
   return data;
 }
@@ -42,24 +42,31 @@ async function authenticateValid() {
 $(document).on("DOMContentLoaded", async () => {
   const user = await authenticateValid();
 
-  $("#user-data").text(`${user.globalDbUser.toUpperCase()}`)
-  $("#user-role").text(`${user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}`)
+  localStorage.setItem("permissions", JSON.stringify(user.permissions));
+
+  $("#user-data").text(`${user.globalDbUser.toUpperCase()}`);
+  $("#user-role").text(
+    `${user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}`
+  );
+
+  aplicarPermisos();
+  protegerRutas();
 });
 
-window.addEventListener('pageshow', async function () {
-    await authenticateValid();
+window.addEventListener("pageshow", async function () {
+  await authenticateValid();
 });
 
 $("#dropdown-menu-btn").on("click", () => {
-  document.querySelector('.dropdown-menu').classList.toggle('show');
-})
+  document.querySelector(".dropdown-menu").classList.toggle("show");
+});
 
 const toggleButton = document.getElementById("toggle-btn");
 const titleSide = document.getElementById("title-sidebar");
 const sidebar = document.getElementById("sidebar");
 
 function toggleSidebar() {
-  titleSide.classList.toggle("hidden")
+  titleSide.classList.toggle("hidden");
   sidebar.classList.toggle("close");
   toggleButton.classList.toggle("rotate");
   closeAllSubMenus(); // Cierra todos los submenús al cerrar el sidebar
@@ -80,7 +87,7 @@ function toggleSubMenu(button) {
   }
 
   if (sidebar.classList.contains("close")) {
-    titleSide.classList.toggle("hidden")
+    titleSide.classList.toggle("hidden");
     sidebar.classList.toggle("close");
     toggleButton.classList.toggle("rotate");
   }
@@ -123,10 +130,34 @@ function useState(initialValue) {
 
   const setState = (value) => {
     state = typeof value === "function" ? value(state) : value;
-    listeners.forEach(fn => fn(state));
+    listeners.forEach((fn) => fn(state));
   };
 
   const subscribe = (fn) => listeners.push(fn);
 
   return [getState, setState, subscribe];
+}
+
+function aplicarPermisos() {
+  const permissions = JSON.parse(localStorage.getItem("permissions")) || [];
+
+  $("[data-permissions]").each(function () {
+    const permisoRequerido = $(this).data("permissions");
+
+    if (!permissions.includes(permisoRequerido)) {
+      $(this).hide();
+    }
+  });
+}
+
+function protegerRutas() {
+  const permissions = JSON.parse(localStorage.getItem("permissions")) || [];
+
+  $("[data-route-permission]").each(function () {
+    const permiso = $(this).data("route-permission");
+
+    if (!permissions.includes(permiso)) {
+      window.location.href = "/gescon-web/public/vista/404.php";
+    }
+  });
 }

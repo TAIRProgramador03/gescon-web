@@ -135,3 +135,9 @@ function obtenerDiasVencimiento(fecha) {
   const diferenciaTiempo = fechaFin - fechaActual;
   return Math.floor(diferenciaTiempo / (1000 * 60 * 60 * 24));
 }
+
+function isPermission(permission) {
+  const permissions = JSON.parse(localStorage.getItem("permissions")) || [];
+
+  return permissions.includes(permission);
+}

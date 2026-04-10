@@ -434,3 +434,9 @@ function calcularPorcentaje(fechaIni, fechaFinal) {
 function transformType(value, object) {
   return object[value];
 }
+
+function isPermission(permission) {
+  const permissions = JSON.parse(localStorage.getItem("permissions")) || [];
+
+  return permissions.includes(permission);
+}

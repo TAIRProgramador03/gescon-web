@@ -61,7 +61,7 @@ require './templates/header.html';
   </p>
 </div>
 
-<main class="main-query-lea">
+<main class="main-query-lea" data-route-permission="ver_leasing">
   <div class="w-full flex gap-2 items-center p-2 rounded-xl border border-gray-300 bg-white">
     <a id="crumb-first" href="" class="px-3 py-1 flex justify-center items-center gap-1 rounded-md text-blue-800 hover:bg-blue-800 hover:text-white transition-colors">
       <i class="bi bi-archive-fill"></i>
@@ -381,6 +381,12 @@ require './templates/header.html';
 
   $("#view-vehicle").on("click", async () => {
 
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
+
     $("#modal-title").text("N° de vehiculos detallados");
 
     const param = new URLSearchParams(window.location.search);
@@ -520,6 +526,12 @@ require './templates/header.html';
   })
 
   $("#view-assign").on("click", async () => {
+
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
 
     $("#modal-title").text("Placas asignadas");
 

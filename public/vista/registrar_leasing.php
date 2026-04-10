@@ -47,7 +47,7 @@ require './templates/header.html';
   </p>
 </div>
 
-<main class="main-register">
+<main class="main-register" data-route-permission="insertar_leasing">
   <div class="contenedor h-fit border rounded-xl border-gray-300 px-9 py-7 relative overflow-hidden">
     <div class="w-full h-3 bg-cyan-700 absolute top-0 left-0"></div>
     <div class="w-full flex flex-col justify-center gap-2">

@@ -44,7 +44,7 @@ require './templates/header.html';
   </p>
 </div>
 
-<main class="main-register">
+<main class="main-register" data-route-permission="insertar_documentos">
   <div class="contenedor border border-gray-300 px-9 py-7 relative overflow-hidden">
     <div class="w-full h-3 bg-taupe-700 absolute top-0 left-0"></div>
     <div class="w-full flex flex-col justify-center gap-2">

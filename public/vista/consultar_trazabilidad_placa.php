@@ -35,7 +35,7 @@ require './templates/header.html';
   </p>
 </div>
 
-<main class="w-full flex flex-col gap-4">
+<main class="w-full flex flex-col gap-4" data-route-permission="ver_placas">
   <div class="w-full bg-white px-9 py-7 rounded-md border border-gray-300 relative overflow-hidden">
     <div class="w-full h-3 bg-orange-700 absolute top-0 left-0"></div>
     <div class="w-full flex flex-col justify-center gap-2">

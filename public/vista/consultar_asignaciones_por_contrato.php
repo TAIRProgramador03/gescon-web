@@ -15,7 +15,7 @@ require './templates/header.html';
 <!--BOOTSTRAP CSS-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
-<div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
+<div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center" >
   <div class="flex-col gap-4 w-full flex items-center justify-center relative">
     <div class="w-28 h-28 border-8 text-blue-600 text-4xl animate-spin border-gray-300 flex items-center justify-center border-t-blue-600 rounded-full"></div>
     <div class="gif-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -34,7 +34,7 @@ require './templates/header.html';
   </p>
 </div>
 
-<main class="w-full flex flex-col gap-4">
+<main class="w-full flex flex-col gap-4" data-route-permission="ver_placas">
   <div class="w-full bg-white px-9 py-7 rounded-md border border-gray-300 relative overflow-hidden">
     <div class="w-full h-3 bg-orange-700 absolute top-0 left-0"></div>
     <div class="w-full flex flex-col justify-center gap-2">

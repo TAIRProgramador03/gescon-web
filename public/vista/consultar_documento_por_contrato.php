@@ -61,7 +61,7 @@ require './templates/header.html';
   </p>
 </div>
 
-<main class="main-query-doc">
+<main class="main-query-doc" data-route-permission="ver_documentos">
   <div class="w-full flex gap-2 items-center p-2 rounded-xl border border-gray-300 bg-white">
     <a id="crumb-first" href="" class="px-3 py-1 flex justify-center items-center gap-1 rounded-md text-blue-800 hover:bg-blue-800 hover:text-white transition-colors">
       <i class="bi bi-archive-fill"></i>
@@ -387,7 +387,7 @@ require './templates/header.html';
       })
     }
 
-    if(nroDoc) {
+    if (nroDoc) {
       $("#crumb-active").text(`${nroDoc}`);
     }
 
@@ -453,6 +453,12 @@ require './templates/header.html';
   })
 
   $("#sup-modal").on("click", async () => {
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
+
     const param = new URLSearchParams(window.location.search)
     const documentoId = param.get("documentoId")
 
@@ -592,6 +598,12 @@ require './templates/header.html';
   })
 
   $("#sev-modal").on("click", async () => {
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
+
     const param = new URLSearchParams(window.location.search)
     const documentoId = param.get("documentoId")
 
@@ -731,6 +743,12 @@ require './templates/header.html';
   })
 
   $("#soc-modal").on("click", async () => {
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
+
     const param = new URLSearchParams(window.location.search)
     const documentoId = param.get("documentoId")
 
@@ -870,6 +888,12 @@ require './templates/header.html';
   })
 
   $("#ciu-modal").on("click", async () => {
+    const perm = isPermission("ver_placas");
+
+    if (!perm) {
+      return;
+    }
+
     const param = new URLSearchParams(window.location.search)
     const documentoId = param.get("documentoId")
 
@@ -1016,6 +1040,12 @@ require './templates/header.html';
   })
 
   $("#view-leasings").on("click", () => {
+    const perm = isPermission("ver_leasing");
+
+    if (!perm) {
+      return;
+    }
+
     const params = new URLSearchParams(window.location.search);
     const clienteId = params.get("clienteId")
     const documentoId = params.get("documentoId")

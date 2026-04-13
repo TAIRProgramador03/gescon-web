@@ -2,7 +2,7 @@ import { animate } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 
 const obtenerInstancia = async () => {
   const IP_LOCAL = await obtenerConfig();
-  instance = axios.create({
+  return axios.create({
     baseURL: `http://${IP_LOCAL}:3000`,
     timeout: 3000,
   });

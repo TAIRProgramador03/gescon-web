@@ -324,7 +324,20 @@ require './templates/header.html';
               <!-- <input id="especial" name="especial" type="checkbox" class="check-form-contrato tooltip-input" data-tooltip="Contrato especial, Cuando un contrato tiene varios periodos de finalización."> -->
               <label class="relative inline-flex w-fit items-center cursor-pointer">
                 <input class="sr-only peer" value="" type="checkbox" id="especial" name="especial">
-                <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 bg-blue-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 after:content-['No'] after:absolute after:outline-none after:rounded-[50%] after:h-8 after:w-8 after:bg-white after:top-1 after:left-1 after:flex after:justify-center after:items-center  after:text-sky-800 after:font-bold peer-checked:after:translate-x-6 peer-checked:after:content-['Si'] peer-checked:after:border-white">
+                <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
+              bg-red-300 
+              peer-checked:bg-blue-300
+              peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500
+              
+              after:content-['No'] after:absolute after:outline-none after:rounded-[50%] 
+              after:h-8 after:w-8 after:bg-white after:top-1 after:left-1 
+              after:flex after:justify-center after:items-center  
+              after:text-red-800 after:font-bold
+              
+              peer-checked:after:translate-x-6 
+              peer-checked:after:content-['Si'] 
+              peer-checked:after:text-sky-800
+              peer-checked:after:border-white">
                 </div>
               </label>
             </div>

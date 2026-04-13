@@ -54,9 +54,9 @@ $(document).on("DOMContentLoaded", async () => {
 
   localStorage.setItem("permissions", JSON.stringify(user.permissions));
 
-  $("#user-data").text(`${user.globalDbUser.toUpperCase()}`);
+  $("#user-data").text(`${user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}`);
   $("#user-role").text(
-    `${user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}`,
+    `${user.globalDbUser.toUpperCase()}`,
   );
 
   aplicarPermisos();

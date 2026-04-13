@@ -1,6 +1,8 @@
 // const IP_LOCAL = "localhost";
 
 const getDocuments = async (contratoId, clienteId) => {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/documentoPorContrato?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
     {
@@ -15,6 +17,8 @@ const getDocuments = async (contratoId, clienteId) => {
 };
 
 const getDetailDocument = async (documentoId) => {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/detalleDocumento?documentoId=${documentoId.toString()}`,
     {
@@ -29,6 +33,8 @@ const getDetailDocument = async (documentoId) => {
 };
 
 const getVehByDocument = async (documentoId, tipoTerr) => {
+  const IP_LOCAL = await obtenerConfig()
+  
   const response = await fetch(
     `http://${IP_LOCAL}:3000/placasPorDocumento?documentoId=${documentoId.toString()}&tipoTerr=${tipoTerr}`,
     {

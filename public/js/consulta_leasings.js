@@ -1,4 +1,6 @@
 const getLeasings = async (bank, clientId, contractId, typeContract) => {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/leasingAll${bank ? `?bank=${bank}` : ""}${clientId ? `&clientId=${clientId}` : ""}${contractId ? `&contractId=${contractId}` : ""}${typeContract ? `&typeContract=${typeContract}` : ""}`,
     {
@@ -12,6 +14,8 @@ const getLeasings = async (bank, clientId, contractId, typeContract) => {
 };
 
 const getVehByLeasing = async (leasingId) => {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/vehiclesByLeasing?leasingId=${leasingId.toString()}`,
     {
@@ -26,6 +30,8 @@ const getVehByLeasing = async (leasingId) => {
 };
 
 const getClients = async () => {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
     credentials: "include",
   });
@@ -36,6 +42,8 @@ const getClients = async () => {
 };
 
 const getContractsByClient = async (clientId) => {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/contratosNro?idCli=${clientId}`,
     {
@@ -49,6 +57,8 @@ const getContractsByClient = async (clientId) => {
 };
 
 const getDocumentsByContract = async (contractId, clientId) => {
+  const IP_LOCAL = await obtenerConfig()
+  
   const response = await fetch(
     `http://${IP_LOCAL}:3000/documentoPorContrato?contratoId=${contractId}&clienteId=${clientId}`,
     {

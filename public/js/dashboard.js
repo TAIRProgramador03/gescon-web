@@ -18,6 +18,8 @@ toastr.options = {
 
 async function cargarContContrato(clientId) {
   try {
+    const IP_LOCAL = await obtenerConfig()
+
     const response = await fetch(
       `http://${IP_LOCAL}:3000/contContrato${clientId ? `?clienteId=${clientId}` : ""}`,
       {
@@ -52,6 +54,8 @@ async function obtenerFlotaVehicular(status, clientId) {
     paramsString = `?clienteId=${clientId}`;
   }
 
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/contVehicleFleet${paramsString}`,
     {
@@ -65,6 +69,8 @@ async function obtenerFlotaVehicular(status, clientId) {
 }
 
 async function obtenerClientes() {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
     credentials: "include",
   });
@@ -75,6 +81,8 @@ async function obtenerClientes() {
 }
 
 async function obtenerLeasings(draw, currentPage, length, search, clientId) {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/contVehicleLeasing?draw=${draw}&start=${currentPage}&length=${length}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
     {
@@ -89,6 +97,8 @@ async function obtenerLeasings(draw, currentPage, length, search, clientId) {
 }
 
 async function obtenerCantidadVehicle(clientId) {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/contLeasing${clientId ? `?clienteId=${clientId}` : ""}`,
     {
@@ -110,6 +120,8 @@ async function obtenerVehiculosVencidos(
   search,
   clientId,
 ) {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/listVehicleExpires?draw=${draw}&start=${currentPage}&length=${length}&label=${label}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
     {
@@ -131,6 +143,8 @@ async function obtenerVehiculosPorVencer(
   search,
   clientId,
 ) {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/listVehicleToExpires?draw=${draw}&start=${currentPage}&length=${length}&label=${label}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
     {
@@ -147,6 +161,8 @@ async function obtenerVehiculosPorVencer(
 async function obtenerTotalVehiculosPorCliente(clientsId) {
   const query = clientsId.map((cli) => `clientesId=${cli}`).join("&");
 
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/contVehicleByClient?${query}`,
     {
@@ -161,6 +177,8 @@ async function obtenerTotalVehiculosPorCliente(clientsId) {
 }
 
 async function obtenerContratos(clientId) {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/contratosNro${clientId ? `?idCli=${clientId}` : ""}`,
     {
@@ -175,6 +193,8 @@ async function obtenerContratos(clientId) {
 }
 
 async function obtenerLeasingsPorContrato(contractId) {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/leasingByContract${contractId ? `?contratoId=${contractId}` : ""}`,
     {
@@ -189,6 +209,8 @@ async function obtenerLeasingsPorContrato(contractId) {
 }
 
 async function obtenerDiasContratoLeasing(contractId, leasingId) {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/contComparationDays?contractId=${contractId}&leasingId=${leasingId}`,
     {
@@ -203,6 +225,8 @@ async function obtenerDiasContratoLeasing(contractId, leasingId) {
 }
 
 async function obtenerModelosGenericos() {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(`http://${IP_LOCAL}:3000/modedosGenericos`, {
     method: "GET",
     credentials: "include",
@@ -214,6 +238,8 @@ async function obtenerModelosGenericos() {
 }
 
 async function obtenerAñosPorModelo(modelId) {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/aniosPorModelo?modelId=${modelId}`,
     {
@@ -228,6 +254,8 @@ async function obtenerAñosPorModelo(modelId) {
 }
 
 async function obtenerTotalCostoPorModelo(modelId, years) {
+  const IP_LOCAL = await obtenerConfig()
+  
   const query = years.map((year) => `years=${year}`).join("&");
 
   const response = await fetch(

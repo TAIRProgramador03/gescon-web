@@ -1,6 +1,8 @@
 // const IP_LOCAL = "localhost";
 
 const getVehicles = async (contratoId, clienteId) => {
+  const IP_LOCAL = await obtenerConfig()
+  
   const response = await fetch(
     `http://${IP_LOCAL}:3000/vehiculosPorContrato?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
     {

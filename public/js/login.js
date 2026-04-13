@@ -16,8 +16,13 @@ toastr.options = {
   hideMethod: "fadeOut",
 };
 
+const obtenerConfig = async () => {
+  const BASE_URL = window.location.origin + '/gescon-web/public';
 
-const IP_LOCAL = '192.168.5.95';
+  const config = await fetch(`${BASE_URL}/php/config.php`).then((r) => r.json());
+
+  return config.IP_LOCAL;
+};
 
 const container = document.querySelector(".container");
 const registerBtn = document.querySelector(".register-btn");
@@ -27,17 +32,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   await authenticateValid();
 });
 
-window.addEventListener('pageshow', async function () {
-    await authenticateValid();
+window.addEventListener("pageshow", async function () {
+  await authenticateValid();
 });
 
 async function authenticateValid() {
+  const IP_LOCAL = await obtenerConfig();
+
   const response = await fetch(`http://${IP_LOCAL}:3000/verify`, {
     method: "GET",
     credentials: "include", // Asegura que las cookies se envíen con la solicitud
   });
 
   if (response.ok) {
-    window.location.replace("./public/vista/dashboard"); // replace no guarda la página en el historial
+    if (data.permissions.includes("ver_dashboard")) {
+      window.location.href = "./public/vista/dashboard";
+    } else {
+      window.location.href = "./public/vista/sistema";
+    }
   }
 }

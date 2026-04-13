@@ -152,6 +152,8 @@ document.addEventListener("change", function (e) {
 
 async function cargarClientes() {
   try {
+    const IP_LOCAL = await obtenerConfig()
+
     const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -191,6 +193,9 @@ async function cargarClientes() {
 async function cargarLeasingOfClient(idCli) {
   try {
     const btnSelectLeasing = document.getElementById("combo-box-leasing");
+
+    const IP_LOCAL = await obtenerConfig()
+
     const response = await fetch(
       `http://${IP_LOCAL}:3000/leasingOfClient?idCli=${idCli}`,
       {
@@ -240,6 +245,8 @@ async function cargarLeasingOfClient(idCli) {
 
 async function cargarLeasing() {
   try {
+    const IP_LOCAL = await obtenerConfig()
+
     const response = await fetch(`http://${IP_LOCAL}:3000/leasing`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -294,6 +301,8 @@ async function listaVehiculosAsignables(clientId) {
   // }
 
   try {
+    const IP_LOCAL = await obtenerConfig()
+
     const response = await fetch(
       `http://${IP_LOCAL}:3000/consultaVehiculoLeasing?idCli=${idCli}&nroLeasing=${idLea}`,
       {
@@ -462,6 +471,8 @@ async function listaVehiculosAsignables(clientId) {
 
 async function cargarClientesAsig() {
   try {
+    const IP_LOCAL = await obtenerConfig()
+
     const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -543,6 +554,8 @@ async function cargarOperaciones() {
       return;
     }
     try {
+      const IP_LOCAL = await obtenerConfig()
+
       // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
       const response = await fetch(
         `http://${IP_LOCAL}:3000/operacionesAsig?idCli=${idCli}`,
@@ -591,6 +604,8 @@ async function cargarContrato() {
       return;
     }
     try {
+      const IP_LOCAL = await obtenerConfig()
+
       // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
       const response = await fetch(
         `http://${IP_LOCAL}:3000/contratosNroAdi?idCli=${idCli}`,
@@ -818,6 +833,8 @@ async function guardaAsignacion() {
 
 const registrar = async (asignacionData) => {
   try {
+    const IP_LOCAL = await obtenerConfig()
+
     await Promise.all(
       asignacionData.detalles.map(async (detalle) => {
         if (!detalle.archivoPdf) return;
@@ -855,6 +872,8 @@ const registrar = async (asignacionData) => {
 
 const validarAsignacion = async (detalles) => {
   if (!detalles || detalles.length === 0) return { success: true };
+  
+  const IP_LOCAL = await obtenerConfig()
 
   const validacionResponse = await fetch(
     `http://${IP_LOCAL}:3000/validaContratoCantidad`,

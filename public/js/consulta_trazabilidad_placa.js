@@ -1,8 +1,14 @@
 // const IP_LOCAL = "localhost";
-const instance = axios.create({
-  baseURL: `http://${IP_LOCAL}:3000`,
-  timeout: 3000,
-});
+
+const obtenerInstancia = async () => {
+  const IP_LOCAL = await obtenerConfig();
+  instance = axios.create({
+    baseURL: `http://${IP_LOCAL}:3000`,
+    timeout: 3000,
+  });
+};
+
+let instance;
 
 toastr.options = {
   closeButton: false,
@@ -26,7 +32,14 @@ toastr.options = {
  * Método para traer la lista de documentos de un contrato especifico
  * @param contratoId Nro de contrato
  */
-export const getAssigns = async (clienteId, contratoId, leasingId, tipoTerr, status) => {
+export const getAssigns = async (
+  clienteId,
+  contratoId,
+  leasingId,
+  tipoTerr,
+  status,
+) => {
+  instance = await obtenerInstancia();
   const response = await instance.get(`/trazabilidadPlaca`, {
     withCredentials: true,
     params: {
@@ -34,7 +47,7 @@ export const getAssigns = async (clienteId, contratoId, leasingId, tipoTerr, sta
       idContrato: contratoId,
       idLeasing: leasingId,
       tipoTerr: tipoTerr,
-      status
+      status,
     },
   });
 
@@ -44,41 +57,46 @@ export const getAssigns = async (clienteId, contratoId, leasingId, tipoTerr, sta
 };
 
 export const getLeasings = async (clienteId, contratoId) => {
-  const response = await instance.get(
-    `/leasingGeneral`,
-    {
-      withCredentials: true,
-      params: {
-        clienteId,
-        contratoId
-      }
+  instance = await obtenerInstancia();
+
+  const response = await instance.get(`/leasingGeneral`, {
+    withCredentials: true,
+    params: {
+      clienteId,
+      contratoId,
     },
-  );
+  });
 
   return response.data;
 };
 
 export const getClients = async () => {
+  instance = await obtenerInstancia();
+
   const response = await instance.get("/clientes", {
     withCredentials: true,
-  })
+  });
 
   return response.data;
-}
+};
 
 export const getContracts = async (clientId) => {
+  instance = await obtenerInstancia();
+
   const response = await instance.get("/contratosNroAdi", {
     withCredentials: true,
     params: {
-      idCli: clientId
-    }
-  })
+      idCli: clientId,
+    },
+  });
 
   return response.data;
-}
+};
 
 const getFile = async (key) => {
   try {
+    const IP_LOCAL = await obtenerConfig()
+    
     const viewPDF = await fetch(
       `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
       {

@@ -316,6 +316,8 @@ require './templates/header.html';
     animate
   } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 
+  let IP_LOCAL = "";
+
   let activeRequests = 0;
 
   function showLoader() {
@@ -365,17 +367,14 @@ require './templates/header.html';
     }
   }
 
-  // window.onload = function() {
-  //   setTimeout(() => {
-  //     document.body.classList.add('loaded');
-  //     document.getElementById('preloader-mini').style.display = 'none';
-  //   }, 2000);
-  // };
-
   let table;
 
   $(document).on('DOMContentLoaded', async function() {
     showLoader();
+
+    const config = await fetch("../php/config.php").then((r) => r.json());
+
+    IP_LOCAL = config.IP_LOCAL;
 
     await cargarClientes();
     document.getElementById("btnClear").addEventListener("click", limpiarCampos);

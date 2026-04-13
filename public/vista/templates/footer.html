@@ -10,6 +10,10 @@
 
         document.getElementById("log_out").addEventListener("click", async () => {
             try {
+                const config = await fetch("../../php/config.php").then((r) => r.json());
+
+                const IP_LOCAL = config.IP_LOCAL;
+
                 const response = await fetch(`http://${IP_LOCAL}:3000/logout`, {
                 method: "POST",
                 credentials: "include",

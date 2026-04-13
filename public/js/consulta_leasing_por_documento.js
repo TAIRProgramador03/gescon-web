@@ -17,6 +17,8 @@ toastr.options = {
 };
 
 const getLeasings = async (documentoId, clienteId) => {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/leasingByDocument?documentoId=${documentoId.toString()}&clienteId=${clienteId.toString()}`,
     {
@@ -81,6 +83,8 @@ const getDetailLeasing = async (
   clienteId,
   documentoId,
 ) => {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/detailLeasing?leasingId=${leasingId.toString()}&nroLeasing=${nroLeasing.trim()}&clienteId=${clienteId.toString()}&contratoId=${documentoId.toString()}&tipoCont=H`,
     {
@@ -99,6 +103,8 @@ const getDetailLeasing = async (
 };
 
 const getVehByLeasing = async (leasingId) => {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/vehiclesByLeasing?leasingId=${leasingId.toString()}`,
     {
@@ -113,6 +119,8 @@ const getVehByLeasing = async (leasingId) => {
 };
 
 const getAssignByLeasing = async (nroLeasing, clienteId, documentoId) => {
+  const IP_LOCAL = await obtenerConfig()
+  
   const response = await fetch(
     `http://${IP_LOCAL}:3000/assignByLeasing?nroLeasing=${nroLeasing}&clienteId=${clienteId}&contratoId=${documentoId}&tipoCont=H`,
     {

@@ -1,9 +1,14 @@
 import { animate } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 
-const instance = axios.create({
-  baseURL: `http://${IP_LOCAL}:3000`,
-  timeout: 3000,
-});
+const obtenerInstancia = async () => {
+  const IP_LOCAL = await obtenerConfig();
+  instance = axios.create({
+    baseURL: `http://${IP_LOCAL}:3000`,
+    timeout: 3000,
+  });
+};
+
+let instance;
 
 toastr.options = {
   closeButton: false,
@@ -188,7 +193,7 @@ function cargarFilasRegistrar(checkbox) {
     {
       opacity: [0, 1],
       transform: ["translateY(10px)", "translateY(0px)"],
-      backgroundColor: ["#07E800", "#ffffff"]
+      backgroundColor: ["#07E800", "#ffffff"],
     },
     {
       duration: 0.5,
@@ -293,7 +298,7 @@ function cargarFilas(data, modelos) {
     {
       opacity: [0, 1],
       transform: ["translateY(10px)", "translateY(0px)"],
-      backgroundColor: ["#07E800", "#ffffff"]
+      backgroundColor: ["#07E800", "#ffffff"],
     },
     {
       duration: 0.5,
@@ -365,6 +370,8 @@ function cargarFilas(data, modelos) {
 
 async function cargarContrato(id) {
   try {
+    instance = await obtenerInstancia();
+
     const response = await instance.get(`/contratoPorId/${id}`, {
       withCredentials: true,
     });
@@ -419,6 +426,8 @@ async function cargarCampos(data) {
 
 async function cargarCampoPDF(key) {
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const viewPDF = await axios.get(
       `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
       {
@@ -463,6 +472,8 @@ async function cargarCampoPDF(key) {
 
 async function cargarClientes(id) {
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -501,6 +512,8 @@ async function cargarClientes(id) {
 
 async function cargarModelos() {
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -534,6 +547,8 @@ async function cargarModelos() {
 }
 
 async function obtenerTodosModelos() {
+  const IP_LOCAL = await obtenerConfig();
+
   const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
     method: "GET",
     credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -549,6 +564,8 @@ async function obtenerTodosModelos() {
 
 async function cargarModelosFila(selectElement) {
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -858,6 +875,8 @@ async function guardarContrato() {
     const nombreArchivo = uploadFile.key;
     const data = { ...contratoData, archivoPdf: nombreArchivo };
     try {
+      const IP_LOCAL = await obtenerConfig();
+
       const response = await fetch(`http://${IP_LOCAL}:3000/insertarContrato`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -890,6 +909,8 @@ async function guardarContrato() {
     }
     const data = { ...contratoData, archivoPdf: nameFile };
     try {
+      const IP_LOCAL = await obtenerConfig();
+
       const response = await fetch(
         `http://${IP_LOCAL}:3000/actualizarContrato/${contractId}`,
         {
@@ -1036,6 +1057,8 @@ async function subirArchivo(archivo) {
   formData.append("documentType", "contracts");
 
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const response = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
       enctype: "multipart/form-data",
       method: "POST",
@@ -1057,6 +1080,8 @@ async function subirArchivo(archivo) {
 
 async function validarArchivo(nombreArchivo) {
   try {
+    const IP_LOCAL = await obtenerConfig();
+    
     const response = await fetch(
       `http://${IP_LOCAL}:3000/validarArchivo?nombre=contracts/${nombreArchivo.trim()}`,
       {

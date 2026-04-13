@@ -195,6 +195,8 @@ $("#exportVehicle").on("click", function () {
 
 async function cargarClientes() {
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -230,6 +232,8 @@ async function cargarClientes() {
 
 async function cargarModelos() {
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -264,6 +268,8 @@ async function cargarModelos() {
 
 async function cargarModelosFila(selectElement) {
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -306,6 +312,8 @@ async function cargarContrato() {
       return;
     }
     try {
+      const IP_LOCAL = await obtenerConfig();
+
       // Realiza una solicitud al servidor para obtener los contratos del cliente
       const response = await fetch(
         `http://${IP_LOCAL}:3000/contratosNro?idCli=${idCli}`,
@@ -610,6 +618,9 @@ async function guardarDocumento() {
       const uploadFile = await subirArchivo(fileInput.files[0]);
       const nombreArchivo = uploadFile.key;
       const data = { ...contratoData, archivoPdf: nombreArchivo };
+
+      const IP_LOCAL = await obtenerConfig();
+
       const response = await fetch(
         `http://${IP_LOCAL}:3000/insertarDocumento`,
         {
@@ -748,6 +759,8 @@ async function subirArchivo(archivo) {
   formData.append("documentType", "documents");
 
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const response = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
       method: "POST",
       enctype: "multipart/form-data",
@@ -767,6 +780,8 @@ async function subirArchivo(archivo) {
 
 async function validarArchivo(nombreArchivo) {
   try {
+    const IP_LOCAL = await obtenerConfig();
+    
     const response = await fetch(
       `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`,
       {

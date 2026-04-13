@@ -21,9 +21,19 @@ function closeAllSubMenus() {
 }*/
 lucide.createIcons();
 
-const IP_LOCAL = "192.168.5.95";
+// const IP_LOCAL = "192.168.5.95";
+
+const obtenerConfig = async () => {
+  const BASE_URL = window.location.origin + '/gescon-web/public';
+
+  const config = await fetch(`${BASE_URL}/php/config.php`).then((r) => r.json());
+
+  return config.IP_LOCAL;
+};
 
 async function authenticateValid() {
+  const IP_LOCAL = await obtenerConfig();
+  
   const response = await fetch(`http://${IP_LOCAL}:3000/verify`, {
     method: "GET",
     credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -46,7 +56,7 @@ $(document).on("DOMContentLoaded", async () => {
 
   $("#user-data").text(`${user.globalDbUser.toUpperCase()}`);
   $("#user-role").text(
-    `${user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}`
+    `${user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}`,
   );
 
   aplicarPermisos();

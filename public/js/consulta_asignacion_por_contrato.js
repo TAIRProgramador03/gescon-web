@@ -5,6 +5,8 @@
  * @param contratoId Nro de contrato
  */
 const getAssigns = async (clienteId, contratoId, leasingId, tipoTerr) => {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/asignacionPorContrato?idCliente=${clienteId.toString()}${contratoId ? `&idContrato=${contratoId.toString()}` : ""}${leasingId ? `&idLeasing=${leasingId}` : ""}${tipoTerr ? `&tipoTerr=${tipoTerr}` : ""}`,
     {
@@ -19,6 +21,8 @@ const getAssigns = async (clienteId, contratoId, leasingId, tipoTerr) => {
 };
 
 const getLeasings = async (clienteId, contratoId) => {
+  const IP_LOCAL = await obtenerConfig()
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/leasingByContract?clienteId=${clienteId.toString()}${contratoId ? `&contratoId=${contratoId.toString()}` : ""}`,
     {
@@ -33,6 +37,8 @@ const getLeasings = async (clienteId, contratoId) => {
 };
 
 const getFile = async (key) => {
+  const IP_LOCAL = await obtenerConfig()
+  
   try {
     const viewPDF = await fetch(
       `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,

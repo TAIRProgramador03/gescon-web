@@ -181,6 +181,8 @@ async function cargartablaClienteLeas() {
     .getElementById("openModalCli")
     .addEventListener("click", async function () {
       try {
+        const IP_LOCAL = await obtenerConfig();
+
         const response = await fetch(
           `http://${IP_LOCAL}:3000/tablaClienteLeas`,
           {
@@ -248,6 +250,8 @@ async function cargartablaClienteLeas() {
 async function cargartablaClienteLeasAsoc() {
   $("#openModalCliAsoc").on("click", async function () {
     try {
+      const IP_LOCAL = await obtenerConfig();
+
       const response = await fetch(`http://${IP_LOCAL}:3000/tablaClienteLeas`, {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -452,6 +456,8 @@ async function cargartablaVehiculo() {
     .getElementById("openModal")
     .addEventListener("click", async function () {
       try {
+        const IP_LOCAL = await obtenerConfig();
+
         // Realiza una solicitud al servidor para obtener los contratos del cliente
         const response = await fetch(`http://${IP_LOCAL}:3000/tablaVehiculo`, {
           method: "GET",
@@ -825,9 +831,9 @@ async function guardaLeasing() {
   // Construcción del objeto final de datos
   const contratoData = { ...formData, detalles, archivoPdf: nombreArchivo };
 
-  console.log(contratoData);
-
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const response = await fetch(`http://${IP_LOCAL}:3000/insertaLeasing`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -857,6 +863,8 @@ async function subirArchivo(archivo) {
   formData.append("documentType", "leasings");
 
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const response = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
       method: "POST",
       enctype: "multipart/form-data",
@@ -879,6 +887,8 @@ async function subirArchivo(archivo) {
 
 async function validarArchivo(nombreArchivo) {
   try {
+    const IP_LOCAL = await obtenerConfig();
+
     const response = await fetch(
       `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`,
       {
@@ -966,6 +976,8 @@ async function cargarContratosPorCliente(idCli) {
   }
 
   try {
+    const IP_LOCAL = await obtenerConfig();
+    
     const response = await fetch(
       `http://${IP_LOCAL}:3000/contratosNroAdi?idCli=${idCli}`,
       {

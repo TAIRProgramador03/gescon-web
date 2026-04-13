@@ -190,6 +190,8 @@
             const password = document.getElementById("password").value;
 
             try {
+              const IP_LOCAL = await obtenerConfig();
+
               const response = await fetch(`http://${IP_LOCAL}:3000/login`, {
                 method: "POST",
                 headers: {
@@ -203,9 +205,17 @@
               if (data.success) {
                 toastr.success(data.message, "Bienvenido");
                 localStorage.setItem("dbUser", dbUser);
-                setTimeout(() => {
-                  window.location.href = "./public/vista/dashboard";
-                }, 1500);
+
+                if(data.permissions.includes("ver_dashboard")) {
+                  setTimeout(() => {
+                    window.location.href = "./public/vista/dashboard";
+                  }, 1500);
+                } else {
+                  setTimeout(() => {
+                    window.location.href = "./public/vista/sistema";
+                  }, 1500);
+                }
+                
               } else {
                 toastr.warning(data.message, "Oops...");
               }

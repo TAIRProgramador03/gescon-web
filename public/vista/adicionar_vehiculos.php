@@ -5,6 +5,33 @@ require './templates/header.html';
 <!-- JQUERY -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- DATATABLE CSS -->
+<link
+  href="https://cdn.datatables.net/v/dt/dt-2.3.7/fh-4.0.6/datatables.min.css"
+  rel="stylesheet"
+  integrity="sha384-7Hrw81H4xX5hYX7S8L0eMfpG12eNpu/o/EJa19nQ3b9LlwFZ+knIhQdpUWrM1GG0"
+  crossorigin="anonymous" />
+<link
+  rel="stylesheet"
+  href="https://cdn.datatables.net/buttons/3.2.6/css/buttons.dataTables.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/select/3.1.3/css/select.dataTables.css" />
+
+<!-- DATATABLE JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script
+  src="https://cdn.datatables.net/v/dt/dt-2.3.7/fh-4.0.6/datatables.min.js"
+  integrity="sha384-CNOVKT615Y5C0jlUJ8NQOcckxgpoWtMsl4+LFWMwh/asaMKYPG8K0hlZayw/GSa+"
+  crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.6/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/select/3.1.3/js/dataTables.select.js"></script>
+<script src="https://cdn.datatables.net/select/3.1.3/js/select.dataTables.js"></script>
+
 <!-- CSS de Select2 -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
 
@@ -82,33 +109,29 @@ require './templates/header.html';
           </label>
         </div>
       </div>
-      <div class="tabla-form-adi">
-        <table>
-          <thead>
-            <tr>
-              <th><input class="check-xtodo" type="checkbox" id="checkAll" disabled> Select</th>
-              <th>ID</th>
-              <th>Placa</th>
-              <th>Marca</th>
-              <th>Modelo</th>
-              <th>Leasing</th>
-              <th>Tarifa</th>
-              <th>Fecha de Entrega</th>
-              <th>Fecha Devolucion</th>
-              <th>Operacion</th>
-              <th>Contrato</th>
-              <th>Terreno</th>
-              <th>Condicion</th>
-              <th>Acta</th>
-            </tr>
-          </thead>
-          <tbody id="asignacion-tbody">
-            <tr>
-              <td colspan="12">Seleccione un cliente para ver los vehiculos por asignar</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <table id="listAssign" class="display">
+        <thead>
+          <tr>
+            <th class="bg-yellow-700 !text-white !font-medium"></th>
+            <th class="bg-yellow-700 !text-white !font-medium">Item</th>
+            <th class="bg-yellow-700 !text-white !font-medium">ID</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Placa</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Marca</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Modelo</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Leasing</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Tarifa</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Fecha de Entrega</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Fecha Devolucion</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Operacion</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Contrato / Documento</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Terreno</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Condicion</th>
+            <th class="bg-yellow-700 !text-white !font-medium">Acta</th>
+          </tr>
+        </thead>
+        <tbody id="asignacion-tbody">
+        </tbody>
+      </table>
       <div class="modal-footer">
         <div class="cbo-form-adiciona">
           <!-- ASIGNAR CBO -->
@@ -121,16 +144,11 @@ require './templates/header.html';
               Asignar Cliente Destino(*)
             </label>
           </div>
-          <!-- <div class="w-full flex gap-3">
-                        <label for="combo-box-asig">Asignar Cliente:</label>
-                        <select id="combo-box-asig" name="opciones" class="cbo-form-leasing" disabled></select>
-                    </div> -->
           <div class="w-full flex gap-3 justify-end items-center">
             <div class="flex justify-center items-center gap-1">
               <input class="check-xtodo" type="checkbox" id="repeticion" disabled>
-              <label for="id=" repeticion"">Repetir</label>
+              <label for="repeticion" repeticion"">Repetir</label>
             </div>
-            <!-- <button class="px-5 py-2 bg-green-600 outline-none rounded-sm hover:bg-green-700 transition-colors text-white cursor-pointer" id="grabarButton">Grabar</button> -->
             <button
               type="button"
               id="grabarButton"
@@ -141,7 +159,6 @@ require './templates/header.html';
               </div>
               <p class="translate-x-4 !m-0 !text-white text-base font-medium">Grabar</p>
             </button>
-            <!-- <button class="px-5 py-2 bg-yellow-700 outline-none rounded-sm hover:bg-yellow-600 transition-colors text-white cursor-pointer" id="btnClear">Limpiar</button> -->
             <button
               type="button"
               id="btnClear"
@@ -176,15 +193,142 @@ require './templates/header.html';
 
 <!-- SCRIPTS DE LA VISTA -->
 
-<script type="module">
-  window.onload = function() {
-    setTimeout(() => {
-      document.body.classList.add('loaded');
-      document.getElementById('preloader-mini').style.display = 'none';
-    }, 2000);
-  };
-</script>
 <script type="module" src="../js/adiciona_vehiculo.js"></script>
+
+<script type="module">
+  import {
+    deshabilitarSelect,
+    guardaAsignacion,
+    limpiarSelect,
+    cargarClientes,
+    cargarLeasingOfClient,
+    listaVehiculosAsignables,
+    cargarClientesAsig
+  } from '../js/adiciona_vehiculo.js';
+
+  import {
+    animate
+  } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
+
+  let activeRequests = 0;
+
+  function showLoader() {
+    activeRequests++;
+    $("#preloader-mini").css("opacity", "1");
+    $("#preloader-mini").css("z-index", "99999");
+  }
+
+  function hideLoader() {
+    activeRequests--;
+    if (activeRequests <= 0) {
+      animate(
+        "#preloader-mini", {
+          opacity: [1, 0],
+        }, {
+          duration: 0.45,
+          easing: "ease-in",
+        },
+      );
+
+      setTimeout(() => {
+        // $("#preloader-mini").css("opacity", "0");
+        $("#preloader-mini").css("z-index", "-99999");
+      }, 400);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    showLoader();
+
+    const params = new URLSearchParams(window.location.search);
+    const clientId = params.get("clienteId");
+
+    document
+      .getElementById("btnClear")
+      .addEventListener("click", deshabilitarSelect);
+    document
+      .getElementById("grabarButton")
+      .addEventListener("click", guardaAsignacion);
+
+    const btnFlotaTotal = document.getElementById("btn-flota-total");
+
+    $("#combo-box").select2({
+      placeholder: "Seleccione el cliente",
+      allowClear: false,
+    });
+
+    $("#combo-box-leasing").select2({
+      placeholder: "Seleccione el leasing",
+      allowClear: false,
+    });
+
+    $("#combo-box-asig").select2({
+      placeholder: "Seleccione el cliente asignado",
+      allowClear: false,
+      width: "65%",
+    });
+
+    $("#combo-box").on("select2:select", function() {
+      limpiarSelect("#combo-box-leasing");
+    });
+
+    cargarClientes();
+
+    const selectClientes = $("#combo-box");
+    const selectLeasingAnonim = $("#combo-box-leasing");
+
+    if (clientId) {
+      cargarLeasingOfClient(clientId).then(() => {
+        listaVehiculosAsignables(clientId);
+      });
+    } else {
+      listaVehiculosAsignables(null);
+    }
+
+    selectClientes.on("select2:select", async function() {
+      const id = selectClientes.val();
+      params.set("clienteId", id);
+      const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, "", nuevaURL);
+
+      cargarLeasingOfClient(id).then(() => {
+        listaVehiculosAsignables(id);
+      });
+    });
+
+    selectLeasingAnonim.on("select2:select", async function() {
+      const id = selectClientes.val();
+      await listaVehiculosAsignables(id);
+    });
+
+    cargarClientesAsig();
+
+    hideLoader();
+  });
+
+  document.addEventListener("change", function(e) {
+    if (!e.target.classList.contains("acta")) return;
+
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const container = e.target.closest("td");
+    const label = container.querySelector("label");
+
+    const span = label.querySelector("span");
+    const icon = label.querySelector("i");
+
+    // cambiar texto
+    span.textContent = file.name;
+
+    // cambiar icono
+    icon.className = "bi bi-check-circle";
+
+    // cambiar color
+    label.classList.remove("bg-blue-800");
+    label.classList.add("bg-green-600");
+  });
+</script>
 
 <?php
 require './templates/footer.html';

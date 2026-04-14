@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (findContract) {
       const isEdit = validNroContract(findContract.nroContrato);
-      if (isEdit === "TEMP") {
+      if (isEdit === "CPEN") {
         $("#title-form").text("Actualizar contrato");
         $("#desc-form").text(
           "Gestione la actualización de contratos temporales registrados para un cliente.",
@@ -983,7 +983,7 @@ async function guardarContrato() {
       .on("click", "#btn-save", async function () {
         if (isUpd && isUpd === "true" && contractId) {
           const isEdit = validNroContract(contratoData.nroContrato);
-          if (isEdit === "TEMP") {
+          if (isEdit === "CPEN") {
             await actualizar(contractId);
           } else {
             await registrar();
@@ -1041,7 +1041,7 @@ async function guardarContrato() {
   // SIN TARIFA ALTA
   if (isUpd && isUpd === "true" && contractId) {
     const isEdit = validNroContract(contratoData.nroContrato);
-    if (isEdit === "TEMP") {
+    if (isEdit === "CPEN") {
       await actualizar(contractId);
     } else {
       await registrar();

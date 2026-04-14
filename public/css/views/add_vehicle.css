@@ -39,22 +39,14 @@ body {
   text-align: center;
 }
 
-.tittle-form-adi {
-  background: #c59315;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  color: #fff;
-  padding: 20px 10px;
-}
-
-.tabla-form-adi {
+/* .tabla-form-adi {
   width: 100%;
   overflow-x: auto;
   overflow-y: auto;
   max-height: 580px;
   padding-bottom: 8px;
   box-sizing: border-box;
-}
+} */
 
 /* Contenedor de la tabla 
     .tabla-form-adi {
@@ -63,226 +55,7 @@ body {
     }*/
 
 /* Estilo para la tabla */
-.tabla-form-adi table::-webkit-scrollbar {
-  width: 15px;
-}
 
-.tabla-form-adi table::-webkit-scrollbar-track {
-  background: rgb(123, 152, 196);
-  border-radius: 50px;
-}
-
-.tabla-form-adi table::-webkit-scrollbar-thumb {
-  background: rgb(185, 185, 185);
-  border-radius: 50px;
-}
-
-table {
-  border-collapse: collapse;
-  width: max-content;
-  white-space: nowrap;
-  color: #000;
-}
-
-th,
-td {
-  border: 1px solid #8d8d8d;
-  padding: 8px 12px;
-  text-align: center;
-}
-
-th {
-  color: white;
-  background-color: #a16207;
-  font-family: "Fredoka Variable", serif;
-  font-size: 13px;
-  font-weight: 500;
-  position: sticky;
-  top: 0;
-  z-index: 2;
-}
-
-td {
-  font-family: "Fredoka Variable", serif;
-  font-size: 12px;
-}
-
-/* Ajustar el color de fondo de los encabezados */
-/* .tabla-form-adi th {
-  background-color: #a16207;
-} */
-
-/* Evitar que las celdas se colapsen demasiado */
-
-/* Añadir un ancho mínimo a las celdas de la tabla */
-th:nth-child(1),
-td:nth-child(1) {
-  /* width: 9%; */
-  width: 20px;
-  /* min-width: 80px; */
-}
-th:nth-child(2),
-td:nth-child(2) {
-  /* min-width: 80px; */
-  display: none;
-}
-th:nth-child(3),
-td:nth-child(3) {
-  width: 120px;
-  /* min-width: 80px; */
-}
-th:nth-child(4),
-td:nth-child(4) {
-  width: 120px;
-  /* min-width: 100px; */
-}
-th:nth-child(5),
-td:nth-child(5) {
-  width: 200px;
-  /* min-width: 100px; */
-}
-th:nth-child(6),
-td:nth-child(6) {
-  width: 180px;
-  /* min-width: 100px; */
-}
-th:nth-child(7),
-td:nth-child(7) {
-  width: 150px;
-  /* min-width: 80px; */
-}
-th:nth-child(8),
-td:nth-child(8) {
-  width: 150px;
-  /* min-width: 80px; */
-}
-th:nth-child(9),
-td:nth-child(9) {
-  width: 150px;
-  /* min-width: 100px; */
-}
-th:nth-child(10),
-td:nth-child(10) {
-  width: 200px;
-  /* min-wdth: 80px; */
-}
-th:nth-child(11),
-td:nth-child(11) {
-  width: 200px;
-  /* min-width: 80px; */
-}
-th:nth-child(12),
-td:nth-child(12) {
-  width: 200px;
-  /* min-width: 80px; */
-}
-th:nth-child(13),
-td:nth-child(13) {
-  width: 200px;
-  /* min-width: 80px; */
-}
-
-/* Estilo para la fila al pasar el mouse */
-tr:hover {
-  color: #fff;
-  cursor: pointer;
-}
-
-table th:nth-child(1) input,
-table td:nth-child(1) input {
-  width: 22px;
-  height: 22px;
-  text-align: center;
-  top: 4px;
-  position: relative;
-}
-
-table th:nth-child(2) input,
-table td:nth-child(2) input,
-table th:nth-child(3) input,
-table td:nth-child(3) input,
-table th:nth-child(4) input,
-table td:nth-child(4) input,
-table th:nth-child(5) input,
-table td:nth-child(5) input,
-table th:nth-child(6) input,
-table td:nth-child(6) input,
-table th:nth-child(7) input,
-table td:nth-child(7) input,
-table th:nth-child(8) input,
-table td:nth-child(8) input,
-table th:nth-child(9) select,
-table td:nth-child(9) input,
-table th:nth-child(10) select,
-table td:nth-child(10) select,
-table th:nth-child(11) input,
-table td:nth-child(11) select,
-table th:nth-child(12) select,
-table td:nth-child(12) select,
-table td:nth-child(13) select {
-  width: 100%;
-  /* height: 30px; */
-  text-align: center;
-}
-
-table th:nth-child(2) input,
-table td:nth-child(2) input {
-  display: none;
-}
-
-input[type="checkbox"] {
-  appearance: none; /* Elimina el diseño predeterminado */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #007bff; /* Borde azul */
-  border-radius: 25px; /* Bordes redondeados */
-  background-color: white;
-  cursor: pointer;
-  display: inline-block;
-}
-
-/* Estilo cuando está marcado */
-input[type="checkbox"]:checked {
-  background-color: #007bff;
-  border-color: #0056b3;
-}
-
-/* Agregar un ícono de check */
-input[type="checkbox"]:checked::after {
-  content: "✔";
-  color: white;
-  font-size: 17px;
-  display: block;
-  text-align: center;
-  line-height: 25px;
-  position: relative;
-  top: -2px;
-}
-
-td td:nth-child(1) input {
-  font-size: 25px;
-}
-
-.tabla-form-adi tr:hover {
-  background-color: #fffaed;
-  color: black;
-}
-
-.tabla-form-adi::-webkit-scrollbar {
-  width: 15px;
-}
-
-.tabla-form-adi::-webkit-scrollbar-track {
-  background: rgb(123, 152, 196);
-  border-radius: 50px;
-}
-
-.tabla-form-adi::-webkit-scrollbar-thumb {
-  background: rgb(185, 185, 185);
-  border-radius: 50px;
-}
 
 .cbo-form-dig {
   display: flex;
@@ -546,4 +319,170 @@ input.check-xtodo[type="checkbox"]:checked {
 /* OPCIONAL: Si quieres que también cambie cuando el menú está ABIERTO */
 .select2-container--default.select2-container--open ~ .label-select {
   color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* TABLA ESTILOS */
+div.dt-scroll {
+  border-radius: 8px !important;
+  border: 1px solid #e5e5e5;
+  overflow: hidden;
+}
+
+table thead {
+  border: 0;
+}
+
+table thead th .dt-column-title {
+  /* color: #667085 !important; */
+  font-size: 14px;
+  /* font-weight: 600; */
+}
+
+table.dataTable > thead > tr > th {
+  padding: 4px 8px;
+}
+
+/* table tbody tr {
+  cursor: pointer;
+} */
+
+table tbody tr:hover {
+  background-color: #f5f5f580;
+}
+
+table tbody tr td {
+  font-size: 12px;
+}
+
+table tfoot {
+  border: 0;
+}
+
+table tfoot tr {
+  background: #f8f9fa;
+}
+
+table tfoot th .dt-column-title {
+  color: #667085 !important;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+table.dataTable.stripe tbody tr.odd,
+table.dataTable.display tbody tr.odd {
+  background-color: #fff !important;
+}
+table.dataTable.stripe tbody tr.even,
+table.dataTable.display tbody tr.even {
+  background-color: #fff !important;
+}
+
+table.dataTable.display > tbody tr > .sorting_1,
+table.dataTable.display > tbody > tr:nth-child(odd) > .sorting_1,
+table.dataTable.hover > tbody > tr:hover > *,
+table.dataTable.display > tbody > tr:hover > *,
+table.dataTable.display > tbody > tr:nth-child(odd) > *,
+table.dataTable.display tbody tr:hover > .sorting_1 {
+  box-shadow: none !important;
+}
+
+.dt-container .superior {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.dt-container .inferior {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.dt-container .inferior .derecha-inferior {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+div.dt-container .dt-info {
+  color: oklch(0.556 0 0) !important;
+  font-size: 0.875rem;
+}
+
+.dt-container .inferior .derecha-inferior select {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current {
+  background: #2b5ce4 !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current:hover {
+  background: #3e68db !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button {
+  background: transparent !important;
+  color: rgb(139, 139, 139);
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button:hover {
+  background: #3e68db !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+table.dataTable.display>tbody>tr.selected+tr.selected>td {
+  border-top: 1px solid #fff !important;
+}
+
+table.dataTable>tbody>tr.selected>*{
+  box-shadow: inset 0 0 0 9999px oklch(80.9% 0.105 251.813) !important;
+  transition: box-shadow linear 300ms;
+}
+
+table.dataTable.display>tbody>tr.selected:hover>* {
+  box-shadow: inset 0 0 0 9999px oklch(62.3% 0.214 259.815) !important;
+}
+
+.selected {
+  box-shadow: inset 0 0 0 9999px oklch(80.9% 0.105 251.813) !important;
+}
+
+.btn-excel {
+  border: 0 !important;
+  border-radius: 4px !important;
+  color: #fff !important;
+  transition: linear 200ms;
+  background-color: #077703 !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+  margin: 0 !important;
+}
+
+.btn-excel:hover {
+  box-shadow: 2px 2px 5px #0000002d !important;
+}
+
+.btn-excel span {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
 }

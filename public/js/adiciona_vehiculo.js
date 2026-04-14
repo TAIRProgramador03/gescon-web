@@ -18,141 +18,13 @@ toastr.options = {
   hideMethod: "fadeOut",
 };
 
-let activeRequests = 0;
-
-function showLoader() {
-  activeRequests++;
-  $("#preloader-mini").css("opacity", "1");
-  $("#preloader-mini").css("z-index", "99999");
-}
-
-function hideLoader() {
-  activeRequests--;
-  if (activeRequests <= 0) {
-    animate(
-      "#preloader-mini",
-      {
-        opacity: [1, 0],
-      },
-      {
-        duration: 0.45,
-        easing: "ease-in",
-      },
-    );
-
-    setTimeout(() => {
-      // $("#preloader-mini").css("opacity", "0");
-      $("#preloader-mini").css("z-index", "-99999");
-    }, 400);
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  showLoader();
-
-  const params = new URLSearchParams(window.location.search);
-  const clientId = params.get("clienteId");
-
-  document
-    .getElementById("btnClear")
-    .addEventListener("click", deshabilitarSelect);
-  document
-    .getElementById("grabarButton")
-    .addEventListener("click", guardaAsignacion);
-
-  const btnFlotaTotal = document.getElementById("btn-flota-total");
-
-  $("#combo-box").select2({
-    placeholder: "Seleccione el cliente",
-    allowClear: false,
-  });
-
-  $("#combo-box-leasing").select2({
-    placeholder: "Seleccione el leasing",
-    allowClear: false,
-  });
-
-  $("#combo-box-asig").select2({
-    placeholder: "Seleccione el cliente asignado",
-    allowClear: false,
-    width: "65%",
-  });
-
-  $("#combo-box").on("select2:select", function () {
-    limpiarSelect("#combo-box-leasing");
-  });
-  // document
-  //   .querySelector("#combo-box-leasing")
-  //   .addEventListener("change", () => limpiarSelect("#combo-box"));
-  cargarClientes();
-  // cargarLeasing();
-
-  const selectClientes = $("#combo-box");
-  const selectLeasingAnonim = $("#combo-box-leasing");
-
-  if (clientId) {
-    cargarLeasingOfClient(clientId).then(() => {
-      listaVehiculosAsignables(clientId);
-    });
-  }
-
-  selectClientes.on("select2:select", async function () {
-    const id = selectClientes.val();
-    params.set("clienteId", id);
-    const nuevaURL = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState({}, "", nuevaURL);
-
-    // deshabilitarSelect();
-    // btnSelectLeasing.setAttribute("disabled", "disabled");
-
-    cargarLeasingOfClient(id).then(() => {
-      listaVehiculosAsignables(id);
-    });
-  });
-
-  selectLeasingAnonim.on("select2:select", async function () {
-    const id = selectClientes.val();
-    await listaVehiculosAsignables(id);
-  });
-
-  cargarClientesAsig();
-  const checkAll = document.getElementById("checkAll");
-  checkAll?.addEventListener("change", function () {
-    const checkboxes = document.querySelectorAll('input[name="item[]"]');
-    checkboxes.forEach((cb) => (cb.checked = this.checked));
-  });
-
-  hideLoader();
-});
-
-document.addEventListener("change", function (e) {
-  if (!e.target.classList.contains("acta")) return;
-
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const container = e.target.closest("td");
-  const label = container.querySelector("label");
-
-  const span = label.querySelector("span");
-  const icon = label.querySelector("i");
-
-  // cambiar texto
-  span.textContent = file.name;
-
-  // cambiar icono
-  icon.className = "bi bi-check-circle";
-
-  // cambiar color
-  label.classList.remove("bg-blue-800");
-  label.classList.add("bg-green-600");
-});
+let tableAssign = null;
 
 // Operacciones para el formulario de asignacion de vehiculos
 
-async function cargarClientes() {
+export async function cargarClientes() {
   try {
-    const IP_LOCAL = await obtenerConfig()
+    const IP_LOCAL = await obtenerConfig();
 
     const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
       method: "GET",
@@ -190,11 +62,11 @@ async function cargarClientes() {
   }
 }
 
-async function cargarLeasingOfClient(idCli) {
+export async function cargarLeasingOfClient(idCli) {
   try {
     const btnSelectLeasing = document.getElementById("combo-box-leasing");
 
-    const IP_LOCAL = await obtenerConfig()
+    const IP_LOCAL = await obtenerConfig();
 
     const response = await fetch(
       `http://${IP_LOCAL}:3000/leasingOfClient?idCli=${idCli}`,
@@ -227,7 +99,6 @@ async function cargarLeasingOfClient(idCli) {
     });
 
     if (leasing.length === 0) {
-      console.log(comboBox2);
       comboBox2.setAttribute("disabled", "disabled");
     } else {
       const allOption = document.createElement("option");
@@ -245,7 +116,7 @@ async function cargarLeasingOfClient(idCli) {
 
 async function cargarLeasing() {
   try {
-    const IP_LOCAL = await obtenerConfig()
+    const IP_LOCAL = await obtenerConfig();
 
     const response = await fetch(`http://${IP_LOCAL}:3000/leasing`, {
       method: "GET",
@@ -279,199 +150,273 @@ async function cargarLeasing() {
   }
 }
 
-function limpiarSelect(selector) {
+export function limpiarSelect(selector) {
   $(selector).val(null).trigger("change");
 }
 
-async function listaVehiculosAsignables(clientId) {
+export async function listaVehiculosAsignables(clientId) {
   // let id = "";
   let idCli = clientId;
   if (!clientId) idCli = $("#combo-box").val();
   const idLea = $("#combo-box-leasing").val();
 
-  console.log({ idCli, idLea });
-
-  // if (idCli !== "" && idLea === "") {
-  //   id = idCli;
-  // } else if (idLea !== "" && idCli === "") {
-  //   id = idLea;
-  // } else {
-  //   console.error("Error al cargar el leasing");
-  //   return;
-  // }
-
   try {
-    const IP_LOCAL = await obtenerConfig()
+    let vehiLeasing = { data: null };
 
-    const response = await fetch(
-      `http://${IP_LOCAL}:3000/consultaVehiculoLeasing?idCli=${idCli}&nroLeasing=${idLea}`,
-      {
-        method: "GET",
-        credentials: "include", // Asegura que las cookies se envíen con la solicitud
-      },
-    );
-    const vehiLeasing = await response.json();
+    if (idCli) {
+      const IP_LOCAL = await obtenerConfig();
 
-    if (!vehiLeasing.success || vehiLeasing.data.length === 0) {
-      document.querySelector(".tabla-form-adi table tbody").innerHTML = `
-                <tr>
-                    <td colspan="12">No hay vehículos disponibles</td>
-                </tr>
-            `;
-      return;
+      const response = await fetch(
+        `http://${IP_LOCAL}:3000/consultaVehiculoLeasing?idCli=${idCli}&nroLeasing=${idLea}`,
+        {
+          method: "GET",
+          credentials: "include", // Asegura que las cookies se envíen con la solicitud
+        },
+      );
+
+      vehiLeasing = await response.json();
     }
 
-    const tbody = document.querySelector(".tabla-form-adi table tbody");
-    tbody.innerHTML = ""; // Limpia las filas existentes
-    let contador = 0;
-    vehiLeasing.data.forEach((vehi, index) => {
-      const fileId = `acta_${index}`;
+    const data = Array.isArray(vehiLeasing.data) ? vehiLeasing.data : [];
 
-      const row = document.createElement("tr");
-      row.innerHTML = `
-                <td>${(contador =
-                  contador +
-                  1)} &nbsp;&nbsp;<input type="checkbox" name="item[]" value=""></td>
-                <td><input type="text" name="codini[]" value="${
-                  vehi.codini
-                }" disabled></td>
-                <td><input type="text" name="placa[]" value="${
-                  vehi.placa
-                }" disabled></td>
-                <td><input type="text" name="marca[]" value="${
-                  vehi.marca
-                }" disabled></td>
-                <td><input type="text" name="modelo[]" value="${
-                  vehi.modelo
-                }" disabled></td>
-                <td><input type="text" name="leasing[]" value="${vehi.nro_leasing.trim()}" disabled></td>
-                <td><input type="text" name="tarifa[]" value="" placeholder="0" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
-                <td><input type="date" name="fechaIni[]" value="" placeholder="dd/mm/aaaa" class="dte-ini text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
-                <td><input type="date" name="fechaFin[]" value="" placeholder="dd/mm/aaaa" class="dte-fin text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
-                <td><select name="operacion[]" class="combo-operacion cbo-form-cliente">
-                    </select></td>
-                <td><select name="contrato[]" class="combo-contrato cbo-form-cliente">
-                    </select></td>
-                <td class="overflow-hidden"><select name="tipo_terreno[]" class="combo-tip-terreno cbo-form-cliente">
-                        <option value="4">Seleccione el tipo</option>
+    if ($.fn.DataTable.isDataTable("#listAssign")) {
+      tableAssign.clear();
+      tableAssign.rows.add(data);
+      tableAssign.draw();
+    } else {
+      tableAssign = $("#listAssign").DataTable({
+        language: {
+          url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+        },
+        emptyTable: "No hay vehículos disponibles",
+        fixedHeader: true,
+        dom: '<"superior"f>rt<"inferior"i<"derecha-inferior"lp>>',
+        scrollCollapse: true,
+        scrollX: true,
+        scrollY: 550,
+        data,
+        order: [[1, "asc"]],
+        select: {
+          style: "multi",
+          selector: "td:first-child",
+        },
+        columnDefs: [
+          {
+            orderable: false,
+            render: DataTable.render.select(),
+            targets: 0,
+          },
+          // Centrar contenido y cabecera en las columnas 0, 1 y 2
+          {
+            className: "dt-center",
+            targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+          },
+        ],
+        columns: [
+          {
+            data: null, // CHECKBOX
+            defaultContent: "",
+          },
+          {
+            data: "item",
+            render: function (data, type, row, meta) {
+              return meta.row + 1;
+            },
+            width: "25px",
+          },
+          {
+            data: "codini",
+            render: (data) => {
+              return `<input type="text" name="codini[]" value="${
+                data
+              }" disabled>`;
+            },
+            visible: false,
+          },
+          {
+            data: "placa",
+            render: (data, type) => {
+              if (type === "filter" || type === "sort") {
+                return data;
+              }
+
+              return `<input type="text" name="placa[]" value="${data}" class="w-full text-center" disabled>`;
+            },
+            width: "80px",
+          },
+          {
+            data: "marca",
+            render: (data, type) => {
+              if (type === "filter" || type === "sort") {
+                return data;
+              }
+
+              return `<input type="text" name="marca[]" value="${
+                data
+              }" class="w-full text-center" disabled>`;
+            },
+            width: "80px",
+          },
+          {
+            data: "modelo",
+            render: (data, type) => {
+              if (type === "filter" || type === "sort") {
+                return data;
+              }
+
+              return `<input type="text" name="modelo[]" value="${
+                data
+              }" class="w-full text-center" disabled>`;
+            },
+            width: "200px",
+          },
+          {
+            data: "nro_leasing",
+            render: (data, type) => {
+              if (type === "filter" || type === "sort") {
+                return data;
+              }
+
+              return `<input type="text" name="leasing[]" value="${data.trim()}" class="w-full text-center" disabled>`;
+            },
+            width: "200px",
+          },
+          {
+            data: null, // TARIFA
+            render: () => {
+              return `<input type="text" name="tarifa[]" value="" placeholder="0" class="!text-black text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input">`;
+            },
+            width: "80px",
+          },
+          {
+            data: null, // FECHA ENTREGA
+            render: () => {
+              return `<input type="date" name="fechaIni[]" value="" placeholder="dd/mm/aaaa" class="dte-ini !text-black text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input">`;
+            },
+            width: "150px",
+          },
+          {
+            data: null, // FECHA DEVOLUCION
+            render: () => {
+              return `<input type="date" name="fechaFin[]" value="" placeholder="dd/mm/aaaa" class="dte-fin !text-black text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input">`;
+            },
+            width: "150px",
+          },
+          {
+            data: null, // OPERACION
+            render: () => {
+              return `<select name="operacion[]" class="combo-operacion cbo-form-cliente"></select>`;
+            },
+            width: "200px",
+          },
+          {
+            data: null, // CONTRATO
+            render: () => {
+              return `<select name="contrato[]" class="combo-contrato cbo-form-cliente"></select>`;
+            },
+            width: "200px",
+          },
+          {
+            data: null, // TERRENO
+            render: () => {
+              return `<select name="tipo_terreno[]" class="combo-tip-terreno cbo-form-cliente">
+                        <option value="5">Seleccione el tipo</option>
                         <option value="0">Superficie</option>
                         <option value="1">Socavon</option>
                         <option value="2">Ciudad</option>
                         <option value="3">Severo</option>
-                    </select>
-                </td>
-                <td>
-                  <select name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
-                    <option value="4">Seleccione el tipo</option>
-                    <option value="0">Titular</option>
-                    <option value="1">Retén</option>
-                    <option value="2">Logística</option>
-                    <option value="3">Pendiente</option>
-                  </select>
-                </td>
-                <td>
-                  <div class="flex">
-                    <label for="${fileId}" class="btn-upload w-full flex justify-center items-center gap-1 cursor-pointer bg-blue-800 !rounded-md !text-white px-3 py-2">
-                      <i class="bi bi-file-earmark-arrow-up"></i>
-                      <span>Subir archivo</span>
-                    </label>
-                    <input id="${fileId}" type="file" name="acta[]" class="acta hidden" accept="application/pdf">
-                  </div>
-                </td>
+                        <option value="4">Pendiente</option>
+                    </select>`;
+            },
+            width: "180px",
+          },
+          {
+            data: null, // CONDICION
+            render: () => {
+              return `
+              <select name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
+                <option value="4">Seleccione el tipo</option>
+                <option value="0">Titular</option>
+                <option value="1">Retén</option>
+                <option value="2">Logística</option>
+                <option value="3">Pendiente</option>
+              </select>
             `;
-      tbody.appendChild(row);
-
-      $(row)
-        .find(".combo-operacion")
-        .select2({
-          placeholder: "Seleccione la operacion",
-          allowClear: false,
-        })
-        .next(".select2-container")
-        .css({
-          "font-family": "Fredoka Variable, sans-serif",
-          "font-size": "13px",
-          "font-optical-sizing": "auto",
-          "font-style": "normal",
-          "font-weight": "400",
-        });
-
-      $(row)
-        .find(".combo-contrato")
-        .select2({
-          placeholder: "Seleccione el contrato",
-          allowClear: false,
-        })
-        .next(".select2-container")
-        .css({
-          "font-family": "Fredoka Variable, sans-serif",
-          "font-size": "13px",
-          "font-optical-sizing": "auto",
-          "font-style": "normal",
-          "font-weight": "400",
-        });
-
-      $(row)
-        .find(".combo-tip-terreno")
-        .select2({
-          placeholder: "Seleccione el terreno",
-          allowClear: false,
-        })
-        .next(".select2-container")
-        .css({
-          "font-family": "Fredoka Variable, sans-serif",
-          "font-size": "13px",
-          "font-optical-sizing": "auto",
-          "font-style": "normal",
-          "font-weight": "400",
-        });
-
-      $(row)
-        .find(".condicion-select")
-        .select2({
-          placeholder: "Seleccione condicion",
-          allowClear: false,
-        })
-        .next(".select2-container")
-        .css({
-          "font-family": "Fredoka Variable, sans-serif",
-          "font-size": "13px",
-          "font-optical-sizing": "auto",
-          "font-style": "normal",
-          "font-weight": "400",
-        });
-
-      $(row)
-        .find(".dte-ini")
-        .each(function () {
-          flatpickr(this, {
-            dateFormat: "d/m/Y",
-            locale: "es",
+            },
+            width: "180px",
+          },
+          {
+            data: null, // ACTA
+            render: (data, type, row, meta) => {
+              return `
+              <div class="flex">
+                <label for="acta_${row.codini}" class="btn-upload w-full flex justify-center items-center gap-1 cursor-pointer bg-blue-800 !rounded-md !text-white px-3 py-2">
+                  <i class="bi bi-file-earmark-arrow-up"></i>
+                  <span>Subir archivo</span>
+                </label>
+                <input id="acta_${row.codini}" type="file" name="acta[]" class="acta hidden" accept="application/pdf">
+              </div>
+            `;
+            },
+            width: "150px",
+          },
+        ],
+        drawCallback: function () {
+          $(".combo-operacion").select2({
+            placeholder: "Seleccione la operacion",
+            width: "100%",
           });
-        });
 
-      $(row)
-        .find(".dte-fin")
-        .each(function () {
-          flatpickr(this, {
-            dateFormat: "d/m/Y",
-            locale: "es",
+          $(".combo-contrato").select2({
+            placeholder: "Seleccione el contrato",
+            width: "100%",
           });
-        });
 
-      $("#combo-box-asig").prop("disabled", false);
-      document.getElementById("checkAll").removeAttribute("disabled");
+          $(".combo-tip-terreno").select2({
+            placeholder: "Seleccione el terreno",
+            width: "100%",
+          });
+
+          $(".condicion-select").select2({
+            placeholder: "Seleccione condicion",
+            width: "100%",
+          });
+
+          $(".dte-ini").each(function () {
+            if (!this._flatpickr) {
+              flatpickr(this, { dateFormat: "d/m/Y", locale: "es" });
+            }
+          });
+
+          $(".dte-fin").each(function () {
+            if (!this._flatpickr) {
+              flatpickr(this, { dateFormat: "d/m/Y", locale: "es" });
+            }
+          });
+        },
+      });
+
+      setTimeout(() => {
+        tableAssign.columns.adjust().draw();
+      }, 100);
+    }
+
+    if (data.length > 0) {
+      $("#combo-box-asig").prop("disabled", false).val(null).trigger("change");
       document.getElementById("repeticion").removeAttribute("disabled");
-    });
+    } else {
+      $("#combo-box-asig").prop("disabled", true).val(null).trigger("change");
+      document.getElementById("repeticion").setAttribute("disabled", "true");
+    }
   } catch (error) {
     console.error("Error al enviar los datos:", error);
     toastr.warning("No se pudo cargar la lista de vehiculos", "Oops...");
   }
 }
 
-async function cargarClientesAsig() {
+export async function cargarClientesAsig() {
   try {
-    const IP_LOCAL = await obtenerConfig()
+    const IP_LOCAL = await obtenerConfig();
 
     const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
       method: "GET",
@@ -505,7 +450,7 @@ async function cargarClientesAsig() {
   }
 }
 
-function deshabilitarSelect() {
+export function deshabilitarSelect() {
   const params = new URLSearchParams(window.location.search);
   params.delete("clienteId");
 
@@ -513,13 +458,11 @@ function deshabilitarSelect() {
   window.history.replaceState({}, "", nuevaURL);
 
   $("#combo-box-asig").prop("disabled", true);
-  document.getElementById("checkAll").setAttribute("disabled", "true");
   document.getElementById("repeticion").setAttribute("disabled", "true");
-  document.querySelector(".tabla-form-adi table tbody").innerHTML = `
-        <tr>
-            <td colspan="12">Seleccione un cliente para ver los vehiculos por asignar</td>
-        </tr>
-    `;
+
+  if (tableAssign) {
+    tableAssign.clear().draw();
+  }
 
   $("#combo-box").val(null).trigger("change"); // Restablece el valor al predeterminado
 
@@ -528,7 +471,7 @@ function deshabilitarSelect() {
 
   $("#combo-box-asig").val(null).trigger("change"); // Restablece el valor al predeterminado
 
-  document.getElementById("checkAll").checked = false;
+  // document.getElementById("checkAll").checked = false;
   document.getElementById("repeticion").checked = false;
 
   comboBox2.innerHTML = "";
@@ -554,7 +497,7 @@ async function cargarOperaciones() {
       return;
     }
     try {
-      const IP_LOCAL = await obtenerConfig()
+      const IP_LOCAL = await obtenerConfig();
 
       // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
       const response = await fetch(
@@ -604,7 +547,7 @@ async function cargarContrato() {
       return;
     }
     try {
-      const IP_LOCAL = await obtenerConfig()
+      const IP_LOCAL = await obtenerConfig();
 
       // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
       const response = await fetch(
@@ -642,11 +585,11 @@ async function cargarContrato() {
   });
 }
 
-async function guardaAsignacion() {
+export async function guardaAsignacion() {
   // Obtener valores de los campos del formulario
   let formData = {
     idCliente: $("#combo-box-asig").val(),
-    valorRepe: document.getElementById("checkAll").checked,
+    valorRepe: document.getElementById("repeticion").checked,
   };
 
   // Validación de campos obligatorios
@@ -659,76 +602,83 @@ async function guardaAsignacion() {
   const tarifasAltas = [];
 
   // Filtrar solo los checkboxes seleccionados
-  const detalles = Array.from(document.querySelectorAll("#asignacion-tbody tr"))
-    .filter((fila) => fila.querySelector('input[name="item[]"]').checked) // Solo los seleccionados
-    .map((fila, index) => {
-      let idveh = fila.querySelector('input[name="codini[]"]').value;
-      let numpla = fila.querySelector('input[name="placa[]"]').value;
-      let marca = fila.querySelector('input[name="marca[]"]').value;
-      let modelo = fila.querySelector('input[name="modelo[]"]').value;
-      let tarifa = fila.querySelector('input[name="tarifa[]"]').value;
-      let fechaIni = dayjs(
-        fila.querySelector('input[name="fechaIni[]"]').value,
-        "DD/MM/YYYY",
-      ).format("YYYY-MM-DD");
-      let fechaFin = dayjs(
-        fila.querySelector('input[name="fechaFin[]"]').value,
-        "DD/MM/YYYY",
-      ).format("YYYY-MM-DD");
-      let idOperacion = fila.querySelector('select[name="operacion[]"]').value; // Cambié de input a select
-      let idContrato = fila.querySelector('select[name="contrato[]"]').value;
-      let condicion = fila.querySelector('select[name="condicion[]"]').value;
-      let leasing = fila.querySelector('input[name="leasing[]"]').value;
-      let idTerreno = fila.querySelector('select[name="tipo_terreno[]"]').value;
-      let file = fila.querySelector('input[name="acta[]"]').files[0];
+  const detalles = [];
 
-      // Validación y asignación de valores predeterminados
-      idveh = idveh === "" ? 0 : idveh;
-      numpla = numpla === "" ? 0 : numpla;
-      tarifa = tarifa === "" ? 0 : tarifa;
+  let contador = 1;
 
-      if (condicion == "4") {
-        toastr.info(
-          `Debes de seleccionar una condición a la placa ${numpla}`,
-          "Aviso",
-        );
-        throw new Error(
-          `Debes de seleccionar una condición a la placa ${numpla}`,
-        );
+  tableAssign.rows({ selected: true }).every(function (index) {
+    const data = this.data(); // ✅ datos originales
+    const node = this.node(); // ✅ DOM real
+    const $fila = $(node);
+
+    let idveh = data.codini; // 🔥 AQUÍ el cambio importante
+    let numpla = $fila.find('input[name="placa[]"]').val();
+    let marca = $fila.find('input[name="marca[]"]').val();
+    let modelo = $fila.find('input[name="modelo[]"]').val();
+    let tarifa = $fila.find('input[name="tarifa[]"]').val();
+
+    let fechaIni = dayjs(
+      $fila.find('input[name="fechaIni[]"]').val(),
+      "DD/MM/YYYY",
+    ).format("YYYY-MM-DD");
+
+    let fechaFin = dayjs(
+      $fila.find('input[name="fechaFin[]"]').val(),
+      "DD/MM/YYYY",
+    ).format("YYYY-MM-DD");
+
+    let idOperacion = $fila.find('select[name="operacion[]"]').val();
+    let idContrato = $fila.find('select[name="contrato[]"]').val();
+    let condicion = $fila.find('select[name="condicion[]"]').val();
+    let leasing = $fila.find('input[name="leasing[]"]').val();
+    let idTerreno = $fila.find('select[name="tipo_terreno[]"]').val();
+    let file = $fila.find('input[name="acta[]"]')[0]?.files[0];
+
+    // Defaults
+    idveh = idveh === "" ? 0 : idveh;
+    numpla = numpla === "" ? 0 : numpla;
+    tarifa = tarifa === "" ? 0 : tarifa;
+
+    if (condicion == "4") {
+      toastr.info(
+        `Debes de seleccionar una condición a la placa ${numpla}`,
+        "Aviso",
+      );
+      throw new Error(`Condición inválida en placa ${numpla}`);
+    }
+
+    if (fechaIni && fechaFin) {
+      const fechaInicio = new Date(fechaIni);
+      const fechaFinal = new Date(fechaFin);
+
+      if (fechaFinal <= fechaInicio) {
+        invalidDates.push(index + 1);
       }
+    }
 
-      if (!fechaIni || !fechaFin) {
-        console.log("Ambas fechas son obligatorias");
-      } else {
-        const fechaInicio = new Date(fechaIni);
-        const fechaFinal = new Date(fechaFin);
+    if (tarifa >= 100) {
+      tarifasAltas.push(tarifa);
+    }
 
-        if (fechaFinal <= fechaInicio) {
-          invalidDates.push(index + 1);
-        }
-      }
-
-      if (tarifa >= 100) {
-        tarifasAltas.push(tarifa);
-      }
-
-      return {
-        secCon: index + 1,
-        idveh,
-        numpla,
-        marca,
-        modelo,
-        tarifa,
-        fechaIni,
-        fechaFin,
-        idOperacion,
-        idContrato,
-        leasing,
-        idTerreno,
-        condicion,
-        archivoPdf: file,
-      };
+    detalles.push({
+      secCon: contador,
+      idveh,
+      numpla,
+      marca,
+      modelo,
+      tarifa,
+      fechaIni,
+      fechaFin,
+      idOperacion,
+      idContrato,
+      leasing,
+      idTerreno,
+      condicion,
+      archivoPdf: file,
     });
+
+    contador++;
+  });
 
   if (detalles.length === 0) {
     toastr.info("Debe seleccionar al menos un vehículo.", "Aviso");
@@ -828,13 +778,14 @@ async function guardaAsignacion() {
 
   const asignacionData = { ...formData, detalles };
 
+  console.log(asignacionData);
+
   await registrar(asignacionData);
 }
 
 const registrar = async (asignacionData) => {
   try {
-    const IP_LOCAL = await obtenerConfig()
-
+    const IP_LOCAL = await obtenerConfig();
     await Promise.all(
       asignacionData.detalles.map(async (detalle) => {
         if (!detalle.archivoPdf) return;
@@ -872,8 +823,8 @@ const registrar = async (asignacionData) => {
 
 const validarAsignacion = async (detalles) => {
   if (!detalles || detalles.length === 0) return { success: true };
-  
-  const IP_LOCAL = await obtenerConfig()
+
+  const IP_LOCAL = await obtenerConfig();
 
   const validacionResponse = await fetch(
     `http://${IP_LOCAL}:3000/validaContratoCantidad`,

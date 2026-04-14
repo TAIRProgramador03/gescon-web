@@ -72,56 +72,6 @@ require './templates/header.html';
 
 <main class="main-container" data-route-permission="ver_leasing">
   <div class="container-info">
-    <!-- <div class="container-filter justify-center items-center px-6 py-4">
-      <div class="w-3 h-full bg-blue-700 absolute top-0 left-0"></div>
-      <h3 class="w-[10%]">Filtrar por</h3>
-      <div class="w-full grid grid-cols-4 gap-6">
-        <div class="row-filter">
-          <div class="flex flex-col w-full relative">
-            <select id="filter-bank" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
-
-            <label
-              for="filter-bank"
-              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-              Bancos
-            </label>
-          </div>
-        </div>
-        <div id="row-client" class="row-filter filter-hidden">
-          <div class="flex flex-col w-full relative">
-            <select id="filter-client" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
-
-            <label
-              for="filter-client"
-              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-              Clientes
-            </label>
-          </div>
-        </div>
-        <div id="row-contract" class="row-filter filter-hidden">
-          <div class="flex flex-col w-full relative">
-            <select id="filter-contract" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
-
-            <label
-              for="filter-contract"
-              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-              Contratos
-            </label>
-          </div>
-        </div>
-        <div id="row-document" class="row-filter filter-hidden">
-          <div class="flex flex-col w-full relative">
-            <select id="filter-document" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
-
-            <label
-              for="filter-document"
-              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-              Documentos
-            </label>
-          </div>
-        </div>
-      </div>
-    </div> -->
     <div class="container-table flex flex-col gap-4 px-9 py-7">
       <div class="w-full h-3 bg-cyan-700 absolute top-0 left-0"></div>
       <div class="w-full flex flex-col justify-center gap-2">
@@ -465,8 +415,8 @@ require './templates/header.html';
           width: "120px",
         },
         {
-          data: "tipoCon",
-          width: "120px",
+          data: "nroContrato",
+          width: "180px",
         },
         {
           data: "archivoPdf",

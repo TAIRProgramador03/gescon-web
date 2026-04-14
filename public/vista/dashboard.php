@@ -57,7 +57,7 @@ require './templates/header.html';
     <span class="animate-wave" style="animation-delay:0.4s">o</span>
     <span class="animate-wave" style="animation-delay:0.5s">n</span>
   </h3>
-  <p class="m-0 font-medium text-gray-400 text-xl">Sistema gestor de contratos</p>
+  <p class="m-0 font-medium text-gray-400 text-xl">Sistema Gestor de Contratos</p>
   <div class="flex-col gap-4 w-full flex items-center justify-center relative">
     <div class="w-28 h-28 border-8 text-blue-600 text-4xl animate-spin border-gray-300 flex items-center justify-center border-t-blue-600 rounded-full"></div>
     <div class="gif-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">

@@ -436,6 +436,11 @@ require './templates/header.html';
           },
         },
       ],
+      createdRow: function(row, data, dataIndex) {
+        if (data.DESCRIPCION.includes("CPEN")) {
+          $(row).css("background-color", "#ffe5e5", "important");
+        }
+      }
     });
 
     $("#combo-box").select2({
@@ -504,12 +509,50 @@ require './templates/header.html';
 
       if (idContract) {
         await cargarDatosContrato(idClient, idContract);
-        $("#btn-edit-con").addClass("flex");
-        $("#btn-edit-con").removeClass("hidden");
+
       } else {
         await cargarDatosContrato(idClient);
         $("#btn-edit-con").addClass("hidden");
         $("#btn-edit-con").removeClass("flex");
+      }
+    } else {
+      const contTemp = await verificarContratosTemp();
+
+      if (contTemp.data.total > 0) {
+        const total = contTemp.data.total;
+        const clientes = contTemp.data.clientes;
+
+        setTimeout(() => {
+          animate(".alert-container", {
+            opacity: [0, 1],
+            scale: [0.7, 1.05, 1]
+          }, {
+            duration: 0.45,
+            easing: "ease-out"
+          });
+
+          $("#alert-modal").css("display", "flex");
+
+          $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
+
+          $("#alert-modal .alert-container").html(
+            `
+              <h2>¡Aviso de contratos pendientes!</h2>
+              <p style="color: black !important">El sistema ha detectado que cuenta con <b>${total}</b> contratos(s) pendiente(s).</p>
+              <div>
+                <p class="font-semibold">Clientes:</p>
+                <ul class="list-disc pl-5">
+                  ${clientes.map((cli) => (
+                    `<li class="text-sm">${cli}</li>`
+                  ))}
+                </ul>
+              </div>
+              <div class="btn-group">
+                <button id="btn-close-alert" class="btn btn-dark">Ok, de acuerdo</button>
+              </div>
+            `
+          )
+        }, 1000)
       }
     }
 
@@ -521,7 +564,17 @@ require './templates/header.html';
     hideLoader();
   });
 
-  $("#alert-modal .alert-bg").on("click", () => {
+  $("#alert-modal .alert-bg").on("click", async () => {
+    const anim = animate(".alert-container", {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.7]
+    }, {
+      duration: 0.45,
+      easing: "ease-in"
+    });
+
+    await anim.finished;
+
     const modal = document.getElementById("alert-modal");
     modal.style.display = "none";
 
@@ -693,8 +746,13 @@ require './templates/header.html';
           document.getElementById("txt-assign").textContent =
             data.data.cantidadAsignados || "0";
 
-          $("#btn-edit-con").addClass("flex")
-          $("#btn-edit-con").removeClass("hidden")
+          if (data.data.isTemp) {
+            $("#btn-edit-con").addClass("flex")
+            $("#btn-edit-con").removeClass("hidden")
+          } else {
+            $("#btn-edit-con").addClass("hidden");
+            $("#btn-edit-con").removeClass("flex");
+          }
 
         } catch (error) {
           console.error("Error al obtener los datos del contrato:", error);
@@ -712,7 +770,7 @@ require './templates/header.html';
   $("#btnNewDoc").on("click", function() {
     const perm = isPermission("insertar_documentos");
 
-    if(!perm) {
+    if (!perm) {
       return;
     }
 
@@ -722,7 +780,7 @@ require './templates/header.html';
   $("#btnNewLea").on("click", function() {
     const perm = isPermission("insertar_leasing");
 
-    if(!perm) {
+    if (!perm) {
       return;
     }
 

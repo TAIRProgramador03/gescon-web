@@ -130,3 +130,26 @@ export const getRoles = async () => {
     toastr.error(error.response.data.message, "Oops...")
   }
 }
+
+export const updateRoleUser = async (id, roleId) => {
+  try {
+    instance = await obtenerInstancia();
+
+    const response = await instance.put(`/actualizarUsuario/${id}`, {
+      roleId
+    }, {
+      withCredentials: true
+    })
+
+    const data = response.data;
+
+    if(data.success) {
+      toastr.success("Rol actualizado correctamente", "¡Éxito!");
+    } else {
+      toastr.warning(data.message, "Oops...");
+    }
+  } catch (error) {
+    console.error(error.response.data.message)
+    toastr.error(error.response.data.message, "Oops...")
+  }
+}

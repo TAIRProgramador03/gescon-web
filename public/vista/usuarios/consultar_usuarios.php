@@ -95,7 +95,8 @@ require '../templates/header.html';
   import {
     getTableUsers,
     getRoles,
-    getUserById
+    getUserById,
+    updateRoleUser
   } from "../../js/consulta_usuario.js"
 
   import {
@@ -171,8 +172,36 @@ require '../templates/header.html';
       .addClass("opacity-100 z-50");
   })
 
-  $("#btn-save").on("click", async function () {
-    const idRol = $("#cbo-roles").val(`${findUser.idRol}`);
+  $("#btn-save").on("click", async function() {
+    const idRol = Number($("#cbo-roles").val());
+
+    await updateRoleUser(currentId, idRol);
+
+    const rowIndex = table.rows().indexes().toArray().find(index => {
+      return table.row(index).data().id === currentId;
+    });
+
+    if (rowIndex !== undefined) {
+      const rowData = table.row(rowIndex).data();
+
+      rowData.rol.name = $("#cbo-roles option:selected").text();
+
+      table.row(rowIndex).data(rowData).draw(false);
+    }
+    
+    const anim = animate(".modal-container", {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.7]
+    }, {
+      duration: 0.45,
+      easing: "ease-in"
+    })
+
+    await anim.finished;
+
+    $("#modal-upd")
+      .removeClass("opacity-100 z-50")
+      .addClass("opacity-0 -z-50");
   })
 
   $("#btn-cancel").on("click", async function() {

@@ -262,7 +262,7 @@ require './templates/header.html';
           <button
             type="button"
             id="btn-edit-con"
-            data-permissions="ver_contratos"
+            data-permissions="editar_contratos"
             class="cursor-pointer bg-blue-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
             <div
               class="bg-blue-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">

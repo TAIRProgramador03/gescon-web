@@ -58,7 +58,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Visualizar dashboard</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="ver-dashboard" name="ver-dashboard" disabled>
+              <input class="sr-only peer" type="checkbox" id="ver_dashboard" name="ver_dashboard" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -438,6 +438,7 @@ require '../templates/header.html';
 
     const permissions = await getPermissions(userId)
 
+    $("#ver_dashboard").prop("checked", permissions.includes("ver_dashboard"))
     $("#ver_contratos").prop("checked", permissions.includes("ver_contratos"))
     $("#ver_documentos").prop("checked", permissions.includes("ver_documentos"))
     $("#ver_leasing").prop("checked", permissions.includes("ver_leasing"))

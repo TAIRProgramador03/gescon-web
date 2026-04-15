@@ -1,7 +1,7 @@
 // const IP_LOCAL = "localhost";
 
 const getDocuments = async (contratoId, clienteId) => {
-  const IP_LOCAL = await obtenerConfig()
+  const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
     `http://${IP_LOCAL}:3000/documentoPorContrato?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
@@ -17,7 +17,7 @@ const getDocuments = async (contratoId, clienteId) => {
 };
 
 const getDetailDocument = async (documentoId) => {
-  const IP_LOCAL = await obtenerConfig()
+  const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
     `http://${IP_LOCAL}:3000/detalleDocumento?documentoId=${documentoId.toString()}`,
@@ -33,8 +33,8 @@ const getDetailDocument = async (documentoId) => {
 };
 
 const getVehByDocument = async (documentoId, tipoTerr) => {
-  const IP_LOCAL = await obtenerConfig()
-  
+  const IP_LOCAL = await obtenerConfig();
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/placasPorDocumento?documentoId=${documentoId.toString()}&tipoTerr=${tipoTerr}`,
     {
@@ -68,6 +68,39 @@ const getVehByDocument = async (documentoId, tipoTerr) => {
   }
 
   return data;
+};
+
+const getFile = async (key) => {
+  try {
+    const IP_LOCAL = await obtenerConfig();
+    const viewPDF = await fetch(
+      `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
+      {
+        credentials: "include",
+      },
+    );
+
+    const result = await viewPDF.json();
+
+    if (result.success) {
+      return result.url;
+    } else {
+      toastr.warning(result.message, "Oops...");
+    }
+  } catch (error) {
+    console.error(error);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+};
+
+const verPdf = async (key) => {
+  const link = await getFile(key);
+
+  if (!link) {
+    return;
+  }
+
+  window.open(link, "_blank");
 };
 
 function convertirFecha(fecha) {

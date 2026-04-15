@@ -215,6 +215,8 @@ async function cargarDatosContrato(clienteId, contratoId) {
       $("#btn-edit-con").addClass("hidden");
       $("#btn-edit-con").removeClass("flex");
     }
+
+    return data;
   } catch (error) {
     console.error("Error al obtener los datos del contrato:", error);
   }
@@ -250,8 +252,6 @@ const getFile = async (key) => {
 
     const result = await viewPDF.json();
 
-    console.log(result);
-
     if (result.success) {
       return result.url;
     } else {
@@ -266,7 +266,10 @@ const getFile = async (key) => {
 const verPdf = async (key) => {
   const link = await getFile(key);
 
-  console.log("LINK", link);
+  if(!link) {
+    return;
+  }
+
   window.open(link, "_blank");
 };
 

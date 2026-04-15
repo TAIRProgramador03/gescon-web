@@ -383,7 +383,7 @@ require './templates/header.html';
 
       // ABRIR EL PDF
       $("#btn-document").off("click").on("click", () => {
-        window.open(detailDocument.archivoPdf, '_blank');
+        verPdf(detailDocument.archivoPdf);
       })
     }
 
@@ -437,9 +437,9 @@ require './templates/header.html';
         $("#btn-document").removeClass("hidden");
 
         // ABRIR EL PDF
-        // $("#btn-document").off("click").on("click", () => {
-        //   window.open(detailDocument.archivoPdf, '_blank');
-        // })
+        $("#btn-document").off("click").on("click", () => {
+          verPdf(detailDocument.archivoPdf);
+        })
 
         hideSkeleton();
       }

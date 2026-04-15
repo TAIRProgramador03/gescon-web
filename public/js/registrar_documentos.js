@@ -532,12 +532,6 @@ async function guardarDocumento() {
           console.log("valido carnal");
         }
 
-        if (condicion == "4") {
-          throw new Error(
-            `Debes de seleccionar una condición al item ${index + 1}`,
-          );
-        }
-
         if (!Number.isInteger(rm) || rm < 0) {
           throw new Error("RM inválido, solo debe contener números enteros");
         }
@@ -611,16 +605,15 @@ async function guardarDocumento() {
   // Construcción del objeto final de datos
   const contratoData = { ...formData, detalles };
 
-  // console.log("DOCUMENTOS=====>", contratoData);
-
   async function registrar() {
+    console.log("DOCUMENTOS=====>", {...contratoData, archivo: fileInput.files[0]});
+
     try {
       const uploadFile = await subirArchivo(fileInput.files[0]);
+      console.log(uploadFile);
       const nombreArchivo = uploadFile.key;
       const data = { ...contratoData, archivoPdf: nombreArchivo };
-
       const IP_LOCAL = await obtenerConfig();
-
       const response = await fetch(
         `http://${IP_LOCAL}:3000/insertarDocumento`,
         {
@@ -645,15 +638,109 @@ async function guardarDocumento() {
     }
   }
 
+  if (detalles.length == 0) {
+    $("#alert-modal").css("display", "flex");
+
+    $("#alert-modal .alert-container")
+      .css("background-color", "#ffeab0")
+      .css("border", "2px solid #ffbb00");
+
+    animate(
+      ".alert-container",
+      {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      },
+      {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
+
+    $("#alert-modal .alert-container").html(
+      `
+        <h2>¡Sin modelos registrados!</h2>
+        <p style="color: black !important">¿Estás seguro que deseas guardar un documento sin modelos?</p>
+        <div class="btn-group">
+          <button id="btn-save" class="btn btn-info">Si, guardar documento</button>
+          <button id="btn-cancel" class="btn btn-dark">No, cancelar proceso</button>
+        </div>
+      `,
+    );
+
+    $("#alert-modal")
+      .off("click", "#btn-save")
+      .on("click", "#btn-save", async function () {
+        await registrar();
+
+        const anim = animate(
+          ".alert-container",
+          {
+            opacity: [1, 0],
+            scale: [1, 1.05, 0.7],
+          },
+          {
+            duration: 0.45,
+            easing: "ease-in",
+          },
+        );
+
+        await anim.finished;
+
+        const modal = document.getElementById("alert-modal");
+        modal.style.display = "none";
+
+        $("#alert-modal .alert-container").empty();
+      });
+
+    $("#alert-modal")
+      .off("click", "#btn-cancel")
+      .on("click", "#btn-cancel", async function () {
+        const anim = animate(
+          ".alert-container",
+          {
+            opacity: [1, 0],
+            scale: [1, 1.05, 0.7],
+          },
+          {
+            duration: 0.45,
+            easing: "ease-in",
+          },
+        );
+
+        await anim.finished;
+
+        const modal = document.getElementById("alert-modal");
+        modal.style.display = "none";
+
+        $("#alert-modal .alert-container").empty();
+      });
+
+    return;
+  }
+
   // CON TARIFA ALTA
   const tarifasAltas = [];
+  const sinCondicion = [];
 
   detalles.forEach((det) => {
+    if (det.condicion == "4") {
+      sinCondicion.push(det.secCon);
+    }
+
     const tarifaDet = det.tarifa;
     if (tarifaDet >= 100) {
       tarifasAltas.push(tarifaDet);
     }
   });
+
+  if (sinCondicion.length > 0) {
+    toastr.warning(
+      `Debes de seleccionar una condición en los items ${sinCondicion.join(", ")}`,
+    );
+
+    return;
+  }
 
   if (tarifasAltas.length > 0) {
     $("#alert-modal").css("display", "flex");
@@ -681,7 +768,7 @@ async function guardarDocumento() {
         <p style="color: black !important">Tarifas observadas: ${tarifasAltas.join(", ")}</p>
         <p style="color: black !important">¿Estas seguro de continuar?</p>
         <div class="btn-group">
-          <button id="btn-save" class="btn btn-info">Si, guardar contrato</button>
+          <button id="btn-save" class="btn btn-info">Si, guardar documento</button>
           <button id="btn-cancel" class="btn btn-dark">No, cancelar proceso</button>
         </div>
       `,
@@ -772,6 +859,8 @@ async function subirArchivo(archivo) {
     if (!result.success) {
       toastr.warning("Error al subir el archivo PDF", "Oops...");
     }
+
+    return result;
   } catch (error) {
     console.error("Error al subir el archivo:", error);
     toastr.warning("Ocurrió un error al subir el archivo", "Oops...");
@@ -781,7 +870,7 @@ async function subirArchivo(archivo) {
 async function validarArchivo(nombreArchivo) {
   try {
     const IP_LOCAL = await obtenerConfig();
-    
+
     const response = await fetch(
       `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`,
       {

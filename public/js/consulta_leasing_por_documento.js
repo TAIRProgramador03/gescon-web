@@ -134,6 +134,39 @@ const getAssignByLeasing = async (nroLeasing, clienteId, documentoId) => {
   return data;
 }
 
+const getFile = async (key) => {
+  try {
+    const IP_LOCAL = await obtenerConfig();
+    const viewPDF = await fetch(
+      `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
+      {
+        credentials: "include",
+      },
+    );
+
+    const result = await viewPDF.json();
+
+    if (result.success) {
+      return result.url;
+    } else {
+      toastr.warning(result.message, "Oops...");
+    }
+  } catch (error) {
+    console.error(error);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+};
+
+const verPdf = async (key) => {
+  const link = await getFile(key);
+
+  if (!link) {
+    return;
+  }
+
+  window.open(link, "_blank");
+};
+
 function convertirFecha(fecha) {
   const anio = fecha.substring(0, 4);
   const mes = fecha.substring(4, 6);

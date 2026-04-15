@@ -271,6 +271,17 @@ require './templates/header.html';
             <p class="translate-x-4 !m-0 !text-white text-base font-medium">Editar contrato</p>
           </button>
           <button
+            type="button"
+            id="btn-file"
+            data-permissions="ver_contratos"
+            class="cursor-pointer bg-violet-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
+            <div
+              class="bg-violet-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+              <i class="bi bi-box-arrow-up-right"></i>
+            </div>
+            <p class="translate-x-4 !m-0 !text-white text-base font-medium">Ver archivo</p>
+          </button>
+          <button
             id="btn-assign"
             type="button"
             data-permissions="insertar_asignacion"
@@ -368,6 +379,7 @@ require './templates/header.html';
   }
 
   let table;
+  let currentKey = '';
 
   $(document).on('DOMContentLoaded', async function() {
     showLoader();
@@ -508,8 +520,9 @@ require './templates/header.html';
       table.draw();
 
       if (idContract) {
-        await cargarDatosContrato(idClient, idContract);
-
+        const detContract = await cargarDatosContrato(idClient, idContract);
+        currentKey = detContract.data.archivoPdf;
+        $("#btn-file").removeClass("hidden").addClass("flex");
       } else {
         await cargarDatosContrato(idClient);
         $("#btn-edit-con").addClass("hidden");
@@ -754,6 +767,8 @@ require './templates/header.html';
             $("#btn-edit-con").removeClass("flex");
           }
 
+          currentKey = data.data.archivoPdf;
+          $("#btn-file").removeClass("hidden").addClass("flex");
         } catch (error) {
           console.error("Error al obtener los datos del contrato:", error);
         }
@@ -1018,7 +1033,8 @@ require './templates/header.html';
               0: "Superficie",
               1: "Socavón",
               2: "Ciudad",
-              3: "Severo"
+              3: "Severo",
+              4: "Pendiente"
             })
           },
           width: "100px"
@@ -1337,7 +1353,8 @@ require './templates/header.html';
               0: "Superficie",
               1: "Socavón",
               2: "Ciudad",
-              3: "Severo"
+              3: "Severo",
+              4: "Pendiente"
             })
           },
           width: "100px"
@@ -1629,7 +1646,8 @@ require './templates/header.html';
               0: "Superficie",
               1: "Socavón",
               2: "Ciudad",
-              3: "Severo"
+              3: "Severo",
+              4: "Pendiente"
             })
           },
           width: "100px"
@@ -1921,7 +1939,8 @@ require './templates/header.html';
               0: "Superficie",
               1: "Socavón",
               2: "Ciudad",
-              3: "Severo"
+              3: "Severo",
+              4: "Pendiente"
             })
           },
           width: "100px"
@@ -2213,7 +2232,8 @@ require './templates/header.html';
               0: "Superficie",
               1: "Socavón",
               2: "Ciudad",
-              3: "Severo"
+              3: "Severo",
+              4: "Pendiente"
             })
           },
           width: "100px"
@@ -2339,6 +2359,10 @@ require './templates/header.html';
 
     const modal = document.getElementById("modal-documents");
     modal.style.display = "flex";
+  })
+
+  $("#btn-file").on("click", function() {
+    verPdf(currentKey);
   })
 
   $("#btn-close").on("click", function() {

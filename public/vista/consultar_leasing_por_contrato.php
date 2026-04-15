@@ -309,7 +309,7 @@ require './templates/header.html';
       $("#btn-leasing").removeClass("hidden");
 
       $("#btn-leasing").off("click").on("click", () => {
-        window.open(detailLeasing.archivoPdf, '_blank');
+        verPdf(detaiLeasing.archivoPdf);
       })
     }
 
@@ -366,9 +366,9 @@ require './templates/header.html';
       $("#btn-leasing").addClass("flex");
       $("#btn-leasing").removeClass("hidden");
 
-      // $("#btn-leasing").off("click").on("click", () => {
-      //   window.open(detaiLeasing.archivoPdf, '_blank');
-      // })
+      $("#btn-leasing").off("click").on("click", () => {
+        verPdf(detaiLeasing.archivoPdf);
+      })
 
       hideSkeleton();
     }

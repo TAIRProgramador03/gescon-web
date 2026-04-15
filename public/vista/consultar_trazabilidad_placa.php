@@ -352,7 +352,8 @@ require './templates/header.html';
               0: "Superficie",
               1: "Socavón",
               2: "Ciudad",
-              3: "Severo"
+              3: "Severo",
+              4: "Pendiente"
             })
           },
           width: "100px"

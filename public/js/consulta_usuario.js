@@ -25,7 +25,13 @@ export const getTableUsers = async () => {
       dom: '<"superior"f<"roles">>rt<"inferior"i<"derecha-inferior"lp>>',
       initComplete: function () {
         $(".roles").html(`
-          <a href="consultar_roles" data-permissions="administrar_roles" class="w-fit px-4 py-2 rounded bg-green-800 text-white hover:bg-green-600 transition-colors">Administrar Roles</a>
+          <div class="flex justify-end items-center gap-2">
+            <a href="registrar_usuarios" data-permissions="insertar_usuarios" class="w-fit px-4 py-2 rounded bg-green-800 text-white hover:bg-green-600 transition-colors">
+              <i class="bi bi-plus"></i>
+              Nuevo
+            </a>
+            <a href="consultar_roles" data-permissions="administrar_roles" class="w-fit px-4 py-2 rounded bg-blue-800 text-white hover:bg-blue-600 transition-colors">Administrar Roles</a>
+          </div>
         `);
 
         aplicarPermisos();

@@ -498,21 +498,21 @@ require './templates/header.html';
           }
         },
         onClick: (evento, elementosActivos) => {
-          const modal = document.getElementById("modal-leasing");
-          modal.style.display = "flex";
-
-          $("#modal-title").text("Vehiculos vencidos")
-
-          Motion.animate(".modal-container", {
-            opacity: [0, 1],
-            scale: [0.7, 1.05, 1]
-          }, {
-            duration: 0.45,
-            easing: "ease-out"
-          })
-
           // Verificamos si se hizo clic en un segmento (y no en el espacio vacío)
           if (elementosActivos.length > 0) {
+            const modal = document.getElementById("modal-leasing");
+            modal.style.display = "flex";
+
+            $("#modal-title").text("Vehiculos vencidos")
+
+            Motion.animate(".modal-container", {
+              opacity: [0, 1],
+              scale: [0.7, 1.05, 1]
+            }, {
+              duration: 0.45,
+              easing: "ease-out"
+            })
+
             const indice = elementosActivos[0].index;
 
             // Obtenemos el label y el valor usando el índice
@@ -691,6 +691,8 @@ require './templates/header.html';
                 }
               ],
             })
+          } else {
+            toastr.info("Debes seleccionar un segmento del grafico", "Aviso")
           }
         }
       }
@@ -741,21 +743,21 @@ require './templates/header.html';
           }
         },
         onClick: (evento, elementosActivos) => {
-          const modal = document.getElementById("modal-leasing");
-          modal.style.display = "flex";
-
-          $("#modal-title").text("Vehiculos por vencer")
-
-          Motion.animate(".modal-container", {
-            opacity: [0, 1],
-            scale: [0.7, 1.05, 1]
-          }, {
-            duration: 0.45,
-            easing: "ease-out"
-          })
-
           // Verificamos si se hizo clic en un segmento (y no en el espacio vacío)
           if (elementosActivos.length > 0) {
+            const modal = document.getElementById("modal-leasing");
+            modal.style.display = "flex";
+
+            $("#modal-title").text("Vehiculos por vencer")
+
+            Motion.animate(".modal-container", {
+              opacity: [0, 1],
+              scale: [0.7, 1.05, 1]
+            }, {
+              duration: 0.45,
+              easing: "ease-out"
+            })
+
             const indice = elementosActivos[0].index;
 
             // Obtenemos el label y el valor usando el índice
@@ -934,6 +936,8 @@ require './templates/header.html';
                 }
               ],
             })
+          } else {
+            toastr.info("Debes seleccionar un segmento del grafico", "Aviso")
           }
         }
       }

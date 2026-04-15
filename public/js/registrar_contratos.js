@@ -812,11 +812,11 @@ async function guardarContrato() {
           );
         }
 
-        if (condicion == "4") {
-          throw new Error(
-            `Debes de seleccionar una condición al item ${index + 1}`,
-          );
-        }
+        // if (condicion == "4") {
+        //   throw new Error(
+        //     `Debes de seleccionar una condición al item ${index + 1}`,
+        //   );
+        // }
 
         return modelo && tarifa != null && cantidad
           ? {
@@ -936,15 +936,118 @@ async function guardarContrato() {
     }
   }
 
+  if (detalles.length == 0) {
+    $("#alert-modal").css("display", "flex");
+
+    $("#alert-modal .alert-container")
+      .css("background-color", "#ffeab0")
+      .css("border", "2px solid #ffbb00");
+
+    animate(
+      ".alert-container",
+      {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      },
+      {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
+
+    $("#alert-modal .alert-container").html(
+      `
+        <h2>¡Sin modelos registrados!</h2>
+        <p style="color: black !important">¿Estás seguro que deseas guardar un documento sin modelos?</p>
+        <div class="btn-group">
+          <button id="btn-save" class="btn btn-info">Si, guardar documento</button>
+          <button id="btn-cancel" class="btn btn-dark">No, cancelar proceso</button>
+        </div>
+      `,
+    );
+
+    $("#alert-modal")
+      .off("click", "#btn-save")
+      .on("click", "#btn-save", async function () {
+        if (isUpd && isUpd === "true" && contractId) {
+          const isEdit = validNroContract(contratoData.nroContrato);
+          if (isEdit === "CPEN") {
+            await actualizar(contractId);
+          } else {
+            await registrar();
+          }
+        } else {
+          await registrar();
+        }
+
+        const anim = animate(
+          ".alert-container",
+          {
+            opacity: [1, 0],
+            scale: [1, 1.05, 0.7],
+          },
+          {
+            duration: 0.45,
+            easing: "ease-in",
+          },
+        );
+
+        await anim.finished;
+
+        const modal = document.getElementById("alert-modal");
+        modal.style.display = "none";
+
+        $("#alert-modal .alert-container").empty();
+      });
+
+    $("#alert-modal")
+      .off("click", "#btn-cancel")
+      .on("click", "#btn-cancel", async function () {
+        const anim = animate(
+          ".alert-container",
+          {
+            opacity: [1, 0],
+            scale: [1, 1.05, 0.7],
+          },
+          {
+            duration: 0.45,
+            easing: "ease-in",
+          },
+        );
+
+        await anim.finished;
+
+        const modal = document.getElementById("alert-modal");
+        modal.style.display = "none";
+
+        $("#alert-modal .alert-container").empty();
+      });
+
+    return;
+  }
+
   // CON TARIFA ALTA
   const tarifasAltas = [];
+  const sinCondicion = [];
 
   detalles.forEach((det) => {
+    if (det.condicion == "4") {
+      sinCondicion.push(det.secCon);
+    }
+
     const tarifaDet = det.tarifa;
     if (tarifaDet >= 100) {
       tarifasAltas.push(tarifaDet);
     }
   });
+
+  if (sinCondicion.length > 0) {
+    toastr.warning(
+      `Debes de seleccionar una condición en los items ${sinCondicion.join(", ")}`,
+    );
+
+    return;
+  }
 
   if (tarifasAltas.length > 0) {
     $("#alert-modal").css("display", "flex");
@@ -1081,7 +1184,7 @@ async function subirArchivo(archivo) {
 async function validarArchivo(nombreArchivo) {
   try {
     const IP_LOCAL = await obtenerConfig();
-    
+
     const response = await fetch(
       `http://${IP_LOCAL}:3000/validarArchivo?nombre=contracts/${nombreArchivo.trim()}`,
       {

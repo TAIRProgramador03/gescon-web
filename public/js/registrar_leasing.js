@@ -876,6 +876,8 @@ async function subirArchivo(archivo) {
     if (!result.success) {
       toastr.warning("No se pudo subir el archivo PDF", "Oops...");
     }
+
+    return result;
   } catch (error) {
     console.error("Error al subir el archivo:", error);
     toastr.warning(

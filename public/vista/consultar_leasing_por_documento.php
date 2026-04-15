@@ -314,7 +314,7 @@ require './templates/header.html';
       $("#btn-leasing").removeClass("hidden");
 
       $("#btn-leasing").off("click").on("click", () => {
-        window.open(detailLeasing.archivoPdf, '_blank');
+        verPdf(detailLeasing.archivoPdf);
       })
     }
 
@@ -367,9 +367,9 @@ require './templates/header.html';
       $("#btn-leasing").addClass("flex");
       $("#btn-leasing").removeClass("hidden");
 
-      // $("#btn-leasing").off("click").on("click", () => {
-      //   window.open(detaiLeasing.archivoPdf, '_blank');
-      // })
+      $("#btn-leasing").off("click").on("click", () => {
+        verPdf(detaiLeasing.archivoPdf);
+      })
 
       table.on("page.dt", () => {
         $('tr').removeClass("selected-row");

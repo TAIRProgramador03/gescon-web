@@ -48,12 +48,14 @@ require '../templates/header.html';
 
     <!-- NUEVO USUARIO -->
     <div class="w-full flex flex-col gap-4">
-      <form id="form-new-user" class="form w-full flex flex-col gap-3">
-        <div class="w-full grid grid-cols-4 gap-3">
-          <div class="input flex flex-col w-full relative">
+      <form id="form-new-user" class="w-full flex flex-col gap-3">
+        <div class="w-full grid grid-cols-6 gap-3">
+          <div class="input flex flex-col w-full relative col-span-2">
             <input
-              name="usuario[]"
+              name="usuario"
               type="text"
+              placeholder="Ingrese un nombre de usuario"
+              required
               class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" />
             <label
               class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
@@ -61,10 +63,12 @@ require '../templates/header.html';
             </label>
           </div>
 
-          <div class="input flex flex-col w-full relative">
+          <div class="input flex flex-col w-full relative col-span-2">
             <input
-              name="codemp[]"
+              name="codemp"
               type="text"
+              required
+              placeholder="Ingrese el codigo del empleado"
               class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" />
             <label
               class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
@@ -72,26 +76,47 @@ require '../templates/header.html';
             </label>
           </div>
 
-          <div class="flex flex-col w-full relative">
-            <select id="cbo-roles" name="roles[]"></select>
-            <label
-              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-              Rol / Perfil
-            </label>
-          </div>
-
-          <div class="input flex flex-col w-full relative">
+          <div class="input flex flex-col w-full relative col-span-2">
             <input
-              name="clave[]"
+              name="clave"
               type="password"
+              required
+              placeholder="Ingrese una clave"
               class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" />
             <label
               class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
               Contraseña
             </label>
+            <button
+              type="button"
+              class="btn-view-pass absolute z-10 top-[calc(50%+8px)] right-2 -translate-y-1/2 cursor-pointer text-gray-600 peer-focus:text-blue-500">
+              <i class="bi bi-eye-fill"></i>
+            </button>
+          </div>
+
+          <div class="flex flex-col w-full relative col-span-3">
+            <select id="cbo-roles" name="rol"></select>
+            <label
+              class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+              Rol
+            </label>
+          </div>
+
+          <div class="flex flex-col gap-2 col-span-3">
+            <div class="flex flex-col w-full relative">
+              <select id="cbo-perfiles" name="perfil" disabled></select>
+              <label
+                class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+                Perfil GesOper
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="checkbox" name="inGesoper" id="inGesoper" class="!accent-blue-500 size-4 outline-none">
+              <label for="inGesoper" class="text-sm text-gray-700">Agregar al GesOper</label>
+            </div>
           </div>
         </div>
-        <div class="w-full flex justify-end items-center">
+        <div class="w-full flex justify-end items-center gap-3">
           <button type="submit" class="w-fit cursor-pointer px-3 py-2 rounded flex justify-center items-center gap-1 bg-green-700 text-white hover:bg-green-500 transition-colors">Registrar</button>
         </div>
       </form>
@@ -116,7 +141,9 @@ require '../templates/header.html';
 <script type="module">
   import {
     getNewUsers,
-    getRoles
+    getRoles,
+    getRolesGesOper,
+    registerUser
   } from '../../js/registrar_usuarios.js'
 
   import {
@@ -152,6 +179,7 @@ require '../templates/header.html';
     showLoader();
 
     const listRoles = await getRoles();
+    const listRolesGesoper = await getRolesGesOper();
 
     $("#cbo-roles").select2({
       placeholder: "Seleccione un rol",
@@ -162,6 +190,19 @@ require '../templates/header.html';
         text: role.name
       }))
     })
+
+    $("#cbo-perfiles").select2({
+      placeholder: "Seleccione un perfil",
+      allowClear: false,
+      width: "100%",
+      data: listRolesGesoper.map(role => ({
+        id: role.id,
+        text: role.name
+      }))
+    })
+
+    $("#cbo-roles").val(null).trigger("change");
+    $("#cbo-perfiles").val(null).trigger("change");
 
     const listNewUsers = await getNewUsers();
     const divNewUsers = $("#listNewUsers")
@@ -177,7 +218,8 @@ require '../templates/header.html';
                   name="usuario[]"
                   type="text"
                   value="${user.usuario}"
-                  class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25"
+                  required
+                  class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 disabled:bg-gray-50"
                   disabled />
                 <label
                   class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
@@ -190,7 +232,8 @@ require '../templates/header.html';
                   name="codemp[]"
                   type="text"
                   value="${user.codEmp}"
-                  class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25"
+                  required
+                  class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 disabled:bg-gray-50"
                   disabled />
                 <label
                   class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
@@ -209,12 +252,19 @@ require '../templates/header.html';
               <div class="input flex flex-col w-full relative">
                 <input
                   name="clave[]"
-                  type="text"
+                  type="password"
+                  required
+                  placeholder="Ingrese una clave"
                   class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" />
                 <label
                   class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
                   Contraseña
                 </label>
+                <button
+                  type="button"
+                  class="btn-view-pass absolute z-10 top-[calc(50%+8px)] right-2 -translate-y-1/2 cursor-pointer text-gray-600 peer-focus:text-blue-500">
+                  <i class="bi bi-eye-fill"></i>
+                </button>
               </div>
             </div>
             <button type="submit" class="w-fit cursor-pointer px-3 py-2 rounded flex justify-center items-center gap-1 bg-green-700 text-white hover:bg-green-500 transition-colors">Registrar</button>
@@ -272,48 +322,91 @@ require '../templates/header.html';
     const data = {
       usuario,
       codemp,
-      rol,
-      clave
+      rol: Number(rol),
+      clave,
+      perfil: 0,
+      inGesoper: false
+    }
+
+    console.log(data);
+    
+    await registerUser(data);
+  });
+
+  $(document).on("submit", "#form-new-user", async function(e) {
+    e.preventDefault();
+
+    const $form = $(this);
+
+    const usuario = $form.find('input[name="usuario"]').val();
+    const codemp = $form.find('input[name="codemp"]').val();
+    const rol = $form.find('select[name="rol"]').val();
+    const clave = $form.find('input[name="clave"]').val();
+    const perfil = $form.find('select[name="perfil"]').val();
+    const inGesoper = $form.find('input[name="inGesoper"]').prop("checked");
+
+    if (!usuario) {
+      toastr.info(`Debe ingresar un nombre de usuario`, "Aviso");
+      return;
+    }
+
+    if (!codemp) {
+      toastr.info(`Debe ingresar un codigo de empleado`, "Aviso");
+      return;
+    }
+
+    if (!rol) {
+      toastr.info(`Debe seleccionar un rol`, "Aviso");
+      return;
+    }
+
+    if (!clave) {
+      toastr.info(`Debe ingresar una contraseña`, "Aviso");
+      return;
+    }
+
+    if (inGesoper) {
+      if (!perfil) {
+        toastr.info(`Debe seleccionar un perfil para el gesoper`, "Aviso");
+        return;
+      }
+    }
+
+    const data = {
+      usuario,
+      codemp,
+      rol: Number(rol),
+      clave,
+      perfil: Number(perfil),
+      inGesoper
     }
 
     console.log(data);
 
-    // try {
-    //   showLoader();
+    await registerUser(data);
+  })
 
-    //   const response = await fetch("/tu-endpoint", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       id: userId,
-    //       usuario,
-    //       codemp,
-    //       rol,
-    //       clave,
-    //     }),
-    //   });
+  $(document).on("click", ".btn-view-pass", function() {
+    const $btn = $(this);
 
-    //   const res = await response.json();
+    const $input = $btn.closest(".input").find("input[name^='clave']");
 
-    //   if (res.success) {
-    //     toastr.success(`Usuario ${usuario} registrado`);
+    const isPassword = $input.attr("type") === "password";
 
-    //     // 🔥 opcional: eliminar formulario
-    //     $form.remove();
+    $input.attr("type", isPassword ? "text" : "password");
 
-    //   } else {
-    //     toastr.error("Error al registrar");
-    //   }
-
-    // } catch (error) {
-    //   console.error(error);
-    //   toastr.error("Error en la petición");
-    // } finally {
-    //   hideLoader();
-    // }
+    $btn.find("i")
+      .toggleClass("bi-eye-fill", !isPassword)
+      .toggleClass("bi-eye-slash-fill", isPassword);
   });
+
+  $("#inGesoper").on("click", function() {
+    $("#cbo-perfiles").prop("disabled", !this.checked);
+
+    if(!this.checked) {
+      $("#cbo-perfiles").val(null).trigger("change");
+    }
+  })
 </script>
 
 <?php

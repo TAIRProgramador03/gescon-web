@@ -23,7 +23,7 @@ export const getNewUsers = async () => {
     console.error(error.response.data.message);
     toastr.error(error.response.data.message, "Oops...");
   }
-}
+};
 
 export const getRoles = async () => {
   try {
@@ -37,7 +37,56 @@ export const getRoles = async () => {
 
     return data;
   } catch (error) {
-    console.error(error.response.data.message)
-    toastr.error(error.response.data.message, "Oops...")
+    console.error(error.response.data.message);
+    toastr.error(error.response.data.message, "Oops...");
   }
-}
+};
+
+export const getRolesGesOper = async () => {
+  try {
+    instance = await obtenerInstancia();
+
+    const response = await instance.get("/obtenerRolesGesoper", {
+      withCredentials: true,
+    });
+
+    const data = response.data;
+
+    return data;
+  } catch (error) {
+    console.error(error.response.data.message);
+    toastr.error(error.response.data.message, "Oops...");
+  }
+};
+
+export const registerUser = async (data) => {
+  try {
+    instance = await obtenerInstancia();
+
+    const response = await instance.post(
+      "/crearUsuario",
+      {
+        usuario: data.usuario,
+        codEmp: data.codEmp,
+        clave: data.clave,
+        rol: data.rol,
+        perfil: data.perfil,
+        inGesoper: data.inGesoper,
+      },
+      {
+        withCredentials: true,
+      },
+    );
+
+    const result = response.data;
+
+    if(result.success) {
+      toastr.success("Usuario registrado correctamente", "¡Éxito!")
+    } else {
+      toastr.warning(result.message, "Oops...")
+    }
+  } catch (error) {
+    console.error(error.response.data.message);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+};

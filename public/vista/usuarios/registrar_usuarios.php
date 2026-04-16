@@ -301,6 +301,7 @@ require '../templates/header.html';
     e.preventDefault();
 
     const $form = $(this);
+    const formEl = $form[0];
 
     const userId = $form.data("form");
 
@@ -329,8 +330,25 @@ require '../templates/header.html';
     }
 
     console.log(data);
-    
+
     await registerUser(data);
+
+    await animate(
+      formEl, {
+        opacity: [1, 0],
+        scale: [1, 0.5]
+      }, {
+        duration: 0.4,
+        easing: "ease-in-out"
+      }
+    ).finished;
+
+    formEl.remove();
+
+    if ($("#listNewUsers .form").length === 0) {
+      // último form
+      $("#listNewUsers").append("<h3>No hay usuarios pendientes</h3>");
+    }
   });
 
   $(document).on("submit", "#form-new-user", async function(e) {
@@ -403,7 +421,7 @@ require '../templates/header.html';
   $("#inGesoper").on("click", function() {
     $("#cbo-perfiles").prop("disabled", !this.checked);
 
-    if(!this.checked) {
+    if (!this.checked) {
       $("#cbo-perfiles").val(null).trigger("change");
     }
   })

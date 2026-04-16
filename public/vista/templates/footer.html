@@ -5,6 +5,16 @@
     <!-- END TOASTR -->
     <script>
         dayjs.extend(dayjs_plugin_customParseFormat);
+
+        const tituloOriginal = document.title;
+
+        document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            document.title = "👀 ¡Oye, vuelve a trabajar!";
+        } else {
+            document.title = tituloOriginal;
+        }
+        });
         
         const logoutIcon = document.getElementById('log_out');
 

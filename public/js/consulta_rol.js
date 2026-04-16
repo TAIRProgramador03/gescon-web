@@ -25,7 +25,7 @@ export const getTableRoles = async () => {
       dom: '<"superior"f<"roles">>rt<"inferior"i<"derecha-inferior"lp>>',
       initComplete: function () {
         $(".roles").html(`
-          <a href="insertar_roles" data-permissions="administrar_roles" class="w-fit flex justify-center items-center gap-1 px-4 py-2 rounded bg-green-800 text-white hover:bg-green-600 transition-colors">
+          <a href="registrar_roles" data-permissions="administrar_roles" class="w-fit flex justify-center items-center gap-1 px-4 py-2 rounded bg-green-800 text-white hover:bg-green-600 transition-colors">
             <i class="bi bi-plus"></i>
             Crear nuevo rol
           </a>

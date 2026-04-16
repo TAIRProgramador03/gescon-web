@@ -467,6 +467,8 @@ require './templates/header.html';
     animate
   } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 
+  document.title = "Registrar Documento | Gescon";
+
   let activeRequests = 0;
 
   function showLoader() {

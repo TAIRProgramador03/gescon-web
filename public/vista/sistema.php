@@ -30,6 +30,8 @@ require './templates/header.html';
 </main>
 
 <script>
+  document.title = "Bienvenido a Gescon";
+
   window.onload = function() {
     setTimeout(() => {
       document.body.classList.add('loaded');

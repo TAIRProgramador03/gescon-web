@@ -163,6 +163,8 @@ require './templates/header.html';
 
 <script src="../js/consulta_leasings.js"></script>
 <script>
+  document.title = "Consultar leasings | Gescon";
+
   let activeRequests = 0;
 
   function showLoader() {

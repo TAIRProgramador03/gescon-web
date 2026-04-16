@@ -228,6 +228,8 @@ require './templates/header.html';
 
 <script src="../js/dashboard.js"></script>
 <script>
+  document.title = "Dashboard | Gescon";
+  
   lucide.createIcons();
   // CHARGE SCREEN
   let onLoadWindow = 0;

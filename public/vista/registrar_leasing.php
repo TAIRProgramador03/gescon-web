@@ -424,6 +424,8 @@ require './templates/header.html';
 
 <!-- SCRIPTS -->
 <script>
+  document.title = "Registrar Leasign | Gescon";
+
   function asignacionVehicular() {
     window.location = 'adicionar_vehiculos.php';
   };

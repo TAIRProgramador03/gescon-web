@@ -84,6 +84,8 @@ require './templates/header.html';
 
 <script src="../js/consulta_total_vehiculos.js"></script>
 <script type="module">
+  document.title = "Consultar vehiculos | Gescon";
+
   window.onload = function() {
     setTimeout(() => {
       document.body.classList.add('loaded');

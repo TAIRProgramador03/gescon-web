@@ -7,6 +7,10 @@ require './templates/header.html';
   <h1 class="text-3xl font-semibold text-gray-600">Página no encontrada</h1>
 </main>
 
+<script>
+  document.title = "No encontrado";
+</script>
+
 <?php
 require './templates/footer.html';
 ?>

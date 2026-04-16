@@ -129,8 +129,9 @@ require './templates/header.html';
           <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
           <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
           <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
-          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
           <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
+          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
+          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
           <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
@@ -142,21 +143,61 @@ require './templates/header.html';
   </div>
 </main>
 
-<div id="modal-assign">
-  <div class="modal-container">
-    <div class="modal-header">
+<div id="modal-assign" class="w-full h-screen fixed top-0 left-0 flex justify-center items-center opacity-0 -z-[9990] overflow-hidden">
+  <div class="modal-overlay w-full h-screen fixed top-0 left-0 bg-black/25 -z-10 overflow-hidden"></div>
+  <div class="modal-container w-full max-w-lg max-h-[90%] bg-white rounded-md overflow-auto">
+    <div class="w-full flex items-center gap-2 bg-yellow-700 text-white font-semibold p-2">
       <i class="bi bi-info-circle"></i>
-      <h2>Detalles</h2>
+      <h2 class="text-2xl">Actualizar placa</h2>
     </div>
-    <div class="modal-body" id="modal-body-info">
+    <div class="w-full flex flex-col gap-2 p-2">
+      <!-- TERRENO -->
+      <div class="flex flex-col w-full relative">
+        <select name="terreno" id="cbo-terreno-upd">
+        </select>
 
+        <label
+          for="cbo-terreno-upd"
+          class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+          Tipo de terreno(*)
+        </label>
+      </div>
+
+      <!-- CONDICION -->
+      <div class="flex flex-col w-full relative">
+        <select name="condicion" id="cbo-condicion-upd">
+        </select>
+
+        <label
+          for="cbo-condicion-upd"
+          class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+          Condicion(*)
+        </label>
+      </div>
+
+      <!-- ACTA -->
+      <div class="flex flex-col w-full relative">
+        <label class="text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors z-[1]">Acta(*)</label>
+        <div class="file-adjunta">
+          <label class="file-upload tooltip-input" id="dropZone" data-tooltip="Arrastra o sube tu archivo PDF">
+            <div id="uploadMessage" class="flex flex-col gap-1 justify-center items-center text-[#b2b2bb]">
+              <i class="bi bi-cloud-upload-fill text-3xl"></i>
+              <span>Haz clic o arrastra un archivo aquí</span>
+            </div>
+            <input type="file" id="fileInput" accept=".pdf">
+            <div class="file-info" id="fileInfo">
+              <img src="https://img.icons8.com/color/48/000000/pdf.png" alt="PDF Icon">
+              <span id="fileName"></span>
+              <button class="view-file" id="viewFile">👁️</button>
+              <button class="remove-file" id="removeFile">X</button>
+            </div>
+          </label>
+        </div>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-success" id="btn-leasing">
-        <span>Ver leasing</span>
-        <i class="bi bi-file-earmark-arrow-down-fill"></i>
-      </button>
-      <button class="btn-error" id="btn-close">Cerrar</button>
+    <div class="w-full flex justify-end items-center gap-2 border-t border-t-gray-300 p-2">
+      <button id="btn-save" class="px-3 py-2 font-medium flex justify-center items-center cursor-pointer bg-green-700 text-white hover:bg-green-600 rounded transition-colors">Guardar</button>
+      <button id="btn-cancel" class="px-3 py-2 font-medium flex justify-center items-center cursor-pointer bg-slate-900 text-white hover:bg-slate-800 rounded transition-colors">Cancelar</button>
     </div>
   </div>
 </div>
@@ -205,15 +246,63 @@ require './templates/header.html';
 
   let table;
 
-  // window.onload = function() {
-  //   setTimeout(() => {
-  //     document.body.classList.add('loaded');
-  //     document.getElementById('preloader-mini').style.display = 'none';
-  //   }, 2000);
-  // };
+  let currentId;
 
   function transformType(value, object) {
     return object[value];
+  }
+
+  // DRAG AND DROP FILES
+
+  const viewFileButton = document.getElementById('viewFile');
+  const fileInput = document.getElementById('fileInput');
+  const dropZone = document.getElementById('dropZone');
+  const fileInfo = document.getElementById('fileInfo');
+  const fileNameDisplay = document.getElementById('fileName');
+  const uploadMessage = $('#uploadMessage');
+  const removeFileButton = document.getElementById('removeFile');
+
+  // Mostrar nombre del archivo al seleccionar
+  fileInput.addEventListener('change', handleFile);
+
+  // Eventos para drag and drop
+  dropZone.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+  });
+
+  dropZone.addEventListener('drop', (event) => {
+    event.preventDefault();
+    dropZone.classList.remove('dragover');
+
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      fileInput.files = event.dataTransfer.files; // Asignar archivo al input
+      handleFile();
+    }
+  });
+
+  function handleFile() {
+    const file = fileInput.files[0];
+    if (file) {
+      uploadMessage.addClass("hidden"); // Muestra el mensaje inicial.
+      uploadMessage.removeClass("flex"); // Muestra el mensaje inicial.
+      fileInfo.style.display = 'flex'; // Mostrar el área con el archivo
+      fileNameDisplay.textContent = truncateFileName(file.name); // Mostrar el nombre truncado del archivo
+    }
+  }
+
+  function truncateFileName(name) {
+    const maxLength = 25;
+    if (name.length <= maxLength) return name;
+
+    const fileExtension = name.slice(name.lastIndexOf('.'));
+    const truncatedName = name.slice(0, maxLength - fileExtension.length - 3);
+    return truncatedName + '...' + fileExtension;
   }
 
   // FUNCION PARA VER EL PDF
@@ -225,6 +314,11 @@ require './templates/header.html';
 
   document.addEventListener("DOMContentLoaded", async () => {
     showLoader();
+
+    fileInfo.style.display = 'none'; // Asegúrate de que la información del archivo no aparezca.
+    uploadMessage.addClass("flex"); // Muestra el mensaje inicial.
+    uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial.
+    fileInput.value = ''; // Limpia el campo de archivo si existe algo previamente.
 
     const param = new URLSearchParams(window.location.search);
     const clienteId = param.get("clienteId");
@@ -314,7 +408,7 @@ require './templates/header.html';
         // Centrar contenido y cabecera en las columnas 0, 1 y 2
         {
           "className": "dt-center",
-          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
         }
       ],
       columns: [{
@@ -435,6 +529,18 @@ require './templates/header.html';
           width: "120px"
         },
         {
+          data: "condicion",
+          render: (data) => {
+            return transformType(data, {
+              0: "Titular",
+              1: "Retén",
+              2: "Logística",
+              3: "Pendiente"
+            })
+          },
+          width: "120px"
+        },
+        {
           data: "porcentaje",
           render: (data, type, row) => {
 
@@ -459,7 +565,7 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "condicion",
+          data: null,
           render: (data, type, row) => {
             const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
             const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
@@ -548,7 +654,7 @@ require './templates/header.html';
       placeholder: "Seleccione un terreno",
       allowClear: false, // Desactiva la "X"
       data: [{
-          id: 4,
+          id: 5,
           text: "Todos"
         },
         {
@@ -566,6 +672,10 @@ require './templates/header.html';
         {
           id: 3,
           text: "Severo"
+        },
+        {
+          id: 4,
+          text: "Pendiente"
         }
       ],
       width: "100%"
@@ -593,6 +703,56 @@ require './templates/header.html';
       ],
       width: "100%"
     });
+
+    $("#cbo-terreno-upd").select2({
+      placeholder: "Seleccione un terreno",
+      allowClear: false,
+      data: [{
+          id: 0,
+          text: "Superficie"
+        },
+        {
+          id: 1,
+          text: "Socavon"
+        },
+        {
+          id: 2,
+          text: "Ciudad"
+        },
+        {
+          id: 3,
+          text: "Severo"
+        },
+        {
+          id: 4,
+          text: "Pendiente"
+        }
+      ],
+      width: "100%"
+    })
+
+    $("#cbo-condicion-upd").select2({
+      placeholder: "Seleccione una condición",
+      allowClear: false,
+      data: [{
+          id: 0,
+          text: "Titular"
+        },
+        {
+          id: 1,
+          text: "Retén"
+        },
+        {
+          id: 2,
+          text: "Logística"
+        },
+        {
+          id: 3,
+          text: "Pendiente"
+        }
+      ],
+      width: "100%"
+    })
 
     if (clienteId) $('#cbo-cliente').val(`${clienteId}`).trigger("change");
 
@@ -690,7 +850,7 @@ require './templates/header.html';
 
     const params = new URLSearchParams(window.location.search);
 
-    if (terrId >= 4) {
+    if (terrId >= 5) {
       params.delete("tipoTerr")
     } else {
       params.set("tipoTerr", terrId)
@@ -704,13 +864,12 @@ require './templates/header.html';
     const nuevaURL = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", nuevaURL);
 
-    const assings = await getAssigns(clienteId, contratoId, leasingId, terrId >= 4 ? null : terrId, status);
+    const assings = await getAssigns(clienteId, contratoId, leasingId, terrId >= 5 ? null : terrId, status);
 
     table.clear();
     table.rows.add(assings);
     table.draw();
   });
-
 
   $('#cbo-estado').on('change', async function(e) {
     const status = $('#cbo-estado').val();
@@ -736,6 +895,101 @@ require './templates/header.html';
     table.clear();
     table.rows.add(assings);
     table.draw();
+  });
+
+  $('#listAssign tbody').on('dblclick', 'tr', function() {
+    // Get row data using the DataTables API
+    const data = table.row(this).data();
+
+    currentId = data.idAssing;
+
+    if (data.terreno == "4" || data.condicion == "3" || data.archivoPdf == "") {
+      $('#cbo-terreno-upd').val(`${data.terreno}`).trigger("change");
+      $('#cbo-condicion-upd').val(`${data.condicion}`).trigger("change");
+
+      if (data.terreno == "4") {
+        $('#cbo-terreno-upd').prop("disabled", false)
+      } else {
+        $('#cbo-terreno-upd').prop("disabled", true)
+      }
+
+      if (data.condicion == "3") {
+        $('#cbo-condicion-upd').prop("disabled", false)
+      } else {
+        $('#cbo-condicion-upd').prop("disabled", true)
+      }
+
+      if (data.archivoPdf == "") {
+        $('#fileInput').prop("disabled", false);
+        $("#uploadMessage").addClass("flex").removeClass("hidden");
+        fileInfo.style.display = "none"
+        $("#fileName").text("");
+        removeFileButton.style.display = "flex";
+        $("#viewFile").show();
+      } else {
+        $('#fileInput').prop("disabled", true);
+        $("#uploadMessage").removeClass("flex").addClass("hidden");
+        fileInfo.style.display = "flex"
+        $("#fileName").text(data.archivoPdf.split("/")[1]);
+        removeFileButton.style.display = "none";
+        $("#viewFile").hide();
+      }
+
+      $("#modal-assign").addClass("opacity-100 z-[9999]").removeClass("opacity-0 -z-[9999]")
+
+      animate(".modal-container", {
+        opacity: [0, 1],
+        scale: [0.75, 1.05, 1]
+      }, {
+        duration: 0.45,
+        easing: "ease-out"
+      })
+    }
+  });
+
+  $("#btn-save").on("click", async function() {
+    const terreno = $('#cbo-terreno-upd').val();
+    const condition = $('#cbo-condicion-upd').val();
+    const file = fileInput.files[0];
+
+    console.log({
+      id: currentId,
+      terreno,
+      condition,
+      file
+    });
+  })
+
+  $("#btn-cancel").on("click", async function() {
+    const anim = animate(".modal-container", {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.75]
+    }, {
+      duration: 0.45,
+      easing: "ease-in"
+    })
+
+    await anim.finished;
+
+    $("#modal-assign").removeClass("opacity-100 z-[9999]").addClass("opacity-0 -z-[9999]")
+  })
+
+  viewFileButton.addEventListener('click', () => {
+    const file = fileInput.files[0];
+
+    if (file && file.type === 'application/pdf') {
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL, '_blank');
+    }
+  });
+
+  removeFileButton.addEventListener('click', () => {
+    fileInput.value = ''; // Limpiar input
+    fileInfo.style.display = 'none'; // Ocultar el área del archivo
+    uploadMessage.addClass("flex"); // Muestra el mensaje inicial.
+    uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial. // Mostrar mensaje de carga
+    pdfPreview.src = '';
+    pdfPreviewContainer.style.display = 'none';
   });
 </script>
 

@@ -349,12 +349,13 @@ export async function listaVehiculosAsignables(clientId) {
             data: null, // ACTA
             render: (data, type, row, meta) => {
               return `
-              <div class="flex">
+              <div class="flex items-center gap-1">
                 <label for="acta_${row.codini}" class="btn-upload w-full flex justify-center items-center gap-1 cursor-pointer bg-blue-800 !rounded-md !text-white px-3 py-2">
                   <i class="bi bi-file-earmark-arrow-up"></i>
-                  <span>Subir archivo</span>
+                  <span class="line-clamp-1">Subir archivo</span>
                 </label>
                 <input id="acta_${row.codini}" type="file" name="acta[]" class="acta hidden" accept="application/pdf">
+                <button id="remove-file-${row.codini}" class="remove-file cursor-pointer p-2 hidden justify-center items-center bg-red-100 border border-red-700 text-red-700 rounded-sm"><i class="bi bi-x"></i></button>
               </div>
             `;
             },

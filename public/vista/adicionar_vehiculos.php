@@ -330,6 +330,42 @@ require './templates/header.html';
     label.classList.remove("bg-blue-800");
     label.classList.add("bg-green-600");
   });
+
+  $("#listAssign tbody").on("change", ".acta", function() {
+    const input = this;
+    const container = $(this).closest("div");
+    const btnRemove = container.find(".remove-file");
+
+    if (input.files && input.files.length > 0) {
+      btnRemove.removeClass("hidden").addClass("flex");
+    } else {
+      btnRemove.addClass("hidden").removeClass("flex");
+    }
+  });
+
+  $("#listAssign tbody").on("click", ".remove-file", function() {
+    const container = $(this).closest("div");
+    const input = container.find(".acta")[0];
+
+    const label = container.find("label");
+    const span = label.find("span");
+    const icon = label.find("i");
+
+    // 🔹 limpiar input file
+    input.value = "";
+
+    // 🔹 restaurar texto
+    span.text("Subir archivo");
+
+    // 🔹 restaurar icono
+    icon.attr("class", "bi bi-file-earmark-arrow-up");
+
+    // 🔹 restaurar color
+    label.removeClass("bg-green-600").addClass("bg-blue-800");
+
+    // 🔹 ocultar botón remove
+    $(this).addClass("hidden").removeClass("flex");
+  });
 </script>
 
 <?php

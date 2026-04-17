@@ -253,6 +253,8 @@ require './templates/header.html';
 
   let dataAssign;
 
+  let currentRow;
+
   function transformType(value, object) {
     return object[value];
   }
@@ -906,6 +908,8 @@ require './templates/header.html';
     // Get row data using the DataTables API
     const data = table.row(this).data();
 
+    currentRow = table.row($(this).closest('tr'));
+
     currentId = data.idAssing;
 
     dataAssign = {
@@ -977,6 +981,14 @@ require './templates/header.html';
     }
 
     await updateAssign(currentId, data);
+
+    const rowData = currentRow.data();
+
+    rowData.terreno = terreno;
+    rowData.condicion = condicion;
+    rowData.archivoPdf = archivoPdf.replace(/^temp\//, "");
+
+    currentRow.data(rowData).draw(false);
   })
 
   $("#btn-cancel").on("click", async function() {

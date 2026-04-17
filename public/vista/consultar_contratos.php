@@ -643,6 +643,14 @@ require './templates/header.html';
     const vehPending = await getPendingVeh(e.params.data.id);
 
     if (vehPending.data && vehPending.data.length > 0) {
+      animate(".alert-container", {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1]
+      }, {
+        duration: 0.45,
+        easing: "ease-out"
+      });
+
       $("#alert-modal").css("display", "flex");
 
       $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
@@ -650,12 +658,12 @@ require './templates/header.html';
       $("#alert-modal .alert-container").html(
         `
           <h2>¡Aviso de unidades pendientes!</h2>
-          <p style="color: black !important">El sistema ha detectado que este cliente cuenta con vehiculos sin asignar. Le sugerimos asignarlos para evitar irregularidades</p>
-          <p style="color: black !important">¿Deseas asignarlos ahora?</p>
-          <div class="btn-group">
-            <button class="btn btn-info btn-assign">Si, quiero asignarlos</button>
-            <button id="btn-close-alert" class="btn btn-dark">Ignorar alerta</button>
-          </div>
+              <p style="color: black !important">El sistema ha detectado que este cliente cuenta con ${vehPending.data.length} vehiculo(s) sin asignar. Le sugerimos asignarlos para evitar irregularidades</p>
+              <p style="color: black !important">¿Deseas asignarlos ahora?</p>
+              <div class="btn-group">
+                <button class="btn btn-info btn-assign">Si, quiero asignarlos</button>
+                <button id="btn-close-alert" class="btn btn-dark">Ignorar alerta</button>
+              </div>
         `
       )
 

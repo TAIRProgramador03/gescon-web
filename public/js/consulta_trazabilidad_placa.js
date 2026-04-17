@@ -1,4 +1,7 @@
 // const IP_LOCAL = "localhost";
+import {
+    animate
+  } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 
 const obtenerInstancia = async () => {
   const IP_LOCAL = await obtenerConfig();
@@ -95,8 +98,8 @@ export const getContracts = async (clientId) => {
 
 const getFile = async (key) => {
   try {
-    const IP_LOCAL = await obtenerConfig()
-    
+    const IP_LOCAL = await obtenerConfig();
+
     const viewPDF = await fetch(
       `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
       {
@@ -122,6 +125,78 @@ export const verPdf = async (key) => {
 
   window.open(link, "_blank");
 };
+
+export async function subirArchivo(archivo) {
+  const formData = new FormData();
+  formData.append("archivoPdf", archivo);
+  formData.append("documentType", "acta");
+
+  try {
+    const IP_LOCAL = await obtenerConfig();
+
+    const response = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
+      enctype: "multipart/form-data",
+      method: "POST",
+      body: formData,
+      credentials: "include", // Asegura que las cookies se envíen con la solicitud
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+      toastr.warning(result.message, "Oops...");
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error al subir el archivo:", error);
+    toastr.warning(error.message, "Oops...");
+  }
+}
+
+export async function updateAssign(id, assign) {
+  try {
+    instance = await obtenerInstancia();
+
+    const response = await instance.put(`/actualizarAsignacion/${id}`, assign, {
+      withCredentials: true,
+    });
+
+    const data = response.data;
+
+    if (data.success) {
+      toastr.success(data.message, "¡Éxito!");
+
+      clearFields();
+    }
+  } catch (error) {
+    console.error(error.response.data.message);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+}
+
+export async function clearFields() {
+  $("#cbo-terreno-upd").val(null).trigger("change");
+  $("#cbo-condicion-upd").val(null).trigger("change");
+  fileInput.value = "";
+
+  const anim = animate(
+    ".modal-container",
+    {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.75],
+    },
+    {
+      duration: 0.45,
+      easing: "ease-in",
+    },
+  );
+
+  await anim.finished;
+
+  $("#modal-assign")
+    .removeClass("opacity-100 z-[9999]")
+    .addClass("opacity-0 -z-[9999]");
+}
 
 export function calcularPorcentaje(fechaIni, fechaFinal) {
   const fechaInicio = new Date(fechaIni);

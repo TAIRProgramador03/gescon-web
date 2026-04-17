@@ -210,7 +210,10 @@ require './templates/header.html';
     getContracts,
     verPdf,
     getLeasings,
-    calcularPorcentaje
+    calcularPorcentaje,
+    subirArchivo,
+    updateAssign,
+    clearFields
   } from "../js/consulta_trazabilidad_placa.js";
 
   import {
@@ -247,6 +250,8 @@ require './templates/header.html';
   let table;
 
   let currentId;
+
+  let dataAssign;
 
   function transformType(value, object) {
     return object[value];
@@ -903,6 +908,12 @@ require './templates/header.html';
 
     currentId = data.idAssing;
 
+    dataAssign = {
+      condicion: data.condicion,
+      terreno: data.terreno,
+      archivoPdf: data.archivoPdf
+    }
+
     if (data.terreno == "4" || data.condicion == "3" || data.archivoPdf == "") {
       $('#cbo-terreno-upd').val(`${data.terreno}`).trigger("change");
       $('#cbo-condicion-upd').val(`${data.condicion}`).trigger("change");
@@ -949,29 +960,27 @@ require './templates/header.html';
 
   $("#btn-save").on("click", async function() {
     const terreno = $('#cbo-terreno-upd').val();
-    const condition = $('#cbo-condicion-upd').val();
+    const condicion = $('#cbo-condicion-upd').val();
     const file = fileInput.files[0];
+    let archivoPdf = dataAssign.archivoPdf;
 
-    console.log({
+    if (file) {
+      const uploadFile = await subirArchivo(fileInput.files[0]);
+      archivoPdf = uploadFile.key;
+    }
+
+    const data = {
       id: currentId,
       terreno,
-      condition,
-      file
-    });
+      condicion,
+      archivoPdf: archivoPdf == '' ? null : archivoPdf
+    }
+
+    await updateAssign(currentId, data);
   })
 
   $("#btn-cancel").on("click", async function() {
-    const anim = animate(".modal-container", {
-      opacity: [1, 0],
-      scale: [1, 1.05, 0.75]
-    }, {
-      duration: 0.45,
-      easing: "ease-in"
-    })
-
-    await anim.finished;
-
-    $("#modal-assign").removeClass("opacity-100 z-[9999]").addClass("opacity-0 -z-[9999]")
+    clearFields()
   })
 
   viewFileButton.addEventListener('click', () => {
@@ -988,8 +997,6 @@ require './templates/header.html';
     fileInfo.style.display = 'none'; // Ocultar el área del archivo
     uploadMessage.addClass("flex"); // Muestra el mensaje inicial.
     uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial. // Mostrar mensaje de carga
-    pdfPreview.src = '';
-    pdfPreviewContainer.style.display = 'none';
   });
 </script>
 

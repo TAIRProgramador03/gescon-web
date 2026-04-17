@@ -338,7 +338,20 @@ require './templates/header.html';
               <label for="combo-box" class="text-gray-500 text-xs font-semibold">Documento Especial</label>
               <label class="relative inline-flex w-fit items-center cursor-pointer">
                 <input class="sr-only peer" value="" type="checkbox" id="especial" name="especial">
-                <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 bg-blue-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 after:content-['No'] after:absolute after:outline-none after:rounded-[50%] after:h-8 after:w-8 after:bg-white after:top-1 after:left-1 after:flex after:justify-center after:items-center  after:text-sky-800 after:font-bold peer-checked:after:translate-x-6 peer-checked:after:content-['Si'] peer-checked:after:border-white">
+                <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
+              bg-red-300 
+              peer-checked:bg-blue-300
+              peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500
+              
+              after:content-['No'] after:absolute after:outline-none after:rounded-[50%] 
+              after:h-8 after:w-8 after:bg-white after:top-1 after:left-1 
+              after:flex after:justify-center after:items-center  
+              after:text-red-800 after:font-bold
+              
+              peer-checked:after:translate-x-6 
+              peer-checked:after:content-['Si'] 
+              peer-checked:after:text-sky-800
+              peer-checked:after:border-white">
                 </div>
               </label>
             </div>
@@ -469,34 +482,9 @@ require './templates/header.html';
 
   document.title = "Registrar Documento | Gescon";
 
-  let activeRequests = 0;
-
-  function showLoader() {
-    activeRequests++;
-    $('#preloader-mini').css('opacity', '1');
-    $('#preloader-mini').css('z-index', '99999');
-  }
-
-  function hideLoader() {
-    activeRequests--;
-    if (activeRequests <= 0) {
-      animate("#preloader-mini", {
-        opacity: [1, 0],
-      }, {
-        duration: 0.45,
-        easing: "ease-in"
-      })
-
-      setTimeout(() => {
-        // $('#preloader-mini').css('opacity', '0');
-        $('#preloader-mini').css('z-index', '-99999');
-      }, 400)
-    }
-  }
+  
 
   document.addEventListener("DOMContentLoaded", function() {
-    showLoader();
-
     const tooltip = document.createElement("div");
 
     tooltip.style.position = "fixed";
@@ -551,8 +539,6 @@ require './templates/header.html';
         }, 200);
       }
     }, true);
-
-    hideLoader();
   });
 
 
@@ -693,49 +679,7 @@ require './templates/header.html';
     uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial. // Mostrar mensaje de carga
   });
 
-  $(document).ready(function() {
-    $("#combo-cliente").select2({
-      placeholder: "Seleccione el cliente",
-      allowClear: false // Desactiva la "X"
-    });
 
-    $("#combo-contrato").select2({
-      placeholder: "Seleccione el contrato",
-      allowClear: false // Desactiva la "X"
-    });
-
-    $("#combo-raz").select2({
-      placeholder: "Seleccione el tipo",
-      allowClear: false // Desactiva la "X"
-    });
-
-    $("#combo-motivo").select2({
-      placeholder: "Seleccione el motivo",
-      allowClear: false // Desactiva la "X"
-    });
-
-    $("#tipoTerreno").select2({
-      placeholder: "Seleccione el tipo",
-      allowClear: false, // Desactiva la "X"
-      width: "140px",
-    });
-
-    $("#tipoModelo").select2({
-      placeholder: "Seleccione el modelo",
-      allowClear: false // Desactiva la "X"
-    });
-
-    $("#condicion").select2({
-      placeholder: "Seleccione la condicion",
-      allowClear: false, // Desactiva la "X"
-      width: "140px",
-    });
-  });
-
-  flatpickr("#text-firma", {
-    dateFormat: "d/m/Y",
-    locale: "es"
-  });
 </script>
 <script type="module" src="../js/registrar_documentos.js"></script>
 

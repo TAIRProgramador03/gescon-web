@@ -18,23 +18,121 @@ toastr.options = {
   hideMethod: "fadeOut",
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  cargarClientes();
-  cargarModelos();
+const obtenerInstancia = async () => {
+  const IP_LOCAL = await obtenerConfig();
+  return axios.create({
+    baseURL: `http://${IP_LOCAL}:3000`,
+    timeout: 3000,
+  });
+};
+
+let instance;
+
+let activeRequests = 0;
+
+function showLoader() {
+  activeRequests++;
+  $("#preloader-mini").css("opacity", "1");
+  $("#preloader-mini").css("z-index", "99999");
+}
+
+function hideLoader() {
+  activeRequests--;
+  if (activeRequests <= 0) {
+    animate(
+      "#preloader-mini",
+      {
+        opacity: [1, 0],
+      },
+      {
+        duration: 0.45,
+        easing: "ease-in",
+      },
+    );
+
+    setTimeout(() => {
+      // $('#preloader-mini').css('opacity', '0');
+      $("#preloader-mini").css("z-index", "-99999");
+    }, 400);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
+  showLoader();
+
+  await cargarClientes();
+  await cargarModelos();
+
   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
-  // document.getElementById("btnAddVeh").addEventListener("click", adicionaVeh);
+
   document
     .getElementById("grabarButton")
     .addEventListener("click", guardarDocumento);
-});
 
-document.addEventListener("DOMContentLoaded", function () {
   const checkbox = document.getElementById("especial");
-  // const tabla = document.getElementById("tabla-dinamica");
 
   checkbox.addEventListener("change", function () {
     actualizarDuracionEstado();
   });
+
+  $("#combo-cliente").select2({
+    placeholder: "Seleccione el cliente",
+    allowClear: false, // Desactiva la "X"
+  });
+
+  $("#combo-contrato").select2({
+    placeholder: "Seleccione el contrato",
+    allowClear: false, // Desactiva la "X"
+  });
+
+  $("#combo-raz").select2({
+    placeholder: "Seleccione el tipo",
+    allowClear: false, // Desactiva la "X"
+  });
+
+  $("#combo-motivo").select2({
+    placeholder: "Seleccione el motivo",
+    allowClear: false, // Desactiva la "X"
+  });
+
+  $("#tipoTerreno").select2({
+    placeholder: "Seleccione el tipo",
+    allowClear: false, // Desactiva la "X"
+    width: "140px",
+  });
+
+  $("#tipoModelo").select2({
+    placeholder: "Seleccione el modelo",
+    allowClear: false, // Desactiva la "X"
+  });
+
+  $("#condicion").select2({
+    placeholder: "Seleccione la condicion",
+    allowClear: false, // Desactiva la "X"
+    width: "140px",
+  });
+
+  flatpickr("#text-firma", {
+    dateFormat: "d/m/Y",
+    locale: "es",
+  });
+
+  const params = new URLSearchParams(window.location.search);
+  const isUpd = params.get("formUpd");
+  const documentId = params.get("idDocumento");
+
+  if (isUpd && isUpd == "true" && documentId) {
+    // CAMBIAMOS EL TITULO Y DESCRIPCIÓN
+    $("#title-form").text("Actualizar Documento");
+    $("#desc-form").text(
+      "Gestione la actualización de documentos temporales registrados para un contrato.",
+    );
+
+    // CARGAMOS TODA LA INFORMACIÓN
+    await cargarDocumento(documentId);
+  }
+
+  hideLoader();
 });
 
 function actualizarDuracionEstado() {
@@ -176,6 +274,19 @@ function agregarFila(checkbox) {
     });
 }
 
+$("#combo-cliente").on("select2:select", async function () {
+  const idCli = $(this).val(); // Obtiene el ID del cliente seleccionado
+
+  if (!idCli) {
+    // Si no hay cliente seleccionado, limpia el combo de contratos
+    document.getElementById("combo-contrato").innerHTML =
+      '<option value="">Seleccione un contrato</option>';
+    return;
+  }
+
+  await cargarContrato(idCli);
+});
+
 /**
  * AGREGA UNA NUEVA FILA A LA TABLA DE VEHICULOS
  */
@@ -185,7 +296,20 @@ $("#addVehicle").on("click", function () {
   agregarFila(checkbox);
 });
 
-$("#tabla-dinamica").on("click", ".btn-remove-vehicle", function () {
+$("#tabla-dinamica tbody").on("click", "tr", function (e) {
+  if ($(e.target).is("button, i, input, select, label")) return;
+
+  const lastRow = $("#tabla-dinamica tbody tr:last")[0];
+
+  if (this === lastRow) {
+    const checkbox = document.getElementById("especial");
+    agregarFila(checkbox);
+  }
+});
+
+$("#tabla-dinamica").on("click", ".btn-remove-vehicle", function (e) {
+  e.stopPropagation();
+
   $(this).closest("tr").remove();
 });
 
@@ -224,7 +348,6 @@ async function cargarClientes() {
       option.textContent = cliente.CLINOM; // El nombre del cliente
       comboBox.appendChild(option);
     });
-    cargarContrato();
   } catch (error) {
     console.error("Error al cargar clientes:", error);
   }
@@ -301,52 +424,103 @@ async function cargarModelosFila(selectElement) {
   }
 }
 
-async function cargarContrato() {
-  $("#combo-cliente").on("select2:select", async function () {
-    const idCli = this.value; // Obtiene el ID del cliente seleccionado
+async function cargarContrato(idCli) {
+  try {
+    const IP_LOCAL = await obtenerConfig();
 
-    if (!idCli) {
-      // Si no hay cliente seleccionado, limpia el combo de contratos
+    // Realiza una solicitud al servidor para obtener los contratos del cliente
+    const response = await fetch(
+      `http://${IP_LOCAL}:3000/contratosNro?idCli=${idCli}`,
+      {
+        method: "GET",
+        credentials: "include", // Asegura que las cookies se envíen con la solicitud
+      },
+    );
+    const contratos = await response.json();
+
+    // Verifica si hay contratos disponibles
+    if (contratos.length === 0) {
       document.getElementById("combo-contrato").innerHTML =
-        '<option value="">Seleccione un contrato</option>';
+        '<option value="">No hay contratos disponibles</option>';
       return;
     }
-    try {
-      const IP_LOCAL = await obtenerConfig();
 
-      // Realiza una solicitud al servidor para obtener los contratos del cliente
-      const response = await fetch(
-        `http://${IP_LOCAL}:3000/contratosNro?idCli=${idCli}`,
-        {
-          method: "GET",
-          credentials: "include", // Asegura que las cookies se envíen con la solicitud
-        },
-      );
-      const contratos = await response.json();
+    // Llena el combo de contratos con los datos devueltos
+    const contratoSelect = document.getElementById("combo-contrato");
+    contratoSelect.innerHTML =
+      '<option value="">Seleccione un contrato</option>'; // Limpia y añade la opción por defecto
 
-      // Verifica si hay contratos disponibles
-      if (contratos.length === 0) {
-        document.getElementById("combo-contrato").innerHTML =
-          '<option value="">No hay contratos disponibles</option>';
-        return;
-      }
+    contratos.forEach((contrato) => {
+      const option = document.createElement("option");
+      option.value = contrato.ID; // Valor del contrato
+      option.textContent = contrato.DESCRIPCION; // Descripción del contrato
+      contratoSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error al obtener los contratos:", error);
+    alert("Error al obtener los contratos. Inténtelo de nuevo más tarde.");
+  }
+}
 
-      // Llena el combo de contratos con los datos devueltos
-      const contratoSelect = document.getElementById("combo-contrato");
-      contratoSelect.innerHTML =
-        '<option value="">Seleccione un contrato</option>'; // Limpia y añade la opción por defecto
+async function cargarDocumento(id) {
+  try {
+    instance = await obtenerInstancia();
 
-      contratos.forEach((contrato) => {
-        const option = document.createElement("option");
-        option.value = contrato.ID; // Valor del contrato
-        option.textContent = contrato.DESCRIPCION; // Descripción del contrato
-        contratoSelect.appendChild(option);
-      });
-    } catch (error) {
-      console.error("Error al obtener los contratos:", error);
-      alert("Error al obtener los contratos. Inténtelo de nuevo más tarde.");
-    }
-  });
+    const response = await instance.get(`/obtenerDocumentoPorId/${id}`, {
+      withCredentials: true,
+    });
+
+    const data = response.data;
+
+    // CBO CLIENTE
+    $("#combo-cliente").val(data.idCliente).trigger("change");
+    $("#combo-cliente").prop("disabled", true);
+
+    //CBO CONTRATO
+    await cargarContrato(data.idCliente);
+    $("#combo-contrato").val(data.idPadre).trigger("change");
+    $("#combo-contrato").prop("disabled", true);
+
+    //CBO TIPO DOC
+    $("#combo-raz").val(data.tipoDoc).trigger("change");
+
+    //NRO DOC
+    $("#text-nro-contra").val(data.nroDoc);
+
+    //FEHCA FIRMA
+    $("#text-firma").val(
+      dayjs(convertirFecha(data.fechaFirma)).format("DD/MM/YYYY"),
+    );
+
+    //DURACION
+    $("#text-dura").val(data.duracion);
+
+    // CBO MOTIVO
+    $("#combo-motivo").val(data.motivo).trigger("change");
+
+    // KM ADICION
+    $("#text-adic").val(data.kmAdicional);
+
+    // KM TOTAL
+    $("#text-bolsa").val(data.kmTotal);
+
+    // TOTAL VEHICULOS
+    $("#text-veh").val(data.cantidad);
+    $("#text-sup").val(data.vehSup);
+    $("#text-soc").val(data.vehSoc);
+    $("#text-ciu").val(data.vehCiu);
+    $("#text-sev").val(data.vehSev);
+
+    // ARCHIVO
+    const file = await obtenerArchivo(data.archivoPdf)
+    $("#uploadMessage").hide(); // Ocultar mensaje de carga
+    $("#fileInfo").css("display", "flex"); // Mostrar el área con el archivo
+    $("#fileInput")[0].files = file.file;
+    $("#fileName").text(file.name); // Mostrar el nombre truncado del archivo
+  } catch (error) {
+    console.error(error.response.data.message);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
 }
 
 async function guardarDocumento() {
@@ -606,7 +780,10 @@ async function guardarDocumento() {
   const contratoData = { ...formData, detalles };
 
   async function registrar() {
-    console.log("DOCUMENTOS=====>", {...contratoData, archivo: fileInput.files[0]});
+    console.log("DOCUMENTOS=====>", {
+      ...contratoData,
+      archivo: fileInput.files[0],
+    });
 
     try {
       const uploadFile = await subirArchivo(fileInput.files[0]);
@@ -838,6 +1015,49 @@ async function guardarDocumento() {
   //     return;
   //   }
   // }
+}
+
+async function obtenerArchivo(key) {
+  try {
+    instance = await obtenerInstancia();
+
+    const response = await instance.get("/previsualizarArchivo", {
+      withCredentials: true,
+      params: {
+        key,
+      },
+    });
+
+    const data = response.data;
+
+    if (data.success) {
+      const resFile = await axios.get(data.url, {
+        responseType: "blob",
+      });
+
+      const blob = resFile.data;
+
+      const name = data.url.split("/");
+      const realName = name[name.length - 1].split("?");
+
+      const file = new File([blob], realName[0], {
+        type: blob.type,
+      });
+
+      const dt = new DataTransfer();
+      dt.items.add(file);
+
+      $("#fileInput")[0].files = dt.files;
+
+      return {
+        file: dt.files,
+        name: file.name,
+      };
+    }
+  } catch (error) {
+    console.error(error.response.data.message);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
 }
 
 async function subirArchivo(archivo) {
@@ -1192,4 +1412,11 @@ function adicionaVeh() {
 
 function textoAGuiones(texto) {
   return texto.trim().replace(/\s+/g, "-").toUpperCase();
+}
+
+function convertirFecha(fecha) {
+  const anio = fecha.substring(0, 4);
+  const mes = fecha.substring(4, 6);
+  const dia = fecha.substring(6, 8);
+  return `${anio}-${mes}-${dia}`;
 }

@@ -101,7 +101,7 @@ require './templates/header.html';
             <label
               for="inputClienteAsociado"
               class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-              Cliente Asociado
+              Cliente Origen
             </label>
             <button id="openModalCliAsoc" class="absolute right-0 bottom-0 px-[14px] text-xs py-[11px] bg-cyan-600/10 border-2 border-cyan-600 text-cyan-600 rounded-sm outline-none cursor-pointer hover:bg-cyan-600 hover:text-white transition-colors disabled:bg-gray-400/10 disabled:text-gray-300 disabled:border-gray-300" disabled>
               <i class="bi bi-search"></i>
@@ -109,7 +109,7 @@ require './templates/header.html';
           </div>
           <div class="flex items-center gap-1">
             <input type="checkbox" name="" id="useAssociatedClient">
-            <label for="useAssociatedClient" class="text-sm text-gray-800 font-medium">Asignar cliente asociado</label>
+            <label for="useAssociatedClient" class="text-sm text-gray-800 font-medium">Asignar cliente origen</label>
           </div>
         </div>
       </div>

@@ -352,7 +352,7 @@ export async function listaVehiculosAsignables(clientId) {
               <div class="flex items-center gap-1">
                 <label for="acta_${row.codini}" class="btn-upload w-full flex justify-center items-center gap-1 cursor-pointer bg-blue-800 !rounded-md !text-white px-3 py-2">
                   <i class="bi bi-file-earmark-arrow-up"></i>
-                  <span class="line-clamp-1">Subir archivo</span>
+                  <span class="line-clamp-2">Subir archivo</span>
                 </label>
                 <input id="acta_${row.codini}" type="file" name="acta[]" class="acta hidden" accept="application/pdf">
                 <button id="remove-file-${row.codini}" class="remove-file cursor-pointer p-2 hidden justify-center items-center bg-red-100 border border-red-700 text-red-700 rounded-sm"><i class="bi bi-x"></i></button>
@@ -789,7 +789,10 @@ const registrar = async (asignacionData) => {
     const IP_LOCAL = await obtenerConfig();
     await Promise.all(
       asignacionData.detalles.map(async (detalle) => {
-        if (!detalle.archivoPdf) return;
+        if (!detalle.archivoPdf) {
+          detalle.archivoPdf = null;
+          return;
+        }
         const formData = new FormData();
         formData.append("archivoPdf", detalle.archivoPdf);
         formData.append("documentType", "acta");

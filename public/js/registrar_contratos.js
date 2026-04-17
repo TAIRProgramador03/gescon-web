@@ -101,11 +101,23 @@ document.addEventListener("DOMContentLoaded", async () => {
  */
 $("#addVehicle").on("click", function (e) {
   const checkbox = document.getElementById("especial");
-
   cargarFilasRegistrar(checkbox);
 });
 
-$("#tabla-dinamica").on("click", ".btn-remove-vehicle", function () {
+$("#tabla-dinamica tbody").on("click", "tr", function (e) {
+  if ($(e.target).is("button, i, input, select, label")) return;
+
+  const lastRow = $("#tabla-dinamica tbody tr:last")[0];
+
+  if (this === lastRow) {
+    const checkbox = document.getElementById("especial");
+    cargarFilasRegistrar(checkbox);
+  }
+});
+
+$("#tabla-dinamica").on("click", ".btn-remove-vehicle", function (e) {
+  e.stopPropagation();
+
   $(this).closest("tr").remove();
 });
 

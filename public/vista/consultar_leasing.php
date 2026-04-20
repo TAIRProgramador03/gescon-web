@@ -134,7 +134,9 @@ require './templates/header.html';
             <th class="!font-medium text-gray-500">Fecha Inicio</th>
             <th class="!font-medium text-gray-500">Fecha Fin</th>
             <th class="!font-medium text-gray-500">Periodo</th>
-            <th class="!font-medium text-gray-500">Asociado a</th>
+            <th class="!font-medium text-gray-500">Cliente</th>
+            <th class="!font-medium text-gray-500">Cliente Origen</th>
+            <th class="!font-medium text-gray-500">Contrato/Adenda</th>
             <th class="!font-medium text-gray-500">Acciones</th>
           </tr>
         </thead>
@@ -354,7 +356,7 @@ require './templates/header.html';
         // Centrar contenido y cabecera en las columnas 0, 1 y 2
         {
           "className": "dt-center",
-          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         }
       ],
       columns: [{
@@ -415,6 +417,17 @@ require './templates/header.html';
             }
           },
           width: "120px",
+        },
+        {
+          data: "cliente",
+          width: "180px",
+        },
+        {
+          data: "clienteOrigen",
+          render: (data, type, row) => {
+            return data == "" ? row.cliente : data;
+          },
+          width: "180px",
         },
         {
           data: "nroContrato",

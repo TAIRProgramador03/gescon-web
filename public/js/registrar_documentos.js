@@ -581,7 +581,7 @@ async function cargarContrato(idCli) {
     });
   } catch (error) {
     console.error("Error al obtener los contratos:", error);
-    alert("Error al obtener los contratos. Inténtelo de nuevo más tarde.");
+    toastr.warning("Error al obtener los contratos. Inténtelo de nuevo más tarde.", "Oops...")
   }
 }
 

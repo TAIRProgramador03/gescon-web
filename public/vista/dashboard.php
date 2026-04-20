@@ -66,8 +66,6 @@ require './templates/header.html';
   </div>
 </div>
 
-
-
 <div class="dashboard-container relative">
   <div class="loader-screen">
     <div class="loading-wave">
@@ -123,25 +121,67 @@ require './templates/header.html';
           <h3>Linea de tiempo (Contrato - Leasing)</h3>
           <div id="data-value-comparation" class="data-value"></div>
           <div class="row-cbo-comparation">
-            <select name="contratos" id="cbo-contratos"></select>
-            <select name="leasings" id="cbo-leasings"></select>
+            <!-- CONTRATOS -->
+            <div class="flex flex-col w-full relative">
+              <select id="cbo-contratos" name="contratos"></select>
+
+              <label
+                for="cbo-contratos"
+                class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+                Contratos
+              </label>
+            </div>
+
+            <!-- LEASINGS -->
+            <div class="flex flex-col w-full relative">
+              <select id="cbo-leasings" name="leasings"></select>
+
+              <label
+                for="cbo-leasings"
+                class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+                Leasings
+              </label>
+            </div>
           </div>
           <canvas id="comparationChart" class="comparationChart !overflow-visible"></canvas>
         </div>
 
         <div class="dashboard-item item-large">
           <h3>Compra por modelo</h3>
-          <div id="vehFleetDifference" class="data-value"></div>
+          <div id="vehFleetDifference" class="data-value">0,00 PEN</div>
           <div class="filter-veh-fleet">
-            <div class="row-filter">
-              <select id="cbo-models-gen"></select>
+            <div class="flex flex-col w-full relative">
+              <select id="cbo-models-gen" name="models"></select>
+
+              <label
+                for="cbo-models-gen"
+                class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+                Modelos
+              </label>
             </div>
-            <div class="row-filter">
-              <select id="cbo-years" name="years[]" multiple="multiple"></select>
+            <div class="w-full flex justify-center items-center gap-3">
+              <div class="flex flex-col w-full relative">
+                <select id="cbo-from-year" name="years"></select>
+
+                <label
+                  for="cbo-from-year"
+                  class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+                  Desde
+                </label>
+              </div>
+              <div class="flex flex-col w-full relative">
+                <select id="cbo-to-year" name="years"></select>
+
+                <label
+                  for="cbo-to-year"
+                  class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+                  Hasta
+                </label>
+              </div>
             </div>
           </div>
           <div class="chart-veh-model-container">
-            <canvas id="campaignDonut" class="can-barra"></canvas>
+            <canvas id="barModelYear" class="can-barra"></canvas>
           </div>
         </div>
 
@@ -229,7 +269,7 @@ require './templates/header.html';
 <script src="../js/dashboard.js"></script>
 <script>
   document.title = "Dashboard | Gescon";
-  
+
   lucide.createIcons();
   // CHARGE SCREEN
   let onLoadWindow = 0;
@@ -417,41 +457,48 @@ require './templates/header.html';
     })
   }
 
-  const initDoughnut = async (data) => {
+  const initBarModelYear = async (data) => {
 
-    const ctx = $("#campaignDonut")
+    const ctx = $("#barModelYear")
 
-    const labels = [...new Set(data.map(itm => itm.MODELO))];
-    const years = [...new Set(data.map(itm => Number(itm.ANO)))];
+    const labels = data.map(itm => itm.MODELO.slice(0, 10));
 
     vehFleetChart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels,
-        datasets: years.map(year => {
-
-          const filter = data.filter(itm => itm.ANO == year)
-          const color = generarColor();
-
-          return {
-            axis: 'y',
-            label: year,
-            data: filter.map(itm => itm.T_PRECIO_VEH),
-            fill: false,
-            backgroundColor: [
-              color[0],
-            ],
-            borderColor: [
-              color[1],
-            ],
-            borderWidth: 1
-          }
-        })
+        datasets: [{
+          label: 'Modelos',
+          data: data.map((cli) => cli.T_PRECIO_VEH),
+          backgroundColor: data.map((cli) => {
+            return 'rgba(54, 162, 235, 0.2)'
+          }),
+          borderColor: data.map((cli) => {
+            return 'rgb(54, 162, 235)'
+          }),
+          borderWidth: 1,
+        }]
       },
       options: {
-        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
+        plugins: {
+          zoom: {
+            pan: {
+              enabled: true,
+              mode: 'x'
+            },
+            zoom: {
+              wheel: {
+                enabled: true
+              },
+              pinch: {
+                enabled: true
+              },
+              mode: 'x'
+            }
+          }
+        }
       }
     })
   }
@@ -530,8 +577,8 @@ require './templates/header.html';
                     <th class="!font-medium text-gray-500">Modelo</th>
                     <th class="!font-medium text-gray-500">Marca</th>
                     <th class="!font-medium text-gray-500">Leasing</th>
-                    <th class="!font-medium text-gray-500">Cliente Inicial</th>
-                    <th class="!font-medium text-gray-500">Cliente Actual</th>
+                    <th class="!font-medium text-gray-500">Cliente</th>
+                    <th class="!font-medium text-gray-500">Cliente Origen</th>
                     <th class="!font-medium text-gray-500">Fecha Fin</th>
                     <th class="!font-medium text-gray-500">% de leasing</th>
                   </tr>
@@ -775,8 +822,8 @@ require './templates/header.html';
                     <th class="!font-medium text-gray-500">Modelo</th>
                     <th class="!font-medium text-gray-500">Marca</th>
                     <th class="!font-medium text-gray-500">Leasing</th>
-                    <th class="!font-medium text-gray-500">Cliente Inicial</th>
-                    <th class="!font-medium text-gray-500">Cliente Actual</th>
+                    <th class="!font-medium text-gray-500">Cliente</th>
+                    <th class="!font-medium text-gray-500">Cliente Origen</th>
                     <th class="!font-medium text-gray-500">Fecha Fin</th>
                     <th class="!font-medium text-gray-500 ">% de leasing</th>
                   </tr>
@@ -1000,7 +1047,14 @@ require './templates/header.html';
       let totalPriceByModel = [];
       if (listModel.length > 0) {
         listYears = await obtenerAñosPorModelo(listModel[0].id)
-        totalPriceByModel = await obtenerTotalCostoPorModelo(listModel[0].id, [listYears[0]])
+        if (listYears.length > 0) {
+          const listCost = await obtenerTotalCostoPorModelo(listModel[0].id, listYears[0])
+          totalPriceByModel = listCost.LIST;
+          $("#vehFleetDifference").text(`${listCost.TOTAL.toLocaleString('es-ES', {
+            style: 'currency',
+            currency: 'PEN'
+          })}`)
+        }
       }
 
       const listContracts = await obtenerContratos(clientId);
@@ -1028,7 +1082,7 @@ require './templates/header.html';
         });
       }
 
-      initDoughnut(totalPriceByModel);
+      initBarModelYear(totalPriceByModel);
       initDoughnutLeaA(quantityVehLea.vencidos);
       initDoughnutLeaB(quantityVehLea.porVencer);
       initBarVehicleLea(firstTenResult);
@@ -1038,6 +1092,7 @@ require './templates/header.html';
       $("#cbo-client").select2({
         placeholder: "Seleccione un estado",
         allowClear: false, // Desactiva la "X"
+        width: '100%',
         language: {
           noResults: function() {
             return "No hay resultados disponibles"; // O puedes devolver un string HTML
@@ -1057,6 +1112,7 @@ require './templates/header.html';
       $("#cbo-models-gen").select2({
         placeholder: "Seleccione un modelo",
         allowClear: false, // Desactiva la "X"
+        width: '100%',
         language: {
           noResults: function() {
             return "No hay resultados disponibles"; // O puedes devolver un string HTML
@@ -1068,7 +1124,7 @@ require './templates/header.html';
         }))
       })
 
-      $("#cbo-years").select2({
+      $("#cbo-from-year").select2({
         placeholder: "Seleccione los años",
         allowClear: false, // Desactiva la "X",
         width: '100%',
@@ -1078,6 +1134,21 @@ require './templates/header.html';
           }
         },
         data: listYears.map(year => ({
+          id: year,
+          text: `${year}`
+        })),
+      })
+
+      $("#cbo-to-year").select2({
+        placeholder: "Seleccione un año",
+        allowClear: false, // Desactiva la "X",
+        width: '100%',
+        language: {
+          noResults: function() {
+            return "No hay resultados disponibles"; // O puedes devolver un string HTML
+          }
+        },
+        data: listYears.filter(year => year >= Number($("#cbo-from-year").val())).map(year => ({
           id: year,
           text: `${year}`
         })),
@@ -1101,6 +1172,7 @@ require './templates/header.html';
       $("#cbo-contratos").select2({
         placeholder: "Seleccione un contrato",
         allowClear: false,
+        width: '100%',
         language: {
           noResults: function() {
             return "No hay resultados disponibles"; // O puedes devolver un string HTML
@@ -1115,6 +1187,7 @@ require './templates/header.html';
       $("#cbo-leasings").select2({
         placeholder: "Seleccione un leasing",
         allowClear: false,
+        width: '100%',
         language: {
           noResults: function() {
             return "No hay resultados disponibles"; // O puedes devolver un string HTML
@@ -1476,86 +1549,128 @@ require './templates/header.html';
   })
 
   $("#cbo-models-gen").on("select2:select", async () => {
+    $('#cbo-from-year').empty().trigger('change');
+    $('#cbo-to-year').empty().trigger('change');
+
     const modelId = $("#cbo-models-gen").val();
 
     const listYears = await obtenerAñosPorModelo(modelId)
+
     let data = [];
 
-    if (listYears.length > 0) data = await obtenerTotalCostoPorModelo(modelId, [listYears[0]])
+    if (listYears.length > 0) {
+      data = await obtenerTotalCostoPorModelo(modelId, listYears[0], listYears[listYears.length - 1])
+    }
 
-    const labels = [...new Set(data.map(itm => itm.MODELO))];
-    const years = [...new Set(data.map(itm => Number(itm.ANO)))];
-
-    $('#cbo-years').empty().trigger('change');
+    const labels = data.LIST.map(itm => itm.MODELO.slice(0, 10));
 
     listYears.forEach(year => {
-      const data = {
-        id: year,
-        text: year
-      };
+      const newOption = new Option(year, year, false, false);
 
-      const newOption = new Option(data.text, data.id, false, false);
-      $('#cbo-years').append(newOption).trigger('change');
+      $('#cbo-from-year').append(newOption).trigger('change');
     })
 
-    $('#cbo-years').val(listYears[0]).trigger('change.select2');
+    $('#cbo-from-year').val(listYears[0]).trigger('change');
+
+    listYears.forEach(year => {
+      const newOption = new Option(year, year, false, false);
+
+      $('#cbo-to-year').append(newOption).trigger('change');
+    })
+
+    $('#cbo-to-year').val(listYears[listYears.length - 1]).trigger('change');
+
+    $("#vehFleetDifference").text(`${data.TOTAL.toLocaleString('es-ES', {
+            style: 'currency',
+            currency: 'PEN'
+          })}`)
 
     vehFleetChart.data.labels = labels;
-    vehFleetChart.data.datasets = years.map(year => {
-
-      const filter = data.filter(itm => itm.ANO == year)
-      const color = generarColor();
-
-      return {
-        axis: 'y',
-        label: year,
-        data: filter.map(itm => itm.T_PRECIO_VEH),
-        fill: false,
-        backgroundColor: [
-          color[0],
-        ],
-        borderColor: [
-          color[1],
-        ],
-        borderWidth: 1
-      }
-    })
-
+    vehFleetChart.data.datasets = [{
+      label: 'Modelos',
+      data: data.LIST.map((cli) => cli.T_PRECIO_VEH),
+      fill: false,
+      backgroundColor: data.LIST.map((cli) => {
+        return 'rgba(54, 162, 235, 0.2)'
+      }),
+      borderColor: data.LIST.map((cli) => {
+        return 'rgb(54, 162, 235)'
+      }),
+      borderWidth: 1,
+    }]
     vehFleetChart.update();
   })
 
-  $("#cbo-years").on("change", async () => {
+  $("#cbo-from-year").on("select2:select", async () => {
+    $('#cbo-to-year').empty().trigger('change');
+
     const modelId = $("#cbo-models-gen").val();
-    const listYears = $("#cbo-years").val();
+    const currentYear = $("#cbo-from-year").val();
 
-    let data = [];
+    const listYears = await obtenerAñosPorModelo(modelId)
 
-    if (listYears.length > 0) data = await obtenerTotalCostoPorModelo(modelId, listYears)
+    const filterYear = listYears.filter(year => year >= Number(currentYear));
 
-    const labels = [...new Set(data.map(itm => itm.MODELO))];
-    const years = [...new Set(data.map(itm => Number(itm.ANO)))];
+    filterYear.forEach(year => {
+      const newOption = new Option(year, year, false, false);
 
-    vehFleetChart.data.labels = labels;
-    vehFleetChart.data.datasets = years.map(year => {
-
-      const filter = data.filter(itm => itm.ANO == year)
-      const color = generarColor();
-
-      return {
-        axis: 'y',
-        label: year,
-        data: filter.map(itm => itm.T_PRECIO_VEH),
-        fill: false,
-        backgroundColor: [
-          color[0],
-        ],
-        borderColor: [
-          color[1],
-        ],
-        borderWidth: 1
-      }
+      $('#cbo-to-year').append(newOption).trigger('change');
     })
 
+    $('#cbo-to-year').val(filterYear[filterYear.length - 1]).trigger('change');
+
+    const data = await obtenerTotalCostoPorModelo(modelId, currentYear, filterYear[filterYear.length - 1])
+
+    const labels = data.LIST.map(itm => itm.MODELO.slice(0, 10));
+
+    $("#vehFleetDifference").text(`${data.TOTAL.toLocaleString('es-ES', {
+            style: 'currency',
+            currency: 'PEN'
+          })}`)
+
+    vehFleetChart.data.labels = labels;
+    vehFleetChart.data.datasets = [{
+      label: 'Modelos',
+      data: data.LIST.map((cli) => cli.T_PRECIO_VEH),
+      fill: false,
+      backgroundColor: data.LIST.map((cli) => {
+        return 'rgba(54, 162, 235, 0.2)'
+      }),
+      borderColor: data.LIST.map((cli) => {
+        return 'rgb(54, 162, 235)'
+      }),
+      borderWidth: 1,
+    }]
+    vehFleetChart.update();
+  })
+
+  $("#cbo-to-year").on("select2:select", async () => {
+    const modelId = $("#cbo-models-gen").val();
+    const fromYear = $("#cbo-from-year").val();
+    const currentYear = $("#cbo-to-year").val();
+
+    const data = await obtenerTotalCostoPorModelo(modelId, fromYear, currentYear)
+
+    const labels = data.LIST.map(itm => itm.MODELO.slice(0, 10));
+
+    $("#vehFleetDifference").text(`${data.TOTAL.toLocaleString('es-ES', {
+            style: 'currency',
+            currency: 'PEN'
+          })}`)
+
+    vehFleetChart.data.labels = labels;
+    vehFleetChart.data.datasets = [{
+      label: 'Modelos',
+      data: data.LIST.map((cli) => cli.T_PRECIO_VEH),
+      fill: false,
+      backgroundColor: data.LIST.map((cli) => {
+        return 'rgba(54, 162, 235, 0.2)'
+      }),
+      borderColor: data.LIST.map((cli) => {
+        return 'rgb(54, 162, 235)'
+      }),
+      borderWidth: 1,
+    }]
     vehFleetChart.update();
   })
 

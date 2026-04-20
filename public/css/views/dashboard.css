@@ -204,7 +204,7 @@ body::before {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-top: 12px;
+  /* margin-top: 12px; */
 }
 
 .row-cbo-comparation select {
@@ -250,7 +250,7 @@ i {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 12px;
+  /* margin-top: 12px; */
 }
 
 .filter-veh-fleet .row-filter {
@@ -779,4 +779,98 @@ div.dt-container.dt-empty-footer .dt-scroll-body {
 
 .red-relleno {
   background-color: #f80707;
+}
+
+/* ESTILOS SELECT2 */
+.select2-container {
+  order: 2;
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__rendered {
+  color: #000000;
+  /* line-height: 28px; */
+}
+
+.select2-container .select2-selection--single {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+  padding: 0;
+}
+
+.select2-dropdown {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+/* Cambia la fuente de los elementos dentro del desplegable */
+.select2-results__option {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single {
+  height: 43.3px !important;
+  padding: 11px 10px;
+}
+
+.select2-selection__arrow {
+  top: 50% !important;
+  transform: translate(0, -50%);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: normal;
+}
+
+.select2-container--default .select2-selection--single {
+  outline: none;
+  border: 2px solid oklch(87.2% 0.01 258.338) !important;
+  border-radius: 5px;
+}
+
+.select2-container--default.select2-container--disabled .select2-selection--single {
+  background: #fff !important;
+  color: #eee !important;
+}
+
+.select2-container--default.select2-container--disabled ~ .label-select {
+  color: #eee !important;
+}
+
+/* Cuando el contenedor de Select2 tenga el foco, pinta el label que viene después */
+.select2-container--default.select2-container--focus ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* Cambia el color del borde cuando Select2 recibe el foco */
+.select2-container--default.select2-container--focus
+  .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* También cuando el menú desplegable está abierto */
+.select2-container--default.select2-container--open .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* OPCIONAL: Si quieres que también cambie cuando el menú está ABIERTO */
+.select2-container--default.select2-container--open ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
 }

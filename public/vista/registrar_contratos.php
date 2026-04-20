@@ -682,7 +682,26 @@ require './templates/header.html';
 
   flatpickr("#firma", {
     dateFormat: "d/m/Y",
-    locale: "es"
+    locale: "es",
+    allowInput: true,
+    clickOpens: true,
+  });
+
+  const validInputDate = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // solo números
+
+    if (value.length >= 3 && value.length <= 4) {
+      value = value.slice(0, 2) + "/" + value.slice(2);
+    } else if (value.length >= 5) {
+      value =
+        value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
+    }
+
+    e.target.value = value;
+  };
+
+  document.getElementById("firma").addEventListener("input", function(e) {
+    validInputDate(e);
   });
 </script>
 <script type="module" src="../js/registrar_contratos.js"></script>

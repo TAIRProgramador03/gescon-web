@@ -21,6 +21,18 @@ toastr.options = {
 let tableAssign = null;
 
 // Operacciones para el formulario de asignacion de vehiculos
+const validInputDate = (e) => {
+  let value = e.target.value.replace(/\D/g, ""); // solo números
+
+  if (value.length >= 3 && value.length <= 4) {
+    value = value.slice(0, 2) + "/" + value.slice(2);
+  } else if (value.length >= 5) {
+    value =
+      value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
+  }
+
+  e.target.value = value;
+};
 
 export async function cargarClientes() {
   try {
@@ -188,6 +200,9 @@ export async function listaVehiculosAsignables(clientId) {
         language: {
           url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
         },
+        paging: false,
+        info: false, // "Mostrando 1 a 100..."
+        lengthChange: false,
         emptyTable: "No hay vehículos disponibles",
         fixedHeader: true,
         dom: '<"superior"f>rt<"inferior"i<"derecha-inferior"lp>>',
@@ -383,15 +398,19 @@ export async function listaVehiculosAsignables(clientId) {
             width: "100%",
           });
 
-          $(".dte-ini").each(function () {
+          $(".dte-ini, .dte-fin").each(function () {
             if (!this._flatpickr) {
-              flatpickr(this, { dateFormat: "d/m/Y", locale: "es" });
-            }
-          });
-
-          $(".dte-fin").each(function () {
-            if (!this._flatpickr) {
-              flatpickr(this, { dateFormat: "d/m/Y", locale: "es" });
+              flatpickr(this, {
+                dateFormat: "d/m/Y",
+                locale: "es",
+                allowInput: true,
+                clickOpens: true,
+                onChange: function (selectedDates, dateStr, instance) {
+                  validInputDate({
+                    target: instance.input,
+                  });
+                },
+              });
             }
           });
         },
@@ -414,6 +433,10 @@ export async function listaVehiculosAsignables(clientId) {
     toastr.warning("No se pudo cargar la lista de vehiculos", "Oops...");
   }
 }
+
+$(document).on("input", ".dte-ini, .dte-fin", function (e) {
+  validInputDate(e);
+});
 
 export async function cargarClientesAsig() {
   try {
@@ -531,7 +554,10 @@ async function cargarOperaciones() {
       });
     } catch (error) {
       console.error("Error al obtener las operaciones:", error);
-      alert("Error al obtener las operaciones. Inténtelo de nuevo más tarde.");
+      toastr.warning(
+        "Error al obtener las operaciones. Inténtelo de nuevo más tarde.",
+        "Oops...",
+      );
     }
   });
 }
@@ -581,7 +607,10 @@ async function cargarContrato() {
       });
     } catch (error) {
       console.error("Error al obtener las operaciones:", error);
-      alert("Error al obtener las operaciones. Inténtelo de nuevo más tarde.");
+      toastr.warning(
+        "Error al obtener las operaciones. Inténtelo de nuevo más tarde.",
+        "Oops...",
+      );
     }
   });
 }

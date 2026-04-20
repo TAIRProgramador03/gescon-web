@@ -164,14 +164,39 @@ document.addEventListener("DOMContentLoaded", () => {
   flatpickr("#fechaIni", {
     dateFormat: "d/m/Y",
     locale: "es",
+    allowInput: true,
+    clickOpens: true,
   });
 
   flatpickr("#fechaFin", {
     dateFormat: "d/m/Y",
     locale: "es",
+    allowInput: true,
+    clickOpens: true,
   });
 
   hideLoader();
+});
+
+const validInputDate = (e) => {
+  let value = e.target.value.replace(/\D/g, ""); // solo números
+
+  if (value.length >= 3 && value.length <= 4) {
+    value = value.slice(0, 2) + "/" + value.slice(2);
+  } else if (value.length >= 5) {
+    value =
+      value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
+  }
+
+  e.target.value = value;
+};
+
+document.getElementById("fechaIni").addEventListener("input", function (e) {
+  validInputDate(e);
+});
+
+document.getElementById("fechaFin").addEventListener("input", function (e) {
+  validInputDate(e);
 });
 
 // document.addEventListener("DOMContentLoaded", cargarSeleccionados);
@@ -242,7 +267,10 @@ async function cargartablaClienteLeas() {
         //     "Error al obtener los datos de OpenAI. Inténtelo de nuevo más tarde."
         //   );
         // }
-        alert("Error al obtener los datos. Inténtelo de nuevo más tarde.");
+        toastr.warning(
+          "Error al obtener los datos. Inténtelo de nuevo más tarde.",
+          "Oops...",
+        );
       }
     });
 }
@@ -979,7 +1007,7 @@ async function cargarContratosPorCliente(idCli) {
 
   try {
     const IP_LOCAL = await obtenerConfig();
-    
+
     const response = await fetch(
       `http://${IP_LOCAL}:3000/contratosNroAdi?idCli=${idCli}`,
       {
@@ -1005,7 +1033,10 @@ async function cargarContratosPorCliente(idCli) {
     });
   } catch (error) {
     console.error("Error al obtener los contratos:", error);
-    alert("Error al obtener los contratos. Inténtelo de nuevo más tarde.");
+    toastr.warning(
+      "Error al obtener los contratos. Inténtelo de nuevo más tarde.",
+      "Oops...",
+    );
   }
 }
 

@@ -253,13 +253,11 @@ async function obtenerAñosPorModelo(modelId) {
   return res;
 }
 
-async function obtenerTotalCostoPorModelo(modelId, years) {
+async function obtenerTotalCostoPorModelo(modelId, fromYear, toYear) {
   const IP_LOCAL = await obtenerConfig()
-  
-  const query = years.map((year) => `years=${year}`).join("&");
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/contTotalPriceModel?modelId=${modelId}&${query}`,
+    `http://${IP_LOCAL}:3000/contTotalPriceModel?modelId=${modelId}&fromYear=${fromYear}${toYear ? `&toYear=${toYear}` : ''}`,
     {
       method: "GET",
       credentials: "include",

@@ -447,34 +447,7 @@ require './templates/header.html';
 
   document.title = "Registrar Contrato | Gescon";
 
-  let activeRequests = 0;
-
-  function showLoader() {
-    activeRequests++;
-    $('#preloader-mini').css('opacity', '1');
-    $('#preloader-mini').css('z-index', '99999');
-  }
-
-  function hideLoader() {
-    activeRequests--;
-    if (activeRequests <= 0) {
-      animate("#preloader-mini", {
-        opacity: [1, 0],
-      }, {
-        duration: 0.45,
-        easing: "ease-in"
-      })
-
-      setTimeout(() => {
-        // $('#preloader-mini').css('opacity', '0');
-        $('#preloader-mini').css('z-index', '-99999');
-      }, 400)
-    }
-  }
-
   document.addEventListener("DOMContentLoaded", function() {
-    showLoader();
-
     const tooltip = document.createElement("div");
 
     tooltip.style.position = "fixed";
@@ -529,8 +502,6 @@ require './templates/header.html';
         }, 200);
       }
     }, true);
-
-    hideLoader();
   });
 
   const fileInput = document.getElementById('fileInput');

@@ -10,6 +10,8 @@ const obtenerInstancia = async () => {
 
 let instance;
 
+let isEdit = false;
+
 toastr.options = {
   closeButton: false,
   debug: false,
@@ -28,10 +30,41 @@ toastr.options = {
   hideMethod: "fadeOut",
 };
 
+let activeRequests = 0;
+
+function showLoader() {
+  activeRequests++;
+  $("#preloader-mini").css("opacity", "1");
+  $("#preloader-mini").css("z-index", "99999");
+}
+
+function hideLoader() {
+  activeRequests--;
+  if (activeRequests <= 0) {
+    animate(
+      "#preloader-mini",
+      {
+        opacity: [1, 0],
+      },
+      {
+        duration: 0.45,
+        easing: "ease-in",
+      },
+    );
+
+    setTimeout(() => {
+      // $('#preloader-mini').css('opacity', '0');
+      $("#preloader-mini").css("z-index", "-99999");
+    }, 400);
+  }
+}
+
 /**
  * Inicializa la página cargando clientes, modelos y configurando los eventos de los botones
  */
 document.addEventListener("DOMContentLoaded", async () => {
+  showLoader();
+
   const params = new URLSearchParams(window.location.search);
   const isUpd = params.get("formUpd");
   const contractId = params.get("contratoId");
@@ -46,8 +79,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const findContract = await cargarContrato(contractId);
 
     if (findContract) {
-      const isEdit = validNroContract(findContract.nroContrato);
-      if (isEdit === "CPEN") {
+      if (findContract.nroContrato.startsWith("CPEN-")) {
+        isEdit = true;
+
         $("#title-form").text("Actualizar contrato");
         $("#desc-form").text(
           "Gestione la actualización de contratos temporales registrados para un cliente.",
@@ -94,6 +128,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   document
     .getElementById("actualizarButton")
     .addEventListener("click", guardarContrato);
+
+  hideLoader();
 });
 
 /**
@@ -104,7 +140,7 @@ $("#addVehicle").on("click", function (e) {
   cargarFilasRegistrar(checkbox);
 });
 
-$("#tabla-dinamica tbody").on("click", "tr", function (e) {
+$("#tabla-dinamica tbody").on("dblclick", "tr", function (e) {
   if ($(e.target).is("button, i, input, select, label")) return;
 
   const lastRow = $("#tabla-dinamica tbody tr:last")[0];
@@ -981,13 +1017,8 @@ async function guardarContrato() {
     $("#alert-modal")
       .off("click", "#btn-save")
       .on("click", "#btn-save", async function () {
-        if (isUpd && isUpd === "true" && contractId) {
-          const isEdit = validNroContract(contratoData.nroContrato);
-          if (isEdit === "CPEN") {
-            await actualizar(contractId);
-          } else {
-            await registrar();
-          }
+        if (isUpd && isUpd === "true" && contractId && isEdit) {
+          await actualizar(contractId);          
         } else {
           await registrar();
         }
@@ -1096,13 +1127,8 @@ async function guardarContrato() {
     $("#alert-modal")
       .off("click", "#btn-save")
       .on("click", "#btn-save", async function () {
-        if (isUpd && isUpd === "true" && contractId) {
-          const isEdit = validNroContract(contratoData.nroContrato);
-          if (isEdit === "CPEN") {
-            await actualizar(contractId);
-          } else {
-            await registrar();
-          }
+        if (isUpd && isUpd === "true" && contractId && isEdit) {
+          await actualizar(contractId);
         } else {
           await registrar();
         }
@@ -1154,13 +1180,8 @@ async function guardarContrato() {
   }
 
   // SIN TARIFA ALTA
-  if (isUpd && isUpd === "true" && contractId) {
-    const isEdit = validNroContract(contratoData.nroContrato);
-    if (isEdit === "CPEN") {
-      await actualizar(contractId);
-    } else {
-      await registrar();
-    }
+  if (isUpd && isUpd === "true" && contractId && isEdit) {
+    await actualizar(contractId);
   } else {
     await registrar();
   }

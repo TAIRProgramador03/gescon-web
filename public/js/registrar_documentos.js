@@ -28,6 +28,10 @@ const obtenerInstancia = async () => {
 
 let instance;
 
+let fileKey;
+
+let isEdit = false;
+
 let activeRequests = 0;
 
 function showLoader() {
@@ -67,6 +71,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   document
     .getElementById("grabarButton")
+    .addEventListener("click", guardarDocumento);
+
+  document
+    .getElementById("updateButton")
     .addEventListener("click", guardarDocumento);
 
   const checkbox = document.getElementById("especial");
@@ -115,6 +123,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   flatpickr("#text-firma", {
     dateFormat: "d/m/Y",
     locale: "es",
+    allowInput: true,
+    clickOpens: true,
   });
 
   const params = new URLSearchParams(window.location.search);
@@ -122,17 +132,28 @@ document.addEventListener("DOMContentLoaded", async function () {
   const documentId = params.get("idDocumento");
 
   if (isUpd && isUpd == "true" && documentId) {
-    // CAMBIAMOS EL TITULO Y DESCRIPCIÓN
-    $("#title-form").text("Actualizar Documento");
-    $("#desc-form").text(
-      "Gestione la actualización de documentos temporales registrados para un contrato.",
-    );
-
     // CARGAMOS TODA LA INFORMACIÓN
     await cargarDocumento(documentId);
   }
 
   hideLoader();
+});
+
+const validInputDate = (e) => {
+  let value = e.target.value.replace(/\D/g, ""); // solo números
+
+  if (value.length >= 3 && value.length <= 4) {
+    value = value.slice(0, 2) + "/" + value.slice(2);
+  } else if (value.length >= 5) {
+    value =
+      value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
+  }
+
+  e.target.value = value;
+};
+
+document.getElementById("text-firma").addEventListener("input", function (e) {
+  validInputDate(e);
 });
 
 function actualizarDuracionEstado() {
@@ -168,6 +189,7 @@ function agregarFila(checkbox) {
             <td><input type="text" name="item[]" value="${
               lastRowIndex + 2
             }" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
+            <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
             <td>
                 <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
                     <option value="">Seleccione un modelo</option>
@@ -274,6 +296,107 @@ function agregarFila(checkbox) {
     });
 }
 
+async function cargarFilasDesdeLista(lista, checkbox) {
+  const tabla = document.getElementById("tabla-dinamica");
+  const tbody = tabla.querySelector("tbody");
+
+  // 🔹 limpiar tabla si quieres (opcional)
+  tbody.innerHTML = "";
+
+  for (const [index, data] of lista.entries()) {
+    const nuevaFila = document.createElement("tr");
+
+    nuevaFila.innerHTML = `
+      <td><input type="text" name="item[]" value="${index + 1}" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
+
+      <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="${data.id}" disabled></td>
+
+      <td>
+        <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select">
+          <option value="">Seleccione un modelo</option>
+        </select>
+      </td>
+
+      <td>
+        <select name="tipo_terreno[]" class="cbo-form-cliente-deta terreno-select">
+          <option value="4">Seleccione el tipo</option>
+          <option value="0">Superficie</option>
+          <option value="1">Socavon</option>
+          <option value="2">Ciudad</option>
+          <option value="3">Severo</option>
+        </select>
+      </td>
+
+      <td><input type="text" name="tarifa[]" value="${data.tarifa}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+      <td><input type="text" name="cpk[]" value="${data.cpk}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+      <td><input type="number" name="rm[]" value="${data.rm}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+      <td><input type="number" name="cantidad[]" value="${data.cantidad}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+
+      <td>
+        <input type="text" name="kmAdi[]" value="${data.kmAdicional}" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" ${
+          checkbox.checked ? "" : "disabled"
+        }>
+      </td>
+
+      <td>
+        <input type="text" name="duracion[]" value="${data.duracion}" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" ${
+          checkbox.checked ? "" : "disabled"
+        }>
+      </td>
+
+      <td><input type="text" name="compra_veh[]" value="${data.compraVeh}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+      <td><input type="text" name="precio_veh[]" value="${data.precioVeh}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+
+      <td>
+        <select name="condicion[]" class="cbo-form-cliente condicion-select">
+          <option value="4">Seleccione el tipo</option>
+          <option value="0">Titular</option>
+          <option value="1">Retén</option>
+          <option value="2">Logística</option>
+          <option value="3">Pendiente</option>
+        </select>
+      </td>
+
+      <td>
+        <button class="btn btn-error btn-remove-vehicle">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    `;
+
+    tbody.appendChild(nuevaFila);
+
+    // 🔹 cargar modelos dinámicamente
+    await cargarModelosFila(nuevaFila.querySelector(".modelo-select"));
+
+    // 🔹 inicializar select2
+    $(nuevaFila).find(".modelo-select").select2({ width: "100%" });
+    $(nuevaFila).find(".terreno-select").select2({ width: "140px" });
+    $(nuevaFila).find(".condicion-select").select2({ width: "140px" });
+
+    // 🔥 setear valores después de inicializar
+    if (data.modelo) {
+      $(nuevaFila).find(".modelo-select").val(data.modelo).trigger("change");
+    }
+
+    if (data.tipoTerreno !== undefined) {
+      $(nuevaFila)
+        .find(".terreno-select")
+        .val(data.tipoTerreno)
+        .trigger("change");
+    }
+
+    if (data.condicion !== undefined) {
+      $(nuevaFila)
+        .find(".condicion-select")
+        .val(data.condicion)
+        .trigger("change");
+    }
+  }
+
+  actualizarDuracionEstado();
+}
+
 $("#combo-cliente").on("select2:select", async function () {
   const idCli = $(this).val(); // Obtiene el ID del cliente seleccionado
 
@@ -296,7 +419,7 @@ $("#addVehicle").on("click", function () {
   agregarFila(checkbox);
 });
 
-$("#tabla-dinamica tbody").on("click", "tr", function (e) {
+$("#tabla-dinamica tbody").on("dblclick", "tr", function (e) {
   if ($(e.target).is("button, i, input, select, label")) return;
 
   const lastRow = $("#tabla-dinamica tbody tr:last")[0];
@@ -472,6 +595,24 @@ async function cargarDocumento(id) {
 
     const data = response.data;
 
+    if(!data.nroDoc.startsWith("DPEN-")) {
+      toastr.warning("El documento no es temporal y no puede ser modificado", "Alerta")
+      isEdit = false;
+      return;
+    }
+
+    isEdit = true;
+
+    // TITULO DE FORMULARIO
+    $("#title-form").text("Actualizar Documento");
+    $("#desc-form").text(
+      "Gestione la actualización de documentos temporales registrados para un contrato.",
+    );
+
+    // MOSTRAR BOTON ACTUALIZAR
+    $("#grabarButton").removeClass("flex").addClass("hidden");
+    $("#updateButton").removeClass("hidden").addClass("flex");
+
     // CBO CLIENTE
     $("#combo-cliente").val(data.idCliente).trigger("change");
     $("#combo-cliente").prop("disabled", true);
@@ -512,11 +653,24 @@ async function cargarDocumento(id) {
     $("#text-sev").val(data.vehSev);
 
     // ARCHIVO
-    const file = await obtenerArchivo(data.archivoPdf)
-    $("#uploadMessage").hide(); // Ocultar mensaje de carga
-    $("#fileInfo").css("display", "flex"); // Mostrar el área con el archivo
-    $("#fileInput")[0].files = file.file;
-    $("#fileName").text(file.name); // Mostrar el nombre truncado del archivo
+    fileKey = data.archivoPdf;
+    const file = await obtenerArchivo(data.archivoPdf);
+    if (file) {
+      $("#uploadMessage").addClass("hidden").removeClass("flex"); // Ocultar mensaje de carga
+      $("#fileInfo").css("display", "flex"); // Mostrar el área con el archivo
+      $("#fileInput")[0].files = file.file;
+      $("#fileName").text(file.name); // Mostrar el nombre truncado del archivo
+    }
+
+    // DOCUMENTO ESPECIAL
+    $("#especial").prop("checked", data.tipoEsp);
+
+    // DESCRIPCION
+    $("#story").val(data.story);
+
+    // CARGAR TABLA
+    const checkbox = document.getElementById("especial");
+    await cargarFilasDesdeLista(data.detalles, checkbox);
   } catch (error) {
     console.error(error.response.data.message);
     toastr.warning(error.response.data.message, "Oops...");
@@ -672,6 +826,7 @@ async function guardarDocumento() {
     // Obtener detalles de contratos
     detalles = Array.from(document.querySelectorAll("#contratos-tbody tr"))
       .map((fila, index) => {
+        let idDet = fila.querySelector('input[name="id[]"]').value || null;
         let modelo = fila.querySelector('select[name="tipo_modelo[]"]').value;
         let tipoTerreno = fila.querySelector(
           'select[name="tipo_terreno[]"]',
@@ -732,6 +887,7 @@ async function guardarDocumento() {
 
         return modelo && tarifa != null && cantidad
           ? {
+              idDet,
               secCon: index + 1,
               modelo,
               tipoTerreno,
@@ -780,7 +936,7 @@ async function guardarDocumento() {
   const contratoData = { ...formData, detalles };
 
   async function registrar() {
-    console.log("DOCUMENTOS=====>", {
+    console.log("REGISTRAR DOCUMENTOS=====>", {
       ...contratoData,
       archivo: fileInput.files[0],
     });
@@ -815,6 +971,52 @@ async function guardarDocumento() {
     }
   }
 
+  async function actualizar(documentId) {
+    console.log("ACTAULIZAR DOCUMENTOS=====>", {
+      ...contratoData,
+      archivo: fileInput.files[0],
+    });
+
+    try {
+      let nameFile = fileInput.files[0].name;
+      const isExist = await validarArchivo(nameFile);
+      if (!isExist) {
+        const uploadFile = await subirArchivo(fileInput.files[0]);
+        nameFile = uploadFile.key;
+      } else {
+        nameFile = `documents/${nameFile}`;
+      }
+
+      const data = { ...contratoData, archivoPdf: nameFile };
+      const IP_LOCAL = await obtenerConfig();
+      const response = await fetch(
+        `http://${IP_LOCAL}:3000/actualizarDocumento/${documentId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+          credentials: "include", // Asegura que las cookies se envíen con la solicitud
+        },
+      );
+      const result = await response.json();
+      if (result.success) {
+        toastr.success("Documento guardado exitosamente", "¡Excelente!");
+        limpiarCampos();
+      } else {
+        toastr.warning(result.message, "Oops...");
+      }
+    } catch (error) {
+      const mensaje =
+        error?.odbcErrors?.[0]?.message || error.message || "Error desconocido";
+      console.error("Error al enviar los datos:", error);
+      toastr.warning(`Error al guardar: ${mensaje}`, "Oops...");
+    }
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const isUpd = params.get("formUpd");
+  const documentId = params.get("idDocumento");
+
   if (detalles.length == 0) {
     $("#alert-modal").css("display", "flex");
 
@@ -848,7 +1050,11 @@ async function guardarDocumento() {
     $("#alert-modal")
       .off("click", "#btn-save")
       .on("click", "#btn-save", async function () {
-        await registrar();
+        if (isUpd && isUpd == "true" && documentId && isEdit) {
+          await actualizar(documentId);
+        } else {
+          await registrar();
+        }
 
         const anim = animate(
           ".alert-container",
@@ -954,7 +1160,12 @@ async function guardarDocumento() {
     $("#alert-modal")
       .off("click", "#btn-save")
       .on("click", "#btn-save", async function () {
-        await registrar();
+        if (isUpd && isUpd == "true" && documentId && isEdit) {
+          
+          await actualizar(documentId);
+        } else {
+          await registrar();
+        }
 
         const anim = animate(
           ".alert-container",
@@ -1003,18 +1214,11 @@ async function guardarDocumento() {
   }
 
   // SIN TARIFA ALTA
-  await registrar();
-
-  // if (nombreArchivo) {
-  //   const yaExiste = await validarArchivo(nombreArchivo); // Solo el nombre, ya es string
-  //   if (!yaExiste) {
-  //     await subirArchivo(fileInput.files[0]); // Aquí mandas el archivo como tal (tipo File)
-  //   } else {
-  //     console.warn("El archivo ya existe, no se sube.");
-  //     mostrarNotificacion("El archivo PDF ya existe en el servidor", "#C70039");
-  //     return;
-  //   }
-  // }
+  if (isUpd && isUpd == "true" && documentId && isEdit) {
+    await actualizar(documentId);
+  } else {
+    await registrar();
+  }
 }
 
 async function obtenerArchivo(key) {
@@ -1057,6 +1261,7 @@ async function obtenerArchivo(key) {
   } catch (error) {
     console.error(error.response.data.message);
     toastr.warning(error.response.data.message, "Oops...");
+    return null;
   }
 }
 
@@ -1092,7 +1297,7 @@ async function validarArchivo(nombreArchivo) {
     const IP_LOCAL = await obtenerConfig();
 
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`,
+      `http://${IP_LOCAL}:3000/validarArchivo?nombre=documents/${nombreArchivo.trim()}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -1100,15 +1305,10 @@ async function validarArchivo(nombreArchivo) {
     );
     const result = await response.json();
 
-    if (result.existe) {
-      toastr.warning("El archivo PDF ya existe en el servidor", "Oops...");
-      return true;
-    } else {
-      return false;
-    }
+    return result.success;
   } catch (error) {
     console.error("Error al validar archivo PDF:", error);
-    toastr.warning("Error al validar archivo PDF", "Oops...");
+    // toastr.warning(error.message, "Oops...");
     return false;
   }
 }
@@ -1297,7 +1497,16 @@ async function exportVehicle() {
 
 function limpiarCampos() {
   // Limpiar los campos de texto (inputs)
-  console.log("Función limpiarCampos ejecutada");
+  const params = new URLSearchParams(window.location.search);
+  params.delete("formUpd");
+  params.delete("idDocumento");
+
+  const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+  window.history.replaceState({}, "", nuevaURL);
+
+  $("#grabarButton").removeClass("hidden").addClass("flex");
+  $("#updateButton").removeClass("flex").addClass("hidden");
+
   document.getElementById("text-nro-contra").value = "";
   document.getElementById("text-veh").value = "0";
   document.getElementById("text-firma").value = "";
@@ -1313,9 +1522,7 @@ function limpiarCampos() {
   document.getElementById("fileInput").value = ""; // Esto limpia el archivo seleccionado
   document.getElementById("fileName").textContent = ""; // Esto limpia el nombre del archivo mostrado
   document.getElementById("fileInfo").style.display = "none"; // Oculta el área de información del archivo
-  const uploadMessage = document.getElementById("uploadMessage");
-  uploadMessage.textContent = "Haz clic o arrastra un archivo aquí"; // Restablece el mensaje
-  uploadMessage.style.display = "block";
+  $("#uploadMessage").removeClass("hidden").addClass("flex");
 
   $("#combo-cliente").val(null).trigger("change");
   $("#combo-contrato").val(null).trigger("change");
@@ -1332,6 +1539,7 @@ function limpiarCampos() {
   // Eliminar todo el contenido del tbody
   tbody.innerHTML = ` <tr>
                            <td><input type="text" name="item[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" disabled></td>
+                           <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
                 <td>
                   <select id="tipoModelo" name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
                     <option value="">Seleccione un modelo</option>

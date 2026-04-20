@@ -360,6 +360,7 @@ require './templates/header.html';
             <thead>
               <tr>
                 <th>Item</th>
+                <th class="hidden">Id</th>
                 <th>Modelo</th>
                 <th>Tipo terreno</th>
                 <th>Tarifa</th>
@@ -377,6 +378,7 @@ require './templates/header.html';
             <tbody id="contratos-tbody" class="table-detalle">
               <tr>
                 <td><input type="text" name="item[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" disabled></td>
+                <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
                 <td>
                   <select id="tipoModelo" name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
                     <option value="">Seleccione un modelo</option>
@@ -455,6 +457,16 @@ require './templates/header.html';
             </div>
             <p class="translate-x-4 !m-0 !text-white text-base font-medium">Registrar</p>
           </button>
+          <button
+            type="button"
+            id="updateButton"
+            class="cursor-pointer bg-blue-700 text-center w-1/4 rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
+            <div
+              class="bg-blue-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+              <i class="bi bi-floppy-fill"></i>
+            </div>
+            <p class="translate-x-4 !m-0 !text-white text-base font-medium">Actualizar</p>
+          </button>
         </div>
       </div>
     </div>
@@ -482,7 +494,7 @@ require './templates/header.html';
 
   document.title = "Registrar Documento | Gescon";
 
-  
+
 
   document.addEventListener("DOMContentLoaded", function() {
     const tooltip = document.createElement("div");
@@ -624,11 +636,20 @@ require './templates/header.html';
   // Mostrar archivo y cambiar el contenido visual
   function handleFile() {
     const file = fileInput.files[0];
+
     if (file) {
-      uploadMessage.addClass("hidden"); // Muestra el mensaje inicial.
-      uploadMessage.removeClass("flex"); // Muestra el mensaje inicial.
-      fileInfo.style.display = 'flex'; // Mostrar el área con el archivo
-      fileNameDisplay.textContent = truncateFileName(file.name); // Mostrar el nombre truncado del archivo
+      // ✅ Estado con archivo
+      uploadMessage.addClass("hidden").removeClass("flex");
+
+      fileInfo.style.display = 'flex';
+      fileNameDisplay.textContent = truncateFileName(file.name);
+
+    } else {
+      // 🔥 Estado inicial (canceló o limpió)
+      uploadMessage.removeClass("hidden").addClass("flex");
+
+      fileInfo.style.display = 'none';
+      fileNameDisplay.textContent = "";
     }
   }
 
@@ -678,8 +699,6 @@ require './templates/header.html';
     uploadMessage.addClass("flex"); // Muestra el mensaje inicial.
     uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial. // Mostrar mensaje de carga
   });
-
-
 </script>
 <script type="module" src="../js/registrar_documentos.js"></script>
 

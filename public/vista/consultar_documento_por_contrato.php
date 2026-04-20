@@ -199,6 +199,17 @@ require './templates/header.html';
         </div>
         <button
           type="button"
+          id="btn-edit-con"
+          data-permissions="editar_documentos"
+          class="cursor-pointer bg-blue-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
+          <div
+            class="bg-blue-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+            <i class="bi bi-pencil-fill"></i>
+          </div>
+          <p class="translate-x-4 !m-0 !text-white text-base font-medium">Editar contrato</p>
+        </button>
+        <button
+          type="button"
           id="btn-document"
           class="cursor-pointer bg-indigo-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
           <div
@@ -291,6 +302,8 @@ require './templates/header.html';
   //   }, 2000);
   // };
 
+  let table;
+
   document.addEventListener("DOMContentLoaded", async () => {
     showLoader();
 
@@ -306,7 +319,7 @@ require './templates/header.html';
 
     const documents = await getDocuments(contratoId, clienteId);
 
-    const table = $("#listDocuments").DataTable({
+    table = $("#listDocuments").DataTable({
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
@@ -353,6 +366,11 @@ require './templates/header.html';
           width: "5%"
         },
       ],
+      createdRow: function(row, data, dataIndex) {
+        if (data.nroDocumento.startsWith("DPEN-")) {
+          $(row).css("background-color", "#ffe5e5", "important");
+        }
+      }
     });
 
     if (documentoId && !isNaN(documentoId)) {
@@ -380,6 +398,10 @@ require './templates/header.html';
       // CANTIDAD LEASING
       $("#leasing-result").text(detailDocument.cantLea);
 
+      if (detailDocument.nroDocumento.startsWith("DPEN-")) {
+        $("#btn-edit-con").removeClass("hidden").addClass("flex")
+      }
+
       $("#btn-document").addClass("flex");
       $("#btn-document").removeClass("hidden");
 
@@ -393,65 +415,88 @@ require './templates/header.html';
       $("#crumb-active").text(`${nroDoc}`);
     }
 
-    $("#listDocuments tbody").on("click", "tr", async function() {
-      if (table.row(this).data()) {
-        showSkeleton();
-
-        $('tr').removeClass("selected-row");
-
-        $(this).addClass("selected-row");
-
-        const data = table.row(this).data();
-
-        param.set("documentoId", data.id)
-        param.set("nroDoc", data.nroDocumento)
-
-        $("#crumb-active").text(`${data.nroDocumento}`);
-
-        const nuevaURL = `${window.location.pathname}?${param.toString()}`;
-        window.history.replaceState({}, "", nuevaURL);
-
-        const detailDocument = await getDetailDocument(data.id);
-
-        const fechaIni = convertirFecha(detailDocument.firma)
-        const fechaFin = calcularFechaFin(fechaIni, detailDocument.duracion);
-        const estado = obtenerEstado(fechaFin);
-
-        // INPUTS DE DATOS
-        $("#fec-fin-result").val(dayjs(fechaFin).format("DD/MM/YYYY"));
-        $("#estado-result").val(estado);
-        $("#tipo-result").val(detailDocument.tipoDocumento);
-        $("#motivo-result").val(detailDocument.motivoDoc);
-        $("#km-total-result").val(detailDocument.kmTotal);
-        $("#km-adi-result").val(detailDocument.kmAdi);
-        $("#descripcion-result").val(detailDocument.descripcion);
-
-        // VEHICULOS POR TERRENOS
-        $("#sup-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSup : 0);
-        $("#sev-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSev : 0);
-        $("#soc-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSoc : 0);
-        $("#ciu-result").text(detailDocument.cantLea > 0 ? detailDocument.vehCiu : 0);
-
-        // CANTIDAD LEASING
-        $("#leasing-result").text(detailDocument.cantLea);
-
-        $("#btn-document").addClass("flex");
-        $("#btn-document").removeClass("hidden");
-
-        // ABRIR EL PDF
-        $("#btn-document").off("click").on("click", () => {
-          verPdf(detailDocument.archivoPdf);
-        })
-
-        hideSkeleton();
-      }
-    })
-
     table.on("page.dt", () => {
       $('tr').removeClass("selected-row");
     })
 
     hideLoader();
+  })
+
+  $("#listDocuments tbody").on("click", "tr", async function() {
+    if (table.row(this).data()) {
+      showSkeleton();
+
+      $('tr').removeClass("selected-row");
+
+      $(this).addClass("selected-row");
+
+      const data = table.row(this).data();
+
+      const param = new URLSearchParams(window.location.search);
+
+      param.set("documentoId", data.id)
+      param.set("nroDoc", data.nroDocumento)
+
+      $("#crumb-active").text(`${data.nroDocumento}`);
+
+      const nuevaURL = `${window.location.pathname}?${param.toString()}`;
+      window.history.replaceState({}, "", nuevaURL);
+
+      const detailDocument = await getDetailDocument(data.id);
+
+      const fechaIni = convertirFecha(detailDocument.firma)
+      const fechaFin = calcularFechaFin(fechaIni, detailDocument.duracion);
+      const estado = obtenerEstado(fechaFin);
+
+      // INPUTS DE DATOS
+      $("#fec-fin-result").val(dayjs(fechaFin).format("DD/MM/YYYY"));
+      $("#estado-result").val(estado);
+      $("#tipo-result").val(detailDocument.tipoDocumento);
+      $("#motivo-result").val(detailDocument.motivoDoc);
+      $("#km-total-result").val(detailDocument.kmTotal);
+      $("#km-adi-result").val(detailDocument.kmAdi);
+      $("#descripcion-result").val(detailDocument.descripcion);
+
+      // VEHICULOS POR TERRENOS
+      $("#sup-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSup : 0);
+      $("#sev-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSev : 0);
+      $("#soc-result").text(detailDocument.cantLea > 0 ? detailDocument.vehSoc : 0);
+      $("#ciu-result").text(detailDocument.cantLea > 0 ? detailDocument.vehCiu : 0);
+
+      // CANTIDAD LEASING
+      $("#leasing-result").text(detailDocument.cantLea);
+
+      if (detailDocument.nroDocumento.startsWith("DPEN-")) {
+        $("#btn-edit-con").removeClass("hidden").addClass("flex")
+      } else {
+        $("#btn-edit-con").removeClass("flex").addClass("hidden")
+      }
+
+      $("#btn-document").addClass("flex");
+      $("#btn-document").removeClass("hidden");
+
+      // ABRIR EL PDF
+      $("#btn-document").off("click").on("click", () => {
+        verPdf(detailDocument.archivoPdf);
+      })
+
+      hideSkeleton();
+    }
+  })
+
+  $("#btn-edit-con").on("click", () => {
+    const perm = isPermission("editar_documentos");
+
+    if (!perm) {
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const documentId = params.get("documentoId")
+
+    if (!documentId) return;
+
+    window.location.href = `registrar_documentos.php?formUpd=true&idDocumento=${documentId}`;
   })
 
   $("#sup-modal").on("click", async () => {

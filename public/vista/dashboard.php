@@ -461,12 +461,13 @@ require './templates/header.html';
 
     const ctx = $("#barModelYear")
 
-    const labels = data.map(itm => itm.MODELO.slice(0, 10));
+    const fullLabels = data.map(itm => itm.MODELO);
+    const shortLabels = fullLabels.map(label => label.slice(0, 10) + "...");
 
     vehFleetChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels,
+        labels: shortLabels,
         datasets: [{
           label: 'Modelos',
           data: data.map((cli) => cli.T_PRECIO_VEH),
@@ -480,9 +481,18 @@ require './templates/header.html';
         }]
       },
       options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
+          tooltip: {
+            callbacks: {
+              title: function(context) {
+                const index = context[0].dataIndex;
+                return fullLabels[index]; // 👈 nombre completo
+              }
+            }
+          },
           zoom: {
             pan: {
               enabled: true,
@@ -572,15 +582,15 @@ require './templates/header.html';
               <table id="listVehExpires" class="display">
                 <thead>
                   <tr>
-                    <th class="!font-medium text-gray-500">Item</th>
-                    <th class="!font-medium text-gray-500">Placa</th>
-                    <th class="!font-medium text-gray-500">Modelo</th>
-                    <th class="!font-medium text-gray-500">Marca</th>
-                    <th class="!font-medium text-gray-500">Leasing</th>
-                    <th class="!font-medium text-gray-500">Cliente</th>
-                    <th class="!font-medium text-gray-500">Cliente Origen</th>
-                    <th class="!font-medium text-gray-500">Fecha Fin</th>
-                    <th class="!font-medium text-gray-500">% de leasing</th>
+                    <th class="!font-medium text-white bg-yellow-500">Item</th>
+                    <th class="!font-medium text-white bg-yellow-500">Placa</th>
+                    <th class="!font-medium text-white bg-yellow-500">Modelo</th>
+                    <th class="!font-medium text-white bg-yellow-500">Marca</th>
+                    <th class="!font-medium text-white bg-green-500">Cliente</th>
+                    <th class="!font-medium text-white bg-green-500">Cliente Origen</th>
+                    <th class="!font-medium text-white bg-green-500">Leasing</th>
+                    <th class="!font-medium text-white bg-green-500">Fecha Fin</th>
+                    <th class="!font-medium text-white bg-green-500">% de leasing</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -701,13 +711,13 @@ require './templates/header.html';
                   data: "marca",
                 },
                 {
-                  data: "nroLeasing"
-                },
-                {
                   data: "cliente"
                 },
                 {
                   data: "clienteAsoc"
+                },
+                {
+                  data: "nroLeasing"
                 },
                 {
                   data: "fechaFin",
@@ -817,15 +827,15 @@ require './templates/header.html';
               <table id="listVehToExpires" class="display">
                 <thead>
                   <tr>
-                    <th class="!font-medium text-gray-500">Item</th>
-                    <th class="!font-medium text-gray-500">Placa</th>
-                    <th class="!font-medium text-gray-500">Modelo</th>
-                    <th class="!font-medium text-gray-500">Marca</th>
-                    <th class="!font-medium text-gray-500">Leasing</th>
-                    <th class="!font-medium text-gray-500">Cliente</th>
-                    <th class="!font-medium text-gray-500">Cliente Origen</th>
-                    <th class="!font-medium text-gray-500">Fecha Fin</th>
-                    <th class="!font-medium text-gray-500 ">% de leasing</th>
+                    <th class="!font-medium text-white bg-yellow-500">Item</th>
+                    <th class="!font-medium text-white bg-yellow-500">Placa</th>
+                    <th class="!font-medium text-white bg-yellow-500">Modelo</th>
+                    <th class="!font-medium text-white bg-yellow-500">Marca</th>
+                    <th class="!font-medium text-white bg-green-500">Cliente</th>
+                    <th class="!font-medium text-white bg-green-500">Cliente Origen</th>
+                    <th class="!font-medium text-white bg-green-500">Leasing</th>
+                    <th class="!font-medium text-white bg-green-500">Fecha Fin</th>
+                    <th class="!font-medium text-white bg-green-500">% de leasing</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -946,13 +956,13 @@ require './templates/header.html';
                   data: "marca",
                 },
                 {
-                  data: "nroLeasing"
-                },
-                {
                   data: "cliente"
                 },
                 {
                   data: "clienteAsoc"
+                },
+                {
+                  data: "nroLeasing"
                 },
                 {
                   data: "fechaFin",
@@ -1562,7 +1572,8 @@ require './templates/header.html';
       data = await obtenerTotalCostoPorModelo(modelId, listYears[0], listYears[listYears.length - 1])
     }
 
-    const labels = data.LIST.map(itm => itm.MODELO.slice(0, 10));
+    const fullLabels = data.LIST.map(itm => itm.MODELO);
+    const shortLabels = fullLabels.map(label => label.slice(0, 10) + "...");
 
     listYears.forEach(year => {
       const newOption = new Option(year, year, false, false);
@@ -1585,7 +1596,7 @@ require './templates/header.html';
             currency: 'PEN'
           })}`)
 
-    vehFleetChart.data.labels = labels;
+    vehFleetChart.data.labels = shortLabels;
     vehFleetChart.data.datasets = [{
       label: 'Modelos',
       data: data.LIST.map((cli) => cli.T_PRECIO_VEH),
@@ -1598,6 +1609,31 @@ require './templates/header.html';
       }),
       borderWidth: 1,
     }]
+    vehFleetChart.options.plugins = {
+      tooltip: {
+        callbacks: {
+          title: function(context) {
+            const index = context[0].dataIndex;
+            return fullLabels[index];
+          }
+        }
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x'
+        },
+        zoom: {
+          wheel: {
+            enabled: true
+          },
+          pinch: {
+            enabled: true
+          },
+          mode: 'x'
+        }
+      }
+    }
     vehFleetChart.update();
   })
 
@@ -1621,14 +1657,15 @@ require './templates/header.html';
 
     const data = await obtenerTotalCostoPorModelo(modelId, currentYear, filterYear[filterYear.length - 1])
 
-    const labels = data.LIST.map(itm => itm.MODELO.slice(0, 10));
+    const fullLabels = data.LIST.map(itm => itm.MODELO);
+    const shortLabels = fullLabels.map(label => label.slice(0, 10) + "...");
 
     $("#vehFleetDifference").text(`${data.TOTAL.toLocaleString('es-ES', {
             style: 'currency',
             currency: 'PEN'
           })}`)
 
-    vehFleetChart.data.labels = labels;
+    vehFleetChart.data.labels = shortLabels;
     vehFleetChart.data.datasets = [{
       label: 'Modelos',
       data: data.LIST.map((cli) => cli.T_PRECIO_VEH),
@@ -1641,6 +1678,31 @@ require './templates/header.html';
       }),
       borderWidth: 1,
     }]
+    vehFleetChart.options.plugins = {
+      tooltip: {
+        callbacks: {
+          title: function(context) {
+            const index = context[0].dataIndex;
+            return fullLabels[index];
+          }
+        }
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x'
+        },
+        zoom: {
+          wheel: {
+            enabled: true
+          },
+          pinch: {
+            enabled: true
+          },
+          mode: 'x'
+        }
+      }
+    }
     vehFleetChart.update();
   })
 
@@ -1651,14 +1713,15 @@ require './templates/header.html';
 
     const data = await obtenerTotalCostoPorModelo(modelId, fromYear, currentYear)
 
-    const labels = data.LIST.map(itm => itm.MODELO.slice(0, 10));
+    const fullLabels = data.LIST.map(itm => itm.MODELO);
+    const shortLabels = fullLabels.map(label => label.slice(0, 10) + "...");
 
     $("#vehFleetDifference").text(`${data.TOTAL.toLocaleString('es-ES', {
             style: 'currency',
             currency: 'PEN'
           })}`)
 
-    vehFleetChart.data.labels = labels;
+    vehFleetChart.data.labels = shortLabels;
     vehFleetChart.data.datasets = [{
       label: 'Modelos',
       data: data.LIST.map((cli) => cli.T_PRECIO_VEH),
@@ -1671,6 +1734,31 @@ require './templates/header.html';
       }),
       borderWidth: 1,
     }]
+    vehFleetChart.options.plugins = {
+      tooltip: {
+        callbacks: {
+          title: function(context) {
+            const index = context[0].dataIndex;
+            return fullLabels[index];
+          }
+        }
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x'
+        },
+        zoom: {
+          wheel: {
+            enabled: true
+          },
+          pinch: {
+            enabled: true
+          },
+          mode: 'x'
+        }
+      }
+    }
     vehFleetChart.update();
   })
 

@@ -369,6 +369,7 @@ function agregarEventosSeleccion() {
         } else {
           toastr.success("Se agrego el cliente seleccionado", "¡Excelente!");
           cargarContratosPorCliente(clienteID);
+          document.getElementById("myModalCli").style.display = "none";
         }
         // Guardar en localStorage
         localStorage.setItem("clienteSeleccionadoID", clienteID);
@@ -455,6 +456,7 @@ function agregarEventosSeleccionAsoc() {
           toastr.info("Por favor, seleccione un cliente asociado.", "Aviso");
         } else {
           toastr.success("Se agrego el cliente asociado", "¡Excelente!");
+          document.getElementById("myModalCliAsoc").style.display = "none";
         }
       }
     });

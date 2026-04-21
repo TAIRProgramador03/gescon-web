@@ -258,6 +258,7 @@ function cargarFilasRegistrar(checkbox) {
     .select2({
       placeholder: "Seleccione el modelo",
       allowClear: false,
+      width: "100%"
     })
     .next(".select2-container")
     .css({
@@ -361,6 +362,7 @@ function cargarFilas(data, modelos) {
     .select2({
       placeholder: "Seleccione el modelo",
       allowClear: false,
+      width: "100%",
       data: modelos.map((mod) => ({
         id: mod.ID,
         text: mod.MODELO,
@@ -1517,11 +1519,13 @@ function limpiarCampos() {
     $("#tipoModelo").select2({
       placeholder: "Seleccione el tipo",
       allowClear: false, // Desactiva la "X"
+      width: "100%"
     });
 
     $("#tipoTerreno").select2({
       placeholder: "Seleccione el terreno",
       allowClear: false, // Desactiva la "X"
+      width: "100%"
     });
   });
 }

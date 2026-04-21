@@ -1,7 +1,5 @@
 // const IP_LOCAL = "localhost";
-import {
-    animate
-  } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
+import { animate } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 
 const obtenerInstancia = async () => {
   const IP_LOCAL = await obtenerConfig();

@@ -342,28 +342,30 @@ require './templates/header.html';
               </label>
             </div>
           </div>
-          <table id="tabla-dinamica" class="w-full">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Modelo</th>
-                <th>Tipo terreno</th>
-                <th>Tarifa</th>
-                <th>CPK</th>
-                <th>RM</th>
-                <th>Cantidad</th>
-                <th>$ KM Adi.</th>
-                <th>Duracion</th>
-                <th>Compra Veh. ($)</th>
-                <th>Venta Veh. ($)</th>
-                <th>Condición</th>
-                <th>Accion</th>
-              </tr>
-            </thead>
-            <tbody id="contratos-tbody" class="table-detalle">
-
-            </tbody>
-          </table>
+          <div class="max-h-[400px] overflow-y-auto">
+            <table id="tabla-dinamica" class="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Item</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Modelo</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Tipo terreno</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Tarifa</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">CPK</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">RM</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Cantidad</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">$ KM Adi.</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Duracion</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Compra Veh. ($)</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Venta Veh. ($)</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Condición</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Accion</th>
+                </tr>
+              </thead>
+              <tbody id="contratos-tbody" class="table-detalle">
+                <!-- filas dinámicas -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       <!--agregar una columna mas-->
@@ -656,27 +658,32 @@ require './templates/header.html';
   $(document).ready(function() {
     $("#combo-cliente").select2({
       placeholder: "Seleccione un cliente",
-      allowClear: false // Desactiva la "X"
+      allowClear: false, // Desactiva la "X"
+      width: "100%"
     });
 
     $("#combo-moneda").select2({
       placeholder: "Seleccione una moneda",
-      allowClear: false // Desactiva la "X"
+      allowClear: false, // Desactiva la "X"
+      width: "100%"
     });
 
     $("#combo-tipo").select2({
       placeholder: "Seleccione un tipo",
-      allowClear: false // Desactiva la "X"
+      allowClear: false, // Desactiva la "X"
+      width: "100%"
     });
 
     $("#tipoModelo").select2({
       placeholder: "Seleccione el modelo",
-      allowClear: false // Desactiva la "X"
+      allowClear: false, // Desactiva la "X"
+      width: "100%"
     });
 
     $("#tipoTerreno").select2({
       placeholder: "Seleccione el terreno",
-      allowClear: false // Desactiva la "X"
+      allowClear: false, // Desactiva la "X"
+      width: "100%"
     });
   });
 

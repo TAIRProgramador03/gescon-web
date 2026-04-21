@@ -71,7 +71,7 @@ require './templates/header.html';
 
 <main class="main-query" data-route-permission="ver_contratos">
   <div class="contenedor">
-    <div class="form-col-1 contenedor-col-1 relative px-9 py-7 overflow-hidden">
+    <div class="w-full flex flex-col bg-white rounded-lg border border-gray-300 gap-5 relative px-9 py-7 overflow-hidden">
       <div class="w-full h-3 bg-blue-700 absolute top-0 left-0"></div>
       <div class="w-full flex flex-col justify-center gap-2">
         <h3 class="text-5xl text-[#002141] font-semibold">Administración de contratos</h3>
@@ -163,7 +163,7 @@ require './templates/header.html';
         </button>
       </div>
     </div>
-    <div class="form-col-2 contenedor-col-2 relative px-9 py-7 overflow-hidden">
+    <div class="w-full flex flex-col bg-white rounded-lg border border-gray-300 gap-5 relative px-9 py-7 overflow-hidden">
       <div class="w-full h-3 bg-blue-700 absolute top-0 left-0"></div>
       <div class="w-full">
         <h3 class="text-2xl text-[#002141] font-semibold">Resumen</h3>
@@ -274,10 +274,10 @@ require './templates/header.html';
             type="button"
             id="btn-file"
             data-permissions="ver_contratos"
-            class="cursor-pointer bg-violet-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
+            class="cursor-pointer bg-red-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
             <div
-              class="bg-violet-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
-              <i class="bi bi-box-arrow-up-right"></i>
+              class="bg-red-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+              <i class="bi bi-file-earmark-pdf-fill"></i>
             </div>
             <p class="translate-x-4 !m-0 !text-white text-base font-medium">Ver archivo</p>
           </button>
@@ -285,10 +285,10 @@ require './templates/header.html';
             id="btn-assign"
             type="button"
             data-permissions="insertar_asignacion"
-            class="cursor-pointer bg-red-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group btn-assign">
+            class="cursor-pointer bg-yellow-600 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group btn-assign">
             <span class="count-veh-alert"></span>
             <div
-              class="bg-red-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+              class="bg-yellow-800 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
               <i class="bi bi-car-front-fill"></i>
             </div>
             <p class="translate-x-4 !m-0 !text-white text-base font-medium">Pendientes</p>
@@ -482,21 +482,20 @@ require './templates/header.html';
         const perm = isPermission("ver_placas");
 
         if (perm) {
-          setTimeout(() => {
-            animate(".alert-container", {
-              opacity: [0, 1],
-              scale: [0.7, 1.05, 1]
-            }, {
-              duration: 0.45,
-              easing: "ease-out"
-            });
+          animate(".alert-container", {
+            opacity: [0, 1],
+            scale: [0.7, 1.05, 1]
+          }, {
+            duration: 0.45,
+            easing: "ease-out"
+          });
 
-            $("#alert-modal").css("display", "flex");
+          $("#alert-modal").css("display", "flex");
 
-            $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
+          $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
 
-            $("#alert-modal .alert-container").html(
-              `
+          $("#alert-modal .alert-container").html(
+            `
               <h2>¡Aviso de unidades pendientes!</h2>
               <p style="color: black !important">El sistema ha detectado que este cliente cuenta con ${vehPending.data.length} vehiculo(s) sin asignar. Le sugerimos asignarlos para evitar irregularidades</p>
               <p style="color: black !important">¿Deseas asignarlos ahora?</p>
@@ -505,8 +504,7 @@ require './templates/header.html';
                 <button id="btn-close-alert" class="btn btn-dark">Ignorar alerta</button>
               </div>
             `
-            )
-          }, 2000)
+          )
 
           $("#btn-assign").removeClass("hidden");
           $("#btn-assign").addClass("flex");
@@ -537,21 +535,20 @@ require './templates/header.html';
         const total = contTemp.data.total;
         const clientes = contTemp.data.clientes;
 
-        setTimeout(() => {
-          animate(".alert-container", {
-            opacity: [0, 1],
-            scale: [0.7, 1.05, 1]
-          }, {
-            duration: 0.45,
-            easing: "ease-out"
-          });
+        animate(".alert-container", {
+          opacity: [0, 1],
+          scale: [0.7, 1.05, 1]
+        }, {
+          duration: 0.45,
+          easing: "ease-out"
+        });
 
-          $("#alert-modal").css("display", "flex");
+        $("#alert-modal").css("display", "flex");
 
-          $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
+        $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
 
-          $("#alert-modal .alert-container").html(
-            `
+        $("#alert-modal .alert-container").html(
+          `
               <h2>¡Aviso de contratos pendientes!</h2>
               <p style="color: black !important">El sistema ha detectado que cuenta con <b>${total}</b> contratos(s) pendiente(s).</p>
               <div>
@@ -566,8 +563,7 @@ require './templates/header.html';
                 <button id="btn-close-alert" class="btn btn-dark">Ok, de acuerdo</button>
               </div>
             `
-          )
-        }, 1000)
+        )
       }
     }
 
@@ -909,9 +905,7 @@ require './templates/header.html';
       <table id="listVeh" class="display">
         <thead>
         <tr>
-          <th class="text-gray-500 !font-medium">Item</th>
-          <th class="text-gray-500 !font-medium">Cliente</th>
-          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Item</th>
           <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
           <th class="bg-yellow-400 !text-white !font-medium">Año</th>
           <th class="bg-yellow-400 !text-white !font-medium">Color</th>
@@ -921,17 +915,20 @@ require './templates/header.html';
           <th class="bg-green-400 !text-white !font-medium">Leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Cliente</th>
+          <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
           <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
           <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
-          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
           <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
-          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
-          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
-          <th class="text-gray-500 !font-medium">% de contrato</th>
-          <th class="text-gray-500 !font-medium">Condicion</th>
-          <th class="text-gray-500 !font-medium">Acta</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
+          <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
+          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
+          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+          <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
       <tbody>
@@ -999,7 +996,7 @@ require './templates/header.html';
         // Centrar contenido y cabecera en las columnas 0, 1 y 2
         {
           "className": "dt-center",
-          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
         }
       ],
       columns: [{
@@ -1008,14 +1005,6 @@ require './templates/header.html';
             return meta.row + 1;
           },
           width: "5%",
-        },
-        {
-          data: "cliente",
-          width: "200px"
-        },
-        {
-          data: "operacion",
-          width: "150px"
         },
         {
           data: "placa",
@@ -1068,6 +1057,14 @@ require './templates/header.html';
           width: "120px"
         },
         {
+          data: "cliente",
+          width: "200px"
+        },
+        {
+          data: "operacion",
+          width: "150px"
+        },
+        {
           data: "contrato",
           width: "150px"
         },
@@ -1079,18 +1076,18 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "fechaFinCon",
-          render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
-          },
-          width: "120px"
-        },
-        {
           data: "plazo",
           render: (data) => {
             return data + ` meses`
           },
           width: "80px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
         },
         {
           data: "tarifa",
@@ -1114,6 +1111,17 @@ require './templates/header.html';
             return dayjs(data).format("DD/MM/YYYY")
           },
           width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data) => {
+            return transformType(data, {
+              0: "Titular",
+              1: "Retén",
+              2: "Logística",
+              3: "Pendiente"
+            })
+          }
         },
         {
           data: "porcentaje",
@@ -1140,7 +1148,7 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "condicion",
+          data: null,
           render: (data, type, row) => {
             const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
             const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
@@ -1229,9 +1237,7 @@ require './templates/header.html';
       <table id="listVehSev" class="display">
         <thead>
         <tr>
-          <th class="text-gray-500 !font-medium">Item</th>
-          <th class="text-gray-500 !font-medium">Cliente</th>
-          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Item</th>
           <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
           <th class="bg-yellow-400 !text-white !font-medium">Año</th>
           <th class="bg-yellow-400 !text-white !font-medium">Color</th>
@@ -1241,17 +1247,20 @@ require './templates/header.html';
           <th class="bg-green-400 !text-white !font-medium">Leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Cliente</th>
+          <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
           <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
           <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
-          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
           <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
-          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
-          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
-          <th class="text-gray-500 !font-medium">% de contrato</th>
-          <th class="text-gray-500 !font-medium">Condicion</th>
-          <th class="text-gray-500 !font-medium">Acta</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
+          <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
+          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
+          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+          <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
       <tbody>
@@ -1319,7 +1328,7 @@ require './templates/header.html';
         // Centrar contenido y cabecera en las columnas 0, 1 y 2
         {
           "className": "dt-center",
-          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
         }
       ],
       columns: [{
@@ -1328,14 +1337,6 @@ require './templates/header.html';
             return meta.row + 1;
           },
           width: "5%",
-        },
-        {
-          data: "cliente",
-          width: "200px"
-        },
-        {
-          data: "operacion",
-          width: "150px"
         },
         {
           data: "placa",
@@ -1388,6 +1389,14 @@ require './templates/header.html';
           width: "120px"
         },
         {
+          data: "cliente",
+          width: "200px"
+        },
+        {
+          data: "operacion",
+          width: "150px"
+        },
+        {
           data: "contrato",
           width: "150px"
         },
@@ -1399,18 +1408,18 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "fechaFinCon",
-          render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
-          },
-          width: "120px"
-        },
-        {
           data: "plazo",
           render: (data) => {
             return data + ` meses`
           },
           width: "80px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
         },
         {
           data: "tarifa",
@@ -1434,6 +1443,17 @@ require './templates/header.html';
             return dayjs(data).format("DD/MM/YYYY")
           },
           width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data) => {
+            return transformType(data, {
+              0: "Titular",
+              1: "Retén",
+              2: "Logística",
+              3: "Pendiente"
+            })
+          }
         },
         {
           data: "porcentaje",
@@ -1460,7 +1480,7 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "condicion",
+          data: null,
           render: (data, type, row) => {
             const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
             const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
@@ -1522,9 +1542,7 @@ require './templates/header.html';
       <table id="listVehSoc" class="display">
         <thead>
         <tr>
-          <th class="text-gray-500 !font-medium">Item</th>
-          <th class="text-gray-500 !font-medium">Cliente</th>
-          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Item</th>
           <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
           <th class="bg-yellow-400 !text-white !font-medium">Año</th>
           <th class="bg-yellow-400 !text-white !font-medium">Color</th>
@@ -1534,17 +1552,20 @@ require './templates/header.html';
           <th class="bg-green-400 !text-white !font-medium">Leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Cliente</th>
+          <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
           <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
           <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
-          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
           <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
-          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
-          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
-          <th class="text-gray-500 !font-medium">% de contrato</th>
-          <th class="text-gray-500 !font-medium">Condicion</th>
-          <th class="text-gray-500 !font-medium">Acta</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
+          <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
+          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
+          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+          <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
       <tbody>
@@ -1612,7 +1633,7 @@ require './templates/header.html';
         // Centrar contenido y cabecera en las columnas 0, 1 y 2
         {
           "className": "dt-center",
-          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
         }
       ],
       columns: [{
@@ -1621,14 +1642,6 @@ require './templates/header.html';
             return meta.row + 1;
           },
           width: "5%",
-        },
-        {
-          data: "cliente",
-          width: "200px"
-        },
-        {
-          data: "operacion",
-          width: "150px"
         },
         {
           data: "placa",
@@ -1681,6 +1694,14 @@ require './templates/header.html';
           width: "120px"
         },
         {
+          data: "cliente",
+          width: "200px"
+        },
+        {
+          data: "operacion",
+          width: "150px"
+        },
+        {
           data: "contrato",
           width: "150px"
         },
@@ -1692,18 +1713,18 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "fechaFinCon",
-          render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
-          },
-          width: "120px"
-        },
-        {
           data: "plazo",
           render: (data) => {
             return data + ` meses`
           },
           width: "80px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
         },
         {
           data: "tarifa",
@@ -1727,6 +1748,17 @@ require './templates/header.html';
             return dayjs(data).format("DD/MM/YYYY")
           },
           width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data) => {
+            return transformType(data, {
+              0: "Titular",
+              1: "Retén",
+              2: "Logística",
+              3: "Pendiente"
+            })
+          }
         },
         {
           data: "porcentaje",
@@ -1753,7 +1785,7 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "condicion",
+          data: null,
           render: (data, type, row) => {
             const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
             const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
@@ -1815,9 +1847,7 @@ require './templates/header.html';
       <table id="listVehSup" class="display">
         <thead>
         <tr>
-          <th class="text-gray-500 !font-medium">Item</th>
-          <th class="text-gray-500 !font-medium">Cliente</th>
-          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Item</th>
           <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
           <th class="bg-yellow-400 !text-white !font-medium">Año</th>
           <th class="bg-yellow-400 !text-white !font-medium">Color</th>
@@ -1827,17 +1857,20 @@ require './templates/header.html';
           <th class="bg-green-400 !text-white !font-medium">Leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Cliente</th>
+          <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
           <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
           <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
-          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
           <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
-          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
-          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
-          <th class="text-gray-500 !font-medium">% de contrato</th>
-          <th class="text-gray-500 !font-medium">Condicion</th>
-          <th class="text-gray-500 !font-medium">Acta</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
+          <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
+          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
+          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+          <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
       <tbody>
@@ -1904,7 +1937,7 @@ require './templates/header.html';
         // Centrar contenido y cabecera en las columnas 0, 1 y 2
         {
           "className": "dt-center",
-          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
         }
       ],
       data: vehicles,
@@ -1914,14 +1947,6 @@ require './templates/header.html';
             return meta.row + 1;
           },
           width: "5%",
-        },
-        {
-          data: "cliente",
-          width: "200px"
-        },
-        {
-          data: "operacion",
-          width: "150px"
         },
         {
           data: "placa",
@@ -1974,6 +1999,14 @@ require './templates/header.html';
           width: "120px"
         },
         {
+          data: "cliente",
+          width: "200px"
+        },
+        {
+          data: "operacion",
+          width: "150px"
+        },
+        {
           data: "contrato",
           width: "150px"
         },
@@ -1985,18 +2018,18 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "fechaFinCon",
-          render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
-          },
-          width: "120px"
-        },
-        {
           data: "plazo",
           render: (data) => {
             return data + ` meses`
           },
           width: "80px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
         },
         {
           data: "tarifa",
@@ -2020,6 +2053,17 @@ require './templates/header.html';
             return dayjs(data).format("DD/MM/YYYY")
           },
           width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data) => {
+            return transformType(data, {
+              0: "Titular",
+              1: "Retén",
+              2: "Logística",
+              3: "Pendiente"
+            })
+          }
         },
         {
           data: "porcentaje",
@@ -2046,7 +2090,7 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "condicion",
+          data: null,
           render: (data, type, row) => {
             const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
             const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
@@ -2108,9 +2152,7 @@ require './templates/header.html';
       <table id="listVehCiu" class="display">
         <thead>
         <tr>
-          <th class="text-gray-500 !font-medium">Item</th>
-          <th class="text-gray-500 !font-medium">Cliente</th>
-          <th class="text-gray-500 !font-medium">Operacion</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Item</th>
           <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
           <th class="bg-yellow-400 !text-white !font-medium">Año</th>
           <th class="bg-yellow-400 !text-white !font-medium">Color</th>
@@ -2120,17 +2162,20 @@ require './templates/header.html';
           <th class="bg-green-400 !text-white !font-medium">Leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Cliente</th>
+          <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
           <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
           <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
-          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
           <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
-          <th class="text-gray-500 !font-medium">Fecha de Acta de Entrega</th>
-          <th class="text-gray-500 !font-medium">Fecha Devolucion</th>
-          <th class="text-gray-500 !font-medium">% de contrato</th>
-          <th class="text-gray-500 !font-medium">Condicion</th>
-          <th class="text-gray-500 !font-medium">Acta</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
+          <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
+          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
+          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+          <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
       <tbody>
@@ -2198,7 +2243,7 @@ require './templates/header.html';
         // Centrar contenido y cabecera en las columnas 0, 1 y 2
         {
           "className": "dt-center",
-          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
         }
       ],
       columns: [{
@@ -2207,14 +2252,6 @@ require './templates/header.html';
             return meta.row + 1;
           },
           width: "5%",
-        },
-        {
-          data: "cliente",
-          width: "200px"
-        },
-        {
-          data: "operacion",
-          width: "150px"
         },
         {
           data: "placa",
@@ -2267,6 +2304,14 @@ require './templates/header.html';
           width: "120px"
         },
         {
+          data: "cliente",
+          width: "200px"
+        },
+        {
+          data: "operacion",
+          width: "150px"
+        },
+        {
           data: "contrato",
           width: "150px"
         },
@@ -2278,18 +2323,18 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "fechaFinCon",
-          render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
-          },
-          width: "120px"
-        },
-        {
           data: "plazo",
           render: (data) => {
             return data + ` meses`
           },
           width: "80px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
         },
         {
           data: "tarifa",
@@ -2313,6 +2358,17 @@ require './templates/header.html';
             return dayjs(data).format("DD/MM/YYYY")
           },
           width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data) => {
+            return transformType(data, {
+              0: "Titular",
+              1: "Retén",
+              2: "Logística",
+              3: "Pendiente"
+            })
+          }
         },
         {
           data: "porcentaje",
@@ -2339,7 +2395,7 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "condicion",
+          data: null,
           render: (data, type, row) => {
             const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
             const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";

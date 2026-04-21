@@ -105,41 +105,43 @@ require './templates/header.html';
       </div>
     </div>
 
-    <table id="listAssign" class="display rounded-md">
-      <thead>
-        <tr>
-          <th></th>
-          <th class="bg-yellow-400 !text-white !font-medium">Item</th>
-          <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
-          <th class="bg-yellow-400 !text-white !font-medium">Año</th>
-          <th class="bg-yellow-400 !text-white !font-medium">Color</th>
-          <th class="bg-yellow-400 !text-white !font-medium">Marca</th>
-          <th class="bg-yellow-400 !text-white !font-medium">Modelo</th>
-          <th class="bg-yellow-400 !text-white !font-medium">Terreno</th>
-          <th class="bg-green-400 !text-white !font-medium">Leasing</th>
-          <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
-          <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
-          <th class="bg-blue-400 !text-white !font-medium">Cliente</th>
-          <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
-          <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
-          <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
-          <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
-          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
-          <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
-          <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
-          <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
-          <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
-          <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
-          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
-          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
-          <th class="bg-taupe-600 text-white !font-medium">Acta</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-        </tr>
-      </tbody>
-    </table>
+    <div class="w-full overflow-visible">
+      <table id="listAssign" class="display rounded-md">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="bg-yellow-400 !text-white !font-medium">Item</th>
+            <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
+            <th class="bg-yellow-400 !text-white !font-medium">Año</th>
+            <th class="bg-yellow-400 !text-white !font-medium">Color</th>
+            <th class="bg-yellow-400 !text-white !font-medium">Marca</th>
+            <th class="bg-yellow-400 !text-white !font-medium">Modelo</th>
+            <th class="bg-yellow-400 !text-white !font-medium">Terreno</th>
+            <th class="bg-green-400 !text-white !font-medium">Leasing</th>
+            <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
+            <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+            <th class="bg-blue-400 !text-white !font-medium">Cliente</th>
+            <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
+            <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
+            <th class="bg-blue-400 !text-white !font-medium">Fecha Firma</th>
+            <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+            <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
+            <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
+            <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
+            <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
+            <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
+            <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
+            <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
+            <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+            <th class="bg-taupe-600 text-white !font-medium">Acta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </main>
 
@@ -200,6 +202,10 @@ require './templates/header.html';
       <button id="btn-cancel" class="px-3 py-2 font-medium flex justify-center items-center cursor-pointer bg-slate-900 text-white hover:bg-slate-800 rounded transition-colors">Cancelar</button>
     </div>
   </div>
+</div>
+
+<div id="tooltip-global"
+  class="fixed opacity-0 pointer-events-none bg-black text-white text-sm px-3 py-2 rounded shadow-lg z-[9999] transition-all duration-200">
 </div>
 
 <script type="module" src="../js/consulta_trazabilidad_placa.js"></script>
@@ -341,7 +347,7 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      fixedHeader: true,
+      // fixedHeader: true,
       dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
       buttons: [{
         extend: 'excelHtml5',
@@ -1009,6 +1015,25 @@ require './templates/header.html';
     fileInfo.style.display = 'none'; // Ocultar el área del archivo
     uploadMessage.addClass("flex"); // Muestra el mensaje inicial.
     uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial. // Mostrar mensaje de carga
+  });
+
+  const tooltip = document.getElementById('tooltip-global');
+
+  $(document).on('mouseenter', 'th[data-dt-column="19"] .dt-column-header', function(e) {
+    tooltip.innerText = "Inicio de valorización";
+    tooltip.style.opacity = 1;
+  });
+
+  $(document).on('mousemove', 'th[data-dt-column="19"] .dt-column-header', function(e) {
+    const offsetY = 12; // distancia arriba del cursor
+
+    tooltip.style.top = (e.clientY - offsetY) + 'px';
+    tooltip.style.left = e.clientX + 'px';
+    tooltip.style.transform = 'translate(-50%, -100%)';
+  });
+
+  $(document).on('mouseleave', 'th[data-dt-column="19"] .dt-column-header', function() {
+    tooltip.style.opacity = 0;
   });
 </script>
 

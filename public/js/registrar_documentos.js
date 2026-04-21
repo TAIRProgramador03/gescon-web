@@ -86,21 +86,25 @@ document.addEventListener("DOMContentLoaded", async function () {
   $("#combo-cliente").select2({
     placeholder: "Seleccione el cliente",
     allowClear: false, // Desactiva la "X"
+    width: "100%"
   });
 
   $("#combo-contrato").select2({
     placeholder: "Seleccione el contrato",
     allowClear: false, // Desactiva la "X"
+    width: "100%"
   });
 
   $("#combo-raz").select2({
     placeholder: "Seleccione el tipo",
     allowClear: false, // Desactiva la "X"
+    width: "100%"
   });
 
   $("#combo-motivo").select2({
     placeholder: "Seleccione el motivo",
     allowClear: false, // Desactiva la "X"
+    width: "100%"
   });
 
   $("#tipoTerreno").select2({
@@ -112,6 +116,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   $("#tipoModelo").select2({
     placeholder: "Seleccione el modelo",
     allowClear: false, // Desactiva la "X"
+    width: "100%"
   });
 
   $("#condicion").select2({
@@ -255,6 +260,7 @@ function agregarFila(checkbox) {
     .select2({
       placeholder: "Seleccione el modelo",
       allowClear: false,
+      width: "100%"
     })
     .next(".select2-container")
     .css({
@@ -1590,6 +1596,7 @@ function limpiarCampos() {
     $("#tipoModelo").select2({
       placeholder: "Seleccione el modelo",
       allowClear: false, // Desactiva la "X"
+      width: "100%"
     });
 
     $("#condicion").select2({

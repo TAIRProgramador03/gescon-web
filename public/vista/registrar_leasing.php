@@ -417,14 +417,14 @@ require './templates/header.html';
     <div id="pdfModal" class="modal-pdf">
       <div class="modal-content-pdf">
         <span class="close-modal-pdf" id="closeModal">&times;</span>
-        <iframe id="modalPdfViewer" width="100%" height="500px"></iframe>
+        <iframe id="modalPdfViewer" width="100%" height="600px"></iframe>
       </div>
     </div>
 </main>
 
 <!-- SCRIPTS -->
 <script>
-  document.title = "Registrar Leasign | Gescon";
+  document.title = "Registrar Leasing | Gescon";
 
   function asignacionVehicular() {
     window.location = 'adicionar_vehiculos.php';

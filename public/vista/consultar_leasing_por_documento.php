@@ -170,10 +170,10 @@ require './templates/header.html';
         <button
           type="button"
           id="btn-leasing"
-          class="cursor-pointer bg-indigo-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
+          class="cursor-pointer bg-red-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
           <div
-            class="bg-indigo-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
-            <i class="bi bi-box-arrow-up-right"></i>
+            class="bg-red-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+            <i class="bi bi-file-earmark-pdf-fill"></i>
           </div>
           <p class="translate-x-4 !m-0 !text-white text-base font-medium">Ver archivo</p>
         </button>

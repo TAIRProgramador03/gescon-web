@@ -15,7 +15,7 @@ require './templates/header.html';
 <!--BOOTSTRAP CSS-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
-<div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center" >
+<div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
   <div class="flex-col gap-4 w-full flex items-center justify-center relative">
     <div class="w-28 h-28 border-8 text-blue-600 text-4xl animate-spin border-gray-300 flex items-center justify-center border-t-blue-600 rounded-full"></div>
     <div class="gif-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -90,8 +90,9 @@ require './templates/header.html';
           <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
           <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
           <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
-          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
           <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
+          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
+          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
           <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
@@ -120,6 +121,10 @@ require './templates/header.html';
       <button class="btn-error" id="btn-close">Cerrar</button>
     </div>
   </div>
+</div>
+
+<div id="tooltip-global"
+  class="fixed opacity-0 pointer-events-none bg-black text-white text-sm px-3 py-2 rounded shadow-lg z-[9999] transition-all duration-200">
 </div>
 
 <script src="../js/consulta_asignacion_por_contrato.js"></script>
@@ -193,7 +198,7 @@ require './templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      fixedHeader: true,
+      // fixedHeader: true,
       dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
       buttons: [{
         extend: 'excelHtml5',
@@ -243,13 +248,15 @@ require './templates/header.html';
         `);
       },
       // ordering: false,
+      scrollCollapse: true,
       scrollX: true,
+      scrollY: 550,
       data: assigns,
       "columnDefs": [
         // Centrar contenido y cabecera en las columnas 0, 1 y 2
         {
           "className": "dt-center",
-          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
         }
       ],
       columns: [{
@@ -366,6 +373,17 @@ require './templates/header.html';
           width: "120px"
         },
         {
+          data: "condicion",
+          render: (data) => {
+            return transformType(data, {
+              0: "Titular",
+              1: "Retén",
+              2: "Logística",
+              3: "Pendiente"
+            })
+          }
+        },
+        {
           data: "porcentaje",
           render: (data, type, row) => {
 
@@ -390,7 +408,7 @@ require './templates/header.html';
           width: "120px"
         },
         {
-          data: "condicion",
+          data: null,
           render: (data, type, row) => {
             const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
             const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
@@ -519,6 +537,25 @@ require './templates/header.html';
     table.clear();
     table.rows.add(assings);
     table.draw();
+  });
+
+  const tooltip = document.getElementById('tooltip-global');
+
+  $(document).on('mouseenter', 'th[data-dt-column="18"] .dt-column-header', function(e) {
+    tooltip.innerText = "Inicio de valorización";
+    tooltip.style.opacity = 1;
+  });
+
+  $(document).on('mousemove', 'th[data-dt-column="18"] .dt-column-header', function(e) {
+    const offsetY = 12; // distancia arriba del cursor
+
+    tooltip.style.top = (e.clientY - offsetY) + 'px';
+    tooltip.style.left = e.clientX + 'px';
+    tooltip.style.transform = 'translate(-50%, -100%)';
+  });
+
+  $(document).on('mouseleave', 'th[data-dt-column="18"] .dt-column-header', function() {
+    tooltip.style.opacity = 0;
   });
 </script>
 

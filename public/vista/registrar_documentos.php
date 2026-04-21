@@ -356,66 +356,68 @@ require './templates/header.html';
               </label>
             </div>
           </div>
-          <table id="tabla-dinamica">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th class="hidden">Id</th>
-                <th>Modelo</th>
-                <th>Tipo terreno</th>
-                <th>Tarifa</th>
-                <th>CPK</th>
-                <th>RM</th>
-                <th>Cantidad</th>
-                <th>$ KM Adi.</th>
-                <th>Duracion</th>
-                <th>Compra Veh. ($)</th>
-                <th>Venta Veh. ($)</th>
-                <th>Condición</th>
-                <th>Accion</th>
-              </tr>
-            </thead>
-            <tbody id="contratos-tbody" class="table-detalle">
-              <tr>
-                <td><input type="text" name="item[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" disabled></td>
-                <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
-                <td>
-                  <select id="tipoModelo" name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
-                    <option value="">Seleccione un modelo</option>
-                  </select>
-                </td>
-                <td>
-                  <select id="tipoTerreno" name="tipo_terreno[]" class="cbo-form-cliente-deta terreno-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
-                    <option value="4">Seleccione el tipo</option>
-                    <option value="0">Superficie</option>
-                    <option value="1">Socavon</option>
-                    <option value="2">Ciudad</option>
-                    <option value="3">Severo</option>
-                  </select>
-                </td>
-                <td><input type="text" name="tarifa[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
-                <td><input type="text" name="cpk[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
-                <td><input type="number" name="rm[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
-                <td><input type="number" name="cantidad[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
-                <td><input type="text" min="0" name="kmAdi[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="$KM Adicional" disabled></td>
-                <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Duracion contrato" disabled></td>
-                <td><input type="text" name="compra_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
-                <td><input type="text" name="precio_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
-                <td>
-                  <select id="condicion" name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
-                    <option value="4">Seleccione el tipo</option>
-                    <option value="0">Titular</option>
-                    <option value="1">Retén</option>
-                    <option value="2">Logística</option>
-                    <option value="3">Pendiente</option>
-                  </select>
-                </td>
-                <td>
-                  <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="max-h-[400px] overflow-y-auto">
+            <table id="tabla-dinamica" class="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Item</th>
+                  <th class="hidden sticky top-0 bg-white z-20 border px-2 py-2">Id</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Modelo</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Tipo terreno</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Tarifa</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">CPK</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">RM</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Cantidad</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">$ KM Adi.</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Duracion</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Compra Veh. ($)</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Venta Veh. ($)</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Condición</th>
+                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Accion</th>
+                </tr>
+              </thead>
+              <tbody id="contratos-tbody" class="table-detalle">
+                <tr>
+                  <td><input type="text" name="item[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" disabled></td>
+                  <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
+                  <td>
+                    <select id="tipoModelo" name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
+                      <option value="">Seleccione un modelo</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select id="tipoTerreno" name="tipo_terreno[]" class="cbo-form-cliente-deta terreno-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
+                      <option value="4">Seleccione el tipo</option>
+                      <option value="0">Superficie</option>
+                      <option value="1">Socavon</option>
+                      <option value="2">Ciudad</option>
+                      <option value="3">Severo</option>
+                    </select>
+                  </td>
+                  <td><input type="text" name="tarifa[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
+                  <td><input type="text" name="cpk[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
+                  <td><input type="number" name="rm[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
+                  <td><input type="number" name="cantidad[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
+                  <td><input type="text" min="0" name="kmAdi[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="$KM Adicional" disabled></td>
+                  <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Duracion contrato" disabled></td>
+                  <td><input type="text" name="compra_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
+                  <td><input type="text" name="precio_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+                  <td>
+                    <select id="condicion" name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
+                      <option value="4">Seleccione el tipo</option>
+                      <option value="0">Titular</option>
+                      <option value="1">Retén</option>
+                      <option value="2">Logística</option>
+                      <option value="3">Pendiente</option>
+                    </select>
+                  </td>
+                  <td>
+                    <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -476,7 +478,7 @@ require './templates/header.html';
 <div id="pdfModal" class="modal">
   <div class="modal-content">
     <span class="close-modal" id="closeModal">&times;</span>
-    <iframe id="modalPdfViewer" width="100%" height="500px"></iframe>
+    <iframe id="modalPdfViewer" width="100%" height="600px"></iframe>
   </div>
 </div>
 

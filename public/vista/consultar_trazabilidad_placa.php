@@ -123,7 +123,7 @@ require './templates/header.html';
             <th class="bg-blue-400 !text-white !font-medium">Cliente</th>
             <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
             <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
-            <th class="bg-blue-400 !text-white !font-medium">Fecha Firma</th>
+            <th class="bg-blue-400 !text-white !font-medium">Fecha Firma de contrato</th>
             <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
             <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
             <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>

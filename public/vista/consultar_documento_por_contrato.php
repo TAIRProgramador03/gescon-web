@@ -325,7 +325,7 @@ require './templates/header.html';
       },
       scrollY: "500px",
       scrollCollapse: true,
-      dom: 'rt<"inferior"i<"derecha-inferior"lp>>',
+      dom: '<"superior"f>rt<"inferior"i<"derecha-inferior"lp>>',
       data: documents,
       columnDefs: [
         // Centrar contenido y cabecera en las columnas 0, 1 y 2

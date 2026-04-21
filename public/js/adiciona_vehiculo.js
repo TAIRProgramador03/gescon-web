@@ -209,6 +209,9 @@ export async function listaVehiculosAsignables(clientId) {
         scrollCollapse: true,
         scrollX: true,
         scrollY: 550,
+        initComplete: function () {
+          this.api().columns.adjust();
+        },
         data,
         order: [[1, "asc"]],
         select: {
@@ -237,7 +240,7 @@ export async function listaVehiculosAsignables(clientId) {
             render: function (data, type, row, meta) {
               return meta.row + 1;
             },
-            width: "25px",
+            width: "15px",
           },
           {
             data: "codini",
@@ -257,7 +260,7 @@ export async function listaVehiculosAsignables(clientId) {
 
               return `<input type="text" name="placa[]" value="${data}" class="w-full text-center" disabled>`;
             },
-            width: "80px",
+            width: "50px",
           },
           {
             data: "marca",
@@ -270,7 +273,7 @@ export async function listaVehiculosAsignables(clientId) {
                 data
               }" class="w-full text-center" disabled>`;
             },
-            width: "80px",
+            width: "50px",
           },
           {
             data: "modelo",
@@ -283,7 +286,7 @@ export async function listaVehiculosAsignables(clientId) {
                 data
               }" class="w-full text-center" disabled>`;
             },
-            width: "200px",
+            width: "150px",
           },
           {
             data: "nro_leasing",
@@ -294,28 +297,28 @@ export async function listaVehiculosAsignables(clientId) {
 
               return `<input type="text" name="leasing[]" value="${data.trim()}" class="w-full text-center" disabled>`;
             },
-            width: "200px",
+            width: "130px",
           },
           {
             data: null, // TARIFA
             render: () => {
-              return `<input type="text" name="tarifa[]" value="" placeholder="0" class="!text-black text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input">`;
+              return `<input type="text" name="tarifa[]" value="" placeholder="0" class="w-12 !text-black text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input">`;
             },
-            width: "80px",
+            width: "20px",
           },
           {
             data: null, // FECHA ENTREGA
             render: () => {
-              return `<input type="date" name="fechaIni[]" value="" placeholder="dd/mm/aaaa" class="dte-ini !text-black text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input">`;
+              return `<input type="date" name="fechaIni[]" value="" placeholder="dd/mm/aaaa" class="dte-ini w-28 !text-black text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input">`;
             },
-            width: "150px",
+            width: "100px",
           },
           {
             data: null, // FECHA DEVOLUCION
             render: () => {
-              return `<input type="date" name="fechaFin[]" value="" placeholder="dd/mm/aaaa" class="dte-fin !text-black text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input">`;
+              return `<input type="date" name="fechaFin[]" value="" placeholder="dd/mm/aaaa" class="dte-fin w-28 !text-black text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input">`;
             },
-            width: "150px",
+            width: "100px",
           },
           {
             data: null, // OPERACION
@@ -343,7 +346,7 @@ export async function listaVehiculosAsignables(clientId) {
                         <option value="4">Pendiente</option>
                     </select>`;
             },
-            width: "180px",
+            width: "130px",
           },
           {
             data: null, // CONDICION
@@ -358,7 +361,7 @@ export async function listaVehiculosAsignables(clientId) {
               </select>
             `;
             },
-            width: "180px",
+            width: "130px",
           },
           {
             data: null, // ACTA
@@ -378,14 +381,26 @@ export async function listaVehiculosAsignables(clientId) {
           },
         ],
         drawCallback: function () {
+          this.api().columns.adjust();
+          
           $(".combo-operacion").select2({
             placeholder: "Seleccione la operacion",
             width: "100%",
+            language: {
+              noResults: function () {
+                return "No hay resultados disponibles"; // O puedes devolver un string HTML
+              },
+            },
           });
 
           $(".combo-contrato").select2({
             placeholder: "Seleccione el contrato",
             width: "100%",
+            language: {
+              noResults: function () {
+                return "No hay resultados disponibles"; // O puedes devolver un string HTML
+              },
+            },
           });
 
           $(".combo-tip-terreno").select2({

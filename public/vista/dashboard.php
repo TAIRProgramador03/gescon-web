@@ -336,6 +336,55 @@ require './templates/header.html';
   // TABLES
   let tableLea;
 
+  function getMidPoint(data) {
+    if (!data[0].x || !data[1].x) {
+      return {
+        x: "",
+        y: data[0].y,
+        label: ""
+      };
+    }
+
+    const inicio = dayjs(data[0].x);
+    const fin = dayjs(data[1].x);
+
+    // Punto medio
+    const mid = inicio.add(fin.diff(inicio) / 2, 'millisecond');
+
+    // Años completos
+    const años = fin.diff(inicio, 'year');
+
+    // Fecha después de sumar años
+    const afterYears = inicio.add(años, 'year');
+
+    // Meses restantes
+    const meses = fin.diff(afterYears, 'month');
+
+    let label = "";
+
+    if (años > 0) {
+      const textoAños = años === 1 ? 'año' : 'años';
+
+      if (meses > 0) {
+        const textoMeses = meses === 1 ? 'mes' : 'meses';
+        label = `${años} ${textoAños} ${meses} ${textoMeses}`;
+      } else {
+        label = `${años} ${textoAños}`;
+      }
+
+    } else {
+      // 👈 cuando no hay años
+      const textoMeses = meses === 1 ? 'mes' : 'meses';
+      label = `${meses} ${textoMeses}`;
+    }
+
+    return {
+      x: mid.toDate(),
+      y: data[0].y,
+      label
+    };
+  }
+
   const initChartComparation = (data) => {
     const ctx = $("#comparationChart");
 
@@ -351,6 +400,26 @@ require './templates/header.html';
       $("#data-value-comparation").text(`Sin resultados`)
     }
 
+    const contratoMid = getMidPoint([{
+        x: data.fechaIniCont,
+        y: 70
+      },
+      {
+        x: data.fechaFinCont,
+        y: 70
+      }
+    ]);
+
+    const leasingMid = getMidPoint([{
+        x: data.fechaIniLea,
+        y: 20
+      },
+      {
+        x: data.fechaFinLea,
+        y: 20
+      }
+    ]);
+
     chartBarComparation = new Chart(ctx, {
       type: 'line',
       data: {
@@ -363,10 +432,10 @@ require './templates/header.html';
             fill: false,
             data: [{
               x: data.fechaIniCont,
-              y: 60
+              y: 70
             }, {
               x: data.fechaFinCont,
-              y: 60
+              y: 70
             }]
           },
           {
@@ -378,11 +447,45 @@ require './templates/header.html';
             fill: false,
             data: [{
               x: data.fechaIniLea,
-              y: 30
+              y: 20
             }, {
               x: data.fechaFinLea,
-              y: 30
+              y: 20
             }],
+          },
+          {
+            label: 'Duración Contrato',
+            data: [contratoMid],
+            pointRadius: 0,
+            borderWidth: 0,
+            datalabels: {
+              align: 'bottom',
+              anchor: 'center',
+              backgroundColor: '#E8FFEC',
+              borderColor: '#00DB00',
+              borderWidth: 1,
+              color: '#00DB00',
+              borderRadius: 6,
+              padding: 6,
+              formatter: (value) => value.label
+            }
+          },
+          {
+            label: 'Duración Leasing',
+            data: [leasingMid],
+            pointRadius: 0,
+            borderWidth: 0,
+            datalabels: {
+              align: 'bottom',
+              anchor: 'center',
+              backgroundColor: '#E8FFEC',
+              borderColor: '#00DB00',
+              borderWidth: 1,
+              color: '#00DB00',
+              borderRadius: 6,
+              padding: 6,
+              formatter: (value) => value.label
+            }
           }
         ]
       },
@@ -398,7 +501,23 @@ require './templates/header.html';
           },
           tooltip: false,
           datalabels: {
-            formatter: (value) => dayjs(value.x).format("DD/MM/YYYY"),
+            formatter: (value, context) => {
+              const fecha = dayjs(value.x).format("DD/MM/YYYY");
+
+              const dataset = context.dataset.label;
+
+              if (dataset === "Contrato") {
+                const tipo = context.dataIndex === 0 ? "Firma" : "Fin";
+                return `${tipo} Contrato\n${fecha}`;
+              }
+
+              if (dataset === "Leasing") {
+                const tipo = context.dataIndex === 0 ? "Inicio" : "Fin";
+                return `${tipo} Leasing\n${fecha}`;
+              }
+
+              return `${tipo}\n${fecha}`;
+            },
             backgroundColor: "#2563eb",
             borderRadius: 6,
             color: "white",
@@ -448,8 +567,8 @@ require './templates/header.html';
         },
         layout: {
           padding: {
-            left: 40,
-            right: 40
+            left: 60,
+            right: 60
           }
         }
       },
@@ -1509,43 +1628,91 @@ require './templates/header.html';
         $("#data-value-comparation").text(`Vencen a la vez`)
       }
 
+      const contratoMid = getMidPoint([{
+          x: data.fechaIniCont,
+          y: 70
+        },
+        {
+          x: data.fechaFinCont,
+          y: 70
+        }
+      ]);
+
+      const leasingMid = getMidPoint([{
+          x: data.fechaIniLea,
+          y: 20
+        },
+        {
+          x: data.fechaFinLea,
+          y: 20
+        }
+      ]);
+
       chartBarComparation.data.datasets[0].data = [{
         x: data.fechaIniCont,
-        y: 60
+        y: 70
       }, {
         x: data.fechaFinCont,
-        y: 60
+        y: 70
       }]
 
       chartBarComparation.data.datasets[1].data = [{
           x: data.fechaIniLea,
-          y: 30
+          y: 20
         },
         {
           x: data.fechaFinLea,
-          y: 30
+          y: 20
         }
       ]
 
+      chartBarComparation.data.datasets[2].data = [contratoMid]
+
+      chartBarComparation.data.datasets[3].data = [leasingMid]
     } else {
       $("#data-value-comparation").text(`Sin resultados`)
+
+      const contratoMid = getMidPoint([{
+          x: "",
+          y: 70
+        },
+        {
+          x: "",
+          y: 70
+        }
+      ]);
+
+      const leasingMid = getMidPoint([{
+          x: "",
+          y: 20
+        },
+        {
+          x: "",
+          y: 20
+        }
+      ]);
+
       chartBarComparation.data.datasets[0].data = [{
         x: "",
-        y: 60
+        y: 70
       }, {
         x: "",
-        y: 60
+        y: 70
       }]
 
       chartBarComparation.data.datasets[1].data = [{
           x: "",
-          y: 30
+          y: 20
         },
         {
           x: "",
-          y: 30
+          y: 20
         }
       ]
+
+      chartBarComparation.data.datasets[2].data = [contratoMid]
+
+      chartBarComparation.data.datasets[3].data = [leasingMid]
     }
 
     chartBarComparation.update();
@@ -1821,43 +1988,92 @@ require './templates/header.html';
         $("#data-value-comparation").text(`Vencen a la vez`)
       }
 
+      const contratoMid = getMidPoint([{
+          x: data.fechaIniCont,
+          y: 70
+        },
+        {
+          x: data.fechaFinCont,
+          y: 70
+        }
+      ]);
+
+      const leasingMid = getMidPoint([{
+          x: data.fechaIniLea,
+          y: 20
+        },
+        {
+          x: data.fechaFinLea,
+          y: 20
+        }
+      ]);
+
       chartBarComparation.data.datasets[0].data = [{
         x: data.fechaIniCont,
-        y: 60
+        y: 70
       }, {
         x: data.fechaFinCont,
-        y: 60
+        y: 70
       }]
 
       chartBarComparation.data.datasets[1].data = [{
           x: data.fechaIniLea,
-          y: 30
+          y: 20
         },
         {
           x: data.fechaFinLea,
-          y: 30
+          y: 20
         }
       ]
 
+      chartBarComparation.data.datasets[2].data = [contratoMid]
+
+      chartBarComparation.data.datasets[3].data = [leasingMid]
+
     } else {
       $("#data-value-comparation").text(`Sin resultados`)
+
+      const contratoMid = getMidPoint([{
+          x: "",
+          y: 70
+        },
+        {
+          x: "",
+          y: 70
+        }
+      ]);
+
+      const leasingMid = getMidPoint([{
+          x: "",
+          y: 20
+        },
+        {
+          x: "",
+          y: 20
+        }
+      ]);
+
       chartBarComparation.data.datasets[0].data = [{
         x: "",
-        y: 60
+        y: 70
       }, {
         x: "",
-        y: 60
+        y: 70
       }]
 
       chartBarComparation.data.datasets[1].data = [{
           x: "",
-          y: 30
+          y: 20
         },
         {
           x: "",
-          y: 30
+          y: 20
         }
       ]
+
+      chartBarComparation.data.datasets[2].data = [contratoMid]
+
+      chartBarComparation.data.datasets[3].data = [leasingMid]
     }
 
     chartBarComparation.update();
@@ -1876,23 +2092,48 @@ require './templates/header.html';
     } else {
       $("#data-value-comparation").text(`Vencen a la vez`)
     }
+
+    const contratoMid = getMidPoint([{
+        x: data.fechaIniCont,
+        y: 70
+      },
+      {
+        x: data.fechaFinCont,
+        y: 70
+      }
+    ]);
+
+    const leasingMid = getMidPoint([{
+        x: data.fechaIniLea,
+        y: 20
+      },
+      {
+        x: data.fechaFinLea,
+        y: 20
+      }
+    ]);
+
     chartBarComparation.data.datasets[0].data = [{
       x: data.fechaIniCont,
-      y: 60
+      y: 70
     }, {
       x: data.fechaFinCont,
-      y: 60
+      y: 70
     }]
 
     chartBarComparation.data.datasets[1].data = [{
         x: data.fechaIniLea,
-        y: 30
+        y: 20
       },
       {
         x: data.fechaFinLea,
-        y: 30
+        y: 20
       }
     ]
+
+    chartBarComparation.data.datasets[2].data = [contratoMid]
+
+    chartBarComparation.data.datasets[3].data = [leasingMid]
 
     chartBarComparation.update();
   })

@@ -35,6 +35,17 @@ require './templates/header.html';
 </div>
 
 <main class="w-full flex flex-col gap-4" data-route-permission="ver_placas">
+  <div class="w-full flex gap-2 items-center p-2 rounded-xl border border-gray-300 bg-white">
+    <a id="crumb-first" href="" class="px-3 py-1 flex justify-center items-center gap-1 rounded-md text-blue-800 hover:bg-blue-800 hover:text-white transition-colors">
+      <i class="bi bi-archive-fill"></i>
+      Contratos
+    </a>
+    <span>/</span>
+    <a id="crumb-active" class="px-3 py-1 flex justify-center items-center bg-blue-800 text-white rounded-md">
+      Vehiculos
+    </a>
+  </div>
+
   <div class="w-full bg-white px-9 py-7 rounded-md border border-gray-300 relative overflow-hidden">
     <div class="w-full h-3 bg-orange-700 absolute top-0 left-0"></div>
     <div class="w-full flex flex-col justify-center gap-2">
@@ -83,7 +94,7 @@ require './templates/header.html';
           <th class="bg-blue-400 !text-white !font-medium">Cliente</th>
           <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
           <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
-          <th class="bg-blue-400 !text-white !font-medium">Fecha Inicio de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Firma de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
           <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
           <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
@@ -183,6 +194,8 @@ require './templates/header.html';
     const tipoTerr = param.get("tipoTerr")
 
     if (!clienteId) toastr.error("No se encontraron los parametros necesarios")
+
+    $('#crumb-first').prop('href', `consultar_contratos.php?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`);
 
     $("#paramClient").text(clienteId);
     if (contratoId) {

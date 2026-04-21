@@ -225,6 +225,7 @@ th {
   /* font-weight: <weight>; */
   font-style: normal;
   font-weight: 500;
+  /* width: 100%; */
 }
 
 td {
@@ -239,45 +240,50 @@ td {
   font-size: 12px;
 }
 
-th:nth-child(1),
+/* th:nth-child(1),
 td:nth-child(1) {
-  width: 5%;
+  width: 15px;
+} */
+
+/* th:nth-child(1),
+td:nth-child(1) {
+  width: 15px;
 }
 th:nth-child(2),
 td:nth-child(2) {
-  width: 35%;
+  width: 30px;
 }
 th:nth-child(3),
 td:nth-child(3) {
-  width: 15%;
+  width: 100px;
 }
 th:nth-child(4),
 td:nth-child(4) {
-  width: 5%;
+  width: 15px;
 }
 th:nth-child(5),
 td:nth-child(5) {
-  width: 5%;
+  width: 15px;
 }
 th:nth-child(6),
 td:nth-child(6) {
-  width: 5%;
+  width: 15px;
 }
 th:nth-child(7),
 td:nth-child(7) {
-  width: 5%;
+  width: 15px;
 }
 th:nth-child(8),
 td:nth-child(8) {
-  width: 5%;
+  width: 15px;
 }
 th:nth-child(9),
 td:nth-child(9) {
-  width: 10%;
+  width: 15px;
 }
 th:nth-child(10),
 td:nth-child(10) {
-  width: 10%;
+  width: 15px;
 }
 
 th:nth-child(1) input,
@@ -319,7 +325,7 @@ td:nth-child(9) input {
 th:nth-child(10) input,
 td:nth-child(10) input {
   width: 100px;
-}
+} */
 
 /* tr:hover {
   background-color: #e7edf7;

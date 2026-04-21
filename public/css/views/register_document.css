@@ -212,7 +212,7 @@ td {
   font-size: 12px;
 }
 
-th:nth-child(1),
+/* th:nth-child(1),
 td:nth-child(1) {
   width: 5%;
 }
@@ -292,7 +292,7 @@ td:nth-child(9) input {
 th:nth-child(10) input,
 td:nth-child(10) input {
   width: 100px;
-}
+} */
 
 /* tr:hover {
   background-color: #f3f3f3;

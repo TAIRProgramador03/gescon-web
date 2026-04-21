@@ -79,7 +79,12 @@ function toggleSidebar() {
   titleSide.classList.toggle("hidden");
   sidebar.classList.toggle("close");
   toggleButton.classList.toggle("rotate");
+
   closeAllSubMenus(); // Cierra todos los submenús al cerrar el sidebar
+
+  setTimeout(() => {
+    window.dispatchEvent(new Event('resize'));
+  }, 300);
 }
 
 function toggleSubMenu(button) {

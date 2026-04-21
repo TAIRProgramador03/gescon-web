@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   $("#condicion").select2({
     placeholder: "Seleccione la condicion",
     allowClear: false, // Desactiva la "X"
-    width: "140px",
+    width: "120px",
   });
 
   flatpickr("#text-firma", {
@@ -193,7 +193,7 @@ function agregarFila(checkbox) {
   nuevaFila.innerHTML = `
             <td><input type="text" name="item[]" value="${
               lastRowIndex + 2
-            }" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
+            }" class="disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
             <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
             <td>
                 <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
@@ -209,18 +209,18 @@ function agregarFila(checkbox) {
                     <option value="3">Severo</option>
                 </select>
             </td>
-            <td><input type="text" name="tarifa[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
-            <td><input type="text" name="cpk[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
-            <td><input type="number" name="rm[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
-            <td><input type="number" name="cantidad[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
-            <td><input type="text" min="0" name="kmAdi[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" ${
+            <td><input type="text" name="tarifa[]" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
+            <td><input type="text" name="cpk[]" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
+            <td><input type="number" name="rm[]" class="no-negative w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
+            <td><input type="number" name="cantidad[]" class="no-negative w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
+            <td><input type="text" min="0" name="kmAdi[]" class="disabled:bg-gray-100 w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" ${
               checkbox.checked ? "" : "disabled"
             } data-tooltip="$KM Adicional"></td>
-            <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" ${
+            <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" ${
               checkbox.checked ? "" : "disabled"
             }  data-tooltip="Duracion contrato"></td>
-            <td><input type="text" name="compra_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
-            <td><input type="text" name="precio_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+            <td><input type="text" name="compra_veh[]" class="w-18 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
+            <td><input type="text" name="precio_veh[]" class="w-18 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
             <td>
                 <select name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
                     <option value="4">Seleccione el tipo</option>
@@ -260,7 +260,7 @@ function agregarFila(checkbox) {
     .select2({
       placeholder: "Seleccione el modelo",
       allowClear: false,
-      width: "100%"
+      width: "120px"
     })
     .next(".select2-container")
     .css({
@@ -276,7 +276,7 @@ function agregarFila(checkbox) {
     .select2({
       placeholder: "Seleccione el terreno",
       allowClear: false,
-      width: "140px",
+      width: "120px",
     })
     .next(".select2-container")
     .css({
@@ -291,7 +291,7 @@ function agregarFila(checkbox) {
     .select2({
       placeholder: "Seleccione la condicion",
       allowClear: false,
-      width: "140px",
+      width: "120px",
     })
     .next(".select2-container")
     .css({
@@ -313,7 +313,7 @@ async function cargarFilasDesdeLista(lista, checkbox) {
     const nuevaFila = document.createElement("tr");
 
     nuevaFila.innerHTML = `
-      <td><input type="text" name="item[]" value="${index + 1}" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
+      <td><input type="text" name="item[]" value="${index + 1}" class="disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
 
       <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="${data.id}" disabled></td>
 
@@ -333,25 +333,25 @@ async function cargarFilasDesdeLista(lista, checkbox) {
         </select>
       </td>
 
-      <td><input type="text" name="tarifa[]" value="${data.tarifa}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
-      <td><input type="text" name="cpk[]" value="${data.cpk}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
-      <td><input type="number" name="rm[]" value="${data.rm}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
-      <td><input type="number" name="cantidad[]" value="${data.cantidad}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+      <td><input type="text" name="tarifa[]" value="${data.tarifa}" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+      <td><input type="text" name="cpk[]" value="${data.cpk}" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+      <td><input type="number" name="rm[]" value="${data.rm}" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+      <td><input type="number" name="cantidad[]" value="${data.cantidad}" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
 
       <td>
-        <input type="text" name="kmAdi[]" value="${data.kmAdicional}" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" ${
+        <input type="text" name="kmAdi[]" value="${data.kmAdicional}" class="disabled:bg-gray-100 w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" ${
           checkbox.checked ? "" : "disabled"
         }>
       </td>
 
       <td>
-        <input type="text" name="duracion[]" value="${data.duracion}" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" ${
+        <input type="text" name="duracion[]" value="${data.duracion}" class="disabled:bg-gray-100 w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" ${
           checkbox.checked ? "" : "disabled"
         }>
       </td>
 
-      <td><input type="text" name="compra_veh[]" value="${data.compraVeh}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
-      <td><input type="text" name="precio_veh[]" value="${data.precioVeh}" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+      <td><input type="text" name="compra_veh[]" value="${data.compraVeh}" class="w-18 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
+      <td><input type="text" name="precio_veh[]" value="${data.precioVeh}" class="w-18 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></td>
 
       <td>
         <select name="condicion[]" class="cbo-form-cliente condicion-select">
@@ -376,9 +376,9 @@ async function cargarFilasDesdeLista(lista, checkbox) {
     await cargarModelosFila(nuevaFila.querySelector(".modelo-select"));
 
     // 🔹 inicializar select2
-    $(nuevaFila).find(".modelo-select").select2({ width: "100%" });
-    $(nuevaFila).find(".terreno-select").select2({ width: "140px" });
-    $(nuevaFila).find(".condicion-select").select2({ width: "140px" });
+    $(nuevaFila).find(".modelo-select").select2({ width: "120px" });
+    $(nuevaFila).find(".terreno-select").select2({ width: "120px" });
+    $(nuevaFila).find(".condicion-select").select2({ width: "120px" });
 
     // 🔥 setear valores después de inicializar
     if (data.modelo) {
@@ -1544,7 +1544,7 @@ function limpiarCampos() {
   const tbody = document.getElementById("contratos-tbody");
   // Eliminar todo el contenido del tbody
   tbody.innerHTML = ` <tr>
-                           <td><input type="text" name="item[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" disabled></td>
+                           <td><input type="text" name="item[]" class="disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" disabled></td>
                            <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
                 <td>
                   <select id="tipoModelo" name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
@@ -1560,14 +1560,14 @@ function limpiarCampos() {
                     <option value="3">Severo</option>
                   </select>
                 </td>
-                <td><input type="text" name="tarifa[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
-                <td><input type="text" name="cpk[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
-                <td><input type="number" name="rm[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
-                <td><input type="number" name="cantidad[]" class="no-negative text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
-                <td><input type="text" min="0" name="kmAdi[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="$KM Adicional" disabled></td>
-                <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Duracion contrato" disabled></td>
-                <td><input type="text" name="compra_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
-                <td><input type="text" name="precio_veh[]" class="text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+                <td><input type="text" name="tarifa[]" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
+                <td><input type="text" name="cpk[]" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
+                <td><input type="number" name="rm[]" class="no-negative w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
+                <td><input type="number" name="cantidad[]" class="no-negative w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
+                <td><input type="text" min="0" name="kmAdi[]" class="disabled:bg-gray-100 w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="$KM Adicional" disabled></td>
+                <td><input type="text" name="duracion[]" class="disabled:bg-gray-100 text-center w-14 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Duracion contrato" disabled></td>
+                <td><input type="text" name="compra_veh[]" class="w-18 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
+                <td><input type="text" name="precio_veh[]" class="w-18 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
                 <td>
                   <select id="condicion" name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
                     <option value="4">Seleccione el tipo</option>
@@ -1590,19 +1590,19 @@ function limpiarCampos() {
     $("#tipoTerreno").select2({
       placeholder: "Seleccione el tipo",
       allowClear: false, // Desactiva la "X"
-      width: "140px",
+      width: "120px",
     });
 
     $("#tipoModelo").select2({
       placeholder: "Seleccione el modelo",
       allowClear: false, // Desactiva la "X"
-      width: "100%"
+      width: "120px"
     });
 
     $("#condicion").select2({
       placeholder: "Seleccione la condicion",
       allowClear: false, // Desactiva la "X"
-      width: "140px",
+      width: "120px",
     });
   });
 }

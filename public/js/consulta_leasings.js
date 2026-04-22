@@ -1,5 +1,5 @@
 const getLeasings = async (bank, clientId, contractId, typeContract) => {
-  const IP_LOCAL = await obtenerConfig()
+  const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
     `http://${IP_LOCAL}:3000/leasingAll${bank ? `?bank=${bank}` : ""}${clientId ? `&clientId=${clientId}` : ""}${contractId ? `&contractId=${contractId}` : ""}${typeContract ? `&typeContract=${typeContract}` : ""}`,
@@ -14,7 +14,7 @@ const getLeasings = async (bank, clientId, contractId, typeContract) => {
 };
 
 const getVehByLeasing = async (leasingId) => {
-  const IP_LOCAL = await obtenerConfig()
+  const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
     `http://${IP_LOCAL}:3000/vehiclesByLeasing?leasingId=${leasingId.toString()}`,
@@ -30,7 +30,7 @@ const getVehByLeasing = async (leasingId) => {
 };
 
 const getClients = async () => {
-  const IP_LOCAL = await obtenerConfig()
+  const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
     credentials: "include",
@@ -42,7 +42,7 @@ const getClients = async () => {
 };
 
 const getContractsByClient = async (clientId) => {
-  const IP_LOCAL = await obtenerConfig()
+  const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
     `http://${IP_LOCAL}:3000/contratosNro?idCli=${clientId}`,
@@ -57,8 +57,8 @@ const getContractsByClient = async (clientId) => {
 };
 
 const getDocumentsByContract = async (contractId, clientId) => {
-  const IP_LOCAL = await obtenerConfig()
-  
+  const IP_LOCAL = await obtenerConfig();
+
   const response = await fetch(
     `http://${IP_LOCAL}:3000/documentoPorContrato?contratoId=${contractId}&clienteId=${clientId}`,
     {
@@ -126,18 +126,17 @@ const verFlota = async (id) => {
       <table id="listVeh" class="display">
         <thead>
           <tr>
-            <th class="!font-medium text-gray-500">Item</th>
-            <th class="!font-medium text-gray-500">Placa</th>
-            <th class="!font-medium text-gray-500">Modelo</th>
-            <th class="!font-medium text-gray-500">Marca</th>
-            <th class="!font-medium text-gray-500">Terreno</th>
-            <th class="!font-medium text-gray-500">Cantidad</th>
-            <th class="!font-medium text-gray-500">Año</th>
-            <th class="!font-medium text-gray-500">Color</th>
-            <th class="!font-medium text-gray-500">Operación</th>
-            <th class="!font-medium text-gray-500">Fecha Fin</th>
-            <th class="!font-medium text-gray-500">Vence en</th>
-            <th class="!font-medium text-gray-500">Leasing</th>
+            <th class="!font-medium bg-yellow-500 text-white">Item</th>
+            <th class="!font-medium bg-yellow-500 text-white">Placa</th>
+            <th class="!font-medium bg-yellow-500 text-white">Marca</th>
+            <th class="!font-medium bg-yellow-500 text-white">Modelo</th>
+            <th class="!font-medium bg-yellow-500 text-white">Terreno</th>
+            <th class="!font-medium bg-yellow-500 text-white">Año</th>
+            <th class="!font-medium bg-yellow-500 text-white">Color</th>
+            <th class="!font-medium bg-yellow-500 text-white">Operación</th>
+            <th class="!font-medium bg-green-500 text-white">Leasing</th>
+            <th class="!font-medium bg-green-500 text-white">Fecha Fin</th>
+            <th class="!font-medium bg-green-500 text-white">Vencimiento</th>
           </tr>
         </thead>
         <tbody>
@@ -154,7 +153,21 @@ const verFlota = async (id) => {
     select: true,
     scrollY: "300px",
     scrollCollapse: true,
-    dom: '<"superior"fB>rt<"inferior"i<"derecha-inferior"lp>>',
+    dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+    initComplete: function () {
+      $(".leyendas").html(`
+          <div class="w-full flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-yellow-400"></span>
+              <p class="text-xs !m-0">Unidad</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-green-400"></span>
+              <p class="text-xs !m-0">Leasing</p>
+            </div>
+          </div>
+        `);
+    },
     buttons: [
       {
         extend: "excelHtml5",
@@ -172,7 +185,7 @@ const verFlota = async (id) => {
       // Centrar contenido y cabecera en las columnas 0, 1 y 2
       {
         className: "dt-center",
-        targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       },
     ],
     columns: [
@@ -187,19 +200,13 @@ const verFlota = async (id) => {
         data: "placa",
       },
       {
-        data: "modelo",
-      },
-      {
         data: "marca",
       },
       {
-        data: "terreno",
+        data: "modelo",
       },
       {
-        data: "cantidad",
-        render: (data) => {
-          return `${data} und.`;
-        },
+        data: "terreno",
       },
       {
         data: "año",
@@ -209,6 +216,9 @@ const verFlota = async (id) => {
       },
       {
         data: "operacion",
+      },
+      {
+        data: "nroLeasing",
       },
       {
         data: "fechaFin",
@@ -237,9 +247,6 @@ const verFlota = async (id) => {
             return "--";
           }
         },
-      },
-      {
-        data: "nroLeasing",
       },
     ],
   });

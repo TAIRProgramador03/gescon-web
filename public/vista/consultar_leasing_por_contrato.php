@@ -42,6 +42,9 @@ require './templates/header.html';
 <!-- TOASTR JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+<!-- MOTION -->
+<script src="https://cdn.jsdelivr.net/npm/motion@10/dist/motion.min.js"></script>
+
 <div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
   <div class="flex-col gap-4 w-full flex items-center justify-center relative">
     <div class="w-28 h-28 border-8 text-blue-600 text-4xl animate-spin border-gray-300 flex items-center justify-center border-t-blue-600 rounded-full"></div>
@@ -400,18 +403,19 @@ require './templates/header.html';
       <table id="listVeh" class="display">
         <thead>
           <tr>
-            <th class="text-gray-500 !font-medium">Item</th>
-            <th class="text-gray-500 !font-medium">Placa</th>
-            <th class="text-gray-500 !font-medium">Modelo</th>
-            <th class="text-gray-500 !font-medium">Marca</th>
-            <th class="text-gray-500 !font-medium">Terreno</th>
-            <th class="text-gray-500 !font-medium">Cantidad</th>
-            <th class="text-gray-500 !font-medium">Año</th>
-            <th class="text-gray-500 !font-medium">Color</th>
-            <th class="text-gray-500 !font-medium">Operación</th>
-            <th class="text-gray-500 !font-medium">Fecha Fin</th>
-            <th class="text-gray-500 !font-medium">Vence en</th>
-            <th class="text-gray-500 !font-medium">Leasing</th>
+            <th class="!font-medium bg-yellow-500 text-white">Item</th>
+            <th class="!font-medium bg-yellow-500 text-white">Placa</th>
+            <th class="!font-medium bg-yellow-500 text-white">Marca</th>
+            <th class="!font-medium bg-yellow-500 text-white">Modelo</th>
+            <th class="!font-medium bg-yellow-500 text-white">Año</th>
+            <th class="!font-medium bg-yellow-500 text-white">Color</th>
+            <th class="!font-medium bg-yellow-500 text-white">Condicion</th>
+            <th class="!font-medium bg-yellow-500 text-white">Terreno</th>
+            <th class="!font-medium bg-yellow-500 text-white">Operación</th>
+            <th class="!font-medium bg-green-500 text-white">Leasing</th>
+            <th class="!font-medium bg-green-500 text-white">Fecha Inicio</th>
+            <th class="!font-medium bg-green-500 text-white">Fecha Fin</th>
+            <th class="!font-medium bg-green-500 text-white">Vencimiento</th>
           </tr>
         </thead>
         <tbody>
@@ -428,6 +432,20 @@ require './templates/header.html';
       scrollY: "300px",
       scrollCollapse: true,
       dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      initComplete: function() {
+        $(".leyendas").html(`
+          <div class="w-full flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-yellow-400"></span>
+              <p class="text-xs !m-0">Unidad</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-green-400"></span>
+              <p class="text-xs !m-0">Leasing</p>
+            </div>
+          </div>
+        `);
+      },
       buttons: [{
         extend: 'excelHtml5',
         text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
@@ -458,7 +476,7 @@ require './templates/header.html';
         // Centrar contenido y cabecera en las columnas 0, 1 y 2
         {
           className: "dt-center",
-          targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+          targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12],
         },
       ],
       columns: [{
@@ -472,16 +490,10 @@ require './templates/header.html';
           data: "placa",
         },
         {
-          data: "modelo",
-        },
-        {
           data: "marca",
         },
         {
-          data: "terreno",
-        },
-        {
-          data: "cantidad",
+          data: "modelo",
         },
         {
           data: "año",
@@ -490,41 +502,55 @@ require './templates/header.html';
           data: "color",
         },
         {
+          data: "condicion",
+        },
+        {
+          data: "terreno",
+        },
+        {
           data: "operacion",
         },
         {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              return convertirFecha(data)
-            } else {
-              return "--"
-            }
-          }
-        },
-        {
-          data: "fechaFin",
-          render: function(data) {
-            if (data) {
-              const fechaTsf = convertirFecha(data);
-              const dias = obtenerDiasVencimiento(fechaTsf);
-              if (dias > 0) {
-                return `${dias} dias`
-              } else if (dias < 0) {
-                return `Hace ${Math.abs(dias)} dias`
-              } else {
-                return `Vence hoy`
-              }
-            } else {
-              return "--"
-            }
-          }
-        },
-        {
           data: "nroLeasing"
+        },
+        {
+          data: "fechaIni",
+          render: function(data) {
+            return dayjs(convertirFecha(data)).format("DD/MM/YYYY");
+          }
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            return dayjs(convertirFecha(data)).format("DD/MM/YYYY");
+          }
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            const fechaTsf = convertirFecha(data);
+            const dias = obtenerDiasVencimiento(fechaTsf);
+            if (dias > 0) {
+              return `<p>${dias} dias</p>`
+            } else if (dias < 0) {
+              return `<p class="text-red-600">Hace ${Math.abs(dias)} dias</p>`
+            } else {
+              return `Vence hoy`
+            }
+          }
         }
       ],
     })
+
+    Motion.animate(
+      ".modal-container", {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      }, {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
 
     const modal = document.getElementById("modal-leasing");
     modal.style.display = "flex";
@@ -556,15 +582,19 @@ require './templates/header.html';
       <table id="listVehAssign" class="display">
         <thead>
           <tr>
-            <th class="text-gray-500 !font-medium">Item</th>
-            <th class="text-gray-500 !font-medium">Placa</th>
-            <th class="text-gray-500 !font-medium">Modelo</th>
-            <th class="text-gray-500 !font-medium">Marca</th>
-            <th class="text-gray-500 !font-medium">Terreno</th>
-            <th class="text-gray-500 !font-medium">Año</th>
-            <th class="text-gray-500 !font-medium">Color</th>
-            <th class="text-gray-500 !font-medium">Operación</th>
-            <th class="text-gray-500 !font-medium">Leasing</th>
+            <th class="!font-medium bg-yellow-500 text-white">Item</th>
+            <th class="!font-medium bg-yellow-500 text-white">Placa</th>
+            <th class="!font-medium bg-yellow-500 text-white">Marca</th>
+            <th class="!font-medium bg-yellow-500 text-white">Modelo</th>
+            <th class="!font-medium bg-yellow-500 text-white">Año</th>
+            <th class="!font-medium bg-yellow-500 text-white">Color</th>
+            <th class="!font-medium bg-yellow-500 text-white">Condicion</th>
+            <th class="!font-medium bg-yellow-500 text-white">Terreno</th>
+            <th class="!font-medium bg-yellow-500 text-white">Operación</th>
+            <th class="!font-medium bg-green-500 text-white">Leasing</th>
+            <th class="!font-medium bg-green-500 text-white">Fecha Inicio</th>
+            <th class="!font-medium bg-green-500 text-white">Fecha Fin</th>
+            <th class="!font-medium bg-green-500 text-white">Vencimiento</th>
           </tr>
         </thead>
         <tbody>
@@ -581,6 +611,20 @@ require './templates/header.html';
       scrollY: "300px",
       scrollCollapse: true,
       dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      initComplete: function() {
+        $(".leyendas").html(`
+          <div class="w-full flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-yellow-400"></span>
+              <p class="text-xs !m-0">Unidad</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-green-400"></span>
+              <p class="text-xs !m-0">Leasing</p>
+            </div>
+          </div>
+        `);
+      },
       buttons: [{
         extend: 'excelHtml5',
         text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
@@ -611,7 +655,7 @@ require './templates/header.html';
         // Centrar contenido y cabecera en las columnas 0, 1 y 2
         {
           className: "dt-center",
-          targets: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+          targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
         },
       ],
       columns: [{
@@ -625,13 +669,10 @@ require './templates/header.html';
           data: "placa",
         },
         {
-          data: "modelo",
-        },
-        {
           data: "marca",
         },
         {
-          data: "terreno",
+          data: "modelo",
         },
         {
           data: "año",
@@ -640,19 +681,73 @@ require './templates/header.html';
           data: "color",
         },
         {
+          data: "condicion",
+        },
+        {
+          data: "terreno",
+        },
+        {
           data: "operacion",
         },
         {
           data: "nroLeasing"
+        },
+        {
+          data: "fechaIni",
+          render: function(data) {
+            return dayjs(convertirFecha(data)).format("DD/MM/YYYY");
+          }
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            return dayjs(convertirFecha(data)).format("DD/MM/YYYY");
+          }
+        },
+        {
+          data: "fechaFin",
+          render: function(data) {
+            const fechaTsf = convertirFecha(data);
+            const dias = obtenerDiasVencimiento(fechaTsf);
+            if (dias > 0) {
+              return `<p>${dias} dias</p>`
+            } else if (dias < 0) {
+              return `<p class="text-red-600">Hace ${Math.abs(dias)} dias</p>`
+            } else {
+              return `Vence hoy`
+            }
+          }
         }
       ],
     })
+
+    Motion.animate(
+      ".modal-container", {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      }, {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
 
     const modal = document.getElementById("modal-leasing");
     modal.style.display = "flex";
   })
 
-  $("#btn-close").on("click", function() {
+  $("#btn-close").on("click", async function() {
+    const anim = Motion.animate(
+      ".modal-container", {
+        opacity: [1, 0],
+        scale: [1, 1.05, 0.7],
+      }, {
+        duration: 0.45,
+        easing: "ease-in",
+      },
+    );
+
+    await anim.finished;
+
     const modal = document.getElementById("modal-leasing");
     modal.style.display = "none";
 

@@ -44,6 +44,9 @@ require './templates/header.html';
 <!-- TOASTR JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+<!-- MOTION -->
+<script src="https://cdn.jsdelivr.net/npm/motion@10/dist/motion.min.js"></script>
+
 <!-- CSS DE LA VISTA CONSULTAR CONTRATOS -->
 <style>
   <?php include '../css/views/query_contract.css'; ?>
@@ -319,6 +322,13 @@ require './templates/header.html';
   <div class="alert-bg"></div>
   <div class="alert-container">
   </div>
+</div>
+
+<div id="tooltip-global"
+  class="fixed opacity-0 pointer-events-none 
+         bg-black text-white text-sm px-3 py-2 rounded shadow-lg 
+         z-[9999] transition-all duration-200 text-center
+         max-w-[250px] w-max break-words">
 </div>
 
 <script src="../js/consulta_contratos.js"></script>
@@ -1047,33 +1057,33 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: "fechaFinLea",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: "cliente",
-          width: "200px"
+          width: "220px"
         },
         {
           data: "operacion",
-          width: "150px"
+          width: "180px"
         },
         {
           data: "contrato",
-          width: "150px"
+          width: "180px"
         },
         {
           data: "fechaIniCon",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "plazo",
@@ -1087,7 +1097,7 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "tarifa",
@@ -1103,14 +1113,14 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "fechaFin",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "condicion",
@@ -1145,7 +1155,7 @@ require './templates/header.html';
               `
             }
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: null,
@@ -1175,6 +1185,16 @@ require './templates/header.html';
         }
       ],
     })
+
+    Motion.animate(
+      ".modal-container", {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      }, {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
 
     const modal = document.getElementById("modal-documents");
     modal.style.display = "flex";
@@ -1379,33 +1399,33 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: "fechaFinLea",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: "cliente",
-          width: "200px"
+          width: "220px"
         },
         {
           data: "operacion",
-          width: "150px"
+          width: "180px"
         },
         {
           data: "contrato",
-          width: "150px"
+          width: "180px"
         },
         {
           data: "fechaIniCon",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "plazo",
@@ -1419,7 +1439,7 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "tarifa",
@@ -1435,14 +1455,14 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "fechaFin",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "condicion",
@@ -1477,7 +1497,7 @@ require './templates/header.html';
               `
             }
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: null,
@@ -1507,6 +1527,16 @@ require './templates/header.html';
         }
       ],
     })
+
+    Motion.animate(
+      ".modal-container", {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      }, {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
 
     const modal = document.getElementById("modal-documents");
     modal.style.display = "flex";
@@ -1684,33 +1714,33 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: "fechaFinLea",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: "cliente",
-          width: "200px"
+          width: "220px"
         },
         {
           data: "operacion",
-          width: "150px"
+          width: "180px"
         },
         {
           data: "contrato",
-          width: "150px"
+          width: "180px"
         },
         {
           data: "fechaIniCon",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "plazo",
@@ -1724,7 +1754,7 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "tarifa",
@@ -1740,14 +1770,14 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "fechaFin",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "condicion",
@@ -1782,7 +1812,7 @@ require './templates/header.html';
               `
             }
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: null,
@@ -1812,6 +1842,16 @@ require './templates/header.html';
         }
       ],
     })
+
+    Motion.animate(
+      ".modal-container", {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      }, {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
 
     const modal = document.getElementById("modal-documents");
     modal.style.display = "flex";
@@ -1989,33 +2029,33 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: "fechaFinLea",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: "cliente",
-          width: "200px"
+          width: "220px"
         },
         {
           data: "operacion",
-          width: "150px"
+          width: "180px"
         },
         {
           data: "contrato",
-          width: "150px"
+          width: "180px"
         },
         {
           data: "fechaIniCon",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "plazo",
@@ -2029,7 +2069,7 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "tarifa",
@@ -2045,14 +2085,14 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "fechaFin",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "condicion",
@@ -2087,7 +2127,7 @@ require './templates/header.html';
               `
             }
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: null,
@@ -2117,6 +2157,16 @@ require './templates/header.html';
         }
       ],
     })
+
+    Motion.animate(
+      ".modal-container", {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      }, {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
 
     const modal = document.getElementById("modal-documents");
     modal.style.display = "flex";
@@ -2294,33 +2344,33 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: "fechaFinLea",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: "cliente",
-          width: "200px"
+          width: "220px"
         },
         {
           data: "operacion",
-          width: "150px"
+          width: "180px"
         },
         {
           data: "contrato",
-          width: "150px"
+          width: "180px"
         },
         {
           data: "fechaIniCon",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "plazo",
@@ -2334,7 +2384,7 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "tarifa",
@@ -2350,14 +2400,14 @@ require './templates/header.html';
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "fechaFin",
           render: (data) => {
             return dayjs(data).format("DD/MM/YYYY")
           },
-          width: "120px"
+          width: "150px"
         },
         {
           data: "condicion",
@@ -2392,7 +2442,7 @@ require './templates/header.html';
               `
             }
           },
-          width: "120px"
+          width: "160px"
         },
         {
           data: null,
@@ -2423,6 +2473,16 @@ require './templates/header.html';
       ],
     })
 
+    Motion.animate(
+      ".modal-container", {
+        opacity: [0, 1],
+        scale: [0.7, 1.05, 1],
+      }, {
+        duration: 0.45,
+        easing: "ease-out",
+      },
+    );
+
     const modal = document.getElementById("modal-documents");
     modal.style.display = "flex";
   })
@@ -2431,12 +2491,65 @@ require './templates/header.html';
     verPdf(currentKey);
   })
 
-  $("#btn-close").on("click", function() {
+  $("#btn-close").on("click", async function() {
+    const anim = Motion.animate(
+      ".modal-container", {
+        opacity: [1, 0],
+        scale: [1, 1.05, 0.7],
+      }, {
+        duration: 0.45,
+        easing: "ease-in",
+      },
+    );
+
+    await anim.finished;
+
     const modal = document.getElementById("modal-documents");
     modal.style.display = "none";
 
     $("#modal-body-info").empty();
   })
+
+  const tooltip = document.getElementById('tooltip-global');
+
+  // TOOLTIP PARA CANTIDAD DE VEHICULOS ACTIVOS
+
+  $("#href-query-veh").on('mouseenter', function(e) {
+    tooltip.innerText = "Vehiculos en funcion al cuadro de operatividad inicialmente grabado";
+    tooltip.style.opacity = 1;
+  });
+
+  $("#href-query-veh").on('mousemove', function(e) {
+    const offsetY = 12; // distancia arriba del cursor
+
+    tooltip.style.top = (e.clientY - offsetY) + 'px';
+    tooltip.style.left = e.clientX + 'px';
+
+    tooltip.style.transform = 'translate(-50%, -100%)';
+  });
+
+  $("#href-query-veh").on('mouseleave', function() {
+    tooltip.style.opacity = 0;
+  });
+
+  // TOOLTIP PARA CANTIDAD DE VEHICULOS ASIGNADOS
+  $("#href-query-assign").on('mouseenter', function(e) {
+    tooltip.innerText = "La sumatoria de vehiculos que viene desde el modulo asignar";
+    tooltip.style.opacity = 1;
+  });
+
+  $("#href-query-assign").on('mousemove', function(e) {
+    const offsetY = 12; // distancia arriba del cursor
+
+    tooltip.style.top = (e.clientY - offsetY) + 'px';
+    tooltip.style.left = e.clientX + 'px';
+
+    tooltip.style.transform = 'translate(-50%, -100%)';
+  });
+
+  $("#href-query-assign").on('mouseleave', function() {
+    tooltip.style.opacity = 0;
+  });
 </script>
 
 <?php

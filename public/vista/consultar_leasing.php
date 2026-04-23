@@ -133,7 +133,7 @@ require './templates/header.html';
             <th class="!font-medium text-gray-500">Cantidad</th>
             <th class="!font-medium text-gray-500">Fecha Inicio</th>
             <th class="!font-medium text-gray-500">Fecha Fin</th>
-            <th class="!font-medium text-gray-500">Periodo</th>
+            <th class="!font-medium text-gray-500">Periodo de gracia</th>
             <th class="!font-medium text-gray-500">Cliente</th>
             <th class="!font-medium text-gray-500">Cliente Origen</th>
             <th class="!font-medium text-gray-500">Contrato/Adenda</th>

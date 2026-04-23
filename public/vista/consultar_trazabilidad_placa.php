@@ -134,6 +134,7 @@ require './templates/header.html';
             <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
             <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
             <th class="bg-taupe-600 text-white !font-medium">Acta</th>
+            <th class="bg-taupe-600 text-white !font-medium">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -204,6 +205,50 @@ require './templates/header.html';
   </div>
 </div>
 
+<div id="modal-history" class="w-full h-screen fixed top-0 left-0 flex justify-center items-center opacity-0 -z-[9990] overflow-hidden">
+  <div class="modal-overlay-hist w-full h-screen fixed top-0 left-0 bg-black/25 -z-10 overflow-hidden"></div>
+  <div class="modal-container-hist w-[80%] h-[90%] flex flex-col gap-3 bg-white rounded-md overflow-auto relative px-4 py-5">
+    <div class="w-full h-2 bg-yellow-400 absolute top-0 left-0"></div>
+    <div class="w-full flex flex-col justify-center gap-1">
+      <h3 class="text-2xl text-[#002141] font-semibold">Historial de movimientos</h3>
+      <p class="!m-0 text-base font-normal text-gray-500">Visualice todas las reasignaciones que se realizaron para este vehiculo.</p>
+    </div>
+    <div class="w-full h-full grid grid-cols-2 gap-3">
+      <ul class="list-history w-full h-full flex flex-col gap-3 border border-gray-100 rounded-md p-3">
+      </ul>
+      <div class="w-full h-full flex flex-col gap-3 border border-gray-100 rounded-md p-3">
+        <h3 class="text-2xl text-[#002141] font-semibold">Información</h3>
+        <p>Fecha: <span class="fecha-info"></span></p>
+        <div class="w-full flex flex-col gap-3 border border-gray-100 rounded-md p-2">
+          <h3 class="text-lg text-[#002141] font-semibold">Anterior</h3>
+
+          <div class="w-full grid grid-cols-3 gap-3 anterior-info">
+            <p>Operación: <span class="operacion-info"></span></p>
+            <p>Tarifa: <span class="tarifa-info"></span></p>
+            <p>Nro Contrato: <span class="nro-info"></span></p>
+            <p>Tipo: <span class="tipo-info"></span></p>
+            <p>Condicion: <span class="condicion-info"></span></p>
+            <p>Archivo: <div class="archivo-info"></div></p>
+          </div>
+        </div>
+        <div class="w-full flex justify-center items-center"><i class="bi bi-arrow-down-circle-fill text-blue-600 text-2xl animate-bounce"></i></div>
+        <div class="w-full flex flex-col gap-3 border border-gray-100 rounded-md p-2">
+          <h3 class="text-lg text-[#002141] font-semibold">Nueva</h3>
+
+          <div class="w-full grid grid-cols-3 gap-3 nuevo-info">
+            <p>Operación: <span class="operacion-info"></span></p>
+            <p>Tarifa: <span class="tarifa-info"></span></p>
+            <p>Nro Contrato: <span class="nro-info"></span></p>
+            <p>Tipo: <span class="tipo-info"></span></p>
+            <p>Condicion: <span class="condicion-info"></span></p>
+            <p>Archivo: <div class="archivo-info"></div></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="tooltip-global"
   class="fixed opacity-0 pointer-events-none bg-black text-white text-sm px-3 py-2 rounded shadow-lg z-[9999] transition-all duration-200">
 </div>
@@ -219,7 +264,10 @@ require './templates/header.html';
     calcularPorcentaje,
     subirArchivo,
     updateAssign,
-    clearFields
+    clearFields,
+    getHistory,
+    getHistoryById,
+    convertirFecha
   } from "../js/consulta_trazabilidad_placa.js";
 
   import {
@@ -325,6 +373,119 @@ require './templates/header.html';
     verPdf(key);
   });
 
+  // FUNCION PARA VER HISTORIAL
+  $(document).on("click", ".btn-view-history", async function() {
+    const key = $(this).data("key");
+    const history = await getHistory(key);
+
+    $("#modal-history").removeClass("opacity-0 -z-[9990]").addClass("opacity-100 z-[9990]")
+
+    animate(".modal-container-hist", {
+      opacity: [0, 1],
+      scale: [0.7, 1.05, 1]
+    }, {
+      duration: 0.45,
+      easing: "ease-out"
+    })
+
+    // AGREGAMOS LA CABECERA
+    $(".list-history").append(`
+      <li class="w-full border border-gray-100 rounded-md flex items-center gap-3 text-sm text-gray-400 font-medium p-2 text-center" data-idReassign="1">
+        <div class="w-full max-w-[50px] flex justify-center items-center">
+          <span>Item</span>
+        </div>
+        <span class="w-full">Fecha del cambio</span>
+        <span class="w-full">Operacion anterior</span>
+        <div class="w-full max-w-[15px] flex justify-center items-center">
+        </div>
+        <span class="w-full">Operacion nueva</span>
+      </li>
+    `)
+
+    // AGREGAMOS LA INFORMACIÓN
+    $(".list-history").append(history.length > 0 ? history.map((hst, i) => (
+      `
+      <li class="itm-reasign cursor-pointer w-full border border-gray-100 rounded-md flex items-center gap-3 text-sm text-gray-700 p-2 text-center hover:bg-blue-300 transition-colors" data-key="${hst.id}">
+        <div class="w-full max-w-[50px] flex justify-center items-center">
+          <span>${i + 1}</span>
+        </div>
+        <span class="w-full">${dayjs(convertirFecha(hst.fecha)).format("DD/MM/YYYY")}</span>
+        <span class="w-full">${hst.opeAnterior}</span>
+        <div class="w-full max-w-[15px] flex justify-center items-center">
+          <i class="bi bi-arrow-right font-bold text-blue-600 text-lg"></i>
+        </div>
+        <span class="w-full">${hst.opeNueva}</span>
+      </li>
+      `
+    )) : `
+      <li class="w-full border border-gray-100 rounded-md flex items-center gap-3 text-sm text-gray-700 p-2 text-center">
+        <span class="w-full text-center">No se encontraron registros</span>
+      </li>
+    `)
+  });
+
+  $(document).on("click", ".itm-reasign", async function() {
+    clearItmReasing();
+
+    const key = $(this).data("key");
+
+    const findAssing = await getHistoryById(key);
+
+    console.log(findAssing);
+
+    $(".fecha-info").text(dayjs(convertirFecha(findAssing.fecha)).format("DD/MM/YYYY"));
+
+    $(".anterior-info").find(".operacion-info").text(findAssing.anterior.operacion)
+    $(".anterior-info").find(".tarifa-info").text(findAssing.anterior.tarifa)
+    $(".anterior-info").find(".nro-info").text(findAssing.anterior.contrato)
+    $(".anterior-info").find(".tipo-info").text(findAssing.anterior.tipo == 'P' ? "Contrato" : "Documento")
+    $(".anterior-info").find(".condicion-info").text(findAssing.anterior.condicion)
+    $(".anterior-info").find(".archivo-info").append();
+
+    $(".nuevo-info").find(".operacion-info").text(findAssing.nuevo.operacion)
+    $(".nuevo-info").find(".tarifa-info").text(findAssing.nuevo.tarifa)
+    $(".nuevo-info").find(".nro-info").text(findAssing.nuevo.contrato)
+    $(".nuevo-info").find(".tipo-info").text(findAssing.nuevo.tipo == 'P' ? "Contrato" : "Documento")
+    $(".nuevo-info").find(".condicion-info").text(findAssing.nuevo.condicion)
+    $(".nuevo-info").find(".archivo-info").append();
+  })
+
+  function clearItmReasing() {
+    $(".fecha-info").empty();
+
+    $(".anterior-info").find(".operacion-info").empty()
+    $(".anterior-info").find(".tarifa-info").empty()
+    $(".anterior-info").find(".nro-info").empty()
+    $(".anterior-info").find(".tipo-info").empty()
+    $(".anterior-info").find(".condicion-info").empty()
+    $(".anterior-info").find(".archivo-info").empty()
+
+    $(".nuevo-info").find(".operacion-info").empty()
+    $(".nuevo-info").find(".tarifa-info").empty()
+    $(".nuevo-info").find(".nro-info").empty()
+    $(".nuevo-info").find(".tipo-info").empty()
+    $(".nuevo-info").find(".condicion-info").empty()
+    $(".nuevo-info").find(".archivo-info").empty()
+  }
+
+  $(".modal-overlay-hist").on("click", async function() {
+    const anim = animate(".modal-container-hist", {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.7]
+    }, {
+      duration: 0.45,
+      easing: "ease-out"
+    })
+
+    await anim.finished;
+
+    $("#modal-history").removeClass("opacity-100 z-[9990]").addClass("opacity-0 -z-[9990]");
+
+    $(".list-history").empty();
+    
+    clearItmReasing();
+  })
+
   document.addEventListener("DOMContentLoaded", async () => {
     showLoader();
 
@@ -356,10 +517,14 @@ require './templates/header.html';
         className: 'btn-excel',
         filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
         title: `Lista de placas`,
-        exportOptions: {
-          modifier: {
+        modifier: {
+          selected: true
+        },
+        rows: function(idx, data, node) {
+          const selected = table.rows({
             selected: true
-          }
+          }).any();
+          return selected ? $(node).hasClass('selected') : true;
         },
         customize: function(xlsx) {
           var sheet = xlsx.xl.worksheets['sheet1.xml'];
@@ -421,7 +586,7 @@ require './templates/header.html';
         // Centrar contenido y cabecera en las columnas 0, 1 y 2
         {
           "className": "dt-center",
-          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
         }
       ],
       columns: [{
@@ -595,6 +760,23 @@ require './templates/header.html';
                 <button class="btn-view-pdf w-full flex justify-center items-center gap-1 bg-red-100 text-red-700 border border-red-700 rounded outline-none px-4 py-2 cursor-pointer" data-key="${data}">
                   <i class="bi bi-file-earmark-pdf-fill"></i>
                   <span>Ver PDF</span>
+                </button>
+              </div>`
+            } else {
+              return `<p class="!text-red-700">Sin acta</p>`
+            }
+          },
+          width: "120px"
+        },
+        {
+          data: "idAssing",
+          render: (data) => {
+            if (data) {
+              return `
+              <div class="w-full flex justify-center items-center">
+                <button class="btn-view-history w-full flex justify-center items-center gap-1 bg-yellow-100 text-yellow-700 border border-yellow-700 rounded outline-none px-4 py-2 cursor-pointer" data-key="${data}">
+                  <i class="bi bi-card-list"></i>
+                  <span>Movimientos</span>
                 </button>
               </div>`
             } else {

@@ -1,0 +1,287 @@
+.select2-container {
+  order: 2;
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__rendered {
+  color: #000000;
+  /* line-height: 28px; */
+}
+
+.select2-container .select2-selection--single {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+  padding: 0;
+}
+
+.select2-dropdown {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+  z-index: 9999;
+}
+
+/* Cambia la fuente de los elementos dentro del desplegable */
+.select2-results__option {
+  /* font-family: "Montserrat", serif; */
+  font-optical-sizing: auto;
+  font-size: 13px;
+  /* font-weight: <weight>; */
+  font-style: normal;
+  color: black;
+}
+
+.select2-container .select2-selection--single {
+  height: 43.3px !important;
+  padding: 11px 10px;
+}
+
+.select2-selection__arrow {
+  top: 50% !important;
+  transform: translate(0, -50%);
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__rendered {
+  line-height: normal;
+}
+
+.select2-container--default .select2-selection--single {
+  outline: none;
+  border: 2px solid oklch(87.2% 0.01 258.338) !important;
+  border-radius: 5px;
+}
+
+.select2-container--default.select2-container--disabled
+  .select2-selection--single {
+  background: #fff !important;
+  color: #eee !important;
+}
+
+.select2-container--default.select2-container--disabled ~ .label-select {
+  color: #eee !important;
+}
+
+/* Cuando el contenedor de Select2 tenga el foco, pinta el label que viene después */
+.select2-container--default.select2-container--focus ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* Cambia el color del borde cuando Select2 recibe el foco */
+.select2-container--default.select2-container--focus
+  .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* También cuando el menú desplegable está abierto */
+.select2-container--default.select2-container--open .select2-selection--single {
+  border-color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* OPCIONAL: Si quieres que también cambie cuando el menú está ABIERTO */
+.select2-container--default.select2-container--open ~ .label-select {
+  color: oklch(62.3% 0.214 259.815) !important;
+}
+
+/* TABLA ESTILOS */
+div.dt-scroll {
+  border-radius: 8px !important;
+  border: 1px solid #e5e5e5;
+  overflow: hidden;
+}
+
+table thead {
+  border: 0;
+}
+
+table thead th .dt-column-title {
+  /* color: #667085 !important; */
+  font-size: 14px;
+  /* font-weight: 600; */
+}
+
+table.dataTable > thead > tr > th {
+  padding: 4px 8px;
+}
+
+/* table tbody tr {
+  cursor: pointer;
+} */
+
+table tbody tr:hover {
+  background-color: #f5f5f580;
+}
+
+table tbody tr td {
+  font-size: 12px;
+}
+
+table tfoot {
+  border: 0;
+}
+
+table tfoot tr {
+  background: #f8f9fa;
+}
+
+table tfoot th .dt-column-title {
+  color: #667085 !important;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+table.dataTable.stripe tbody tr.odd,
+table.dataTable.display tbody tr.odd {
+  background-color: #fff !important;
+}
+table.dataTable.stripe tbody tr.even,
+table.dataTable.display tbody tr.even {
+  background-color: #fff !important;
+}
+
+table.dataTable.display > tbody tr > .sorting_1,
+table.dataTable.display > tbody > tr:nth-child(odd) > .sorting_1,
+table.dataTable.hover > tbody > tr:hover > *,
+table.dataTable.display > tbody > tr:hover > *,
+table.dataTable.display > tbody > tr:nth-child(odd) > *,
+table.dataTable.display tbody tr:hover > .sorting_1 {
+  box-shadow: none !important;
+}
+
+.dt-container .superior {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.dt-container .inferior {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.dt-container .inferior .derecha-inferior {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+div.dt-container .dt-info {
+  color: oklch(0.556 0 0) !important;
+  font-size: 0.875rem;
+}
+
+.dt-container .inferior .derecha-inferior select {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current {
+  background: #2b5ce4 !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current:hover {
+  background: #3e68db !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button {
+  background: transparent !important;
+  color: rgb(139, 139, 139);
+  border: 0;
+  border-radius: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button:hover {
+  background: #3e68db !important;
+  color: #fff !important;
+  border: 0;
+  border-radius: 4px;
+}
+
+table.dataTable input.dt-select-checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+table.dataTable input.dt-select-checkbox:checked:after {
+  margin-top: -4px;
+}
+
+table.dataTable input.dt-select-checkbox:indeterminate:after {
+  top: 3px;
+  left: 3px;
+  height: 8px;
+  width: 8px;
+}
+
+table.dataTable > thead > tr > .dt-select input.dt-select-checkbox {
+  display: none;
+}
+
+table.dataTable.display > tbody > tr.selected + tr.selected > td {
+  border-top: 1px solid #fff !important;
+}
+
+table.dataTable > tbody > tr.selected > * {
+  box-shadow: inset 0 0 0 9999px oklch(80.9% 0.105 251.813) !important;
+  transition: box-shadow linear 300ms;
+}
+
+table.dataTable.display > tbody > tr.selected:hover > * {
+  box-shadow: inset 0 0 0 9999px oklch(62.3% 0.214 259.815) !important;
+}
+
+/* .dt-scroll-head,
+.dt-scroll-headInner {
+  overflow: visible !important;
+} */
+
+.selected {
+  box-shadow: inset 0 0 0 9999px oklch(80.9% 0.105 251.813) !important;
+}
+
+.btn-excel {
+  border: 0 !important;
+  border-radius: 4px !important;
+  color: #fff !important;
+  transition: linear 200ms;
+  background-color: #077703 !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+  margin: 0 !important;
+}
+
+.btn-excel:hover {
+  box-shadow: 2px 2px 5px #0000002d !important;
+}
+
+.btn-excel span {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}

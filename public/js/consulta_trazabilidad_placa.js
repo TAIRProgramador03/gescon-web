@@ -172,6 +172,36 @@ export async function updateAssign(id, assign) {
   }
 }
 
+export async function getHistory(id) {
+  try {
+    instance = await obtenerInstancia();
+
+    const result = await instance.get(`/historialMovimientos/${id}`, {
+      withCredentials: true
+    });
+
+    return result.data;
+  } catch (error) {
+    console.error(error.response.data);
+    toastr.warning(error.response.data.message, "Oops...")
+  }
+}
+
+export async function getHistoryById(id) {
+  try {
+    instance = await obtenerInstancia();
+
+    const result = await instance.get(`/obtenerReasignacion/${id}`, {
+      withCredentials: true
+    });
+
+    return result.data;
+  } catch (error) {
+    console.error(error.response.data);
+    toastr.warning(error.response.data.message, "Oops...")
+  }
+}
+
 export async function clearFields() {
   $("#cbo-terreno-upd").val(null).trigger("change");
   $("#cbo-condicion-upd").val(null).trigger("change");
@@ -219,4 +249,12 @@ export function calcularPorcentaje(fechaIni, fechaFinal) {
   porcentaje = Math.min(Math.max(porcentaje, 0), 100);
 
   return porcentaje;
+}
+
+export function convertirFecha(date) {
+  const fecha = `${date}`;
+  const anio = fecha.substring(0, 4);
+  const mes = fecha.substring(4, 6);
+  const dia = fecha.substring(6, 8);
+  return `${anio}-${mes}-${dia}`;
 }

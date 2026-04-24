@@ -214,29 +214,15 @@ require './templates/header.html';
       // fixedHeader: true,
       dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
       buttons: [{
-        extend: 'excelHtml5',
         text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
         titleAttr: 'Excel',
         className: 'btn-excel',
-        filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
-        title: `Lista de placas del cliente ${clienteId}`,
-        customize: function(xlsx) {
-          var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-          // 1. Cambiar el color del Título (Celda A1)
-          // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
-          $('row c[r^="A1"]', sheet).attr('s', '51');
-
-          // 2. Personalizar los Headers (Fila de encabezados)
-          // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
-          // El estilo '2' es negrita, '42' es fondo azul claro, etc.
-          $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
-
-          // 3. Si quieres colores manuales más específicos (estilos personalizados)
-          // Tienes que editar el diccionario de estilos de JSZip (más complejo)
-          // Pero DataTables trae estilos incorporados del 0 al 60:
-          // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
-        },
+        action: async function(e, dt, button, config) {
+          const dataRow = dt.rows({
+            search: 'applied'
+          }).data().toArray();
+          await generarExcel(dataRow, "Vehiculos Asignados");
+        }
       }],
       initComplete: function() {
         $(".leyendas").html(`

@@ -252,7 +252,134 @@ const verFlota = async (id) => {
   });
 };
 
-function convertirFecha(fecha) {
+async function generarExcel(data, title) {
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet("Leasings");
+
+  ws.mergeCells("A1:J1");
+  const titleCell = ws.getCell("A1");
+
+  titleCell.value = `Gescon: ${title}`.toUpperCase();
+  titleCell.font = { bold: true, color: { argb: "FFFFFF" } };
+  titleCell.alignment = { vertical: "middle", horizontal: "center" };
+  titleCell.fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "007595" },
+  };
+  ws.getRow(1).height = 15;
+
+  const rows = await Promise.all(
+    data.map(async (row, i) => {
+      const fechaIni = row.fechaIni ? dayjs(convertirFecha(row.fechaIni)).toDate() : null;
+      const fechaFin = row.fechaFin
+        ? dayjs(convertirFecha(row.fechaFin)).toDate()
+        : null;
+
+      return [
+        i + 1,
+        row.nroLeasing,
+        row.banco,
+        `${row.cantidad} und.`,
+        fechaIni,
+        fechaFin,
+        row.perGracia ? row.perGracia > 0 ? `${row.perGracia} meses` : `Sin periodo` : `Sin periodo`,
+        row.cliente,
+        row.clienteOrigen ? row.clienteOrigen : row.cliente,
+        row.nroContrato,
+      ];
+    }),
+  );
+
+  ws.addTable({
+    name: "TablaLeasings",
+    ref: "A2",
+    headerRow: true,
+    style: {
+      theme: "TableStyleMedium2",
+      showRowStripes: true,
+    },
+    columns: [
+      { name: "Item", filterButton: true },
+      { name: "N° Leasing", filterButton: true },
+      { name: "Banco", filterButton: true },
+      { name: "Cantidad Vehiculos", filterButton: true },
+      { name: "Fecha Inicio", filterButton: true },
+      { name: "Fecha Fin", filterButton: true },
+      { name: "Periodo de Gracia", filterButton: true },
+      { name: "Cliente", filterButton: true },
+      { name: "Cliente Origen", filterButton: true },
+      { name: "Contrato/Adenda", filterButton: true },
+    ],
+    rows,
+  });
+
+  ws.getTable("TablaLeasings").commit();
+
+  const headerRow = ws.getRow(2);
+
+  headerRow.eachCell((cell) => {
+    cell.font = { bold: true, color: { argb: "FFFFFF" } };
+
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "002141" },
+    };
+
+    cell.alignment = { horizontal: "center", vertical: "middle" };
+
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+  });
+
+  // Formatos de columnas
+  ws.getColumn(5).numFmt = "dd/mm/yyyy";
+  ws.getColumn(6).numFmt = "dd/mm/yyyy";
+
+  // Tamaño columnas
+  ws.getColumn(1).width = 8; // Item
+  ws.getColumn(2).width = 25; // Nro Leasing
+  ws.getColumn(3).width = 30; // Banco
+  ws.getColumn(4).width = 20; // Cantidad
+  ws.getColumn(5).width = 30; // Fecha inicio
+  ws.getColumn(6).width = 30; // Fecha fin
+  ws.getColumn(7).width = 20; // Periodo
+  ws.getColumn(8).width = 45; // Cliente
+  ws.getColumn(9).width = 45; // Cliente Origen
+  ws.getColumn(10).width = 40; // Contrato / Adenda
+
+  ws.views = [{ state: "frozen", ySplit: 2 }];
+
+  ws.eachRow((row, rowNumber) => {
+    row.eachCell((cell) => {
+      cell.alignment = {
+        vertical: "middle",
+        horizontal: "center",
+        wrapText: true,
+      };
+    });
+  });
+
+  const buffer = await wb.xlsx.writeBuffer();
+
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `Gescon_Reporte_Leasings_${new Date().toLocaleDateString()}.xlsx`;
+  link.click();
+}
+
+function convertirFecha(date) {
+  const fecha = `${date}`;
+
   const anio = fecha.substring(0, 4);
   const mes = fecha.substring(4, 6);
   const dia = fecha.substring(6, 8);

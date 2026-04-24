@@ -196,18 +196,20 @@ require './templates/header.html';
         <table id="listLeasings" class="display">
           <thead>
             <tr>
-              <th class="!font-medium text-gray-500">Item</th>
-              <th class="!font-medium text-gray-500">Placa</th>
-              <th class="!font-medium text-gray-500">Modelo</th>
-              <th class="!font-medium text-gray-500">Tipo</th>
-              <th class="!font-medium text-gray-500">F. Acta Entrega.</th>
-              <th class="!font-medium text-gray-500">F. Devolucion.</th>
-              <th class="!font-medium text-gray-500">Años Contrato</th>
-              <th class="!font-medium text-gray-500">Nro Leasing</th>
-              <th class="!font-medium text-gray-500">F. Ini. Lea.</th>
-              <th class="!font-medium text-gray-500">F. Fin Lea.</th>
-              <th class="!font-medium text-gray-500">Años Leasing</th>
-              <th class="!font-medium text-gray-500">Estado (Diferencia)</th>
+              <th class="!font-medium bg-yellow-400 text-white">Item</th>
+              <th class="!font-medium bg-yellow-400 text-white">Placa</th>
+              <th class="!font-medium bg-yellow-400 text-white">Modelo</th>
+              <th class="!font-medium bg-yellow-400 text-white">F. Entrega (Acta)</th>
+              <th class="!font-medium bg-yellow-400 text-white">F. Devolucion</th>
+              <th class="!font-medium bg-blue-400 text-white">Tipo</th>
+              <th class="!font-medium bg-blue-400 text-white">F. Firma Contrato</th>
+              <th class="!font-medium bg-blue-400 text-white">F. Fin Contrato</th>
+              <th class="!font-medium bg-blue-400 text-white">Años Contrato</th>
+              <th class="!font-medium bg-green-400 text-white">N° de Leasing</th>
+              <th class="!font-medium bg-green-400 text-white">F. Inicio Leasing</th>
+              <th class="!font-medium bg-green-400 text-white">F. Fin Leasing</th>
+              <th class="!font-medium bg-green-400 text-white">Años Leasing</th>
+              <th class="!font-medium bg-taupe-600 text-white">Estado (Diferencia)</th>
             </tr>
           </thead>
           <tbody>
@@ -612,27 +614,27 @@ require './templates/header.html';
               }
             }
           },
-          zoom: {
-            pan: {
-              enabled: true,
-              mode: 'x'
-            },
-            zoom: {
-              wheel: {
-                enabled: true
-              },
-              pinch: {
-                enabled: true
-              },
-              mode: 'x'
-            }
-          }
+          // zoom: {
+          //   pan: {
+          //     enabled: true,
+          //     mode: 'x'
+          //   },
+          //   zoom: {
+          //     wheel: {
+          //       enabled: true
+          //     },
+          //     pinch: {
+          //       enabled: true
+          //     },
+          //     mode: 'x'
+          //   }
+          // }
         }
       }
     })
   }
 
-  const initDoughnutLeaA = async (data) => {
+  const initDoughnutLeaA = async (data, clientId) => {
     const ctx = $("#donutLeasingA")
 
     $("#data-value-veh-exp").text(`${data.menor30Dias + data.entre30Y45Dias + data.entre45Y60Dias + data.entre60Y90Dias + data.mayor90Dias} vehiculos`)
@@ -675,7 +677,7 @@ require './templates/header.html';
             align: 'center' // Opcional: 'start', 'center' o 'end'
           }
         },
-        onClick: (evento, elementosActivos) => {
+        onClick: async (evento, elementosActivos) => {
           // Verificamos si se hizo clic en un segmento (y no en el espacio vacío)
           if (elementosActivos.length > 0) {
             const modal = document.getElementById("modal-leasing");
@@ -697,19 +699,21 @@ require './templates/header.html';
             const label = chartDoughnutLeaA.data.labels[indice];
             const valor = chartDoughnutLeaA.data.datasets[0].data[indice];
 
+            const listVehicles = await obtenerVehiculosVencidos(label, clientId);
+
             $("#modal-body-info").append(`
               <table id="listVehExpires" class="display">
                 <thead>
                   <tr>
-                    <th class="!font-medium text-white bg-yellow-500">Item</th>
-                    <th class="!font-medium text-white bg-yellow-500">Placa</th>
-                    <th class="!font-medium text-white bg-yellow-500">Modelo</th>
-                    <th class="!font-medium text-white bg-yellow-500">Marca</th>
-                    <th class="!font-medium text-white bg-green-500">Cliente</th>
-                    <th class="!font-medium text-white bg-green-500">Cliente Origen</th>
-                    <th class="!font-medium text-white bg-green-500">Leasing</th>
-                    <th class="!font-medium text-white bg-green-500">Fecha Fin</th>
-                    <th class="!font-medium text-white bg-green-500">% de leasing</th>
+                    <th class="!font-medium text-white bg-yellow-400">Item</th>
+                    <th class="!font-medium text-white bg-yellow-400">Placa</th>
+                    <th class="!font-medium text-white bg-yellow-400">Marca</th>
+                    <th class="!font-medium text-white bg-yellow-400">Modelo</th>
+                    <th class="!font-medium text-white bg-green-400">Cliente</th>
+                    <th class="!font-medium text-white bg-green-400">Cliente Origen</th>
+                    <th class="!font-medium text-white bg-green-400">Leasing</th>
+                    <th class="!font-medium text-white bg-green-400">Fecha Fin</th>
+                    <th class="!font-medium text-white bg-green-400">% de leasing</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -723,89 +727,35 @@ require './templates/header.html';
               language: {
                 url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
               },
-              dom: '<"superior"fB>rt<"inferior"i<"derecha-inferior"lp>>',
+              dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
               buttons: [{
-                extend: 'excelHtml5',
                 text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
                 titleAttr: 'Excel',
                 className: 'btn-excel',
-                filename: 'Reporte_Placas_Leasing_Vencidos_' + new Date().toLocaleDateString(),
-                title: 'Lista de placas de los Leasings Vencidos',
-                customize: function(xlsx) {
-                  var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-                  // 1. Cambiar el color del Título (Celda A1)
-                  // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
-                  $('row c[r^="A1"]', sheet).attr('s', '51');
-
-                  // 2. Personalizar los Headers (Fila de encabezados)
-                  // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
-                  // El estilo '2' es negrita, '42' es fondo azul claro, etc.
-                  $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
-
-                  // 3. Si quieres colores manuales más específicos (estilos personalizados)
-                  // Tienes que editar el diccionario de estilos de JSZip (más complejo)
-                  // Pero DataTables trae estilos incorporados del 0 al 60:
-                  // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
-                },
-                action: function(e, dt, button, config) {
-                  var self = this;
-                  var oldStart = dt.settings()._iDisplayStart;
-
-                  // Mostrar un mensaje de "Procesando" manual
-                  dt.buttons.info('Generando archivo', 'Por favor espere...', 3000);
-
-                  dt.one('preXhr', function(e, s, data) {
-                    data.start = 0;
-                    data.length = 2147483647; // Tu número máximo para DB2
-
-                    dt.one('preDraw', function(e, settings) {
-                      // Ejecutar la exportación original
-                      $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
-
-                      // IMPORTANTE: Decirle a DataTables que ya terminó el proceso visual
-                      dt.processing(false);
-
-                      // Restaurar paginación original
-                      settings._iDisplayStart = oldStart;
-                      setTimeout(function() {
-                        dt.ajax.reload(null, false); // Recargar la vista original sin resetear paginado
-                      }, 200);
-
-                      return false; // Evitar renderizar miles de filas
-                    });
-                  });
-
-                  dt.ajax.reload();
+                action: async function(e, dt, button, config) {
+                  const dataRow = dt.rows({
+                    search: 'applied'
+                  }).data().toArray();
+                  await generarExcelVehiclesDonut(dataRow, "Vehiculos expirados");
                 }
               }],
-              ordering: false,
+              initComplete: function() {
+                $(".leyendas").html(`
+                  <div class="w-full flex justify-center items-center gap-4">
+                    <div class="flex justify-center items-center gap-1">
+                      <span class="size-5 bg-yellow-400"></span>
+                      <p class="text-xs !m-0">Unidad</p>
+                    </div>
+                    <div class="flex justify-center items-center gap-1">
+                      <span class="size-5 bg-green-400"></span>
+                      <p class="text-xs !m-0">Leasing</p>
+                    </div>
+                  </div>
+                `);
+              },
               scrollY: '300px',
               scrollCollapse: true,
-              serverSide: true, // Activa el procesamiento en servidor
-              processing: true,
-              ajax: async function(dataRender, callback, settings) {
-                const paramsActualizados = new URLSearchParams(window.location.search);
-                const paramClient = paramsActualizados.get("clienteId")
-
-                try {
-                  const search = dataRender.search.value;
-
-                  // 2. Ejecutar tu Fetch con tus headers/includes personalizados
-                  const res = await obtenerVehiculosVencidos(dataRender.draw, dataRender.start, dataRender.length, label, search, paramClient);
-
-                  // 3. Mapear tu respuesta a lo que DataTables espera
-                  callback({
-                    draw: dataRender.draw,
-                    recordsTotal: res.recordsTotal,
-                    recordsFiltered: res.recordsFiltered,
-                    data: res.data
-                  });
-
-                } catch (error) {
-                  console.error("Error en fetch:", error);
-                }
-              },
+              data: listVehicles,
               "columnDefs": [
                 // Centrar contenido y cabecera en las columnas 0, 1 y 2
                 {
@@ -824,10 +774,10 @@ require './templates/header.html';
                   data: "placa",
                 },
                 {
-                  data: "modelo",
+                  data: "marca",
                 },
                 {
-                  data: "marca",
+                  data: "modelo",
                 },
                 {
                   data: "cliente"
@@ -877,7 +827,7 @@ require './templates/header.html';
     })
   }
 
-  const initDoughnutLeaB = async (data) => {
+  const initDoughnutLeaB = async (data, clientId) => {
     const ctx = $("#donutLeasingB")
 
     $("#data-value-veh-to-exp").text(`${data.menor30Dias + data.entre30Y45Dias + data.entre45Y60Dias + data.entre60Y90Dias + data.mayor90Dias} vehiculos`)
@@ -920,7 +870,7 @@ require './templates/header.html';
             align: 'center' // Opcional: 'start', 'center' o 'end'
           }
         },
-        onClick: (evento, elementosActivos) => {
+        onClick: async (evento, elementosActivos) => {
           // Verificamos si se hizo clic en un segmento (y no en el espacio vacío)
           if (elementosActivos.length > 0) {
             const modal = document.getElementById("modal-leasing");
@@ -942,19 +892,21 @@ require './templates/header.html';
             const label = chartDoughnutLeaB.data.labels[indice];
             const valor = chartDoughnutLeaB.data.datasets[0].data[indice];
 
+            const listVehicle = await obtenerVehiculosPorVencer(label, clientId);
+
             $("#modal-body-info").append(`
               <table id="listVehToExpires" class="display">
                 <thead>
                   <tr>
-                    <th class="!font-medium text-white bg-yellow-500">Item</th>
-                    <th class="!font-medium text-white bg-yellow-500">Placa</th>
-                    <th class="!font-medium text-white bg-yellow-500">Modelo</th>
-                    <th class="!font-medium text-white bg-yellow-500">Marca</th>
-                    <th class="!font-medium text-white bg-green-500">Cliente</th>
-                    <th class="!font-medium text-white bg-green-500">Cliente Origen</th>
-                    <th class="!font-medium text-white bg-green-500">Leasing</th>
-                    <th class="!font-medium text-white bg-green-500">Fecha Fin</th>
-                    <th class="!font-medium text-white bg-green-500">% de leasing</th>
+                    <th class="!font-medium text-white bg-yellow-400">Item</th>
+                    <th class="!font-medium text-white bg-yellow-400">Placa</th>
+                    <th class="!font-medium text-white bg-yellow-400">Marca</th>
+                    <th class="!font-medium text-white bg-yellow-400">Modelo</th>
+                    <th class="!font-medium text-white bg-green-400">Cliente</th>
+                    <th class="!font-medium text-white bg-green-400">Cliente Origen</th>
+                    <th class="!font-medium text-white bg-green-400">Leasing</th>
+                    <th class="!font-medium text-white bg-green-400">Fecha Fin</th>
+                    <th class="!font-medium text-white bg-green-400">% de leasing</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -968,89 +920,35 @@ require './templates/header.html';
               language: {
                 url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
               },
-              dom: '<"superior"fB>rt<"inferior"i<"derecha-inferior"lp>>',
+              dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
               buttons: [{
-                extend: 'excelHtml5',
                 text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
                 titleAttr: 'Excel',
                 className: 'btn-excel',
-                filename: 'Reporte_Placas_Leasing_Por_Vencer_' + new Date().toLocaleDateString(),
-                title: 'Lista de placas de los Leasings por vencer',
-                customize: function(xlsx) {
-                  var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-                  // 1. Cambiar el color del Título (Celda A1)
-                  // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
-                  $('row c[r^="A1"]', sheet).attr('s', '51');
-
-                  // 2. Personalizar los Headers (Fila de encabezados)
-                  // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
-                  // El estilo '2' es negrita, '42' es fondo azul claro, etc.
-                  $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
-
-                  // 3. Si quieres colores manuales más específicos (estilos personalizados)
-                  // Tienes que editar el diccionario de estilos de JSZip (más complejo)
-                  // Pero DataTables trae estilos incorporados del 0 al 60:
-                  // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
-                },
-                action: function(e, dt, button, config) {
-                  var self = this;
-                  var oldStart = dt.settings()._iDisplayStart;
-
-                  // Mostrar un mensaje de "Procesando" manual
-                  dt.buttons.info('Generando archivo', 'Por favor espere...', 3000);
-
-                  dt.one('preXhr', function(e, s, data) {
-                    data.start = 0;
-                    data.length = 2147483647; // Tu número máximo para DB2
-
-                    dt.one('preDraw', function(e, settings) {
-                      // Ejecutar la exportación original
-                      $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
-
-                      // IMPORTANTE: Decirle a DataTables que ya terminó el proceso visual
-                      dt.processing(false);
-
-                      // Restaurar paginación original
-                      settings._iDisplayStart = oldStart;
-                      setTimeout(function() {
-                        dt.ajax.reload(null, false); // Recargar la vista original sin resetear paginado
-                      }, 200);
-
-                      return false; // Evitar renderizar miles de filas
-                    });
-                  });
-
-                  dt.ajax.reload();
+                action: async function(e, dt, button, config) {
+                  const dataRow = dt.rows({
+                    search: 'applied'
+                  }).data().toArray();
+                  await generarExcelVehiclesDonut(dataRow, "Vehiculos por expirar");
                 }
               }],
-              ordering: false,
+              initComplete: function() {
+                $(".leyendas").html(`
+                  <div class="w-full flex justify-center items-center gap-4">
+                    <div class="flex justify-center items-center gap-1">
+                      <span class="size-5 bg-yellow-400"></span>
+                      <p class="text-xs !m-0">Unidad</p>
+                    </div>
+                    <div class="flex justify-center items-center gap-1">
+                      <span class="size-5 bg-green-400"></span>
+                      <p class="text-xs !m-0">Leasing</p>
+                    </div>
+                  </div>
+                `);
+              },
               scrollY: '300px',
               scrollCollapse: true,
-              serverSide: true, // Activa el procesamiento en servidor
-              processing: true,
-              ajax: async function(dataRender, callback, settings) {
-                const paramsActualizados = new URLSearchParams(window.location.search);
-                const paramClient = paramsActualizados.get("clienteId")
-
-                try {
-                  const search = dataRender.search.value;
-
-                  // 2. Ejecutar tu Fetch con tus headers/includes personalizados
-                  const res = await obtenerVehiculosPorVencer(dataRender.draw, dataRender.start, dataRender.length, label, search, paramClient);
-
-                  // 3. Mapear tu respuesta a lo que DataTables espera
-                  callback({
-                    draw: dataRender.draw,
-                    recordsTotal: res.recordsTotal,
-                    recordsFiltered: res.recordsFiltered,
-                    data: res.data
-                  });
-
-                } catch (error) {
-                  console.error("Error en fetch:", error);
-                }
-              },
+              data: listVehicle,
               "columnDefs": [
                 // Centrar contenido y cabecera en las columnas 0, 1 y 2
                 {
@@ -1069,10 +967,10 @@ require './templates/header.html';
                   data: "placa",
                 },
                 {
-                  data: "modelo",
+                  data: "marca",
                 },
                 {
-                  data: "marca",
+                  data: "modelo",
                 },
                 {
                   data: "cliente"
@@ -1192,6 +1090,8 @@ require './templates/header.html';
         listLeasings = await obtenerLeasingsPorContrato(listContracts[0].ID)
       }
 
+      const listVehLeasing = await obtenerLeasings(clientId);
+
       const firstTenResult = quatityVehCli.slice(0, 10)
 
       // INITIALIZE FETCH
@@ -1212,8 +1112,8 @@ require './templates/header.html';
       }
 
       initBarModelYear(totalPriceByModel);
-      initDoughnutLeaA(quantityVehLea.vencidos);
-      initDoughnutLeaB(quantityVehLea.porVencer);
+      initDoughnutLeaA(quantityVehLea.vencidos, clientId);
+      initDoughnutLeaB(quantityVehLea.porVencer, clientId);
       initBarVehicleLea(firstTenResult);
 
       const client = await obtenerClientes();
@@ -1332,104 +1232,58 @@ require './templates/header.html';
         language: {
           url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
         },
-        dom: '<"superior"fB>rt<"inferior"i<"derecha-inferior"lp>>',
+        dom: '<"superior"f<"leyendas-lea">B>rt<"inferior"i<"derecha-inferior"lp>>',
         buttons: [{
-          extend: 'excelHtml5',
           text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
           titleAttr: 'Excel',
           className: 'btn-excel',
-          filename: 'Reporte_Placas_' + new Date().toLocaleDateString(),
-          title: 'Lista de placas de los Leasings',
-          customize: function(xlsx) {
-            var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-            // 1. Cambiar el color del Título (Celda A1)
-            // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
-            $('row c[r^="A1"]', sheet).attr('s', '51');
-
-            // 2. Personalizar los Headers (Fila de encabezados)
-            // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
-            // El estilo '2' es negrita, '42' es fondo azul claro, etc.
-            $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
-
-            // 3. Si quieres colores manuales más específicos (estilos personalizados)
-            // Tienes que editar el diccionario de estilos de JSZip (más complejo)
-            // Pero DataTables trae estilos incorporados del 0 al 60:
-            // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
-          },
-          action: function(e, dt, button, config) {
-            var self = this;
-            var oldStart = dt.settings()._iDisplayStart;
-
-            // Mostrar un mensaje de "Procesando" manual
-            dt.buttons.info('Generando archivo', 'Por favor espere...', 3000);
-
-            dt.one('preXhr', function(e, s, data) {
-              data.start = 0;
-              data.length = 2147483647; // Tu número máximo para DB2
-
-              dt.one('preDraw', function(e, settings) {
-                // Ejecutar la exportación original
-                $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
-
-                // IMPORTANTE: Decirle a DataTables que ya terminó el proceso visual
-                dt.processing(false);
-
-                // Restaurar paginación original
-                settings._iDisplayStart = oldStart;
-                setTimeout(function() {
-                  dt.ajax.reload(null, false); // Recargar la vista original sin resetear paginado
-                }, 200);
-
-                return false; // Evitar renderizar miles de filas
-              });
-            });
-
-            dt.ajax.reload();
+          action: async function(e, dt, button, config) {
+            const dataRow = dt.rows({
+              search: 'applied'
+            }).data().toArray();
+            await generarExcelLeasingsVeh(dataRow);
           }
         }],
-        ordering: false,
-        scrollY: '438px',
+        initComplete: function() {
+          $(".leyendas-lea").html(`
+          <div class="w-full flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-yellow-400"></span>
+              <p class="text-xs !m-0">Unidad</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-green-400"></span>
+              <p class="text-xs !m-0">Leasing</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-blue-400"></span>
+              <p class="text-xs !m-0">Contrato</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-taupe-600"></span>
+              <p class="text-xs !m-0">Extra</p>
+            </div>
+          </div>
+        `);
+        },
+        scrollY: '364px',
         scrollX: true,
         scrollCollapse: true,
-        serverSide: true, // Activa el procesamiento en servidor
-        processing: true,
-        ajax: async function(dataRender, callback, settings) {
-          const paramsActualizados = new URLSearchParams(window.location.search);
-          const paramClient = paramsActualizados.get("clienteId")
-
-          try {
-            const search = dataRender.search.value;
-
-            // 2. Ejecutar tu Fetch con tus headers/includes personalizados
-            const res = await obtenerLeasings(dataRender.draw, dataRender.start, dataRender.length, search, paramClient);
-
-            // 3. Mapear tu respuesta a lo que DataTables espera
-            callback({
-              draw: dataRender.draw,
-              recordsTotal: res.recordsTotal,
-              recordsFiltered: res.recordsFiltered,
-              data: res.data
-            });
-
-          } catch (error) {
-            console.error("Error en fetch:", error);
-          }
-        },
         rowCallback: function(row, data) {
           if (data.diferenciaDias < 0) {
-            $($(row).find("td")[11]).css("background-color", "#E60026").css("color", "#fff");
+            $($(row).find("td")[13]).css("background-color", "#E60026").css("color", "#fff");
           } else if (data.diferenciaDias > 0) {
-            $($(row).find("td")[11]).css("background-color", "#259e01").css("color", "#fff");
+            $($(row).find("td")[13]).css("background-color", "#259e01").css("color", "#fff");
           } else {
-            $($(row).find("td")[11]).css("background-color", "#006be6").css("color", "#fff");
+            $($(row).find("td")[13]).css("background-color", "#006be6").css("color", "#fff");
           }
         },
+        data: listVehLeasing,
         "columnDefs": [
           // Centrar contenido y cabecera en las columnas 0, 1 y 2
           {
             "className": "dt-center",
-            "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+            "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           }
         ],
         columns: [{
@@ -1437,7 +1291,7 @@ require './templates/header.html';
             render: function(data, type, row, meta) {
               return meta.row + 1;
             },
-            width: "52px",
+            width: "50px",
           },
           {
             data: 'placa',
@@ -1448,6 +1302,20 @@ require './templates/header.html';
             width: "200px"
           },
           {
+            data: 'fechaIniActa',
+            render: (data) => {
+              return data == "" ? "Sin fecha" : dayjs(data).format("DD/MM/YYYY")
+            },
+            width: "150px"
+          },
+          {
+            data: 'fechaFinActa',
+            render: (data) => {
+              return data == "" ? "Sin fecha" : dayjs(data).format("DD/MM/YYYY")
+            },
+            width: "150px"
+          },
+          {
             data: 'tipoCont',
             render: (data) => {
               return data == "P" ? "Contrato" : "Adenda";
@@ -1455,44 +1323,44 @@ require './templates/header.html';
             width: "100px"
           },
           {
-            data: 'fechaIniActa',
+            data: 'fechaIniCont',
             render: (data) => {
-              return dayjs(data).format("DD/MM/YYYY")
+              return data == "" ? "Sin fecha" : dayjs(data).format("DD/MM/YYYY")
             },
-            width: "100px"
+            width: "150px"
           },
           {
-            data: 'fechaFinActa',
+            data: 'fechaFinCont',
             render: (data) => {
-              return dayjs(data).format("DD/MM/YYYY")
+              return data == "" ? "Sin fecha" : dayjs(data).format("DD/MM/YYYY")
             },
-            width: "100px"
+            width: "150px"
           },
           {
             data: 'añosContrato',
-            width: "100px"
+            width: "150px"
           },
           {
             data: 'nroLeasing',
-            width: "100px"
+            width: "120px"
           },
           {
             data: 'fechaIniLea',
             render: (data) => {
               return dayjs(data).format("DD/MM/YYYY")
             },
-            width: "100px"
+            width: "150px"
           },
           {
             data: 'fechaFinLea',
             render: (data) => {
               return dayjs(data).format("DD/MM/YYYY")
             },
-            width: "100px"
+            width: "150px"
           },
           {
             data: 'añosLeasing',
-            width: "100px"
+            width: "150px"
           },
           {
             data: 'diferenciaDias',

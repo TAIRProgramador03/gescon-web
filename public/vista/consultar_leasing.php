@@ -344,12 +344,15 @@ require './templates/header.html';
       scrollCollapse: true,
       dom: '<"superior"fB>rt<"inferior"i<"derecha-inferior"lp>>',
       buttons: [{
-        extend: 'excelHtml5',
         text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
         titleAttr: 'Excel',
         className: 'btn-excel',
-        filename: 'Reporte_Placas_Leasing_Vencidos_' + new Date().toLocaleDateString(),
-        title: 'Lista de placas de los Leasings Vencidos',
+        action: async function(e, dt, button, config) {
+          const dataRow = dt.rows({
+            search: 'applied'
+          }).data().toArray();
+          await generarExcel(dataRow, "Reporte de Leasings");
+        }
       }],
       data: leasings,
       "columnDefs": [
@@ -413,7 +416,7 @@ require './templates/header.html';
                 return `Sin periodo`
               };
             } else {
-              return "--";
+              return "Sin periodo";
             }
           },
           width: "120px",

@@ -372,7 +372,7 @@ require './templates/header.html';
         [1, "asc"]
       ],
       select: {
-        style: "os",
+        style: "single",
         selector: "td:first-child",
       },
       columnDefs: [{
@@ -660,6 +660,21 @@ require './templates/header.html';
     $(".modal-pdf").removeClass("opacity-100 z-[9990]").addClass("opacity-0 -z-[9990]");
   })
 
+  $("#tarifa").on("input", function () {
+    let value = $(this).val();
+
+    // eliminar todo lo que no sea número o punto
+    value = value.replace(/[^0-9.]/g, "");
+
+    // evitar más de un punto
+    const parts = value.split(".");
+    if (parts.length > 2) {
+      value = parts[0] + "." + parts.slice(1).join("");
+    }
+
+    $(this).val(value);
+  }); 
+
   // GUARDAR
   function showSpinner(element) {
     $(element).find(".spinner").removeClass("hidden")
@@ -692,9 +707,9 @@ require './templates/header.html';
     const tariff = $("#tarifa").val();
     const file = $("#acta")[0].files[0];
 
-    if (!date) {
+    if (!date || !tariff || !contract || !condition) {
       hideSpinner(this);
-      toastr.info("Debes completar el campo de fecha", "Aviso");
+      toastr.info("Debes completar todos los campos", "Aviso");
       return;
     }
 
@@ -715,8 +730,6 @@ require './templates/header.html';
       file: key
     };
 
-    console.log("INFO==>", data);
-
     const result = await saveOperation(idAssign, data);
 
     if (result.success) {
@@ -724,10 +737,6 @@ require './templates/header.html';
       clearFields();
       toastr.success(result.message, "¡Éxito!");
     }
-
-    // row.remove().draw(false);
-    // clearFields();
-    // toastr.success("Exito", "¡Éxito!");
 
     hideSpinner(this);
   });

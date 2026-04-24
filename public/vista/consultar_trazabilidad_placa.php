@@ -214,34 +214,74 @@ require './templates/header.html';
       <p class="!m-0 text-base font-normal text-gray-500">Visualice todas las reasignaciones que se realizaron para este vehiculo.</p>
     </div>
     <div class="w-full h-full grid grid-cols-2 gap-3">
-      <ul class="list-history w-full h-full flex flex-col gap-3 border border-gray-100 rounded-md p-3">
+      <ul class="list-history w-full h-full flex flex-col gap-3 border border-gray-100 rounded-md p-3 overflow-auto">
       </ul>
       <div class="w-full h-full flex flex-col gap-3 border border-gray-100 rounded-md p-3">
-        <h3 class="text-2xl text-[#002141] font-semibold">Información</h3>
-        <p>Fecha: <span class="fecha-info"></span></p>
-        <div class="w-full flex flex-col gap-3 border border-gray-100 rounded-md p-2">
+        <div class="w-full flex justify-between items-center">
+          <h3 class="text-2xl text-[#002141] font-semibold">Información</h3>
+          <p class="text-lg text-[#002141] font-semibold fecha-info"></p>
+        </div>
+        <div class="w-full flex flex-col gap-3 border border-gray-100 rounded-md px-4 py-2 relative overflow-hidden">
+          <div class="w-2 h-full bg-red-400 absolute top-0 left-0"></div>
           <h3 class="text-lg text-[#002141] font-semibold">Anterior</h3>
 
           <div class="w-full grid grid-cols-3 gap-3 anterior-info">
-            <p>Operación: <span class="operacion-info"></span></p>
-            <p>Tarifa: <span class="tarifa-info"></span></p>
-            <p>Nro Contrato: <span class="nro-info"></span></p>
-            <p>Tipo: <span class="tipo-info"></span></p>
-            <p>Condicion: <span class="condicion-info"></span></p>
-            <p>Archivo: <div class="archivo-info"></div></p>
+            <p class="w-full flex flex-col gap-2">
+              Operación:
+              <span class="operacion-info text-sm text-gray-600">--</span>
+            </p>
+            <p class="w-full flex flex-col gap-2">
+              Tarifa:
+              <span class="tarifa-info text-sm text-gray-600">--</span>
+            </p>
+            <p class="w-full flex flex-col gap-2">
+              Nro Contrato:
+              <span class="nro-info text-sm text-gray-600">--</span>
+            </p>
+            <p class="w-full flex flex-col gap-2">
+              Tipo:
+              <span class="tipo-info text-sm text-gray-600">--</span>
+            </p>
+            <p class="w-full flex flex-col gap-2">
+              Condicion:
+              <span class="condicion-info text-sm text-gray-600">--</span>
+            </p>
+            <div class="w-full flex flex-col gap-2">
+              Archivo:
+              <div class="archivo-info text-sm text-gray-600">--</div>
+            </div>
           </div>
         </div>
         <div class="w-full flex justify-center items-center"><i class="bi bi-arrow-down-circle-fill text-blue-600 text-2xl animate-bounce"></i></div>
-        <div class="w-full flex flex-col gap-3 border border-gray-100 rounded-md p-2">
+        <div class="w-full flex flex-col gap-3 border border-gray-100 rounded-md px-4 py-2 relative overflow-hidden">
+          <div class="w-2 h-full bg-green-400 absolute top-0 left-0"></div>
           <h3 class="text-lg text-[#002141] font-semibold">Nueva</h3>
 
           <div class="w-full grid grid-cols-3 gap-3 nuevo-info">
-            <p>Operación: <span class="operacion-info"></span></p>
-            <p>Tarifa: <span class="tarifa-info"></span></p>
-            <p>Nro Contrato: <span class="nro-info"></span></p>
-            <p>Tipo: <span class="tipo-info"></span></p>
-            <p>Condicion: <span class="condicion-info"></span></p>
-            <p>Archivo: <div class="archivo-info"></div></p>
+            <p class="w-full flex flex-col gap-2">
+              Operación:
+              <span class="operacion-info text-sm text-gray-600">--</span>
+            </p>
+            <p class="w-full flex flex-col gap-2">
+              Tarifa:
+              <span class="tarifa-info text-sm text-gray-600">--</span>
+            </p>
+            <p class="w-full flex flex-col gap-2">
+              Nro Contrato:
+              <span class="nro-info text-sm text-gray-600">--</span>
+            </p>
+            <p class="w-full flex flex-col gap-2">
+              Tipo:
+              <span class="tipo-info text-sm text-gray-600">--</span>
+            </p>
+            <p class="w-full flex flex-col gap-2">
+              Condicion:
+              <span class="condicion-info text-sm text-gray-600">--</span>
+            </p>
+            <div class="w-full flex flex-col gap-2">
+              Archivo:
+              <div class="archivo-info text-sm text-gray-600">--</div>
+            </div>
           </div>
         </div>
       </div>
@@ -308,6 +348,8 @@ require './templates/header.html';
   let dataAssign;
 
   let currentRow;
+
+  let currentReasign = null;
 
   function transformType(value, object) {
     return object[value];
@@ -425,47 +467,82 @@ require './templates/header.html';
   });
 
   $(document).on("click", ".itm-reasign", async function() {
+    const key = $(this).data("key");
+
+    if (currentReasign && currentReasign == key) return;
+
     clearItmReasing();
 
-    const key = $(this).data("key");
+    $(".itm-reasign").removeClass("bg-blue-300");
+    $(this).addClass("bg-blue-300");
+
+    currentReasign = key;
 
     const findAssing = await getHistoryById(key);
 
     console.log(findAssing);
 
-    $(".fecha-info").text(dayjs(convertirFecha(findAssing.fecha)).format("DD/MM/YYYY"));
+    $(".fecha-info").text(`(${dayjs(convertirFecha(findAssing.fecha)).format("DD/MM/YYYY")})`);
 
     $(".anterior-info").find(".operacion-info").text(findAssing.anterior.operacion)
     $(".anterior-info").find(".tarifa-info").text(findAssing.anterior.tarifa)
     $(".anterior-info").find(".nro-info").text(findAssing.anterior.contrato)
     $(".anterior-info").find(".tipo-info").text(findAssing.anterior.tipo == 'P' ? "Contrato" : "Documento")
     $(".anterior-info").find(".condicion-info").text(findAssing.anterior.condicion)
-    $(".anterior-info").find(".archivo-info").append();
+
+    // MOSTRAR ARCHIVO ANTERIOR
+    $(".anterior-info").find(".archivo-info").empty();
+    $(".anterior-info").find(".archivo-info").append(findAssing.anterior.archivo ? `
+                <button class="btn-view-pdf-anterior w-full flex justify-center items-center gap-1 bg-red-100 text-red-700 border border-red-700 rounded outline-none px-4 py-2 cursor-pointer" data-key="${findAssing.anterior.archivo}">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                  <span>Ver PDF</span>
+                </button>
+    ` : `<p class="text-red-500!">Sin acta</p>`);
 
     $(".nuevo-info").find(".operacion-info").text(findAssing.nuevo.operacion)
     $(".nuevo-info").find(".tarifa-info").text(findAssing.nuevo.tarifa)
     $(".nuevo-info").find(".nro-info").text(findAssing.nuevo.contrato)
     $(".nuevo-info").find(".tipo-info").text(findAssing.nuevo.tipo == 'P' ? "Contrato" : "Documento")
-    $(".nuevo-info").find(".condicion-info").text(findAssing.nuevo.condicion)
-    $(".nuevo-info").find(".archivo-info").append();
+    $(".nuevo-info").find(".condicion-info").text(findAssing.nuevo.condicion);
+
+    // MOSTRAR ARCHIVO NUEVO
+    $(".nuevo-info").find(".archivo-info").empty();
+    $(".nuevo-info").find(".archivo-info").append(findAssing.nuevo.archivo ? `
+                <button class="btn-view-pdf-nuevo w-full flex justify-center items-center gap-1 bg-red-100 text-red-700 border border-red-700 rounded outline-none px-4 py-2 cursor-pointer" data-key="${findAssing.nuevo.archivo}">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                  <span>Ver PDF</span>
+                </button>
+    ` : `<p class="text-red-500!">Sin acta</p>`);
   })
+
+  $(document).on("click", ".btn-view-pdf-anterior", function() {
+    const key = $(this).data("key");
+
+    verPdf(key);
+  });
+
+  $(document).on("click", ".btn-view-pdf-nuevo", function() {
+    const key = $(this).data("key");
+
+    verPdf(key);
+  });
 
   function clearItmReasing() {
     $(".fecha-info").empty();
 
-    $(".anterior-info").find(".operacion-info").empty()
-    $(".anterior-info").find(".tarifa-info").empty()
-    $(".anterior-info").find(".nro-info").empty()
-    $(".anterior-info").find(".tipo-info").empty()
-    $(".anterior-info").find(".condicion-info").empty()
-    $(".anterior-info").find(".archivo-info").empty()
+    $(".anterior-info").find(".operacion-info").text("--")
+    $(".anterior-info").find(".tarifa-info").text("--")
+    $(".anterior-info").find(".nro-info").text("--")
+    $(".anterior-info").find(".tipo-info").text("--")
+    $(".anterior-info").find(".condicion-info").text("--")
+    $(".anterior-info").find(".archivo-info").text("--")
 
-    $(".nuevo-info").find(".operacion-info").empty()
-    $(".nuevo-info").find(".tarifa-info").empty()
-    $(".nuevo-info").find(".nro-info").empty()
-    $(".nuevo-info").find(".tipo-info").empty()
-    $(".nuevo-info").find(".condicion-info").empty()
-    $(".nuevo-info").find(".archivo-info").empty()
+    $(".nuevo-info").find(".operacion-info").text("--")
+    $(".nuevo-info").find(".tarifa-info").text("--")
+    $(".nuevo-info").find(".nro-info").text("--")
+    $(".nuevo-info").find(".tipo-info").text("--")
+    $(".nuevo-info").find(".condicion-info").text("--")
+    $(".nuevo-info").find(".archivo-info").text("--")
   }
 
   $(".modal-overlay-hist").on("click", async function() {
@@ -482,7 +559,9 @@ require './templates/header.html';
     $("#modal-history").removeClass("opacity-100 z-[9990]").addClass("opacity-0 -z-[9990]");
 
     $(".list-history").empty();
-    
+
+    currentReasign = null;
+
     clearItmReasing();
   })
 

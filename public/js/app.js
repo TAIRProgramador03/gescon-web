@@ -24,7 +24,7 @@ lucide.createIcons();
 // const IP_LOCAL = "192.168.5.95";
 
 const obtenerConfig = async () => {
-  const BASE_URL = window.location.origin + '/gescon-web/public';
+  const BASE_URL = window.location.origin + '/public';
 
   const config = await fetch(`${BASE_URL}/php/config.php`).then((r) => r.json());
 
@@ -40,7 +40,7 @@ async function authenticateValid() {
   });
 
   if (!response.ok) {
-    window.location.replace("/gescon-web/index.html"); // replace no guarda la página en el historial
+    window.location.replace("/index.html"); // replace no guarda la página en el historial
     return;
   }
 
@@ -172,7 +172,7 @@ function protegerRutas() {
     const permiso = $(this).data("route-permission");
 
     if (!permissions.includes(permiso)) {
-      window.location.href = "/gescon-web/public/vista/404.php";
+      window.location.href = "/public/vista/404.php";
     }
   });
 }

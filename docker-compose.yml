@@ -1,0 +1,15 @@
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - 8080:80
+    volumes:
+      - .:/usr/share/nginx/html
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+  
+  php:
+    image: php:8.2-fpm
+    volumes:
+      - .:/usr/share/nginx/html

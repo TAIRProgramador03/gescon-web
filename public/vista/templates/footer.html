@@ -20,7 +20,7 @@
 
         document.getElementById("log_out").addEventListener("click", async () => {
             try {
-                const BASE_URL = window.location.origin + '/gescon-web/public';
+                const BASE_URL = window.location.origin + '/public';
 
                 const config = await fetch(`${BASE_URL}/php/config.php`).then((r) => r.json());
 
@@ -33,7 +33,7 @@
                 const data = await response.json();
                 if (response.ok) {
                     localStorage.removeItem("dbUser");
-                    window.location.href = "/gescon-web/index.html";
+                    window.location.href = "/index.html";
                 } else {
                     toastr("No se pudo cerrar sesión", "Oops...")
                 }

@@ -17,7 +17,7 @@ toastr.options = {
 };
 
 const obtenerConfig = async () => {
-  const BASE_URL = window.location.origin + '/gescon-web/public';
+  const BASE_URL = window.location.origin + '/public';
 
   const config = await fetch(`${BASE_URL}/php/config.php`).then((r) => r.json());
 

@@ -841,6 +841,7 @@ const registrar = async (asignacionData) => {
         const res = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
           method: "POST",
           body: formData,
+          credentials: 'include'
         });
         const data = await res.json();
         detalle.archivoPdf = data.key;

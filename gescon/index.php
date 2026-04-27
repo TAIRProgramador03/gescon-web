@@ -1098,18 +1098,13 @@ require './templates/header.html';
       cargarContContrato(clientId);
 
       // Initialize charts with placeholder data
-      if (listContracts.length > 0 && listLeasings.length > 0) {
-        const daysComparation = await obtenerDiasContratoLeasing(listContracts[0].ID, listLeasings[0].id)
-        initChartComparation(daysComparation);
-      } else {
-        initChartComparation({
-          "fechaIniCont": "",
-          "fechaFinCont": "",
-          "fechaIniLea": "",
-          "fechaFinLea": "",
-          "diferenciaDias": 0
-        });
-      }
+      initChartComparation({
+        "fechaIniCont": "",
+        "fechaFinCont": "",
+        "fechaIniLea": "",
+        "fechaFinLea": "",
+        "diferenciaDias": 0
+      });
 
       initBarModelYear(totalPriceByModel);
       initDoughnutLeaA(quantityVehLea.vencidos, clientId);
@@ -1384,8 +1379,9 @@ require './templates/header.html';
 
       if (listYears.length > 0) $('#cbo-years').val(listYears[0]).trigger("change");
       $('#cbo-clients-multiple').val(firstTenResult.map(cli => cli.id)).trigger("change");
-      if (listContracts.length > 0) $("#cbo-contratos").val(listContracts[0].ID).trigger("change");
-      if (listLeasings.length > 0) $("#cbo-leasings").val(listLeasings[0].id).trigger("change");
+      $("#cbo-contratos").val(null).trigger("change");
+      $("#cbo-leasings").val(null).trigger("change");
+      $("#cbo-models-gen").val(null).trigger("change");
     } catch (err) {
       console.error(err);
       toastr.error(err.message, "Oops...")

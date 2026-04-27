@@ -46,9 +46,9 @@ async function authenticateValid() {
 
   if (response.ok) {
     if (data.permissions.includes("ver_dashboard")) {
-      window.location.href = "./vista/";
+      window.location.href = "./gescon/";
     } else {
-      window.location.href = "./vista/sistema";
+      window.location.href = "./gescon/sistema";
     }
   }
 }

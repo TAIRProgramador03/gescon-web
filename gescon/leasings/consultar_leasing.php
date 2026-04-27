@@ -1,5 +1,5 @@
 <?php
-require './templates/header.html';
+require '../templates/header.html';
 ?>
 
 <!-- JQUERY -->
@@ -48,7 +48,7 @@ require './templates/header.html';
 <script src="https://cdn.jsdelivr.net/npm/motion@10/dist/motion.min.js"></script>
 
 <style>
-  <?php include '../css/views/query_leasing.css' ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/query_leasing.css' ?>
 </style>
 
 <div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
@@ -163,7 +163,7 @@ require './templates/header.html';
   </div>
 </div>
 
-<script src="../js/consulta_leasings.js"></script>
+<script src="/js/consulta_leasings.js"></script>
 <script>
   document.title = "Consultar leasings | Gescon";
 
@@ -652,6 +652,7 @@ require './templates/header.html';
     const anim = Motion.animate(
       ".modal-container", {
         opacity: [1, 0],
+        scale: [1, 1.05, 0.7],
       }, {
         duration: 0.45,
         easing: "ease-in",
@@ -668,5 +669,5 @@ require './templates/header.html';
 </script>
 
 <?php
-require './templates/footer.html';
+require '../templates/footer.html';
 ?>

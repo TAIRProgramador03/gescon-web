@@ -7,7 +7,7 @@ require '../templates/header.html';
 
 <!-- ESTILOS -->
 <style>
-  <?php include '../../css/views/query_roles.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/query_roles.css'; ?>
 </style>
 
 <div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
@@ -65,12 +65,12 @@ require '../templates/header.html';
   </div>
 </main>
 
-<script type="module" src="../../js/consulta_rol.js"></script>
+<script type="module" src="/js/consulta_rol.js"></script>
 
 <script type="module">
   import {
     getTableRoles
-  } from "../../js/consulta_rol.js"
+  } from "/js/consulta_rol.js"
 
   import {
     animate

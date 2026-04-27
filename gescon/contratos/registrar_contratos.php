@@ -1,5 +1,5 @@
 <?php
-require './templates/header.html';
+require '../templates/header.html';
 ?>
 <!-- CSS de Select2 -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
@@ -21,7 +21,7 @@ require './templates/header.html';
 
 <!-- ESTILOS -->
 <style>
-  <?php include '../css/views/register_document.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/register_contract.css'; ?>
 </style>
 
 <!-- MAQUETACIÓN DE LA VISTA -->
@@ -44,12 +44,12 @@ require './templates/header.html';
   </p>
 </div>
 
-<main class="main-register" data-route-permission="insertar_documentos">
+<main class="main-register" data-route-permission="insertar_contratos">
   <div class="contenedor border border-gray-300 px-9 py-7 relative overflow-hidden">
-    <div class="w-full h-3 bg-taupe-700 absolute top-0 left-0"></div>
+    <div class="w-full h-3 bg-blue-700 absolute top-0 left-0"></div>
     <div class="w-full flex flex-col justify-center gap-2">
-      <h3 id="title-form" class="text-5xl text-[#002141] font-semibold">Registrar Documentos</h3>
-      <p id="desc-form" class="!m-0 text-base font-normal text-gray-500">Gestione el registro de un nuevo documento vinculado a un contrato y cliente.</p>
+      <h3 id="title-form" class="text-5xl text-[#002141] font-semibold">Registrar Contrato</h3>
+      <p id="desc-form" class="!m-0 text-base font-normal text-gray-500">Gestione el registro de un nuevo contrato vinculado a un cliente.</p>
     </div>
     <div class="form-registrar flex flex-col gap-2">
       <div class="form-one">
@@ -66,65 +66,33 @@ require './templates/header.html';
           </label>
         </div>
 
-        <!-- DOC. PADRE -->
-        <div class="flex flex-col w-full relative">
-          <select id="combo-contrato" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente">
-            <option value="">Seleccione un contrato</option>
-          </select>
-
-          <label
-            for="combo-contrato"
-            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-            Doc. Padre(*)
-          </label>
-        </div>
-
-        <!-- TIPO DOC. -->
-        <div class="flex flex-col w-full relative">
-          <select id="combo-raz" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente">
-            <option value="">Seleccione un tipo</option>
-            <option value="1">Adenda</option>
-            <option value="2">Carta</option>
-            <option value="3">Orden de Compra</option>
-            <option value="4">Orden de Servicio</option>
-            <option value="5">Orden de Cambio</option>
-          </select>
-
-          <label
-            for="combo-raz"
-            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-            Tipo Documento(*)
-          </label>
-        </div>
-
         <!-- NRO CONTRATO -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="text-nro-contra"
-            name="nro-contrato"
+            id="contrato"
+            name="Contrato"
             type="text"
             placeholder="CLIENTE-MM-AAAA-0001"
-            data-tooltip="El número del documento debe ser un correlativo (CLIENTE-MM-AAAA-0001)"
+            data-tooltip="El número del contrato debe ser un correlativo (CLIENTE-MM-AAAA-0001)"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
           <label
-            for="text-nro-contra"
+            for="contrato"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
-            N° de Documento(*)
+            N° de Contrato(*)
           </label>
         </div>
-      </div>
-      <div class="form-two">
+
         <!-- FECHA FIRMA -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="text-firma"
+            id="firma"
             name="Firma"
             type="text"
             placeholder="Ingrese una fecha"
             data-tooltip="Fecha de la firma del contrato"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
           <label
-            for="text-firma"
+            for="firma"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             Fecha Firma(*)
           </label>
@@ -133,41 +101,63 @@ require './templates/header.html';
         <!-- DURACION -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="text-dura"
+            id="duracion"
             name="Duracion"
             type="number"
             placeholder="Ingrese la duración"
             data-tooltip="Duracion del contrato en meses"
             class="no-negative peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
           <label
-            for="text-dura"
+            for="duracion"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             Duracion (Meses)(*)
           </label>
         </div>
 
-        <!-- MOTIVO -->
+        <!-- TIPO MONEDA -->
         <div class="flex flex-col w-full relative">
-          <select id="combo-motivo" name="opciones" class="tooltip-input" data-tooltip="Selecciona el rubro del cliente">
-            <option value="">Seleccione un Motivo</option>
-            <option value="1">Ampliación</option>
-            <option value="2">Renovación</option>
-            <option value="3">Cambio de datos del cliente</option>
-            <option value="3">Actualización de condiciones del cliente</option>
-            <option value="4">Devolución</option>
+          <select id="combo-moneda" name="opciones" class="tooltip-input">
+            <option value="">Seleccione una moneda</option>
+            <option value="0">Soles</option>
+            <option value="1">Dólares</option>
           </select>
 
           <label
-            for="combo-motivo"
+            for="combo-moneda"
             class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-            Motivo(*)
+            Tipo Moneda(*)
           </label>
         </div>
 
+        <!-- RUBRO DE EMPRESA -->
+        <div class="flex flex-col w-full relative">
+          <select id="combo-tipo" name="opciones" class="tooltip-input" data-tooltip="Selecciona el rubro del cliente">
+            <option value="">Seleccione un tipo</option>
+            <option value="1">AVICOLA</option>
+            <option value="2">CONTRATISTA MINERA</option>
+            <option value="3">ENERGIA</option>
+            <option value="4">GOBIERNO</option>
+            <option value="5">INMOBILIARIA</option>
+            <option value="6">MINERIA</option>
+            <option value="7">PESQUERA</option>
+            <option value="8">SEGURIDAD</option>
+            <option value="9">TELEFONIA</option>
+            <option value="10">TRANSPORTES</option>
+            <option value="11">OTROS</option>
+          </select>
+
+          <label
+            for="combo-tipo"
+            class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+            Rubro de empresa
+          </label>
+        </div>
+      </div>
+      <div class="form-two">
         <!-- KM ADICIONAL -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="text-adic"
+            id="adicional"
             name="Adicional"
             type="text"
             placeholder="Ingrese el km adicional"
@@ -175,7 +165,7 @@ require './templates/header.html';
             data-tooltip="Tarifa por km adicional de recorrido 0.000"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
           <label
-            for="text-adic"
+            for="adicional"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             $ KM Adicional(*)
           </label>
@@ -184,7 +174,7 @@ require './templates/header.html';
         <!-- BOLSA KM TOTAL -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="text-bolsa"
+            id="bolsa"
             name="Bolsa"
             type="text"
             placeholder="Ingrese el km total"
@@ -192,18 +182,17 @@ require './templates/header.html';
             data-tooltip="Km total a recorrer por unidad"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" />
           <label
-            for="text-bolsa"
+            for="bolsa"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             Bolsa KM Total(*)
           </label>
         </div>
-      </div>
-      <div class="form-three">
+
         <!-- CANTIDAD VEHICULOS -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="text-veh"
-            name="Sev"
+            id="vehiculos"
+            name="Vehiculos"
             type="number"
             min="0"
             placeholder="Ingrese la cantidad de vehiculos"
@@ -211,7 +200,7 @@ require './templates/header.html';
             data-tooltip="Cantidad de vehiculos contratados"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
           <label
-            for="text-veh"
+            for="vehiculos"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             Cant. de Vehiculos(*)
           </label>
@@ -220,7 +209,7 @@ require './templates/header.html';
         <!-- VEH SUP -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="text-sup"
+            id="sup"
             name="Sup"
             type="number"
             min="0"
@@ -229,7 +218,7 @@ require './templates/header.html';
             data-tooltip="Cantidad de vehículos en Superficie"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
           <label
-            for="text-sup"
+            for="sup"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             # Veh. Sup(*)
           </label>
@@ -238,7 +227,7 @@ require './templates/header.html';
         <!-- VEH SOC -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="text-soc"
+            id="soc"
             name="Soc"
             type="number"
             min="0"
@@ -247,7 +236,7 @@ require './templates/header.html';
             data-tooltip="Cantidad de vehículos en Socavón"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
           <label
-            for="text-soc"
+            for="soc"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             # Veh. Soc(*)
           </label>
@@ -256,7 +245,7 @@ require './templates/header.html';
         <!-- VEH CIU -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="text-ciu"
+            id="ciu"
             name="Ciu"
             type="number"
             min="0"
@@ -265,7 +254,7 @@ require './templates/header.html';
             data-tooltip="Cantidad de vehículos en Ciudad"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
           <label
-            for="text-ciu"
+            for="ciu"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             # Veh. Ciu(*)
           </label>
@@ -274,7 +263,7 @@ require './templates/header.html';
         <!-- VEH SEV -->
         <div class="input flex flex-col w-full relative">
           <input
-            id="text-sev"
+            id="sev"
             name="Sev"
             type="number"
             min="0"
@@ -283,13 +272,13 @@ require './templates/header.html';
             data-tooltip="Cantidad de vehículos en Severo"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input no-negative" />
           <label
-            for="text-sev"
+            for="sev"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             # Veh. Sev(*)
           </label>
         </div>
       </div>
-      <div class="form-six form-adjun">
+      <div class="form-six">
         <!-- SUBIR ARCHIVO -->
         <div class="flex flex-col w-full relative">
           <label class="text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors z-[1]">Adjunta archivo(*)</label>
@@ -309,13 +298,9 @@ require './templates/header.html';
             </label>
           </div>
         </div>
-
-
-        <!-- <div class="form-cliente form-especial">
-          <label for="combo-box">Doc. Especial:</label>
-          <input id="especial" name="especial" type="checkbox" class="check-form-contrato tooltip-input" data-tooltip="Contrato especial, Cuando un contrato tiene varios periodos de finalización.">
-        </div> -->
       </div>
+
+      <!--agregar una columna mas-->
       <div class="form-seven">
         <div class="tabla-form">
           <div class="tabla-add-vehicle w-full flex justify-between items-end">
@@ -335,7 +320,8 @@ require './templates/header.html';
 
             <!-- CONTRATO ESPECIAL -->
             <div class="flex flex-col justify-end items-end gap-2">
-              <label for="combo-box" class="text-gray-500 text-xs font-semibold">Documento Especial</label>
+              <label for="combo-box" class="text-gray-500 text-xs font-semibold">Contrato Especial</label>
+              <!-- <input id="especial" name="especial" type="checkbox" class="check-form-contrato tooltip-input" data-tooltip="Contrato especial, Cuando un contrato tiene varios periodos de finalización."> -->
               <label class="relative inline-flex w-fit items-center cursor-pointer">
                 <input class="sr-only peer" value="" type="checkbox" id="especial" name="especial">
                 <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
@@ -361,7 +347,6 @@ require './templates/header.html';
               <thead>
                 <tr>
                   <th class="sticky top-0 bg-white z-20 border px-2 py-2">Item</th>
-                  <th class="hidden sticky top-0 bg-white z-20 border px-2 py-2">Id</th>
                   <th class="sticky top-0 bg-white z-20 border px-2 py-2">Modelo</th>
                   <th class="sticky top-0 bg-white z-20 border px-2 py-2">Tipo terreno</th>
                   <th class="sticky top-0 bg-white z-20 border px-2 py-2">Tarifa</th>
@@ -377,51 +362,20 @@ require './templates/header.html';
                 </tr>
               </thead>
               <tbody id="contratos-tbody" class="table-detalle">
-                <tr>
-                  <td><input type="text" name="item[]" class="disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" disabled></td>
-                  <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
-                  <td>
-                    <select id="tipoModelo" name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
-                      <option value="">Seleccione un modelo</option>
-                    </select>
-                  </td>
-                  <td>
-                    <select id="tipoTerreno" name="tipo_terreno[]" class="cbo-form-cliente-deta terreno-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione el tipo de terreno">
-                      <option value="4">Seleccione el tipo</option>
-                      <option value="0">Superficie</option>
-                      <option value="1">Socavon</option>
-                      <option value="2">Ciudad</option>
-                      <option value="3">Severo</option>
-                    </select>
-                  </td>
-                  <td><input type="text" name="tarifa[]" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
-                  <td><input type="text" name="cpk[]" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
-                  <td><input type="number" name="rm[]" class="no-negative w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
-                  <td><input type="number" name="cantidad[]" class="no-negative w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
-                  <td><input type="text" min="0" name="kmAdi[]" class="w-14 disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="$KM Adicional" disabled></td>
-                  <td><input type="text" name="duracion[]" class="w-14 disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Duracion contrato" disabled></td>
-                  <td><input type="text" name="compra_veh[]" class="w-18 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
-                  <td><input type="text" name="precio_veh[]" class="w-18 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
-                  <td>
-                    <select id="condicion" name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
-                      <option value="4">Seleccione el tipo</option>
-                      <option value="0">Titular</option>
-                      <option value="1">Retén</option>
-                      <option value="2">Logística</option>
-                      <option value="3">Pendiente</option>
-                    </select>
-                  </td>
-                  <td>
-                    <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
-                  </td>
-                </tr>
+                <!-- filas dinámicas -->
               </tbody>
             </table>
           </div>
         </div>
       </div>
+      <!--agregar una columna mas-->
 
       <div class="form-cliente-cbo">
+        <!-- <div class="cbo-registrar">
+          <label for="combo-box">Descripcion:</label>
+          <textarea id="story" name="story" rows="4" placeholder="" class="area-campo tooltip-input border border-gray-300 rounded-sm focus:outline-1 focus:outline-blue-500 focus:shadow-sm" data-tooltip="Ingrese aqui algun comentario adicional"></textarea>
+        </div> -->
+
         <div class="input flex flex-col w-full relative">
           <textarea
             id="story"
@@ -430,13 +384,12 @@ require './templates/header.html';
             data-tooltip="Ingrese aqui algun comentario adicional"
             class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] h-24 text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input"></textarea>
           <label
-            for="story"
+            for="contrato"
             class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
             Descripción
           </label>
         </div>
       </div>
-
       <div class="form-cliente-cbo">
         <div class="cbo-registrar body">
           <button
@@ -461,11 +414,11 @@ require './templates/header.html';
           </button>
           <button
             type="button"
-            id="updateButton"
+            id="actualizarButton"
             class="cursor-pointer bg-blue-700 text-center w-1/4 rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
             <div
               class="bg-blue-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
-              <i class="bi bi-floppy-fill"></i>
+              <i class="bi bi-pencil-fill"></i>
             </div>
             <p class="translate-x-4 !m-0 !text-white text-base font-medium">Actualizar</p>
           </button>
@@ -494,9 +447,7 @@ require './templates/header.html';
     animate
   } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 
-  document.title = "Registrar Documento | Gescon";
-
-
+  document.title = "Registrar Contrato | Gescon";
 
   document.addEventListener("DOMContentLoaded", function() {
     const tooltip = document.createElement("div");
@@ -555,7 +506,6 @@ require './templates/header.html';
     }, true);
   });
 
-
   const fileInput = document.getElementById('fileInput');
   const dropZone = document.getElementById('dropZone');
   const fileInfo = document.getElementById('fileInfo');
@@ -568,6 +518,7 @@ require './templates/header.html';
     //   document.body.classList.add('loaded');
     //   document.getElementById('preloader-mini').style.display = 'none';
     // }, 2000);
+
     fileInfo.style.display = 'none'; // Asegúrate de que la información del archivo no aparezca.
     uploadMessage.addClass("flex"); // Muestra el mensaje inicial.
     uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial.
@@ -638,20 +589,11 @@ require './templates/header.html';
   // Mostrar archivo y cambiar el contenido visual
   function handleFile() {
     const file = fileInput.files[0];
-
     if (file) {
-      // ✅ Estado con archivo
-      uploadMessage.addClass("hidden").removeClass("flex");
-
-      fileInfo.style.display = 'flex';
-      fileNameDisplay.textContent = truncateFileName(file.name);
-
-    } else {
-      // 🔥 Estado inicial (canceló o limpió)
-      uploadMessage.removeClass("hidden").addClass("flex");
-
-      fileInfo.style.display = 'none';
-      fileNameDisplay.textContent = "";
+      uploadMessage.addClass("hidden"); // Muestra el mensaje inicial.
+      uploadMessage.removeClass("flex"); // Muestra el mensaje inicial.
+      fileInfo.style.display = 'flex'; // Mostrar el área con el archivo
+      fileNameDisplay.textContent = truncateFileName(file.name); // Mostrar el nombre truncado del archivo
     }
   }
 
@@ -684,6 +626,8 @@ require './templates/header.html';
     }
   });
 
+
+
   // Función para truncar el nombre del archivo
   function truncateFileName(name) {
     const maxLength = 25;
@@ -700,10 +644,76 @@ require './templates/header.html';
     fileInfo.style.display = 'none'; // Ocultar el área del archivo
     uploadMessage.addClass("flex"); // Muestra el mensaje inicial.
     uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial. // Mostrar mensaje de carga
+    pdfPreview.src = '';
+    pdfPreviewContainer.style.display = 'none';
+  });
+
+  /*$(document).ready(function() {
+      $("#tipoTerreno").select2({
+          placeholder: "Seleccione el tipo",
+          allowClear: false // Desactiva la "X"
+      });
+  });*/
+
+  $(document).ready(function() {
+    $("#combo-cliente").select2({
+      placeholder: "Seleccione un cliente",
+      allowClear: false, // Desactiva la "X"
+      width: "100%"
+    });
+
+    $("#combo-moneda").select2({
+      placeholder: "Seleccione una moneda",
+      allowClear: false, // Desactiva la "X"
+      width: "100%"
+    });
+
+    $("#combo-tipo").select2({
+      placeholder: "Seleccione un tipo",
+      allowClear: false, // Desactiva la "X"
+      width: "100%"
+    });
+
+    $("#tipoModelo").select2({
+      placeholder: "Seleccione el modelo",
+      allowClear: false, // Desactiva la "X"
+      width: "100%"
+    });
+
+    $("#tipoTerreno").select2({
+      placeholder: "Seleccione el terreno",
+      allowClear: false, // Desactiva la "X"
+      width: "100%"
+    });
+  });
+
+  flatpickr("#firma", {
+    dateFormat: "d/m/Y",
+    locale: "es",
+    allowInput: true,
+    clickOpens: true,
+  });
+
+  const validInputDate = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // solo números
+
+    if (value.length >= 3 && value.length <= 4) {
+      value = value.slice(0, 2) + "/" + value.slice(2);
+    } else if (value.length >= 5) {
+      value =
+        value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
+    }
+
+    e.target.value = value;
+  };
+
+  document.getElementById("firma").addEventListener("input", function(e) {
+    validInputDate(e);
   });
 </script>
-<script type="module" src="../js/registrar_documentos.js"></script>
+<script type="module" src="/js/registrar_contratos.js"></script>
+
 
 <?php
-require './templates/footer.html';
+require '../templates/footer.html';
 ?>

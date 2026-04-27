@@ -507,7 +507,7 @@ async function generarExcelLeasingsVeh(data) {
 
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = `Reporte_Placas_${new Date().toLocaleDateString()}.xlsx`;
+  link.download = `Gescon_Reporte_Placas_${new Date().toLocaleDateString()}.xlsx`;
   link.click();
 }
 
@@ -679,7 +679,7 @@ async function generarExcelVehiclesDonut(data, title) {
 
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = `Reporte_Placas_${new Date().toLocaleDateString()}.xlsx`;
+  link.download = `Gescon_Reporte_Placas_${new Date().toLocaleDateString()}.xlsx`;
   link.click();
 }
 

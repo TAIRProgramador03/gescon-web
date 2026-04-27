@@ -16,7 +16,7 @@ require '../templates/header.html';
 
 <!-- ESTILOS -->
 <style>
-  <?php include '../../css/views/register_user.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/register_user.css'; ?>
 </style>
 
 <div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
@@ -137,14 +137,14 @@ require '../templates/header.html';
   </div>
 </main>
 
-<script type="module" src="../../js/registrar_usuarios.js"></script>
+<script type="module" src="/js/registrar_usuarios.js"></script>
 <script type="module">
   import {
     getNewUsers,
     getRoles,
     getRolesGesOper,
     registerUser
-  } from '../../js/registrar_usuarios.js'
+  } from '/js/registrar_usuarios.js'
 
   import {
     animate

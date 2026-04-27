@@ -43,7 +43,7 @@ require './templates/header.html';
 
 <!-- CSS DE LA VISTA DASHBOARD -->
 <style>
-  <?php include '../css/views/dashboard.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/dashboard.css'; ?>
 </style>
 
 <!-- MAQUETACIÓN DE LA VISTA -->
@@ -268,7 +268,7 @@ require './templates/header.html';
   </div>
 </div>
 
-<script src="../js/dashboard.js"></script>
+<script src="/js/dashboard.js"></script>
 <script>
   document.title = "Dashboard | Gescon";
 

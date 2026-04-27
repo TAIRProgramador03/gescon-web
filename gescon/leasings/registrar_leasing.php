@@ -1,5 +1,5 @@
 <?php
-require './templates/header.html';
+require '../templates/header.html';
 ?>
 
 <!-- JQUERY -->
@@ -24,7 +24,7 @@ require './templates/header.html';
 
 <!-- ESTILOS -->
 <style>
-  <?php include '../css/views/register_leasing.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/register_leasing.css'; ?>
 </style>
 
 <!-- MAQUETACIÓN DE LA VISTA -->
@@ -427,7 +427,7 @@ require './templates/header.html';
   document.title = "Registrar Leasing | Gescon";
 
   function asignacionVehicular() {
-    window.location = 'adicionar_vehiculos';
+    window.location = '/gescon/vehiculos/adicionar_vehiculos';
   };
 </script>
 <script type="module">
@@ -657,8 +657,8 @@ require './templates/header.html';
     uploadMessage.removeClass("hidden"); // Muestra el mensaje inicial. // Mostrar mensaje de carga
   });
 </script>
-<script type="module" src="../js/registrar_leasing.js"></script>
+<script type="module" src="/js/registrar_leasing.js"></script>
 
 <?php
-require './templates/footer.html';
+require '../templates/footer.html';
 ?>

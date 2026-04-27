@@ -99,13 +99,13 @@ require '../templates/header.html';
   </div>
 </main>
 
-<script type="module" src="../../js/registrar_roles.js"></script>
+<script type="module" src="/js/registrar_roles.js"></script>
 <script type="module">
   import {
     getPermissions,
     convertTitle,
     registerRole
-  } from '../../js/registrar_roles.js'
+  } from '/js/registrar_roles.js'
 
   import {
     animate

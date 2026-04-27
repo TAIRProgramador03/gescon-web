@@ -2,11 +2,8 @@
 require '../templates/header.html';
 ?>
 
-<!-- CSS de Select2 -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
-
-<!-- JS de Select2 -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<!-- TOASTR JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <!--BOOTSTRAP CSS-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -37,6 +34,10 @@ require '../templates/header.html';
       Usuarios
     </a>
     <span>/</span>
+    <a id="crumb-second" href="consultar_roles" class="px-3 py-1 flex justify-center items-center gap-1 rounded-md text-blue-800 hover:bg-blue-800 hover:text-white transition-colors">
+      Roles
+    </a>
+    <span>/</span>
     <a id="crumb-active" class="px-3 py-1 flex justify-center items-center bg-blue-800 text-white rounded-md">
       Permisos
     </a>
@@ -44,9 +45,25 @@ require '../templates/header.html';
 
   <div class="w-full flex flex-col gap-4 bg-white px-9 py-7 rounded-md border border-gray-300 relative overflow-hidden">
     <div class="w-full h-3 bg-violet-800 absolute top-0 left-0"></div>
-    <div class="w-full flex flex-col justify-center gap-2">
-      <h3 class="text-5xl text-[#002141] font-semibold">Visualizar permisos</h3>
-      <p class="!m-0 text-base font-normal text-gray-500">Verifique la cantidad de permisos asignados a un usuario especifico.</p>
+    <div class="w-full flex justify-between items-end">
+      <div class="w-full flex flex-col justify-center gap-2">
+        <h3 class="text-5xl text-[#002141] font-semibold">Administrar permisos</h3>
+        <p class="!m-0 text-base font-normal text-gray-500">Visualice y modifique los permisos asignados a un rol.</p>
+      </div>
+      <div class="flex justify-end items-center gap-2">
+        <button id="btn-edit" class="w-fit px-4 py-2 flex justify-center items-center gap-1 rounded cursor-pointer font-medium bg-blue-100 border border-blue-800 text-blue-800 hover:bg-blue-800 hover:text-white transition-colors">
+          <i class="bi bi-pencil-square"></i>
+          <span>Editar</span>
+        </button>
+        <button id="btn-save" class="hidden w-fit px-4 py-2 justify-center items-center gap-1 rounded cursor-pointer font-medium bg-green-100 border border-green-800 text-green-800 hover:bg-green-800 hover:text-white transition-colors">
+          <i class="bi bi-floppy-fill"></i>
+          <span>Guardar</span>
+        </button>
+        <button id="btn-cancel" class="hidden w-fit px-4 py-2 justify-center items-center gap-1 rounded cursor-pointer font-medium bg-red-100 border border-red-800 text-red-800 hover:bg-red-800 hover:text-white transition-colors">
+          <i class="bi bi-x"></i>
+          <span>Cancelar</span>
+        </button>
+      </div>
     </div>
 
     <div class="w-full grid grid-cols-1 gap-4">
@@ -58,7 +75,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Visualizar dashboard</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="ver_dashboard" name="ver_dashboard" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="ver-dashboard" name="ver-dashboard" data-id="1" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -88,7 +105,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Consultar contratos</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="ver_contratos" name="ver_contratos" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="ver_contratos" name="ver_contratos" data-id="2" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -110,7 +127,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Registrar contratos</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="insertar_contratos" name="insertar_contratos" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="insertar_contratos" name="insertar_contratos" data-id="7" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -132,7 +149,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Modificar contratos temp.</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="editar_contratos" name="editar_contratos" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="editar_contratos" name="editar_contratos" data-id="13" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -162,7 +179,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Consultar documentos</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="ver_documentos" name="ver_documentos" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="ver_documentos" name="ver_documentos" data-id="3" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -184,7 +201,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Registrar documentos</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="insertar_documentos" name="insertar_documentos" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="insertar_documentos" name="insertar_documentos" data-id="8" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -236,7 +253,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Consultar leasings</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="ver_leasing" name="ver_leasing" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="ver_leasing" name="ver_leasing" data-id="4" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -258,7 +275,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Registrar lesaings</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="insertar_leasing" name="insertar_leasing" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="insertar_leasing" name="insertar_leasing" data-id="9" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -288,7 +305,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Consultar placas</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="ver_placas" name="ver_placas" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="ver_placas" name="ver_placas" data-id="5" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -310,7 +327,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Asignar placas</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="insertar_asignacion" name="insertar_asignacion" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="insertar_asignacion" name="insertar_asignacion" data-id="10" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -340,7 +357,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Consultar usuarios</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="ver_usuarios" name="ver_usuarios" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="ver_usuarios" name="ver_usuarios" data-id="6" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -362,7 +379,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Registrar usuarios</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="insertar_usuarios" name="insertar_usuarios" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="insertar_usuarios" name="insertar_usuarios" data-id="11" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -384,7 +401,7 @@ require '../templates/header.html';
           <li class="w-full flex justify-between items-center">
             <span class="text-medium text-gray-500">Administrar roles</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
-              <input class="sr-only peer" type="checkbox" id="administrar_roles" name="administrar_roles" disabled>
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="administrar_roles" name="administrar_roles" data-id="12" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 
@@ -409,12 +426,12 @@ require '../templates/header.html';
   </div>
 </main>
 
-<script type="module" src="../../js/consulta_permisos_por_usuario.js"></script>
-
+<script type="module" src="/js/consulta_permisos_por_rol.js"></script>
 <script type="module">
   import {
-    getPermissions
-  } from "../../js/consulta_permisos_por_usuario.js"
+    getPermissions,
+    updatePermissions
+  } from "/js/consulta_permisos_por_rol.js"
 
   import {
     animate
@@ -447,35 +464,88 @@ require '../templates/header.html';
 
   let table;
 
+  let permissions = [];
+  let selectedPermissions = new Set();
+
   $(document).ready(async function() {
     showLoader();
 
     const params = new URLSearchParams(window.location.search);
-    const userId = params.get("usuarioId");
+    const roleId = params.get("rolId");
 
-    if (!userId) {
-      toastr.warning("No se detecto ningun parametro del usuario", "Oops...")
+    if (!roleId) {
+      toastr.warning("No se detecto ningun parametro del rol", "Oops...")
       return;
     }
 
-    const permissions = await getPermissions(userId)
+    permissions = await getPermissions(roleId)
 
-    $("#ver_dashboard").prop("checked", permissions.includes("ver_dashboard"))
-    $("#ver_contratos").prop("checked", permissions.includes("ver_contratos"))
-    $("#ver_documentos").prop("checked", permissions.includes("ver_documentos"))
-    $("#ver_leasing").prop("checked", permissions.includes("ver_leasing"))
-    $("#ver_placas").prop("checked", permissions.includes("ver_placas"))
-    $("#ver_usuarios").prop("checked", permissions.includes("ver_usuarios"))
-    $("#insertar_contratos").prop("checked", permissions.includes("insertar_contratos"))
-    $("#insertar_documentos").prop("checked", permissions.includes("insertar_documentos"))
-    $("#insertar_leasing").prop("checked", permissions.includes("insertar_leasing"))
-    $("#insertar_asignacion").prop("checked", permissions.includes("insertar_asignacion"))
-    $("#insertar_usuarios").prop("checked", permissions.includes("insertar_usuarios"))
-    $("#administrar_roles").prop("checked", permissions.includes("administrar_roles"))
-    $("#editar_contratos").prop("checked", permissions.includes("editar_contratos"))
-    $("#editar_documentos").prop("checked", permissions.includes("editar_documentos"))
+    permissions.forEach(perm => {
+      selectedPermissions.add(perm.id);
+
+      $(`.permission-checkbox[data-id="${perm.id}"]`)
+        .prop("checked", true);
+    });
 
     hideLoader();
+  })
+
+  $(document).on("change", ".permission-checkbox", function() {
+    const id = Number($(this).data("id"));
+
+    if (this.checked) {
+      selectedPermissions.add(id);
+    } else {
+      selectedPermissions.delete(id);
+    }
+  });
+
+  $("#btn-edit").on("click", function() {
+    $(`.permission-checkbox`)
+      .prop("disabled", false);
+
+    $(this).addClass("hidden")
+    $(this).removeClass("flex")
+
+    $("#btn-save").removeClass("hidden")
+    $("#btn-save").addClass("flex")
+
+    $("#btn-cancel").removeClass("hidden")
+    $("#btn-cancel").addClass("flex")
+  })
+
+  $("#btn-save").on("click", async function() {
+    $(`.permission-checkbox`)
+      .prop("disabled", true);
+
+    const params = new URLSearchParams(window.location.search);
+    const roleId = params.get("rolId");
+
+    await updatePermissions(roleId, selectedPermissions)
+
+    $(this).addClass("hidden").removeClass("flex")
+    $("#btn-cancel").addClass("hidden").removeClass("flex")
+    $("#btn-edit").removeClass("hidden").addClass("flex")
+  })
+
+  $("#btn-cancel").on("click", async function() {
+    $(`.permission-checkbox`)
+      .prop("disabled", true);
+
+    $(".permission-checkbox").prop("checked", false);
+
+    selectedPermissions.clear();
+
+    permissions.forEach(perm => {
+      selectedPermissions.add(perm.id);
+
+      $(`.permission-checkbox[data-id="${perm.id}"]`)
+        .prop("checked", true);
+    });
+
+    $(this).addClass("hidden").removeClass("flex")
+    $("#btn-save").addClass("hidden").removeClass("flex")
+    $("#btn-edit").removeClass("hidden").addClass("flex")
   })
 </script>
 

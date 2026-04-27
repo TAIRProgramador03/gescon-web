@@ -1595,7 +1595,7 @@ function limpiarSelect(idSelect) {
 }
 
 function adicionaVeh() {
-  window.location = "adicionar_vehiculos";
+  window.location = "/gescon/vehiculos/adicionar_vehiculos";
 }
 
 function textoAGuiones(texto) {

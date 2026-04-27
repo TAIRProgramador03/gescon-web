@@ -1,5 +1,5 @@
 <?php
-require './templates/header.html';
+require '../templates/header.html';
 ?>
 
 <!-- CSS de Select2 -->
@@ -13,7 +13,7 @@ require './templates/header.html';
 
 <!-- ESTILOS -->
 <style>
-  <?php include '../css/views/query_plate_traceability.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/query_plate_traceability.css'; ?>
 </style>
 
 <div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
@@ -293,7 +293,7 @@ require './templates/header.html';
   class="fixed opacity-0 pointer-events-none bg-black text-white text-sm px-3 py-2 rounded shadow-lg z-[9999] transition-all duration-200">
 </div>
 
-<script type="module" src="../js/consulta_trazabilidad_placa.js"></script>
+<script type="module" src="/js/consulta_trazabilidad_placa.js"></script>
 <script type="module">
   import {
     getAssigns,
@@ -309,7 +309,7 @@ require './templates/header.html';
     getHistoryById,
     convertirFecha,
     generarExcel
-  } from "../js/consulta_trazabilidad_placa.js";
+  } from "/js/consulta_trazabilidad_placa.js";
 
   import {
     animate
@@ -1291,5 +1291,5 @@ require './templates/header.html';
 </script>
 
 <?php
-require './templates/footer.html';
+require '../templates/footer.html';
 ?>

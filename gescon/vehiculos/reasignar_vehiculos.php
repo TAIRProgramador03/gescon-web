@@ -1,5 +1,5 @@
 <?php
-require './templates/header.html';
+require '../templates/header.html';
 ?>
 
 <!-- TOASTR JS -->
@@ -23,7 +23,7 @@ require './templates/header.html';
 
 <!-- ESTILOS -->
 <style>
-  <?php include '../css/views/reassign_vehicle.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/reassign_vehicle.css'; ?>
 </style>
 
 <div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
@@ -218,7 +218,7 @@ require './templates/header.html';
     convertirFecha,
     manejarArchivo,
     getContracts
-  } from "../js/reasigna_vehiculo.js"
+  } from "/js/reasigna_vehiculo.js"
   import {
     animate
   } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
@@ -783,5 +783,5 @@ require './templates/header.html';
 </script>
 
 <?php
-require './templates/footer.html';
+require '../templates/footer.html';
 ?>

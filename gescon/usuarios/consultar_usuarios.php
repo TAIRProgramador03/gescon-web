@@ -17,7 +17,7 @@ require '../templates/header.html';
 
 <!-- ESTILOS -->
 <style>
-  <?php include '../../css/views/query_user.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/query_user.css'; ?>
 </style>
 
 <div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
@@ -92,7 +92,7 @@ require '../templates/header.html';
   </div>
 </div>
 
-<script type="module" src="../../js/consulta_usuario.js"></script>
+<script type="module" src="/js/consulta_usuario.js"></script>
 
 <script type="module">
   import {
@@ -100,7 +100,7 @@ require '../templates/header.html';
     getRoles,
     getUserById,
     updateRoleUser
-  } from "../../js/consulta_usuario.js"
+  } from "/js/consulta_usuario.js"
 
   import {
     animate

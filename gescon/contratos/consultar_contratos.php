@@ -1,5 +1,5 @@
 <?php
-require './templates/header.html';
+require '../templates/header.html';
 ?>
 
 <!-- JQUERY -->
@@ -49,7 +49,7 @@ require './templates/header.html';
 
 <!-- CSS DE LA VISTA CONSULTAR CONTRATOS -->
 <style>
-  <?php include '../css/views/query_contract.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/query_contract.css'; ?>
 </style>
 
 <!-- MAQUETACIÓN DE LA VISTA -->
@@ -331,7 +331,7 @@ require './templates/header.html';
          max-w-[250px] w-max break-words">
 </div>
 
-<script src="../js/consulta_contratos.js"></script>
+<script src="/js/consulta_contratos.js"></script>
 <script type="module">
   import {
     animate
@@ -396,7 +396,7 @@ require './templates/header.html';
   $(document).on('DOMContentLoaded', async function() {
     showLoader();
 
-    const config = await fetch("../php/config.php").then((r) => r.json());
+    const config = await fetch("../../php/config.php").then((r) => r.json());
 
     IP_LOCAL = config.IP_LOCAL;
 
@@ -608,7 +608,7 @@ require './templates/header.html';
 
     if (!clienteId) return;
 
-    window.location.href = `adicionar_vehiculos?clienteId=${clienteId}`;
+    window.location.href = `/gescon/vehiculos/adicionar_vehiculos?clienteId=${clienteId}`;
   })
 
   $(document).on("click", "#btn-close-alert", async () => {
@@ -832,7 +832,7 @@ require './templates/header.html';
       return;
     }
 
-    window.location.href = `consultar_documento_por_contrato?contratoId=${contratoId}&clienteId=${clienteId}`;
+    window.location.href = `/gescon/documentos/consultar_documento_por_contrato?contratoId=${contratoId}&clienteId=${clienteId}`;
   }
 
   function queryLeasing() {
@@ -845,7 +845,7 @@ require './templates/header.html';
       return;
     }
 
-    window.location.href = `consultar_leasing_por_contrato?contratoId=${contratoId}&clienteId=${clienteId}`;
+    window.location.href = `/gescon/leasings/consultar_leasing_por_contrato?contratoId=${contratoId}&clienteId=${clienteId}`;
   }
 
   function queryVehicles() {
@@ -855,7 +855,7 @@ require './templates/header.html';
 
     if (!contratoId || !clienteId) return;
 
-    window.location.href = `consultar_total_vehiculos?contratoId=${contratoId}&clienteId=${clienteId}`;
+    window.location.href = `/gescon/vehiculos/consultar_total_vehiculos?contratoId=${contratoId}&clienteId=${clienteId}`;
   }
 
   function queryAssign() {
@@ -868,7 +868,7 @@ require './templates/header.html';
       return;
     }
 
-    window.location.href = `consultar_asignaciones_por_contrato?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`;
+    window.location.href = `/gescon/contratos/consultar_asignaciones_por_contrato?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`;
   }
 
   $("#href-query-doc").on("click", () => {
@@ -2483,5 +2483,5 @@ require './templates/header.html';
 </script>
 
 <?php
-require './templates/footer.html';
+require '../templates/footer.html';
 ?>

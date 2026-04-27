@@ -1,9 +1,9 @@
 <?php
-require './templates/header.html';
+require '../templates/header.html';
 ?>
 
 <style>
-  <?php include '../css/views/query_assign_by_contract.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/query_assign_by_contract.css'; ?>
 </style>
 
 <!-- CSS de Select2 -->
@@ -138,7 +138,7 @@ require './templates/header.html';
   class="fixed opacity-0 pointer-events-none bg-black text-white text-sm px-3 py-2 rounded shadow-lg z-[9999] transition-all duration-200">
 </div>
 
-<script src="../js/consulta_asignacion_por_contrato.js"></script>
+<script src="/js/consulta_asignacion_por_contrato.js"></script>
 <script type="module">
   import {
     animate
@@ -195,7 +195,7 @@ require './templates/header.html';
 
     if (!clienteId) toastr.error("No se encontraron los parametros necesarios")
 
-    $('#crumb-first').prop('href', `consultar_contratos?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`);
+    $('#crumb-first').prop('href', `/gescon/contratos/consultar_contratos?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`);
 
     $("#paramClient").text(clienteId);
     if (contratoId) {
@@ -559,5 +559,5 @@ require './templates/header.html';
 </script>
 
 <?php
-require './templates/footer.html';
+require '../templates/footer.html';
 ?>

@@ -1,9 +1,9 @@
 <?php
-require './templates/header.html';
+require '../templates/header.html';
 ?>
 
 <style>
-  <?php include '../css/views/query_total_vehicles.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/query_total_vehicles.css'; ?>
 </style>
 
 <!-- JQUERY -->
@@ -82,7 +82,7 @@ require './templates/header.html';
   </div>
 </div> -->
 
-<script src="../js/consulta_total_vehiculos.js"></script>
+<script src="/js/consulta_total_vehiculos.js"></script>
 <script type="module">
   document.title = "Consultar vehiculos | Gescon";
 
@@ -215,5 +215,5 @@ require './templates/header.html';
 </script>
 
 <?php
-require './templates/footer.html';
+require '../templates/footer.html';
 ?>

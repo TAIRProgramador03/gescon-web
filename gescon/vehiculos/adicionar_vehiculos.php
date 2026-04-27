@@ -1,5 +1,5 @@
 <?php
-require './templates/header.html';
+require '../templates/header.html';
 ?>
 
 <!-- JQUERY -->
@@ -51,7 +51,7 @@ require './templates/header.html';
 
 <!-- CSS DE LA VISTA ADICIONAR VEHICULOS -->
 <style>
-  <?php include '../css/views/add_vehicle.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/add_vehicle.css'; ?>
 </style>
 
 <!-- MAQUETACIÓN DE LA VISTA -->
@@ -193,7 +193,7 @@ require './templates/header.html';
 
 <!-- SCRIPTS DE LA VISTA -->
 
-<script type="module" src="../js/adiciona_vehiculo.js"></script>
+<script type="module" src="/js/adiciona_vehiculo.js"></script>
 
 <script type="module">
   import {
@@ -204,7 +204,7 @@ require './templates/header.html';
     cargarLeasingOfClient,
     listaVehiculosAsignables,
     cargarClientesAsig
-  } from '../js/adiciona_vehiculo.js';
+  } from '/js/adiciona_vehiculo.js';
 
   import {
     animate
@@ -388,5 +388,5 @@ require './templates/header.html';
 </script>
 
 <?php
-require './templates/footer.html';
+require '../templates/footer.html';
 ?>

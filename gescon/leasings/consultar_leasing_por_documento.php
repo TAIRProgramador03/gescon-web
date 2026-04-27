@@ -1,9 +1,9 @@
 <?php
-require './templates/header.html';
+require '../templates/header.html';
 ?>
 
 <style>
-  <?php include '../css/views/query_leasing_by_document.css'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/query_leasing_by_document.css'; ?>
 </style>
 
 <!-- JQUERY -->
@@ -200,7 +200,7 @@ require './templates/header.html';
   </div>
 </div>
 
-<script src="../js/consulta_leasing_por_documento.js"></script>
+<script src="/js/consulta_leasing_por_documento.js"></script>
 <script type="module">
   import {
     animate
@@ -281,8 +281,8 @@ require './templates/header.html';
     const nroDoc = param.get("nroDoc");
     const contratoId = param.get("contratoId");
 
-    $('#crumb-first').prop('href', `consultar_contratos?clienteId=${clienteId}&contratoId=${contratoId}`);
-    $('#crumb-second').prop('href', `consultar_documento_por_contrato?contratoId=${contratoId}&clienteId=${clienteId}&documentoId=${documentoId}&nroDoc=${nroDoc}`);
+    $('#crumb-first').prop('href', `/gescon/contratos/consultar_contratos?clienteId=${clienteId}&contratoId=${contratoId}`);
+    $('#crumb-second').prop('href', `/gescon/documentos/consultar_documento_por_contrato?contratoId=${contratoId}&clienteId=${clienteId}&documentoId=${documentoId}&nroDoc=${nroDoc}`);
 
     if (!documentoId || !clienteId) {
       toastr.warning("Faltan parametros obligatorios para realizar la consulta", "Advertencia");
@@ -452,29 +452,15 @@ require './templates/header.html';
         `);
       },
       buttons: [{
-        extend: 'excelHtml5',
         text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
         titleAttr: 'Excel',
         className: 'btn-excel',
-        filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
-        title: `Lista de placas del leasing ${leasingId}`,
-        customize: function(xlsx) {
-          var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-          // 1. Cambiar el color del Título (Celda A1)
-          // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
-          $('row c[r^="A1"]', sheet).attr('s', '51');
-
-          // 2. Personalizar los Headers (Fila de encabezados)
-          // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
-          // El estilo '2' es negrita, '42' es fondo azul claro, etc.
-          $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
-
-          // 3. Si quieres colores manuales más específicos (estilos personalizados)
-          // Tienes que editar el diccionario de estilos de JSZip (más complejo)
-          // Pero DataTables trae estilos incorporados del 0 al 60:
-          // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
-        },
+        action: async function(e, dt, button, config) {
+          const dataRow = dt.rows({
+            search: 'applied'
+          }).data().toArray();
+          await generarExcel(dataRow, "Reporte de Vehiculos");
+        }
       }],
       data: vehicles,
       columnDefs: [
@@ -631,29 +617,15 @@ require './templates/header.html';
         `);
       },
       buttons: [{
-        extend: 'excelHtml5',
         text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
         titleAttr: 'Excel',
         className: 'btn-excel',
-        filename: 'Placas_Asignadas_' + new Date().toLocaleDateString(),
-        title: `Lista de placas del leasing ${nroLeasing}`,
-        customize: function(xlsx) {
-          var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-          // 1. Cambiar el color del Título (Celda A1)
-          // Usamos el estilo '51' que suele ser fondo gris/azul con texto blanco
-          $('row c[r^="A1"]', sheet).attr('s', '51');
-
-          // 2. Personalizar los Headers (Fila de encabezados)
-          // Buscamos todas las celdas de la fila 2 (donde suelen estar los headers)
-          // El estilo '2' es negrita, '42' es fondo azul claro, etc.
-          $('row:eq(1) c', sheet).attr('s', '22'); // 22 es un estilo predefinido (negrita + borde)
-
-          // 3. Si quieres colores manuales más específicos (estilos personalizados)
-          // Tienes que editar el diccionario de estilos de JSZip (más complejo)
-          // Pero DataTables trae estilos incorporados del 0 al 60:
-          // 2: Negrita, 5: Centrado, 15: Bordes, 20: Azul, 22: Blanco sobre Azul
-        },
+        action: async function(e, dt, button, config) {
+          const dataRow = dt.rows({
+            search: 'applied'
+          }).data().toArray();
+          await generarExcel(dataRow, "Reporte de Vehiculos Asignados");
+        }
       }],
       data: vehicles,
       columnDefs: [
@@ -761,5 +733,5 @@ require './templates/header.html';
 </script>
 
 <?php
-require './templates/footer.html';
+require '../templates/footer.html';
 ?>

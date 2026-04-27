@@ -172,7 +172,7 @@ function protegerRutas() {
     const permiso = $(this).data("route-permission");
 
     if (!permissions.includes(permiso)) {
-      window.location.href = "/vista/404";
+      window.location.href = "/gescon/404";
     }
   });
 }

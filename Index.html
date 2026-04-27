@@ -12,7 +12,7 @@
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./public/css/style.css" />
+    <link rel="stylesheet" href="./css/style.css" />
     <title>Gescon</title>
     <link rel="icon" href="./public/img/favicon.webp" type="image/webp" />
     <!-- TOASTR -->
@@ -112,7 +112,7 @@
     <!-- TOASTR -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <!-- END TOASTR -->
-    <script src="./public/js/login.js"></script>
+    <script src="./js/login.js"></script>
     <script>
       const btnSubmit = document.getElementById("btn-submit");
       const btnViewPass = document.getElementById("btn-view-pass");
@@ -208,11 +208,11 @@
 
                 if(data.permissions.includes("ver_dashboard")) {
                   setTimeout(() => {
-                    window.location.href = "./public/vista/dashboard";
+                    window.location.href = "./vista/";
                   }, 1500);
                 } else {
                   setTimeout(() => {
-                    window.location.href = "./public/vista/sistema";
+                    window.location.href = "./vista/sistema";
                   }, 1500);
                 }
                 

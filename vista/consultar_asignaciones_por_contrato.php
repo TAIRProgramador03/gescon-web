@@ -1,0 +1,563 @@
+<?php
+require './templates/header.html';
+?>
+
+<style>
+  <?php include '../css/views/query_assign_by_contract.css'; ?>
+</style>
+
+<!-- CSS de Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
+
+<!-- JS de Select2 -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<!--BOOTSTRAP CSS-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+<div id="preloader-mini" class="w-full h-screen fixed top-0 left-0 z-[9999] bg-white flex flex-col justify-center items-center">
+  <div class="flex-col gap-4 w-full flex items-center justify-center relative">
+    <div class="w-28 h-28 border-8 text-blue-600 text-4xl animate-spin border-gray-300 flex items-center justify-center border-t-blue-600 rounded-full"></div>
+    <div class="gif-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <img src="/public/img/carpeta.gif">
+    </div>
+  </div>
+  <p class="m-0 font-medium text-gray-400 text-xl flex gap-1"><span class="animate-wave" style="animation-delay:0s"></span>
+    <span class="animate-wave" style="animation-delay:0.1s">C</span>
+    <span class="animate-wave" style="animation-delay:0.2s">a</span>
+    <span class="animate-wave" style="animation-delay:0.3s">r</span>
+    <span class="animate-wave" style="animation-delay:0.4s">g</span>
+    <span class="animate-wave" style="animation-delay:0.5s">a</span>
+    <span class="animate-wave" style="animation-delay:0.6s">n</span>
+    <span class="animate-wave" style="animation-delay:0.7s">d</span>
+    <span class="animate-wave" style="animation-delay:0.8s">o</span>
+  </p>
+</div>
+
+<main class="w-full flex flex-col gap-4" data-route-permission="ver_placas">
+  <div class="w-full flex gap-2 items-center p-2 rounded-xl border border-gray-300 bg-white">
+    <a id="crumb-first" href="" class="px-3 py-1 flex justify-center items-center gap-1 rounded-md text-blue-800 hover:bg-blue-800 hover:text-white transition-colors">
+      <i class="bi bi-archive-fill"></i>
+      Contratos
+    </a>
+    <span>/</span>
+    <a id="crumb-active" class="px-3 py-1 flex justify-center items-center bg-blue-800 text-white rounded-md">
+      Vehiculos
+    </a>
+  </div>
+
+  <div class="w-full bg-white px-9 py-7 rounded-md border border-gray-300 relative overflow-hidden">
+    <div class="w-full h-3 bg-orange-700 absolute top-0 left-0"></div>
+    <div class="w-full flex flex-col justify-center gap-2">
+      <h3 class="text-5xl text-[#002141] font-semibold">Vehiculos asignados</h3>
+      <p class="!m-0 text-base font-normal text-gray-500">Visualice y consulte la información de las placas asignadas a un contrato en el sistema.</p>
+    </div>
+    <div class="w-full grid grid-cols-2 items-center gap-4">
+      <!-- LEASING -->
+      <div class="flex flex-col w-full relative">
+        <select id="cbo-leasing" name="opciones">
+        </select>
+
+        <label
+          for="cbo-leasing"
+          class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+          Leasing
+        </label>
+      </div>
+
+      <!-- TERRENO -->
+      <div class="flex flex-col w-full relative">
+        <select id="cbo-terreno" name="opciones">
+        </select>
+
+        <label
+          for="cbo-terreno"
+          class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+          Tipo de Terreno
+        </label>
+      </div>
+    </div>
+
+    <table id="listAssign" class="display rounded-md">
+      <thead>
+        <tr>
+          <th class="bg-yellow-400 !text-white !font-medium">Item</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Año</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Color</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Marca</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Modelo</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Terreno</th>
+          <th class="bg-green-400 !text-white !font-medium">Leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
+          <th class="bg-green-400 !text-white !font-medium">Fecha Fin de leasing</th>
+          <th class="bg-blue-400 !text-white !font-medium">Cliente</th>
+          <th class="bg-blue-400 !text-white !font-medium">Operacion</th>
+          <th class="bg-blue-400 !text-white !font-medium">Contrato/Adenda</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Firma de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Plazo</th>
+          <th class="bg-blue-400 !text-white !font-medium">Fecha Fin de contrato</th>
+          <th class="bg-blue-400 !text-white !font-medium">Tarifa</th>
+          <th class="bg-blue-400 !text-white !font-medium">Moneda</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha de Acta de Entrega</th>
+          <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
+          <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
+          <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
+          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+          <th class="bg-taupe-600 text-white !font-medium">Acta</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<div id="modal-assign">
+  <div class="modal-container">
+    <div class="modal-header">
+      <i class="bi bi-info-circle"></i>
+      <h2>Detalles</h2>
+    </div>
+    <div class="modal-body" id="modal-body-info">
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-success" id="btn-leasing">
+        <span>Ver leasing</span>
+        <i class="bi bi-file-earmark-arrow-down-fill"></i>
+      </button>
+      <button class="btn-error" id="btn-close">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="tooltip-global"
+  class="fixed opacity-0 pointer-events-none bg-black text-white text-sm px-3 py-2 rounded shadow-lg z-[9999] transition-all duration-200">
+</div>
+
+<script src="../js/consulta_asignacion_por_contrato.js"></script>
+<script type="module">
+  import {
+    animate
+  } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
+
+  document.title = "Consultar placas | Gescon";
+
+  let activeRequests = 0;
+
+  function showLoader() {
+    activeRequests++;
+    $('#preloader-mini').css('opacity', '1');
+    $('#preloader-mini').css('z-index', '99999');
+  }
+
+  function hideLoader() {
+    activeRequests = Math.max(0, activeRequests - 1);
+    if (activeRequests === 0) {
+      animate("#preloader-mini", {
+        opacity: [1, 0],
+      }, {
+        duration: 0.45,
+        easing: "ease-in"
+      })
+
+      setTimeout(() => {
+        // $('#preloader-mini').css('opacity', '0');
+        $('#preloader-mini').css('z-index', '-99999');
+      }, 400)
+    }
+  }
+
+  let table;
+
+  // window.onload = function() {
+  //   setTimeout(() => {
+  //     document.body.classList.add('loaded');
+  //     document.getElementById('preloader-mini').style.display = 'none';
+  //   }, 2000);
+  // };
+
+  function transformType(value, object) {
+    return object[value];
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    showLoader();
+
+    const param = new URLSearchParams(window.location.search);
+    const clienteId = param.get("clienteId");
+    const contratoId = param.get("contratoId");
+    const leasingId = param.get("leasingId")
+    const tipoTerr = param.get("tipoTerr")
+
+    if (!clienteId) toastr.error("No se encontraron los parametros necesarios")
+
+    $('#crumb-first').prop('href', `consultar_contratos?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`);
+
+    $("#paramClient").text(clienteId);
+    if (contratoId) {
+      $("#paramContText").removeClass("hidden");
+      $("#paramContract").text(contratoId);
+    }
+
+
+    const assigns = await getAssigns(clienteId, contratoId, leasingId, tipoTerr);
+
+    // INTEGRAMOS LA LIBRERIA DATATABLE
+    table = $("#listAssign").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      // fixedHeader: true,
+      dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      buttons: [{
+        text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+        titleAttr: 'Excel',
+        className: 'btn-excel',
+        action: async function(e, dt, button, config) {
+          const dataRow = dt.rows({
+            search: 'applied'
+          }).data().toArray();
+          await generarExcel(dataRow, "Vehiculos Asignados");
+        }
+      }],
+      initComplete: function() {
+        $(".leyendas").html(`
+          <div class="w-full flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-yellow-400"></span>
+              <p class="text-xs !m-0">Unidad</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-green-400"></span>
+              <p class="text-xs !m-0">Leasing</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-blue-400"></span>
+              <p class="text-xs !m-0">Contrato</p>
+            </div>
+            <div class="flex justify-center items-center gap-1">
+              <span class="size-5 bg-taupe-600"></span>
+              <p class="text-xs !m-0">Acta</p>
+            </div>
+          </div>
+        `);
+      },
+      // ordering: false,
+      scrollCollapse: true,
+      scrollX: true,
+      scrollY: 550,
+      data: assigns,
+      "columnDefs": [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          "className": "dt-center",
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+        }
+      ],
+      columns: [{
+          data: "item",
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "5%",
+        },
+        {
+          data: "placa",
+          width: "80px"
+        },
+        {
+          data: "año"
+        },
+        {
+          data: "color",
+          width: "100px"
+        },
+        {
+          data: "marca",
+          width: "80px"
+        },
+        {
+          data: "modelo",
+          width: "150px"
+        },
+        {
+          data: "terreno",
+          render: (data) => {
+            return transformType(data, {
+              0: "Superficie",
+              1: "Socavón",
+              2: "Ciudad",
+              3: "Severo",
+              4: "Pendiente"
+            })
+          },
+          width: "100px"
+        },
+        {
+          data: "leasing",
+          width: "120px"
+        },
+        {
+          data: "fechaIniLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFinLea",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "cliente",
+          width: "200px"
+        },
+        {
+          data: "operacion",
+          width: "150px"
+        },
+        {
+          data: "contrato",
+          width: "150px"
+        },
+        {
+          data: "fechaIniCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "plazo",
+          render: (data) => {
+            return data + ` meses`
+          },
+          width: "80px"
+        },
+        {
+          data: "fechaFinCon",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "tarifa",
+          render: (data) => {
+            return data.toFixed(2);
+          }
+        },
+        {
+          data: "moneda"
+        },
+        {
+          data: "fechaIni",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "fechaFin",
+          render: (data) => {
+            return dayjs(data).format("DD/MM/YYYY")
+          },
+          width: "120px"
+        },
+        {
+          data: "condicion",
+          render: (data) => {
+            return transformType(data, {
+              0: "Titular",
+              1: "Retén",
+              2: "Logística",
+              3: "Pendiente"
+            })
+          }
+        },
+        {
+          data: "porcentaje",
+          render: (data, type, row) => {
+
+            const fechaIni = dayjs(row.fechaIni).format("YYYY-MM-DD")
+            const fechaFin = dayjs(row.fechaFin).format("YYYY-MM-DD")
+
+            const result = calcularPorcentaje(fechaIni, fechaFin);
+
+            if (typeof result == "string") {
+              return `<span style="color: red;">${result}</span>`;
+            } else {
+              const color = result > 0 && result <= 25 ? "red-relleno" : result > 25 && result <= 60 ? "yellow-relleno" : "green-relleno";
+              const colorText = result > 0 && result <= 25 ? "black-porcentaje" : result > 25 && result <= 60 ? "black-porcentaje" : "white-porcentaje";
+              return `
+                <div class="contenedor-barra">
+                  <div class="progreso-relleno ${color}" style="width: ${result}%;"></div>
+                  <span class="numero-porcentaje ${colorText}">${result}%</span>
+                </div>
+              `
+            }
+          },
+          width: "120px"
+        },
+        {
+          data: null,
+          render: (data, type, row) => {
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+
+            return `<span class="tag-estado ${color}">${status}</span>`
+          }
+        },
+        {
+          data: "archivoPdf",
+          render: (data) => {
+            if (data) {
+              return `
+              <div class="w-full flex justify-center items-center">
+                <button class="w-full flex justify-center items-center gap-1 bg-red-100 text-red-700 border border-red-700 rounded outline-none px-4 py-2 cursor-pointer" onClick="verPdf('${data}')">
+                  <i class="bi bi-file-earmark-pdf-fill"></i>
+                  <span>Ver PDF</span>
+                </button>
+              </div>`
+            } else {
+              return `<p class="!text-red-700">Sin acta</p>`
+            }
+          },
+          width: "120px"
+        }
+      ],
+    });
+
+    const listLeasing = await getLeasings(clienteId, contratoId)
+
+    const dataCleaned = listLeasing.map((lea) => ({
+      id: lea.nroLeasing,
+      text: lea.nroLeasing
+    }))
+
+    $("#cbo-leasing").select2({
+      placeholder: "Seleccione un leasing",
+      allowClear: false, // Desactiva la "X"
+      data: [{
+          id: 0,
+          text: "Todos",
+        },
+        ...dataCleaned
+      ],
+      width: "100%"
+    });
+
+    $("#cbo-terreno").select2({
+      placeholder: "Seleccione un contrato",
+      allowClear: false, // Desactiva la "X"
+      data: [{
+          id: 4,
+          text: "Todos"
+        },
+        {
+          id: 0,
+          text: "Superficie"
+        },
+        {
+          id: 1,
+          text: "Socavon"
+        },
+        {
+          id: 2,
+          text: "Ciudad"
+        },
+        {
+          id: 3,
+          text: "Severo"
+        }
+      ],
+      width: "100%"
+    });
+
+    if (leasingId) $('#cbo-leasing').val(`${leasingId}`).trigger("change");
+
+    if (tipoTerr) $('#cbo-terreno').val(`${tipoTerr}`).trigger("change");
+
+    hideLoader();
+  })
+
+  $('#cbo-leasing').on('change', async function(e) {
+    const leasingId = $('#cbo-leasing').val();
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (leasingId == 0) {
+      params.delete("leasingId")
+    } else {
+      params.set("leasingId", leasingId)
+    }
+
+    const contratoId = params.get("contratoId");
+    const clienteId = params.get("clienteId");
+    const terrId = params.get("tipoTerr");
+
+    const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", nuevaURL);
+
+    const assings = await getAssigns(clienteId, contratoId, leasingId != 0 ? leasingId : null, terrId);
+
+    table.clear();
+    table.rows.add(assings);
+    table.draw();
+  });
+
+  $('#cbo-terreno').on('change', async function(e) {
+    const terrId = $('#cbo-terreno').val();
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (terrId >= 4) {
+      params.delete("tipoTerr")
+    } else {
+      params.set("tipoTerr", terrId)
+    }
+
+    const contratoId = params.get("contratoId");
+    const clienteId = params.get("clienteId")
+    const leasingId = params.get("leasingId")
+
+    const nuevaURL = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", nuevaURL);
+
+    const assings = await getAssigns(clienteId, contratoId, leasingId, terrId >= 4 ? null : terrId);
+
+    table.clear();
+    table.rows.add(assings);
+    table.draw();
+  });
+
+  const tooltip = document.getElementById('tooltip-global');
+
+  $(document).on('mouseenter', 'th[data-dt-column="18"] .dt-column-header', function(e) {
+    tooltip.innerText = "Inicio de valorización";
+    tooltip.style.opacity = 1;
+  });
+
+  $(document).on('mousemove', 'th[data-dt-column="18"] .dt-column-header', function(e) {
+    const offsetY = 12; // distancia arriba del cursor
+
+    tooltip.style.top = (e.clientY - offsetY) + 'px';
+    tooltip.style.left = e.clientX + 'px';
+    tooltip.style.transform = 'translate(-50%, -100%)';
+  });
+
+  $(document).on('mouseleave', 'th[data-dt-column="18"] .dt-column-header', function() {
+    tooltip.style.opacity = 0;
+  });
+</script>
+
+<?php
+require './templates/footer.html';
+?>

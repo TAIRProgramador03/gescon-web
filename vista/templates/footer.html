@@ -1,0 +1,47 @@
+    
+    </main>
+    <!-- TOASTR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- END TOASTR -->
+    <script>
+        dayjs.extend(dayjs_plugin_customParseFormat);
+
+        const tituloOriginal = document.title;
+
+        document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            document.title = "👀 ¡Oye, vuelve a trabajar!";
+        } else {
+            document.title = tituloOriginal;
+        }
+        });
+        
+        const logoutIcon = document.getElementById('log_out');
+
+        document.getElementById("log_out").addEventListener("click", async () => {
+            try {
+                const BASE_URL = window.location.origin;
+
+                const config = await fetch(`${BASE_URL}/php/config.php`).then((r) => r.json());
+
+                const IP_LOCAL = config.IP_LOCAL;
+
+                const response = await fetch(`http://${IP_LOCAL}:3000/logout`, {
+                method: "POST",
+                credentials: "include",
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.removeItem("dbUser");
+                    window.location.href = "/";
+                } else {
+                    toastr("No se pudo cerrar sesión", "Oops...")
+                }
+            } catch (error) {
+                console.error("Error al hacer la solicitud:", error);
+                toastr("Sucedio un error desconocido en la solicitud", "Oops...")
+            }
+        });
+    </script>
+</body>
+</html>

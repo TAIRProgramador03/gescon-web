@@ -177,13 +177,13 @@ export async function getHistory(id) {
     instance = await obtenerInstancia();
 
     const result = await instance.get(`/historialMovimientos/${id}`, {
-      withCredentials: true
+      withCredentials: true,
     });
 
     return result.data;
   } catch (error) {
     console.error(error.response.data);
-    toastr.warning(error.response.data.message, "Oops...")
+    toastr.warning(error.response.data.message, "Oops...");
   }
 }
 
@@ -192,21 +192,17 @@ export async function getHistoryById(id) {
     instance = await obtenerInstancia();
 
     const result = await instance.get(`/obtenerReasignacion/${id}`, {
-      withCredentials: true
+      withCredentials: true,
     });
 
     return result.data;
   } catch (error) {
     console.error(error.response.data);
-    toastr.warning(error.response.data.message, "Oops...")
+    toastr.warning(error.response.data.message, "Oops...");
   }
 }
 
 export async function clearFields() {
-  $("#cbo-terreno-upd").val(null).trigger("change");
-  $("#cbo-condicion-upd").val(null).trigger("change");
-  fileInput.value = "";
-
   const anim = animate(
     ".modal-container",
     {
@@ -224,6 +220,12 @@ export async function clearFields() {
   $("#modal-assign")
     .removeClass("opacity-100 z-[9999]")
     .addClass("opacity-0 -z-[9999]");
+
+  $("#fechaEntrega").val(null);
+  $("#fechaDevolucion").val(null);
+  $("#cbo-terreno-upd").val(null).trigger("change");
+  $("#cbo-condicion-upd").val(null).trigger("change");
+  fileInput.value = "";
 }
 
 export async function generarExcel(data, title) {
@@ -246,9 +248,13 @@ export async function generarExcel(data, title) {
   const rows = await Promise.all(
     data.map(async (row, i) => {
       const fechaIni = dayjs(convertirFecha(row.fechaIni)).format("YYYY-MM-DD");
-      const fechaFin = row.fechaFin ? dayjs(convertirFecha(row.fechaFin)).format("YYYY-MM-DD") : null;
+      const fechaFin = row.fechaFin
+        ? dayjs(convertirFecha(row.fechaFin)).format("YYYY-MM-DD")
+        : null;
 
-      const result = fechaFin ? calcularPorcentaje(fechaIni, fechaFin) : "No calculado";
+      const result = fechaFin
+        ? calcularPorcentaje(fechaIni, fechaFin)
+        : "No calculado";
 
       let porcentaje;
 

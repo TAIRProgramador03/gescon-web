@@ -11,6 +11,12 @@ require '../templates/header.html';
 <!--BOOTSTRAP CSS-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
+<!-- CSS de Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- JS de Flatpickr -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
 <!-- ESTILOS -->
 <style>
   <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/query_plate_traceability.css'; ?>
@@ -146,6 +152,7 @@ require '../templates/header.html';
   </div>
 </main>
 
+<!-- MODAL EDITAR PLACAS -->
 <div id="modal-assign" class="w-full h-screen fixed top-0 left-0 flex justify-center items-center opacity-0 -z-[9990] overflow-hidden">
   <div class="modal-overlay w-full h-screen fixed top-0 left-0 bg-black/25 -z-10 overflow-hidden"></div>
   <div class="modal-container w-full max-w-lg max-h-[90%] bg-white rounded-md overflow-auto">
@@ -154,6 +161,36 @@ require '../templates/header.html';
       <h2 class="text-2xl">Actualizar placa</h2>
     </div>
     <div class="w-full flex flex-col gap-2 p-2">
+      <!-- FECHA ENTREGA -->
+      <div class="input flex flex-col w-full relative">
+        <input
+          id="fechaEntrega"
+          name="fechaEntrega"
+          type="text"
+          placeholder="Ingrese una fecha"
+          class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" />
+        <label
+          for="fechaEntrega"
+          class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+          Fecha Entrega(*)
+        </label>
+      </div>
+
+      <!-- FECHA DEVOLUCION -->
+      <div class="input flex flex-col w-full relative">
+        <input
+          id="fechaDevolucion"
+          name="fechaDevolucion"
+          type="text"
+          placeholder="Ingrese una fecha"
+          class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" />
+        <label
+          for="fechaDevolucion"
+          class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+          Fecha Devolución(*)
+        </label>
+      </div>
+
       <!-- TERRENO -->
       <div class="flex flex-col w-full relative">
         <select name="terreno" id="cbo-terreno-upd">
@@ -205,6 +242,7 @@ require '../templates/header.html';
   </div>
 </div>
 
+<!-- MODAL HISTORIAL DE MOVIMIENTOS -->
 <div id="modal-history" class="w-full h-screen fixed top-0 left-0 flex justify-center items-center opacity-0 -z-[9990] overflow-hidden">
   <div class="modal-overlay-hist w-full h-screen fixed top-0 left-0 bg-black/25 -z-10 overflow-hidden"></div>
   <div class="modal-container-hist w-[80%] h-[90%] flex flex-col gap-3 bg-white rounded-md overflow-auto relative px-4 py-5">
@@ -351,6 +389,10 @@ require '../templates/header.html';
   let currentRow;
 
   let currentReasign = null;
+
+  let fp = null;
+
+  let fp2 = null;
 
   function transformType(value, object) {
     return object[value];
@@ -1020,6 +1062,20 @@ require '../templates/header.html';
       width: "100%"
     })
 
+    fp = flatpickr("#fechaEntrega", {
+      dateFormat: "d/m/Y",
+      locale: "es",
+      allowInput: true,
+      clickOpens: true,
+    });
+
+    fp2 = flatpickr("#fechaDevolucion", {
+      dateFormat: "d/m/Y",
+      locale: "es",
+      allowInput: true,
+      clickOpens: true,
+    });
+
     if (clienteId) $('#cbo-cliente').val(`${clienteId}`).trigger("change");
 
     if (contratoId) $('#cbo-contrato').val(`${contratoId}`).trigger("change");
@@ -1032,6 +1088,27 @@ require '../templates/header.html';
 
     hideLoader();
   })
+
+  const validInputDate = (e) => {
+    let value = e.target.value.replace(/\D/g, ""); // solo números
+
+    if (value.length >= 3 && value.length <= 4) {
+      value = value.slice(0, 2) + "/" + value.slice(2);
+    } else if (value.length >= 5) {
+      value =
+        value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
+    }
+
+    e.target.value = value;
+  };
+
+  document.getElementById("fechaEntrega").addEventListener("input", function(e) {
+    validInputDate(e);
+  });
+
+  document.getElementById("fechaDevolucion").addEventListener("input", function(e) {
+    validInputDate(e);
+  });
 
   $('#cbo-cliente').on('select2:select', async function(e) {
     const clientId = $('#cbo-cliente').val();
@@ -1172,56 +1249,73 @@ require '../templates/header.html';
     currentId = data.idAssing;
 
     dataAssign = {
+      fechaEntrega: convertirFecha(data.fechaIni),
+      fechaDevolucion: convertirFecha(data.fechaFin),
       condicion: data.condicion,
       terreno: data.terreno,
       archivoPdf: data.archivoPdf
     }
 
-    if (data.terreno == "4" || data.condicion == "3" || data.archivoPdf == "") {
-      $('#cbo-terreno-upd').val(`${data.terreno}`).trigger("change");
-      $('#cbo-condicion-upd').val(`${data.condicion}`).trigger("change");
+    const dateInit = dayjs(convertirFecha(data.fechaIni));
+    const dateEnd = dayjs(convertirFecha(data.fechaFin));
+    
+    $("#fechaEntrega").val(dateInit.format("DD/MM/YYYY"));
+    $("#fechaDevolucion").val(dateEnd.format("DD/MM/YYYY"));
+    $('#cbo-terreno-upd').val(`${data.terreno}`).trigger("change");
+    $('#cbo-condicion-upd').val(`${data.condicion}`).trigger("change");
+    
+    
+    const dateObj = dateInit.toDate();
+    const dateObj2 = dateEnd.toDate();
 
-      if (data.terreno == "4") {
-        $('#cbo-terreno-upd').prop("disabled", false)
-      } else {
-        $('#cbo-terreno-upd').prop("disabled", true)
-      }
+    fp.jumpToDate(dateObj);
+    fp.setDate(dateObj, true); 
 
-      if (data.condicion == "3") {
-        $('#cbo-condicion-upd').prop("disabled", false)
-      } else {
-        $('#cbo-condicion-upd').prop("disabled", true)
-      }
+    fp2.jumpToDate(dateObj2);
+    fp2.setDate(dateObj2, true); 
 
-      if (data.archivoPdf == "") {
-        $('#fileInput').prop("disabled", false);
-        $("#uploadMessage").addClass("flex").removeClass("hidden");
-        fileInfo.style.display = "none"
-        $("#fileName").text("");
-        removeFileButton.style.display = "flex";
-        $("#viewFile").show();
-      } else {
-        $('#fileInput').prop("disabled", true);
-        $("#uploadMessage").removeClass("flex").addClass("hidden");
-        fileInfo.style.display = "flex"
-        $("#fileName").text(data.archivoPdf.split("/")[1]);
-        removeFileButton.style.display = "none";
-        $("#viewFile").hide();
-      }
-
-      $("#modal-assign").addClass("opacity-100 z-[9999]").removeClass("opacity-0 -z-[9999]")
-
-      animate(".modal-container", {
-        opacity: [0, 1],
-        scale: [0.75, 1.05, 1]
-      }, {
-        duration: 0.45,
-        easing: "ease-out"
-      })
+    if (data.terreno == "4") {
+      $('#cbo-terreno-upd').prop("disabled", false)
+    } else {
+      $('#cbo-terreno-upd').prop("disabled", true)
     }
+
+    if (data.condicion == "3") {
+      $('#cbo-condicion-upd').prop("disabled", false)
+    } else {
+      $('#cbo-condicion-upd').prop("disabled", true)
+    }
+
+    if (data.archivoPdf == "") {
+      $('#fileInput').prop("disabled", false);
+      $("#uploadMessage").addClass("flex").removeClass("hidden");
+      fileInfo.style.display = "none"
+      $("#fileName").text("");
+      removeFileButton.style.display = "flex";
+      $("#viewFile").show();
+    } else {
+      $('#fileInput').prop("disabled", true);
+      $("#uploadMessage").removeClass("flex").addClass("hidden");
+      fileInfo.style.display = "flex"
+      $("#fileName").text(data.archivoPdf.split("/")[1]);
+      removeFileButton.style.display = "none";
+      $("#viewFile").hide();
+    }
+
+    $("#modal-assign").addClass("opacity-100 z-[9999]").removeClass("opacity-0 -z-[9999]")
+
+    animate(".modal-container", {
+      opacity: [0, 1],
+      scale: [0.75, 1.05, 1]
+    }, {
+      duration: 0.45,
+      easing: "ease-out"
+    })
   });
 
   $("#btn-save").on("click", async function() {
+    const fechaInicio = dayjs($('#fechaEntrega').val(), "DD/MM/YYYY").format("YYYY-MM-DD");
+    const fechaFin = dayjs($('#fechaDevolucion').val(), "DD/MM/YYYY").format("YYYY-MM-DD");
     const terreno = $('#cbo-terreno-upd').val();
     const condicion = $('#cbo-condicion-upd').val();
     const file = fileInput.files[0];
@@ -1234,6 +1328,8 @@ require '../templates/header.html';
 
     const data = {
       id: currentId,
+      fechaInicio,
+      fechaFin,
       terreno,
       condicion,
       archivoPdf: archivoPdf == '' ? null : archivoPdf
@@ -1242,7 +1338,9 @@ require '../templates/header.html';
     await updateAssign(currentId, data);
 
     const rowData = currentRow.data();
-
+    
+    rowData.fechaIni = dayjs(fechaInicio).format("YYYYMMDD");
+    rowData.fechaFin = dayjs(fechaFin).format("YYYYMMDD");
     rowData.terreno = terreno;
     rowData.condicion = condicion;
     rowData.archivoPdf = archivoPdf.replace(/^temp\//, "");

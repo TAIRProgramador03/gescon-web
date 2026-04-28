@@ -244,7 +244,6 @@ require '../templates/header.html';
       })
 
       setTimeout(() => {
-        // $('#preloader-mini').css('opacity', '0');
         $('#preloader-mini').css('z-index', '-99999');
       }, 400)
     }
@@ -264,9 +263,11 @@ require '../templates/header.html';
 
     const listOperations = await getOperations();
 
-    const listContracts = await getContracts();
-
     const listVehicle = await getVehiclesPending();
+
+    const listOpeTable = listOperations.filter(op =>
+      listVehicle.some(veh => veh.idOpeAsign == op.ID)
+    );
 
     $("#cbo-clientes").select2({
       placeholder: "Seleccione un cliente",
@@ -291,7 +292,7 @@ require '../templates/header.html';
           return "No hay resultados disponibles";
         }
       },
-      data: listOperations.map(ope => ({
+      data: listOpeTable.map(ope => ({
         id: ope.ID,
         text: ope.DESCRIPCION
       })),
@@ -306,10 +307,7 @@ require '../templates/header.html';
           return "No hay resultados disponibles";
         }
       },
-      data: listContracts.map(cont => ({
-        id: cont.ID,
-        text: cont.DESCRIPCION
-      })),
+      data: [],
       width: "100%"
     })
 
@@ -428,10 +426,26 @@ require '../templates/header.html';
 
     $("thead .dt-select-checkbox").remove();
 
-    table.on("select", function(e, dt, type, indexes) {
+    table.on("select", async function(e, dt, type, indexes) {
       if (type === "row") {
         const row = table.row(indexes[0]);
         const data = row.data();
+
+        const listContracts = await getContracts(data.idClienteOpe);
+
+        const optList = listContracts.map(cont => ({
+          id: cont.ID,
+          text: cont.DESCRIPCION
+        }));
+
+        $("#cbo-contratos").empty();
+
+        $("#cbo-contratos").append(new Option(data.nroContrato, data.idContrato, false, false));
+
+        optList.forEach(item => {
+          const option = new Option(item.text, item.id, false, false);
+          $("#cbo-contratos").append(option);
+        });
 
         selectedBeforeOperation = data.idOpeAsign;
         selectedOperation = data.idOpeActual;
@@ -471,6 +485,8 @@ require '../templates/header.html';
         selectedBeforeOperation = null;
         selectedOperation = null;
         selectedOperationName = null;
+
+        $("#cbo-contratos").empty();
 
         $("#operacion").val(null);
         $("#cbo-contratos").val(null).trigger("change")
@@ -532,12 +548,16 @@ require '../templates/header.html';
     const listOperations = await getOperations(idCli);
     const listVehicles = await getVehiclesPending(idCli);
 
+    const listOpeTable = listOperations.filter(op =>
+      listVehicles.some(veh => veh.idOpeAsign == op.ID)
+    );
+
     const $operaciones = $("#cbo-operaciones");
     $operaciones.empty();
 
     $operaciones.append(new Option("", "", true, true));
 
-    listOperations.forEach(op => {
+    listOpeTable.forEach(op => {
       const option = new Option(op.DESCRIPCION, op.ID, false, false);
       $operaciones.append(option);
     });
@@ -660,7 +680,7 @@ require '../templates/header.html';
     $(".modal-pdf").removeClass("opacity-100 z-[9990]").addClass("opacity-0 -z-[9990]");
   })
 
-  $("#tarifa").on("input", function () {
+  $("#tarifa").on("input", function() {
     let value = $(this).val();
 
     // eliminar todo lo que no sea número o punto
@@ -673,7 +693,7 @@ require '../templates/header.html';
     }
 
     $(this).val(value);
-  }); 
+  });
 
   // GUARDAR
   function showSpinner(element) {

@@ -58,11 +58,14 @@ export const getClients = async () => {
   }
 };
 
-export const getContracts = async () => {
+export const getContracts = async (idCli) => {
   try {
     instance = await obtenerInstancia();
     const response = await instance.get("/contratosNroAdi", {
       withCredentials: true,
+      params: {
+        idCli
+      }
     });
 
     return response.data;

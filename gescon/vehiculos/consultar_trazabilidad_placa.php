@@ -328,7 +328,7 @@ require '../templates/header.html';
 </div>
 
 <div id="tooltip-global"
-  class="fixed opacity-0 pointer-events-none bg-black text-white text-sm px-3 py-2 rounded shadow-lg z-[9999] transition-all duration-200">
+  class="fixed opacity-0 pointer-events-none bg-green-600 text-white text-sm px-3 py-2 rounded shadow-lg z-[9999] transition-all duration-200">
 </div>
 
 <script type="module" src="/js/consulta_trazabilidad_placa.js"></script>

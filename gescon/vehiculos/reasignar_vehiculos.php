@@ -433,7 +433,7 @@ require '../templates/header.html';
 
         const listContracts = await getContracts(data.idClienteOpe);
 
-        const optList = listContracts.map(cont => ({
+        const optList = listContracts.filter(cont => cont.ID != data.idContrato).map(cont => ({
           id: cont.ID,
           text: cont.DESCRIPCION
         }));

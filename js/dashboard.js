@@ -90,13 +90,14 @@ async function obtenerClientes() {
   return data;
 }
 
-async function obtenerLeasings(clienteId) {
+async function obtenerLeasings(clienteId, all) {
   try {
     instance = await obtenerInstancia();
     const response = await instance.get("/contVehicleLeasing", {
       withCredentials: true,
       params: {
         clienteId,
+        all,
       },
     });
 
@@ -121,20 +122,22 @@ async function obtenerLeasings(clienteId) {
   // return res;
 }
 
-async function obtenerCantidadVehicle(clientId) {
-  const IP_LOCAL = await obtenerConfig();
+async function obtenerCantidadVehicle(clienteId) {
+  try {
+    instance = await obtenerInstancia();
 
-  const response = await fetch(
-    `http://${IP_LOCAL}:3000/contLeasing${clientId ? `?clienteId=${clientId}` : ""}`,
-    {
-      method: "GET",
-      credentials: "include",
-    },
-  );
+    const response = await instance.get(`/contLeasing`, {
+      withCredentials: true,
+      params: {
+        clienteId,
+      },
+    });
 
-  const res = await response.json();
-
-  return res;
+    return response.data;
+  } catch (error) {
+    console.error(error.response.data);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
 }
 
 async function obtenerVehiculosVencidos(label, clienteId) {
@@ -330,7 +333,7 @@ async function generarExcelLeasingsVeh(data) {
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet("Vehiculos");
 
-  ws.mergeCells("A1:O1");
+  ws.mergeCells("A1:P1");
   const titleCell = ws.getCell("A1");
 
   titleCell.value = "Gescon: Placas por Leasing".toUpperCase();
@@ -367,6 +370,7 @@ async function generarExcelLeasingsVeh(data) {
       { name: "Años Leasing", filterButton: true },
       { name: "Estado (Diferencia)", filterButton: true },
       { name: "Tipo Estado", filterButton: true },
+      { name: "Operatividad", filterButton: true },
     ],
     rows: data.map((row, i) => {
       const tipoEstado =
@@ -382,6 +386,13 @@ async function generarExcelLeasingsVeh(data) {
           : row.diferenciaDias < 0
             ? `Contrato vence antes (${Math.abs(row.diferenciaDias)} dias)`
             : "Vencen a la vez";
+
+      const status =
+        row.idOpe == 109
+          ? "Vendido"
+          : row.idOpe != row.secOpe
+            ? "Inactivo"
+            : "Activo";
 
       return [
         i + 1,
@@ -399,6 +410,7 @@ async function generarExcelLeasingsVeh(data) {
         row.añosLeasing,
         estadoTexto,
         tipoEstado,
+        status
       ];
     }),
   });
@@ -449,6 +461,7 @@ async function generarExcelLeasingsVeh(data) {
   ws.getColumn(13).width = 18; // Años lea
   ws.getColumn(14).width = 30; // Estado
   ws.getColumn(15).width = 18; // Tipo Estado
+  ws.getColumn(16).width = 18; // Tipo Estado
 
   ws.views = [{ state: "frozen", ySplit: 2 }];
 

@@ -133,7 +133,7 @@ require './templates/header.html';
         $("#alert-modal .alert-container").html(
           `
               <h2>¡Aviso de unidades pendientes!</h2>
-              <p style="color: black !important">El sistema ha detectado que se cuenta con <b>${listVehiclesPending.length}</b> vehiculo(s) que han sido traspasados a otros clientes.</p>
+              <p style="color: black !important">El sistema ha detectado que se cuenta con <b>${listVehiclesPending.length}</b> vehiculo(s) que han sido traspasados a otras operaciones.</p>
               <p style="color: black !important">¿Deseas reasignarlos ahora?</p>
               <div class="btn-group">
                 <a href="/gescon/vehiculos/reasignar_vehiculos" class="btn btn-info btn-assign">Si, quiero reasignarlos</a>

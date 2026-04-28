@@ -210,6 +210,7 @@ require './templates/header.html';
               <th class="!font-medium bg-green-400 text-white">F. Fin Leasing</th>
               <th class="!font-medium bg-green-400 text-white">Años Leasing</th>
               <th class="!font-medium bg-taupe-600 text-white">Estado (Diferencia)</th>
+              <th class="!font-medium bg-taupe-600 text-white">Operatividad</th>
             </tr>
           </thead>
           <tbody>
@@ -1096,7 +1097,7 @@ require './templates/header.html';
         listLeasings = await obtenerLeasingsPorContrato(listContracts[0].ID)
       }
 
-      const listVehLeasing = await obtenerLeasings(clientId);
+      const listVehLeasing = await obtenerLeasings(clientId, 'false');
 
       const firstTenResult = quatityVehCli.slice(0, 10)
 
@@ -1122,7 +1123,7 @@ require './templates/header.html';
       $("#cbo-client").select2({
         placeholder: "Seleccione un estado",
         allowClear: false, // Desactiva la "X"
-        width: '100%',
+        // width: '100%',
         language: {
           noResults: function() {
             return "No hay resultados disponibles"; // O puedes devolver un string HTML
@@ -1233,7 +1234,8 @@ require './templates/header.html';
         language: {
           url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
         },
-        dom: '<"superior"f<"leyendas-lea">B>rt<"inferior"i<"derecha-inferior"lp>>',
+        // dom: '<"superior"<f"checkbox-view"><"leyendas-lea">B>rt<"inferior"i<"derecha-inferior"lp>>',
+        dom: '<"superior flex justify-between items-center"<"left flex items-center gap-2"f<"checkbox-view">><"leyendas-lea">B>rt<"inferior"i<"derecha-inferior"lp>>',
         buttons: [{
           text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
           titleAttr: 'Excel',
@@ -1247,44 +1249,54 @@ require './templates/header.html';
         }],
         initComplete: function() {
           $(".leyendas-lea").html(`
-          <div class="w-full flex justify-center items-center gap-4">
-            <div class="flex justify-center items-center gap-1">
-              <span class="size-5 bg-yellow-400"></span>
-              <p class="text-xs !m-0">Unidad</p>
+            <div class="w-full flex justify-center items-center gap-4">
+              <div class="flex justify-center items-center gap-1">
+                <span class="size-5 bg-yellow-400"></span>
+                <p class="text-xs !m-0">Unidad</p>
+              </div>
+              <div class="flex justify-center items-center gap-1">
+                <span class="size-5 bg-green-400"></span>
+                <p class="text-xs !m-0">Leasing</p>
+              </div>
+              <div class="flex justify-center items-center gap-1">
+                <span class="size-5 bg-blue-400"></span>
+                <p class="text-xs !m-0">Contrato</p>
+              </div>
+              <div class="flex justify-center items-center gap-1">
+                <span class="size-5 bg-taupe-600"></span>
+                <p class="text-xs !m-0">Extra</p>
+              </div>
             </div>
-            <div class="flex justify-center items-center gap-1">
-              <span class="size-5 bg-green-400"></span>
-              <p class="text-xs !m-0">Leasing</p>
-            </div>
-            <div class="flex justify-center items-center gap-1">
-              <span class="size-5 bg-blue-400"></span>
-              <p class="text-xs !m-0">Contrato</p>
-            </div>
-            <div class="flex justify-center items-center gap-1">
-              <span class="size-5 bg-taupe-600"></span>
-              <p class="text-xs !m-0">Extra</p>
-            </div>
-          </div>
-        `);
+          `);
+
+          $(".checkbox-view").html(`
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input class="check-table sr-only peer" type="checkbox" />
+              <div
+                class="w-12 h-8 rounded-full bg-blue-500 peer-checked:bg-green-500 transition-all duration-500 after:content-['No'] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:flex after:items-center after:justify-center after:transition-all after:duration-500 peer-checked:after:translate-x-4 peer-checked:after:content-['Si'] after:shadow-md after:text-sm"
+              ></div>
+              <span class="ml-1! text-sm font-medium text-gray-900">Mostrar todos</span>
+            </label>
+          `)
         },
         scrollY: '364px',
         scrollX: true,
         scrollCollapse: true,
-        rowCallback: function(row, data) {
-          if (data.diferenciaDias < 0) {
-            $($(row).find("td")[13]).css("background-color", "#E60026").css("color", "#fff");
-          } else if (data.diferenciaDias > 0) {
-            $($(row).find("td")[13]).css("background-color", "#259e01").css("color", "#fff");
-          } else {
-            $($(row).find("td")[13]).css("background-color", "#006be6").css("color", "#fff");
-          }
-        },
+        // rowCallback: function(row, data) {
+        //   if (data.diferenciaDias < 0) {
+        //     $($(row).find("td")[13]).css("background-color", "#E60026").css("color", "#fff");
+        //   } else if (data.diferenciaDias > 0) {
+        //     $($(row).find("td")[13]).css("background-color", "#259e01").css("color", "#fff");
+        //   } else {
+        //     $($(row).find("td")[13]).css("background-color", "#006be6").css("color", "#fff");
+        //   }
+        // },
         data: listVehLeasing,
         "columnDefs": [
           // Centrar contenido y cabecera en las columnas 0, 1 y 2
           {
             "className": "dt-center",
-            "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+            "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
           }
         ],
         columns: [{
@@ -1300,7 +1312,7 @@ require './templates/header.html';
           },
           {
             data: 'modelo',
-            width: "200px"
+            width: "250px"
           },
           {
             data: 'fechaIniActa',
@@ -1339,6 +1351,9 @@ require './templates/header.html';
           },
           {
             data: 'añosContrato',
+            render: function(data) {
+              return `${data} años`
+            },
             width: "150px"
           },
           {
@@ -1361,21 +1376,33 @@ require './templates/header.html';
           },
           {
             data: 'añosLeasing',
+            render: function(data) {
+              return `${data} años`
+            },
             width: "150px"
           },
           {
             data: 'diferenciaDias',
             render: (data) => {
               if (data > 0) {
-                return `Leasing vence antes (${Math.abs(data)} dias)`;
+                return `<span class="w-fit px-3 py-1 rounded-md bg-green-400">Leasing vence antes (${Math.abs(data)} dias)</span>`;
               } else if (data < 0) {
-                return `Contrato vence antes (${Math.abs(data)} dias)`;
+                return `<span class="w-fit px-3 py-1 rounded-md bg-red-400">Contrato vence antes (${Math.abs(data)} dias)</span>`;
               } else {
-                return `Vencen a la vez`;
+                return `<span class="w-fit px-3 py-1 rounded-md bg-yellow-400">Vencen a la vez</span>`;
               }
             },
-            width: "200px"
-          }
+            width: "250px"
+          },
+          {
+            data: null,
+            render: (data, type, row) => {
+              const status = row.idOpe == 109 ? "Vendido" : row.idOpe != row.secOpe ? "Inactivo" : "Activo";
+              const color = row.idOpe == 109 ? "bg-yellow-400" : row.idOpe != row.secOpe ? "bg-red-400" : "bg-green-400";
+
+              return `<span class="w-fit px-3 py-1 rounded-md ${color}">${status}</span>`
+            }
+          },
         ]
       })
 
@@ -1410,7 +1437,7 @@ require './templates/header.html';
           $("#alert-modal .alert-container").html(
             `
               <h2>¡Aviso de unidades pendientes!</h2>
-              <p style="color: black !important">El sistema ha detectado que se cuenta con <b>${listVehiclesPending.length}</b> vehiculo(s) que han sido traspasados a otros clientes.</p>
+              <p style="color: black !important">El sistema ha detectado que se cuenta con <b>${listVehiclesPending.length}</b> vehiculo(s) que han sido traspasados a otras operaciones.</p>
               <p style="color: black !important">¿Deseas reasignarlos ahora?</p>
               <div class="btn-group">
                 <a href="/gescon/vehiculos/reasignar_vehiculos" class="btn btn-info btn-assign">Si, quiero reasignarlos</a>
@@ -1446,27 +1473,42 @@ require './templates/header.html';
     $("#alert-modal .alert-container").empty();
   })
 
+  $(document).on("click", ".check-table", async function() {
+    const all = $(this).prop("checked");
+    const clientId = $("#cbo-client").val();
+
+    const listVehLeasing = await obtenerLeasings(clientId != 0 ? clientId : undefined, all);
+
+    tableLea.clear();
+    tableLea.rows.add(listVehLeasing);
+    tableLea.draw();
+  })
+
   $("#cbo-client").on("select2:select", async () => {
     showLoader();
 
     const clientId = $("#cbo-client").val();
+    const all = $(".check-table").prop("checked");
 
     const params = new URLSearchParams(window.location.search)
 
     let contratos;
     let leasings = [];
+    let listVehLeasing = [];
     $('#cbo-contratos').empty().trigger('change');
     $('#cbo-leasings').empty().trigger('change');
 
     if (clientId == 0) {
       params.delete("clienteId")
       contratos = await obtenerContratos();
+      listVehLeasing = await obtenerLeasings(undefined, all);
       if (contratos.length > 0) {
         leasings = await obtenerLeasingsPorContrato(contratos[0].ID)
       }
     } else {
       params.set("clienteId", clientId)
       contratos = await obtenerContratos(clientId);
+      listVehLeasing = await obtenerLeasings(clientId, all);
       if (contratos.length > 0) {
         leasings = await obtenerLeasingsPorContrato(contratos[0].ID)
       }
@@ -1637,6 +1679,8 @@ require './templates/header.html';
     chartBarComparation.update();
 
     // TABLE LEA
+    tableLea.clear();
+    tableLea.rows.add(listVehLeasing);
     tableLea.draw();
 
     setTimeout(() => {

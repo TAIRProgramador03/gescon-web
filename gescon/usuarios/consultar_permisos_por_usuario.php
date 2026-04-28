@@ -329,6 +329,28 @@ require '../templates/header.html';
               </div>
             </label>
           </li>
+          <li class="w-full flex justify-between items-center">
+            <span class="text-medium text-gray-500">Reasignar placas</span>
+            <label class="relative inline-flex w-fit items-center cursor-pointer">
+              <input class="sr-only peer" type="checkbox" id="insertar_reasignacion" name="insertar_reasignacion" disabled>
+
+              <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
+              bg-red-300 
+              peer-checked:bg-blue-300
+              peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500
+              
+              after:content-['No'] after:absolute after:outline-none after:rounded-[50%] 
+              after:h-8 after:w-8 after:bg-white after:top-1 after:left-1 
+              after:flex after:justify-center after:items-center  
+              after:text-red-800 after:font-bold
+              
+              peer-checked:after:translate-x-6 
+              peer-checked:after:content-['Si'] 
+              peer-checked:after:text-sky-800
+              peer-checked:after:border-white">
+              </div>
+            </label>
+          </li>
         </ul>
       </div>
 
@@ -470,6 +492,7 @@ require '../templates/header.html';
     $("#insertar_documentos").prop("checked", permissions.includes("insertar_documentos"))
     $("#insertar_leasing").prop("checked", permissions.includes("insertar_leasing"))
     $("#insertar_asignacion").prop("checked", permissions.includes("insertar_asignacion"))
+    $("#insertar_reasignacion").prop("checked", permissions.includes("insertar_reasignacion"))
     $("#insertar_usuarios").prop("checked", permissions.includes("insertar_usuarios"))
     $("#administrar_roles").prop("checked", permissions.includes("administrar_roles"))
     $("#editar_contratos").prop("checked", permissions.includes("editar_contratos"))

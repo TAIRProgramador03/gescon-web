@@ -45,7 +45,7 @@ require '../templates/header.html';
   </p>
 </div>
 
-<main class="w-full flex gap-4" data-route-permission="ver_placas">
+<main class="w-full flex gap-4" data-route-permission="insertar_reasignacion">
   <div class="w-full bg-white flex flex-col gap-3 px-9 py-7 rounded-md border border-gray-300 relative overflow-hidden">
     <div class="w-full h-3 bg-orange-700 absolute top-0 left-0"></div>
     <div class="w-full flex flex-col justify-center gap-2">

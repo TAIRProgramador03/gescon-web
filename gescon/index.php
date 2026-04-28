@@ -268,6 +268,12 @@ require './templates/header.html';
   </div>
 </div>
 
+<div id="alert-modal">
+  <div class="alert-bg"></div>
+  <div class="alert-container">
+  </div>
+</div>
+
 <script src="/js/dashboard.js"></script>
 <script>
   document.title = "Dashboard | Gescon";
@@ -1382,6 +1388,38 @@ require './templates/header.html';
       $("#cbo-contratos").val(null).trigger("change");
       $("#cbo-leasings").val(null).trigger("change");
       $("#cbo-models-gen").val(null).trigger("change");
+
+
+      const listVehiclesPending = await obtenerVehiculosReasignacion();
+
+      if (listVehiclesPending.length > 0) {
+        const perm = isPermission('insertar_reasignacion')
+        if (perm) {
+          Motion.animate(".alert-container", {
+            opacity: [0, 1],
+            scale: [0.7, 1.05, 1]
+          }, {
+            duration: 0.45,
+            easing: "ease-out"
+          });
+
+          $("#alert-modal").css("display", "flex");
+
+          $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
+
+          $("#alert-modal .alert-container").html(
+            `
+              <h2>¡Aviso de unidades pendientes!</h2>
+              <p style="color: black !important">El sistema ha detectado que se cuenta con <b>${listVehiclesPending.length}</b> vehiculo(s) que han sido traspasados a otros clientes.</p>
+              <p style="color: black !important">¿Deseas reasignarlos ahora?</p>
+              <div class="btn-group">
+                <a href="/gescon/vehiculos/reasignar_vehiculos" class="btn btn-info btn-assign">Si, quiero reasignarlos</a>
+                <button id="btn-close-alert" class="btn btn-dark">Ignorar alerta</button>
+              </div>
+            `
+          )
+        }
+      }
     } catch (err) {
       console.error(err);
       toastr.error(err.message, "Oops...")
@@ -1390,6 +1428,23 @@ require './templates/header.html';
 
     hideLoaderWindow();
   });
+
+  $(document).on("click", "#btn-close-alert", async () => {
+    const anim = Motion.animate(".alert-container", {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.7]
+    }, {
+      duration: 0.45,
+      easing: "ease-in"
+    });
+
+    await anim.finished;
+
+    const modal = document.getElementById("alert-modal");
+    modal.style.display = "none";
+
+    $("#alert-modal .alert-container").empty();
+  })
 
   $("#cbo-client").on("select2:select", async () => {
     showLoader();

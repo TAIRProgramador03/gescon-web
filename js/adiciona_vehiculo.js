@@ -1,5 +1,15 @@
 import { animate } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 
+const obtenerInstancia = async () => {
+  const IP_LOCAL = await obtenerConfig();
+  return axios.create({
+    baseURL: `http://${IP_LOCAL}:3000`,
+    timeout: 3000,
+  });
+};
+
+let instance;
+
 toastr.options = {
   closeButton: false,
   debug: false,
@@ -382,7 +392,7 @@ export async function listaVehiculosAsignables(clientId) {
         ],
         drawCallback: function () {
           this.api().columns.adjust();
-          
+
           $(".combo-operacion").select2({
             placeholder: "Seleccione la operacion",
             width: "100%",
@@ -841,7 +851,7 @@ const registrar = async (asignacionData) => {
         const res = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
           method: "POST",
           body: formData,
-          credentials: 'include'
+          credentials: "include",
         });
         const data = await res.json();
         detalle.archivoPdf = data.key;
@@ -892,3 +902,23 @@ const validarAsignacion = async (detalles) => {
 
   return { success: true };
 };
+
+export async function obtenerVehiculosReasignacion() {
+  try {
+    instance = await obtenerInstancia();
+    const response = await instance.get("/vehiculosPendientesReasginar", {
+      withCredentials: true,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error.response.data);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+}
+
+export function isPermission(permission) {
+  const permissions = JSON.parse(localStorage.getItem("permissions")) || [];
+
+  return permissions.includes(permission);
+}

@@ -312,6 +312,20 @@ async function obtenerTotalCostoPorModelo(modelId, fromYear, toYear) {
   return res;
 }
 
+async function obtenerVehiculosReasignacion() {
+  try {
+    instance = await obtenerInstancia();
+    const response = await instance.get("/vehiculosPendientesReasginar", {
+      withCredentials: true,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error.response.data);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+}
+
 async function generarExcelLeasingsVeh(data) {
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet("Vehiculos");
@@ -599,7 +613,7 @@ async function generarExcelVehiclesDonut(data, title) {
   });
 
   ws.getColumn(8).numFmt = "dd/mm/yyyy";
-  ws.getColumn(9).numFmt = '0%';
+  ws.getColumn(9).numFmt = "0%";
 
   // Tamaño columnas
   ws.getColumn(1).width = 8; // Item
@@ -619,7 +633,7 @@ async function generarExcelVehiclesDonut(data, title) {
       cell.alignment = {
         vertical: "middle",
         horizontal: "center",
-        wrapText: true
+        wrapText: true,
       };
     });
   });
@@ -706,4 +720,10 @@ function calcularPorcentaje(fechaIni, fechaFinal) {
   porcentaje = Math.min(Math.max(porcentaje, 0), 100);
 
   return porcentaje;
+}
+
+function isPermission(permission) {
+  const permissions = JSON.parse(localStorage.getItem("permissions")) || [];
+
+  return permissions.includes(permission);
 }

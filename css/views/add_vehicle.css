@@ -494,3 +494,87 @@ table.dataTable>tbody>tr>td {
   flex-direction: row;
   gap: 4px;
 }
+
+/* MODAL DE ALERTA */
+#alert-modal-reasign {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9990;
+}
+
+#alert-modal-reasign .alert-bg-reasign {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9990;
+}
+
+#alert-modal-reasign .alert-container-reasign {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  gap: 12px;
+  border-radius: 12px;
+  width: 30%;
+  max-height: 90%;
+  overflow: hidden !important;
+  z-index: 9999;
+  padding: 20px;
+}
+
+#alert-modal-reasign .btn-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#alert-modal-reasign h2 {
+  color: #e0a501;
+  font-weight: 500;
+  font-size: 24px;
+}
+
+#alert-modal-reasign .btn-group a {
+  padding: 8px 4px;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+#alert-modal-reasign .btn-group .btn {
+  padding: 8px 16px;
+  color: white;
+  outline: none;
+  cursor: pointer;
+  border: 0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+#alert-modal-reasign .btn-group .btn-info {
+  background-color: #005ad9;
+  transition: background 150ms ease-in;
+}
+
+#alert-modal-reasign .btn-group .btn-info:hover {
+  background-color: #0d72ff;
+}
+
+#alert-modal-reasign .btn-group .btn-dark {
+  background-color: #292929;
+  transition: background 150ms ease-in;
+}
+
+#alert-modal-reasign .btn-group .btn-dark:hover {
+  background-color: #464646;
+}

@@ -489,7 +489,7 @@ require '../templates/header.html';
       const vehPending = await getPendingVeh(idClient);
 
       if (vehPending.data && vehPending.data.length > 0) {
-        const perm = isPermission("ver_placas");
+        const perm = isPermission("insertar_asignacion");
 
         if (perm) {
           animate(".alert-container", {
@@ -507,7 +507,7 @@ require '../templates/header.html';
           $("#alert-modal .alert-container").html(
             `
               <h2>¡Aviso de unidades pendientes!</h2>
-              <p style="color: black !important">El sistema ha detectado que este cliente cuenta con ${vehPending.data.length} vehiculo(s) sin asignar. Le sugerimos asignarlos para evitar irregularidades</p>
+              <p style="color: black !important">El sistema ha detectado que este cliente cuenta con <b>${vehPending.data.length}</b> vehiculo(s) sin asignar. Le sugerimos asignarlos para evitar irregularidades</p>
               <p style="color: black !important">¿Deseas asignarlos ahora?</p>
               <div class="btn-group">
                 <button class="btn btn-info btn-assign">Si, quiero asignarlos</button>
@@ -664,7 +664,7 @@ require '../templates/header.html';
       $("#alert-modal .alert-container").html(
         `
           <h2>¡Aviso de unidades pendientes!</h2>
-              <p style="color: black !important">El sistema ha detectado que este cliente cuenta con ${vehPending.data.length} vehiculo(s) sin asignar. Le sugerimos asignarlos para evitar irregularidades</p>
+              <p style="color: black !important">El sistema ha detectado que este cliente cuenta con <b>${vehPending.data.length}</b> vehiculo(s) sin asignar. Le sugerimos asignarlos para evitar irregularidades</p>
               <p style="color: black !important">¿Deseas asignarlos ahora?</p>
               <div class="btn-group">
                 <button class="btn btn-info btn-assign">Si, quiero asignarlos</button>

@@ -193,6 +193,12 @@ require '../templates/header.html';
   </div>
 </div>
 
+<div id="alert-modal-reasign">
+  <div class="alert-bg-reasign"></div>
+  <div class="alert-container-reasign">
+  </div>
+</div>
+
 <!-- SCRIPTS DE LA VISTA -->
 
 <script type="module" src="/js/adiciona_vehiculo.js"></script>
@@ -205,7 +211,9 @@ require '../templates/header.html';
     cargarClientes,
     cargarLeasingOfClient,
     listaVehiculosAsignables,
-    cargarClientesAsig
+    cargarClientesAsig,
+    obtenerVehiculosReasignacion,
+    isPermission
   } from '/js/adiciona_vehiculo.js';
 
   import {
@@ -271,7 +279,7 @@ require '../templates/header.html';
     $(element).find(".icon-btn").removeClass("hidden");
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
     showLoader();
 
     const params = new URLSearchParams(window.location.search);
@@ -334,8 +342,56 @@ require '../templates/header.html';
 
     cargarClientesAsig();
 
+    const listVehiclesPending = await obtenerVehiculosReasignacion();
+
+    if (listVehiclesPending.length > 0) {
+      const perm = isPermission('insertar_reasignacion')
+      if (perm) {
+        animate(".alert-container-reasign", {
+          opacity: [0, 1],
+          scale: [0.7, 1.05, 1]
+        }, {
+          duration: 0.45,
+          easing: "ease-out"
+        });
+
+        $("#alert-modal-reasign").css("display", "flex");
+
+        $("#alert-modal-reasign .alert-container-reasign").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
+
+        $("#alert-modal-reasign .alert-container-reasign").html(
+          `
+              <h2>¡Aviso de unidades pendientes!</h2>
+              <p style="color: black !important">El sistema ha detectado que se cuenta con <b>${listVehiclesPending.length}</b> vehiculo(s) que han sido traspasados a otros clientes.</p>
+              <p style="color: black !important">¿Deseas reasignarlos ahora?</p>
+              <div class="btn-group">
+                <a href="/gescon/vehiculos/reasignar_vehiculos" class="btn btn-info btn-assign">Si, quiero reasignarlos</a>
+                <button id="btn-close-alert" class="btn btn-dark">Ignorar alerta</button>
+              </div>
+            `
+        )
+      }
+    }
+
     hideLoader();
   });
+
+  $(document).on("click", "#btn-close-alert", async () => {
+    const anim = animate(".alert-container-reasign", {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.7]
+    }, {
+      duration: 0.45,
+      easing: "ease-in"
+    });
+
+    await anim.finished;
+
+    const modal = document.getElementById("alert-modal-reasign");
+    modal.style.display = "none";
+
+    $("#alert-modal-reasign .alert-container-reasign").empty();
+  })
 
   document.addEventListener("change", function(e) {
     if (!e.target.classList.contains("acta")) return;

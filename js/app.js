@@ -26,14 +26,16 @@ lucide.createIcons();
 const obtenerConfig = async () => {
   const BASE_URL = window.location.origin;
 
-  const config = await fetch(`${BASE_URL}/php/config.php`).then((r) => r.json());
+  const config = await fetch(`${BASE_URL}/php/config.php`).then((r) =>
+    r.json(),
+  );
 
   return config.IP_LOCAL;
 };
 
 async function authenticateValid() {
   const IP_LOCAL = await obtenerConfig();
-  
+
   const response = await fetch(`http://${IP_LOCAL}:3000/verify`, {
     method: "GET",
     credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -54,10 +56,10 @@ $(document).on("DOMContentLoaded", async () => {
 
   localStorage.setItem("permissions", JSON.stringify(user.permissions));
 
-  $("#user-data").text(`${user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}`);
-  $("#user-role").text(
-    `${user.globalDbUser.toUpperCase()}`,
+  $("#user-data").text(
+    `${user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase()}`,
   );
+  $("#user-role").text(`${user.globalDbUser.toUpperCase()}`);
 
   aplicarPermisos();
   protegerRutas();
@@ -68,7 +70,40 @@ window.addEventListener("pageshow", async function () {
 });
 
 $("#dropdown-menu-btn").on("click", () => {
-  document.querySelector(".dropdown-menu").classList.toggle("show");
+  const menu = document.querySelector(".dropdown-menu");
+  const isOpen = menu.classList.contains("show");
+
+  if (!isOpen) {
+    // 🔓 ABRIR
+    menu.classList.add("show");
+
+    Motion.animate(
+      menu,
+      {
+        opacity: [0, 1],
+        transform: ["translateY(-10px)", "translateY(0px)"],
+      },
+      {
+        duration: 0.25,
+        easing: "ease-out",
+      },
+    );
+  } else {
+    // 🔒 CERRAR
+    Motion.animate(
+      menu,
+      {
+        opacity: [1, 0],
+        transform: ["translateY(0px)", "translateY(-10px)"],
+      },
+      {
+        duration: 0.2,
+        easing: "ease-in",
+      },
+    ).finished.then(() => {
+      menu.classList.remove("show");
+    });
+  }
 });
 
 const toggleButton = document.getElementById("toggle-btn");
@@ -83,7 +118,7 @@ function toggleSidebar() {
   closeAllSubMenus(); // Cierra todos los submenús al cerrar el sidebar
 
   setTimeout(() => {
-    window.dispatchEvent(new Event('resize'));
+    window.dispatchEvent(new Event("resize"));
   }, 300);
 }
 

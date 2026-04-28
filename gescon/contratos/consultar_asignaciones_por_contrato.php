@@ -134,8 +134,9 @@ require '../templates/header.html';
   </div>
 </div>
 
-<div id="tooltip-global"
-  class="fixed opacity-0 pointer-events-none bg-green-600 text-white text-sm px-3 py-2 rounded shadow-lg z-[9999] transition-all duration-200">
+<div id="tooltip-global" class="fixed z-[9999] opacity-0 pointer-events-none transition-opacity duration-200 flex flex-col justify-center items-center">
+  <div class="tooltip-content px-2 py-1 text-xs text-white bg-blue-700 rounded-md shadow-lg max-w-[280px] text-center break-words"></div>
+  <div class="tooltip-arrow w-2 h-2 bg-blue-700 rotate-45 mx-auto -mt-1!"></div>
 </div>
 
 <script src="/js/consulta_asignacion_por_contrato.js"></script>
@@ -538,22 +539,54 @@ require '../templates/header.html';
     table.draw();
   });
 
-  const tooltip = document.getElementById('tooltip-global');
+  const tooltip = document.getElementById("tooltip-global");
+  const tooltipText = tooltip.querySelector(".tooltip-content");
 
-  $(document).on('mouseenter', 'th[data-dt-column="18"] .dt-column-header', function(e) {
-    tooltip.innerText = "Inicio de valorización";
+  // INICIO VALORIZACION
+  $(document).on("mouseenter", 'th[data-dt-column="18"]', function() {
+    const rect = this.getBoundingClientRect();
+
+    tooltipText.innerText = "Inicio de valorización";
     tooltip.style.opacity = 1;
+
+    // 🔥 importante: esperar a que renderice
+    requestAnimationFrame(() => {
+      const tooltipWidth = tooltip.offsetWidth;
+      const tooltipHeight = tooltip.offsetHeight;
+
+      tooltip.style.top = (rect.top - tooltipHeight - 8) + "px";
+      tooltip.style.left = (rect.left + rect.width / 2 - tooltipWidth / 2) + "px";
+    });
   });
 
-  $(document).on('mousemove', 'th[data-dt-column="18"] .dt-column-header', function(e) {
-    const offsetY = 12; // distancia arriba del cursor
-
-    tooltip.style.top = (e.clientY - offsetY) + 'px';
-    tooltip.style.left = e.clientX + 'px';
-    tooltip.style.transform = 'translate(-50%, -100%)';
+  $(document).on("mouseleave", 'th[data-dt-column="18"]', function() {
+    tooltip.style.opacity = 0;
   });
 
-  $(document).on('mouseleave', 'th[data-dt-column="18"] .dt-column-header', function() {
+  // OPERATIVIDAD
+  $(document).on("mouseenter", 'th[data-dt-column="22"]', function() {
+    const rect = this.getBoundingClientRect();
+
+    tooltipText.innerHTML = `
+      <div class="flex flex-col gap-1">
+        <div><span class="font-medium">Activo:</span> Unidad en la misma operación que fue asignada.</div>
+        <div><span class="font-medium">Inactivo:</span> Unidad diferente a la operación donde inicialmente se asignó.</div>
+        <div><span class="font-medium">Vendido:</span> Unidad actualmente en la operación Tair Vendidas.</div>
+      </div>
+    `;
+    tooltip.style.opacity = 1;
+
+    // 🔥 importante: esperar a que renderice
+    requestAnimationFrame(() => {
+      const tooltipWidth = tooltip.offsetWidth;
+      const tooltipHeight = tooltip.offsetHeight;
+
+      tooltip.style.top = (rect.top - tooltipHeight - 8) + "px";
+      tooltip.style.left = (rect.left + rect.width / 2 - tooltipWidth / 2) + "px";
+    });
+  });
+
+  $(document).on("mouseleave", 'th[data-dt-column="22"]', function() {
     tooltip.style.opacity = 0;
   });
 </script>

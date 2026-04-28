@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/public/img/favicon.webp" type="image/webp">
+    <link rel="icon" href="/public/img/favicon.webp" type="image/webp" />
     <title>Gescon</title>
     <link rel="stylesheet" href="/css/dashboard.css" />
     <link rel="stylesheet" href="/css/components/banner-loader.css" />
@@ -18,7 +18,10 @@
       href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css"
     /> -->
     <!-- FONTAWESOME -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
 
     <!-- CHARTJS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +61,10 @@
       rel="stylesheet"
       href="https://cdn.datatables.net/buttons/3.2.6/css/buttons.dataTables.css"
     />
-    <link rel="stylesheet" href="https://cdn.datatables.net/select/3.1.3/css/select.dataTables.css"/>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/select/3.1.3/css/select.dataTables.css"
+    />
 
     <!-- DATATABLE JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -96,6 +102,9 @@
 
     <!-- LUCIDE ICON -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- MOTION -->
+    <script src="https://cdn.jsdelivr.net/npm/motion@10/dist/motion.min.js"></script>
   </head>
 
   <body>
@@ -133,7 +142,10 @@
         <!-- REGISTRAR -->
         <li>
           <button onclick="toggleSubMenu(this)" class="dropdown-btn">
-            <i class="fa-solid fa-pencil" style="font-size: 19px; padding-left: 2px"></i>
+            <i
+              class="fa-solid fa-pencil"
+              style="font-size: 19px; padding-left: 2px"
+            ></i>
             <span style="padding-left: 3px">Registrar</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -152,28 +164,46 @@
               <!-- CONTRATOS REGISTRAR -->
               <li data-permissions="insertar_contratos">
                 <a href="/gescon/contratos/registrar_contratos">
-                  <i class="bi bi-file-earmark-fill" style="font-size: 19px; padding-left: 2px"></i>
+                  <i
+                    class="bi bi-file-earmark-fill"
+                    style="font-size: 19px; padding-left: 2px"
+                  ></i>
                   Contratos
                 </a>
               </li>
 
               <!-- DOCUMENTOS REGISTRAR -->
-              <li data-permissions="insertar_documentos"><a href="/gescon/documentos/registrar_documentos">
-                <i class="bi bi-filetype-doc" style="font-size: 19px; padding-left: 2px"></i>
-                Documentos
-              </a></li>
+              <li data-permissions="insertar_documentos">
+                <a href="/gescon/documentos/registrar_documentos">
+                  <i
+                    class="bi bi-filetype-doc"
+                    style="font-size: 19px; padding-left: 2px"
+                  ></i>
+                  Documentos
+                </a>
+              </li>
 
               <!-- LEASING REGISTRAR -->
-              <li data-permissions="insertar_leasing"><a href="/gescon/leasings/registrar_leasing">
-                <i class="bi bi-file-earmark-spreadsheet-fill" style="font-size: 19px; padding-left: 2px"></i>
-                Leasing
-              </a></li>
+              <li data-permissions="insertar_leasing">
+                <a href="/gescon/leasings/registrar_leasing">
+                  <i
+                    class="bi bi-file-earmark-spreadsheet-fill"
+                    style="font-size: 19px; padding-left: 2px"
+                  ></i>
+                  Leasing
+                </a>
+              </li>
 
               <!-- ASIGNAR REGISTRAR -->
-              <li data-permissions="insertar_asignacion"><a href="/gescon/vehiculos/adicionar_vehiculos">
-                <i class="bi bi-car-front-fill" style="font-size: 19px; padding-left: 2px"></i>
-                Asignar
-              </a></li>
+              <li data-permissions="insertar_asignacion">
+                <a href="/gescon/vehiculos/adicionar_vehiculos">
+                  <i
+                    class="bi bi-car-front-fill"
+                    style="font-size: 19px; padding-left: 2px"
+                  ></i>
+                  Asignar
+                </a>
+              </li>
             </div>
           </ul>
         </li>
@@ -181,7 +211,10 @@
         <!-- CONSULTAR -->
         <li>
           <button onclick="toggleSubMenu(this)" class="dropdown-btn">
-            <i class="fa-solid fa-book-open" style="font-size: 19px; padding-left: 2px"></i>
+            <i
+              class="fa-solid fa-book-open"
+              style="font-size: 19px; padding-left: 2px"
+            ></i>
             <span style="padding-left: 3px">Consultar</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -197,11 +230,13 @@
           </button>
           <ul class="sub-menu">
             <div>
-
               <!-- CONTRATOS CONSULTAR -->
               <li data-permissions="ver_contratos">
                 <button onclick="toggleSubMenuSec(this)" class="dropdown-btn">
-                  <i class="bi bi-file-earmark-fill" style="font-size: 19px; padding-left: 2px"></i>
+                  <i
+                    class="bi bi-file-earmark-fill"
+                    style="font-size: 19px; padding-left: 2px"
+                  ></i>
                   <span style="padding-left: 3px">Contratos</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -218,13 +253,22 @@
                 <ul class="sub-menu-sec">
                   <div>
                     <a href="/gescon/contratos/consultar_contratos">
-                      <i class="bi bi-table" style="font-size: 19px; padding-left: 2px"></i>
+                      <i
+                        class="bi bi-table"
+                        style="font-size: 19px; padding-left: 2px"
+                      ></i>
                       Administración
                     </a>
 
                     <!-- CONSULTAR PLACAS -->
-                    <a href="/gescon/vehiculos/consultar_trazabilidad_placa" data-permissions="ver_placas">
-                      <i class="bi bi-badge-sd" style="font-size: 19px; padding-left: 2px"></i>
+                    <a
+                      href="/gescon/vehiculos/consultar_trazabilidad_placa"
+                      data-permissions="ver_placas"
+                    >
+                      <i
+                        class="bi bi-badge-sd"
+                        style="font-size: 19px; padding-left: 2px"
+                      ></i>
                       Buscar placas
                     </a>
                   </div>
@@ -232,10 +276,15 @@
               </li>
 
               <!-- LEASING CONSULTAR -->
-              <li data-permissions="ver_leasing"><a href="/gescon/leasings/consultar_leasing">
-                <i class="bi bi-file-earmark-spreadsheet-fill" style="font-size: 19px; padding-left: 2px"></i>
-                Leasing
-              </a></li>
+              <li data-permissions="ver_leasing">
+                <a href="/gescon/leasings/consultar_leasing">
+                  <i
+                    class="bi bi-file-earmark-spreadsheet-fill"
+                    style="font-size: 19px; padding-left: 2px"
+                  ></i>
+                  Leasing
+                </a>
+              </li>
             </div>
           </ul>
         </li>

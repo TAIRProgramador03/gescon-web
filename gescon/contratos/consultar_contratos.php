@@ -324,11 +324,9 @@ require '../templates/header.html';
   </div>
 </div>
 
-<div id="tooltip-global"
-  class="fixed opacity-0 pointer-events-none 
-         bg-black text-white text-sm px-3 py-2 rounded shadow-lg 
-         z-[9999] transition-all duration-200 text-center
-         max-w-[250px] w-max break-words">
+<div id="tooltip-global" class="fixed z-[9999] opacity-0 pointer-events-none transition-opacity duration-200 flex flex-col justify-center items-center">
+  <div class="tooltip-content px-2 py-1 text-xs text-white bg-blue-700 rounded-md shadow-lg max-w-[280px] text-center break-words"></div>
+  <div class="tooltip-arrow w-2 h-2 bg-blue-700 rotate-45 mx-auto -mt-1!"></div>
 </div>
 
 <script src="/js/consulta_contratos.js"></script>
@@ -2440,44 +2438,48 @@ require '../templates/header.html';
     $("#modal-body-info").empty();
   })
 
-  const tooltip = document.getElementById('tooltip-global');
+  const tooltip = document.getElementById("tooltip-global");
+  const tooltipText = tooltip.querySelector(".tooltip-content");
 
   // TOOLTIP PARA CANTIDAD DE VEHICULOS ACTIVOS
+  $("#href-query-veh").on("mouseenter", function() {
+    const rect = this.getBoundingClientRect();
 
-  $("#href-query-veh").on('mouseenter', function(e) {
-    tooltip.innerText = "Vehiculos en funcion al cuadro de operatividad inicialmente grabado";
+    tooltipText.innerText = "Vehiculos en funcion al cuadro de operatividad inicialmente grabado";
     tooltip.style.opacity = 1;
+
+    // 🔥 importante: esperar a que renderice
+    requestAnimationFrame(() => {
+      const tooltipWidth = tooltip.offsetWidth;
+      const tooltipHeight = tooltip.offsetHeight;
+
+      tooltip.style.top = (rect.top - tooltipHeight - 8) + "px";
+      tooltip.style.left = (rect.left + rect.width / 2 - tooltipWidth / 2) + "px";
+    });
   });
 
-  $("#href-query-veh").on('mousemove', function(e) {
-    const offsetY = 12; // distancia arriba del cursor
-
-    tooltip.style.top = (e.clientY - offsetY) + 'px';
-    tooltip.style.left = e.clientX + 'px';
-
-    tooltip.style.transform = 'translate(-50%, -100%)';
-  });
-
-  $("#href-query-veh").on('mouseleave', function() {
+  $("#href-query-veh").on("mouseleave", function() {
     tooltip.style.opacity = 0;
   });
 
   // TOOLTIP PARA CANTIDAD DE VEHICULOS ASIGNADOS
-  $("#href-query-assign").on('mouseenter', function(e) {
-    tooltip.innerText = "La sumatoria de vehiculos que viene desde el modulo asignar";
+  $("#href-query-assign").on("mouseenter", function() {
+    const rect = this.getBoundingClientRect();
+
+    tooltipText.innerText = "La sumatoria de vehiculos que viene desde el modulo asignar";
     tooltip.style.opacity = 1;
+
+    // 🔥 importante: esperar a que renderice
+    requestAnimationFrame(() => {
+      const tooltipWidth = tooltip.offsetWidth;
+      const tooltipHeight = tooltip.offsetHeight;
+
+      tooltip.style.top = (rect.top - tooltipHeight - 8) + "px";
+      tooltip.style.left = (rect.left + rect.width / 2 - tooltipWidth / 2) + "px";
+    });
   });
 
-  $("#href-query-assign").on('mousemove', function(e) {
-    const offsetY = 12; // distancia arriba del cursor
-
-    tooltip.style.top = (e.clientY - offsetY) + 'px';
-    tooltip.style.left = e.clientX + 'px';
-
-    tooltip.style.transform = 'translate(-50%, -100%)';
-  });
-
-  $("#href-query-assign").on('mouseleave', function() {
+  $("#href-query-assign").on("mouseleave", function() {
     tooltip.style.opacity = 0;
   });
 </script>

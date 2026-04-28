@@ -118,7 +118,10 @@ require './templates/header.html';
 
       <div class="dashboard-time-section">
         <div class="dashboard-item item-large">
-          <h3>Linea de tiempo (Contrato - Leasing)</h3>
+          <div class="flex items-center gap-1">
+            <h3>Linea de tiempo (Contrato - Leasing)</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-gray-400 text-sm" data-tooltip="Visualización gráfica de la diferencia de tiempo entre un Contrato y su Leasing."></i>
+          </div>
           <div id="data-value-comparation" class="data-value"></div>
           <div class="row-cbo-comparation">
             <!-- CONTRATOS -->
@@ -147,7 +150,10 @@ require './templates/header.html';
         </div>
 
         <div class="dashboard-item item-large">
-          <h3>Compra por modelo</h3>
+          <div class="flex items-center gap-1">
+            <h3>Compra por modelo</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-gray-400 text-sm" data-tooltip="Reporte gráfico de las compras de vehiculos por modelo genérico."></i>
+          </div>
           <div id="vehFleetDifference" class="data-value">0,00 PEN</div>
           <div class="filter-veh-fleet">
             <div class="flex flex-col w-full relative">
@@ -192,7 +198,10 @@ require './templates/header.html';
       </div>
 
       <div class="dashboard-item item-large table-leasings">
-        <h3>Placas de Leasings</h3>
+        <div class="flex items-center gap-1">
+          <h3>Placas de Leasings</h3>
+          <i class="tooltip-info bi bi-exclamation-circle text-gray-400 text-sm" data-tooltip="Reporte de vehiculos asociados a un leasing que han sido asignados a un cliente."></i>
+        </div>
         <table id="listLeasings" class="display">
           <thead>
             <tr>
@@ -222,7 +231,10 @@ require './templates/header.html';
 
       <div class="dashboard-doughnut-section">
         <div class="dashboard-item item-large !bg-red-100 !border-red-600">
-          <h3 class="!text-red-500">Vehiculos con leasings Vencidos</h3>
+          <div class="flex items-center gap-1">
+            <h3 class="!text-red-500">Vehiculos con leasings Vencidos</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-red-500 text-sm" data-tooltip="Reporte gráfico de vehiculos asignados a un Leasign que ha vencido."></i>
+          </div>
           <div id="data-value-veh-exp" class="data-value !text-red-800"></div>
           <div style="width: 100%; height: 220px;">
             <canvas id="donutLeasingA" class="can-barra"></canvas>
@@ -230,7 +242,10 @@ require './templates/header.html';
         </div>
 
         <div class="dashboard-item item-large !bg-green-100 !border-green-600">
-          <h3 class="!text-green-500">Vehiculos con leasings Por Vencer</h3>
+          <div class="flex items-center gap-1">
+            <h3 class="!text-green-500">Vehiculos con leasings Por Vencer</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-green-500 text-sm" data-tooltip="Reporte gráfico de vehiculos asignados a un Leasign apunto de vencer."></i>
+          </div>
           <div id="data-value-veh-to-exp" class="data-value !text-green-800"></div>
           <div style="width: 100%; height: 220px;">
             <canvas id="donutLeasingB" class="can-barra"></canvas>
@@ -239,7 +254,10 @@ require './templates/header.html';
       </div>
 
       <div class="dashboard-item item-large chart-vehicles-cli">
-        <h3>Total vehiculos por clientes</h3>
+        <div class="flex items-center gap-1">
+          <h3>Total vehiculos por clientes</h3>
+          <i class="tooltip-info bi bi-exclamation-circle text-gray-400 text-sm" data-tooltip="Reporte gráfico del total de vehiculos adquiridos por cliente."></i>
+        </div>
         <div id="data-value-chart-veh" class="data-value"></div>
         <div class="data-chart">
           <div class="cbo-clients-multiple">
@@ -273,6 +291,11 @@ require './templates/header.html';
   <div class="alert-bg"></div>
   <div class="alert-container">
   </div>
+</div>
+
+<div id="tooltip-global" class="fixed z-[9999] opacity-0 pointer-events-none transition-opacity duration-200 flex flex-col justify-center items-center">
+  <div class="tooltip-content px-2 py-1 text-xs text-white bg-blue-700 rounded-md shadow-lg max-w-[280px] text-center"></div>
+  <div class="tooltip-arrow w-2 h-2 bg-blue-700 rotate-45 mx-auto -mt-1!"></div>
 </div>
 
 <script src="/js/dashboard.js"></script>
@@ -2124,6 +2147,30 @@ require './templates/header.html';
 
   $(window).on('resize', function() {
     chartBarVehCli.resize(); // Fuerza a Chart.js a recalcular el tamaño
+  });
+
+  const tooltip = document.getElementById("tooltip-global");
+  const tooltipText = tooltip.querySelector(".tooltip-content");
+
+  $(document).on("mouseenter", ".tooltip-info", function() {
+    const text = $(this).data("tooltip");
+    const rect = this.getBoundingClientRect();
+
+    tooltipText.innerText = text;
+    tooltip.style.opacity = 1;
+
+    // 🔥 importante: esperar a que renderice
+    requestAnimationFrame(() => {
+      const tooltipWidth = tooltip.offsetWidth;
+      const tooltipHeight = tooltip.offsetHeight;
+
+      tooltip.style.top = (rect.top - tooltipHeight - 8) + "px";
+      tooltip.style.left = (rect.left + rect.width / 2 - tooltipWidth / 2) + "px";
+    });
+  });
+
+  $(document).on("mouseleave", ".tooltip-info", function() {
+    tooltip.style.opacity = 0;
   });
 </script>
 

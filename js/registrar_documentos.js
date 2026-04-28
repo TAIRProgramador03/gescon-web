@@ -69,14 +69,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
 
-  document
-    .getElementById("grabarButton")
-    .addEventListener("click", guardarDocumento);
-
-  document
-    .getElementById("updateButton")
-    .addEventListener("click", guardarDocumento);
-
   const checkbox = document.getElementById("especial");
 
   checkbox.addEventListener("change", function () {
@@ -689,6 +681,36 @@ async function cargarDocumento(id) {
   }
 }
 
+function showSpinner(element) {
+  // Cambiar cursor al boton
+  $(element).removeClass("cursor-pointer").addClass("cursor-progress");
+
+  // Mostrar background
+  $(element).find(".backgroud-spinner").addClass("w-full").removeClass("w-1/4");
+
+  // Ocultar icono
+  $(element).find(".icon-btn").addClass("hidden");
+
+  // Mostrar spinner
+  $(element).find(".spinner").removeClass("hidden");
+  $(element).prop("disabled", true);
+}
+
+function hideSpinner(element) {
+  // Cambiar cursor al boton
+  $(element).addClass("cursor-pointer").removeClass("cursor-progress");
+
+  // Ocultar background
+  $(element).find(".backgroud-spinner").removeClass("w-full").addClass("w-1/4");
+
+  // Ocultar spinner
+  $(element).find(".spinner").addClass("hidden");
+  $(element).prop("disabled", false);
+
+  // Mostrar icono
+  $(element).find(".icon-btn").removeClass("hidden");
+}
+
 async function guardarDocumento() {
   // Obtener valores de los campos del formulario
   let formData = {
@@ -1199,6 +1221,22 @@ async function guardarDocumento() {
     await registrar();
   }
 }
+
+$("#grabarButton").on("click", async function () {
+  showSpinner(this);
+
+  await guardarDocumento();
+
+  hideSpinner(this);
+});
+
+$("#updateButton").on("click", async function () {
+  showSpinner(this);
+
+  await guardarDocumento();
+
+  hideSpinner(this);
+});
 
 async function obtenerArchivo(key) {
   try {

@@ -122,12 +122,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   document.getElementById("btnClear").addEventListener("click", limpiarCampos);
-  document
-    .getElementById("grabarButton")
-    .addEventListener("click", guardarContrato);
-  document
-    .getElementById("actualizarButton")
-    .addEventListener("click", guardarContrato);
 
   hideLoader();
 });
@@ -645,6 +639,36 @@ async function cargarModelosFila(selectElement) {
   } catch (error) {
     console.error("Error al cargar modelos:", error);
   }
+}
+
+function showSpinner(element) {
+  // Cambiar cursor al boton
+  $(element).removeClass("cursor-pointer").addClass("cursor-progress");
+
+  // Mostrar background
+  $(element).find(".backgroud-spinner").addClass("w-full").removeClass("w-1/4");
+
+  // Ocultar icono
+  $(element).find(".icon-btn").addClass("hidden");
+
+  // Mostrar spinner
+  $(element).find(".spinner").removeClass("hidden");
+  $(element).prop("disabled", true);
+}
+
+function hideSpinner(element) {
+  // Cambiar cursor al boton
+  $(element).addClass("cursor-pointer").removeClass("cursor-progress");
+
+  // Ocultar background
+  $(element).find(".backgroud-spinner").removeClass("w-full").addClass("w-1/4");
+
+  // Ocultar spinner
+  $(element).find(".spinner").addClass("hidden");
+  $(element).prop("disabled", false);
+
+  // Mostrar icono
+  $(element).find(".icon-btn").removeClass("hidden");
 }
 
 async function guardarContrato() {
@@ -1168,6 +1192,21 @@ async function guardarContrato() {
     await registrar();
   }
 }
+
+$("#grabarButton").on("click", async function () {
+  showSpinner(this);
+
+  await guardarContrato();
+
+  hideSpinner(this);
+});
+$("#actualizarButton").on("click", async function () {
+  showSpinner(this);
+
+  await guardarContrato();
+
+  hideSpinner(this);
+});
 
 async function subirArchivo(archivo) {
   const formData = new FormData();

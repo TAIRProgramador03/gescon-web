@@ -454,8 +454,10 @@ require '../templates/header.html';
             id="grabarButton"
             class="cursor-pointer bg-green-700 text-center w-1/4 rounded-2xl h-16 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
             <div
-              class="bg-green-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
-              <i class="bi bi-floppy-fill"></i>
+              class="backgroud-spinner bg-green-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+              <i class="bi bi-floppy-fill icon-btn"></i>
+              <div
+              class="spinner hidden w-4 h-4 border-2 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
             </div>
             <p class="translate-x-4 !m-0 !text-white text-base font-medium">Registrar</p>
           </button>
@@ -464,8 +466,10 @@ require '../templates/header.html';
             id="updateButton"
             class="cursor-pointer bg-blue-700 text-center w-1/4 rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
             <div
-              class="bg-blue-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
-              <i class="bi bi-floppy-fill"></i>
+              class="backgroud-spinner bg-blue-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+              <i class="bi bi-floppy-fill icon-btn"></i>
+              <div
+              class="spinner hidden w-4 h-4 border-2 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
             </div>
             <p class="translate-x-4 !m-0 !text-white text-base font-medium">Actualizar</p>
           </button>

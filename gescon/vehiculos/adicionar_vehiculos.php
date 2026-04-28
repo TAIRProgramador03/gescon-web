@@ -154,8 +154,10 @@ require '../templates/header.html';
               id="grabarButton"
               class="cursor-pointer bg-green-700 text-center w-1/3 rounded-2xl h-12 relative text-xl flex justify-center items-center font-semibold border-4 border-white group">
               <div
-                class="bg-green-950 text-white rounded-xl h-10 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
-                <i class="bi bi-floppy-fill"></i>
+                class="backgroud-spinner bg-green-950 text-white rounded-xl h-10 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
+                <i class="bi bi-floppy-fill icon-btn"></i>
+                <div
+                  class="spinner hidden w-4 h-4 border-2 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
               </div>
               <p class="translate-x-4 !m-0 !text-white text-base font-medium">Grabar</p>
             </button>
@@ -239,6 +241,36 @@ require '../templates/header.html';
     }
   }
 
+  function showSpinner(element) {
+    // Cambiar cursor al boton
+    $(element).removeClass("cursor-pointer").addClass("cursor-progress");
+
+    // Mostrar background
+    $(element).find(".backgroud-spinner").addClass("w-full").removeClass("w-1/4");
+
+    // Ocultar icono
+    $(element).find(".icon-btn").addClass("hidden");
+
+    // Mostrar spinner
+    $(element).find(".spinner").removeClass("hidden");
+    $(element).prop("disabled", true);
+  }
+
+  function hideSpinner(element) {
+    // Cambiar cursor al boton
+    $(element).addClass("cursor-pointer").removeClass("cursor-progress");
+
+    // Ocultar background
+    $(element).find(".backgroud-spinner").removeClass("w-full").addClass("w-1/4");
+
+    // Ocultar spinner
+    $(element).find(".spinner").addClass("hidden");
+    $(element).prop("disabled", false);
+
+    // Mostrar icono
+    $(element).find(".icon-btn").removeClass("hidden");
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     showLoader();
 
@@ -248,9 +280,6 @@ require '../templates/header.html';
     document
       .getElementById("btnClear")
       .addEventListener("click", deshabilitarSelect);
-    document
-      .getElementById("grabarButton")
-      .addEventListener("click", guardaAsignacion);
 
     const btnFlotaTotal = document.getElementById("btn-flota-total");
 
@@ -330,6 +359,15 @@ require '../templates/header.html';
     label.classList.remove("bg-blue-800");
     label.classList.add("bg-green-600");
   });
+
+  $("#grabarButton").on("click", async function() {
+    showSpinner(this);
+
+    await guardaAsignacion();
+
+    hideSpinner(this);
+  });
+
 
   $("#listAssign tbody").on("change", ".acta", function() {
     const input = this;

@@ -378,7 +378,7 @@ require '../templates/header.html';
               </thead>
               <tbody id="contratos-tbody" class="table-detalle">
                 <tr>
-                  <td><input type="text" name="item[]" class="disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" disabled></td>
+                  <td><input type="text" name="item[]" class="cursor-pointer disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" readonly></td>
                   <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
                   <td>
                     <select id="tipoModelo" name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">

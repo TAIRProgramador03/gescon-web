@@ -102,13 +102,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   $("#tipoTerreno").select2({
     placeholder: "Seleccione el tipo",
     allowClear: false, // Desactiva la "X"
-    width: "140px",
+    width: "120px",
   });
 
   $("#tipoModelo").select2({
     placeholder: "Seleccione el modelo",
     allowClear: false, // Desactiva la "X"
-    width: "100%",
+    width: "120px",
   });
 
   $("#condicion").select2({
@@ -185,7 +185,7 @@ function agregarFila(checkbox) {
   nuevaFila.innerHTML = `
             <td><input type="text" name="item[]" value="${
               lastRowIndex + 2
-            }" class="disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
+            }" class="cursor-pointer disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" readonly></td>
             <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
             <td>
                 <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
@@ -305,7 +305,7 @@ async function cargarFilasDesdeLista(lista, checkbox) {
     const nuevaFila = document.createElement("tr");
 
     nuevaFila.innerHTML = `
-      <td><input type="text" name="item[]" value="${index + 1}" class="disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
+      <td><input type="text" name="item[]" value="${index + 1}" class="cursor-pointer disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" readonly></td>
 
       <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="${data.id}" disabled></td>
 
@@ -417,12 +417,21 @@ $("#addVehicle").on("click", function () {
   agregarFila(checkbox);
 });
 
-$("#tabla-dinamica tbody").on("dblclick", "tr", function (e) {
-  if ($(e.target).is("button, i, input, select, label")) return;
+// $("#tabla-dinamica tbody").on("dblclick", "tr", function (e) {
+//   if ($(e.target).is("button, i, input, select, label")) return;
 
-  const lastRow = $("#tabla-dinamica tbody tr:last")[0];
+//   const lastRow = $("#tabla-dinamica tbody tr:last")[0];
 
-  if (this === lastRow) {
+//   if (this === lastRow) {
+//     const checkbox = document.getElementById("especial");
+//     agregarFila(checkbox);
+//   }
+// });
+
+$("#tabla-dinamica tbody").on("click", 'input[name="item[]"]', function () {
+  const isLast = $(this).closest("tr").is(":last-child");
+
+  if (isLast) {
     const checkbox = document.getElementById("especial");
     agregarFila(checkbox);
   }
@@ -1555,7 +1564,7 @@ function limpiarCampos() {
   const tbody = document.getElementById("contratos-tbody");
   // Eliminar todo el contenido del tbody
   tbody.innerHTML = ` <tr>
-                           <td><input type="text" name="item[]" class="disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" disabled></td>
+                           <td><input type="text" name="item[]" class="cursor-pointer disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" readonly></td>
                            <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
                 <td>
                   <select id="tipoModelo" name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">

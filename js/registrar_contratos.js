@@ -134,12 +134,21 @@ $("#addVehicle").on("click", function (e) {
   cargarFilasRegistrar(checkbox);
 });
 
-$("#tabla-dinamica tbody").on("dblclick", "tr", function (e) {
-  if ($(e.target).is("button, i, input, select, label")) return;
+// $("#tabla-dinamica tbody").on("dblclick", "tr", function (e) {
+//   if ($(e.target).is("button, i, input, select, label")) return;
 
-  const lastRow = $("#tabla-dinamica tbody tr:last")[0];
+//   const lastRow = $("#tabla-dinamica tbody tr:last")[0];
 
-  if (this === lastRow) {
+//   if (this === lastRow) {
+//     const checkbox = document.getElementById("especial");
+//     cargarFilasRegistrar(checkbox);
+//   }
+// });
+
+$("#tabla-dinamica tbody").on("click", 'input[name="item[]"]', function () {
+  const isLast = $(this).closest("tr").is(":last-child");
+
+  if (isLast) {
     const checkbox = document.getElementById("especial");
     cargarFilasRegistrar(checkbox);
   }
@@ -186,7 +195,7 @@ function cargarFilasRegistrar(checkbox) {
   nuevaFila.innerHTML = `
             <td><input type="text" name="item[]" value="${
               lastRowIndex + 2
-            }" class="disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
+            }" class="cursor-pointer disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" readonly></td>
             <td style="display: none;"><input type="text" name="iddet[]" class="tooltip-input" value=0"></td>
             <td>
                 <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
@@ -292,7 +301,7 @@ function cargarFilas(data, modelos) {
   nuevaFila.innerHTML = `
             <td><input type="text" name="item[]" value="${
               lastRowIndex + 2
-            }" class="disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
+            }" class="cursor-pointer disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" readonly></td>
             <td style="display: none;"><input type="text" name="iddet[]" value="${data.id}"></td>
             <td>
                 <select name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">

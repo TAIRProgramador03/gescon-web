@@ -213,7 +213,9 @@ require '../templates/header.html';
     listaVehiculosAsignables,
     cargarClientesAsig,
     obtenerVehiculosReasignacion,
-    isPermission
+    isPermission,
+    cargarOperaciones,
+    cargarContrato
   } from '/js/adiciona_vehiculo.js';
 
   import {
@@ -424,7 +426,6 @@ require '../templates/header.html';
     hideSpinner(this);
   });
 
-
   $("#listAssign tbody").on("change", ".acta", function() {
     const input = this;
     const container = $(this).closest("div");
@@ -478,6 +479,30 @@ require '../templates/header.html';
 
     // 🔹 ocultar botón remove
     $(this).addClass("hidden").removeClass("flex");
+  });
+
+  const showSkeleton = () => {
+    $(".combo-operacion").next(".select2").hide();
+    $(".combo-contrato").next(".select2").hide();
+
+    $(".skeleton-select").removeClass("hidden");
+  }
+
+  const hideSkeleton = () => {
+    $(".combo-operacion").next(".select2").show();
+    $(".combo-contrato").next(".select2").show();
+
+    $(".skeleton-select").addClass("hidden");
+  }
+
+  $("#combo-box-asig").on("select2:select", async function() {
+    showSkeleton();
+    const idCli = this.value;
+
+    await cargarOperaciones(idCli);
+    await cargarContrato(idCli);
+
+    hideSkeleton();
   });
 </script>
 

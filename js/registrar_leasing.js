@@ -884,7 +884,7 @@ async function guardaLeasing() {
 $("#grabarButton").on("click", async function () {
   showSpinner(this);
 
-  await guardarLeasing();
+  await guardaLeasing();
 
   hideSpinner(this);
 });

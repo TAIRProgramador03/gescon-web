@@ -86,33 +86,33 @@ require './templates/header.html';
       </div>
 
       <div class="dashboard-cont-section">
-        <div class="dashboard-item item-small">
+        <div class="link-contracts dashboard-item item-small">
           <div>
             <h3>Contratos</h3>
             <div class="data-value" id="con-Contra">0</div>
           </div>
-          <img src="/public/img/icons/icon-contract.webp" alt="Contratos">
+          <img src="/public/img/icons/icon-total-contracts.webp" alt="Contratos">
         </div>
-        <div class="dashboard-item item-small">
+        <div class="link-documents dashboard-item item-small">
           <div>
-            <h3>Adendas</h3>
+            <h3>Documentos</h3>
             <div class="data-value" id="con-Adenda">0</div>
           </div>
-          <img src="/public/img/icons/icon-adenda.webp" alt="Adendas">
+          <img src="/public/img/icons/icon-total-documents.webp" alt="Documentos">
         </div>
-        <div class="dashboard-item item-small">
+        <div class="link-leasings dashboard-item item-small">
           <div>
-            <h3>Cartas</h3>
+            <h3>Leasings</h3>
             <div class="data-value" id="con-Carta">0</div>
           </div>
-          <img src="/public/img/icons/icon-carta.webp" alt="Cartas">
+          <img src="/public/img/icons/icon-total-leasings.webp" alt="Leasings">
         </div>
-        <div class="dashboard-item item-small">
+        <div class="link-vehicles dashboard-item item-small">
           <div>
-            <h3>Orden de compras</h3>
+            <h3>Vehiculos asignados</h3>
             <div class="data-value" id="con-OC">0</div>
           </div>
-          <img src="/public/img/icons/icon-orden-de-compra.webp" alt="Orden de compras">
+          <img src="/public/img/icons/icon-total-vehicles.webp" alt="Vehiculos asignados">
         </div>
       </div>
 
@@ -293,9 +293,9 @@ require './templates/header.html';
   </div>
 </div>
 
-<div id="tooltip-global" class="fixed z-[9999] opacity-0 pointer-events-none transition-opacity duration-200 flex flex-col justify-center items-center">
-  <div class="tooltip-content px-2 py-1 text-xs text-white bg-blue-700 rounded-md shadow-lg max-w-[280px] text-center"></div>
-  <div class="tooltip-arrow w-2 h-2 bg-blue-700 rotate-45 mx-auto -mt-1!"></div>
+<div id="tooltip-global" class="fixed z-[9999] opacity-0 pointer-events-none transition-opacity duration-200 flex justify-center items-center">
+  <div class="tooltip-arrow w-2 h-2 bg-blue-700 rotate-45 mx-auto"></div>
+  <div class="tooltip-content px-2 py-1 text-xs text-white bg-blue-700 rounded-md shadow-lg max-w-[280px] text-center -ml-1!"></div>
 </div>
 
 <script src="/js/dashboard.js"></script>
@@ -1470,6 +1470,16 @@ require './templates/header.html';
           )
         }
       }
+
+      const viewContract = isPermission('ver_contratos');
+      // const viewDocument = isPermission('ver_documentos');
+      const viewLeasing = isPermission('ver_leasing');
+      const viewVehicle = isPermission('ver_placas');
+
+      if (viewContract) $('.link-contracts').addClass("cursor-pointer");
+      // if(viewDocument) $('.link-documents').addClass("cursor-pointer");
+      if (viewLeasing) $('.link-leasings').addClass("cursor-pointer");
+      if (viewVehicle) $('.link-vehicles').addClass("cursor-pointer");
     } catch (err) {
       console.error(err);
       toastr.error(err.message, "Oops...")
@@ -1515,7 +1525,7 @@ require './templates/header.html';
 
     const params = new URLSearchParams(window.location.search)
 
-    let contratos;
+    let contratos = [];
     let leasings = [];
     let listVehLeasing = [];
     $('#cbo-contratos').empty().trigger('change');
@@ -1525,9 +1535,7 @@ require './templates/header.html';
       params.delete("clienteId")
       contratos = await obtenerContratos();
       listVehLeasing = await obtenerLeasings(undefined, all);
-      if (contratos.length > 0) {
-        leasings = await obtenerLeasingsPorContrato(contratos[0].ID)
-      }
+      leasings = await obtenerLeasingsPorContrato()
     } else {
       params.set("clienteId", clientId)
       contratos = await obtenerContratos(clientId);
@@ -1598,8 +1606,13 @@ require './templates/header.html';
       $('#cbo-leasings').append(newOption).trigger('change');
     })
 
+    if (clientId == 0) {
+      $('#cbo-contratos').val(null).trigger("change");
+      $('#cbo-leasings').val(null).trigger("change");
+    }
+
     const contractId = contratos[0] ? contratos[0].ID : null
-    const leasingId = $('#cbo-leasings').val();
+    const leasingId = contratos[0] ? contratos[0].ID : null;
 
     if (contractId && leasingId) {
       const data = await obtenerDiasContratoLeasing(contractId, leasingId)
@@ -1608,8 +1621,10 @@ require './templates/header.html';
         $("#data-value-comparation").text(`Leasing vence antes (${Math.abs(data.diferenciaDias)} dias)`)
       } else if (data.diferenciaDias < 0) {
         $("#data-value-comparation").text(`Contrato vence antes (${Math.abs(data.diferenciaDias)} dias)`)
-      } else {
+      } else if (data.diferenciaDias === 0) {
         $("#data-value-comparation").text(`Vencen a la vez`)
+      } else {
+        $("#data-value-comparation").text(`Sin resultados`)
       }
 
       const contratoMid = getMidPoint([{
@@ -2159,19 +2174,58 @@ require './templates/header.html';
     tooltipText.innerText = text;
     tooltip.style.opacity = 1;
 
-    // 🔥 importante: esperar a que renderice
     requestAnimationFrame(() => {
       const tooltipWidth = tooltip.offsetWidth;
       const tooltipHeight = tooltip.offsetHeight;
 
-      tooltip.style.top = (rect.top - tooltipHeight - 8) + "px";
-      tooltip.style.left = (rect.left + rect.width / 2 - tooltipWidth / 2) + "px";
+      const offset = 8;
+
+      // 👉 A LA DERECHA
+      tooltip.style.top = (rect.top + rect.height / 2 - tooltipHeight / 2) + "px";
+      tooltip.style.left = (rect.right + offset) + "px";
     });
   });
 
   $(document).on("mouseleave", ".tooltip-info", function() {
     tooltip.style.opacity = 0;
   });
+
+  $(".link-contracts").on("click", function() {
+    const params = new URLSearchParams(window.location.search)
+    const clientId = params.get("clienteId");
+
+    const perm = isPermission('ver_contratos')
+    if (perm) {
+      window.location.href = `/gescon/contratos/consultar_contratos${clientId ? `?clienteId=${clientId}` : ``}`;
+    }
+  })
+
+  // $(".link-documents").on("click", function() {
+  //   const perm = isPermission('ver_documentos')
+  //   if (perm) {
+  //     window.location.href = "/gescon/documentos/consultar-documentos";
+  //   }
+  // })
+
+  $(".link-leasings").on("click", function() {
+    const params = new URLSearchParams(window.location.search)
+    const clientId = params.get("clienteId");
+
+    const perm = isPermission('ver_leasing')
+    if (perm) {
+      window.location.href = `/gescon/leasings/consultar_leasing${clientId ? `?clienteId=${clientId}` : ``}`;
+    }
+  })
+
+  $(".link-vehicles").on("click", function() {
+    const params = new URLSearchParams(window.location.search)
+    const clientId = params.get("clienteId");
+
+    const perm = isPermission('ver_placas')
+    if (perm) {
+      window.location.href = `/gescon/vehiculos/consultar_trazabilidad_placa${clientId ? `?clienteId=${clientId}` : ``}`;
+    }
+  })
 </script>
 
 

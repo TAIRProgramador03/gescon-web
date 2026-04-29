@@ -333,14 +333,20 @@ export async function listaVehiculosAsignables(clientId) {
           {
             data: null, // OPERACION
             render: () => {
-              return `<select name="operacion[]" class="combo-operacion cbo-form-cliente"></select>`;
+              return `<div>
+                <select name="operacion[]" class="combo-operacion cbo-form-cliente"></select>
+                <div class="skeleton-select w-full h-[43.3px] bg-black/10 animate-pulse hidden rounded-md"></div>
+              </div>`;
             },
             width: "200px",
           },
           {
             data: null, // CONTRATO
             render: () => {
-              return `<select name="contrato[]" class="combo-contrato cbo-form-cliente"></select>`;
+              return `<div class=""w-full>
+                <select name="contrato[]" class="combo-contrato cbo-form-cliente"></select>
+                <div class="skeleton-select w-full h-[43.3px] bg-black/10 animate-pulse hidden rounded-md"></div>
+              </div>`;
             },
             width: "200px",
           },
@@ -492,8 +498,6 @@ export async function cargarClientesAsig() {
       option.textContent = cliente.CLINOM; // El nombre del cliente
       comboBox.appendChild(option);
     });
-    cargarOperaciones();
-    cargarContrato();
   } catch (error) {
     console.error("Error al cargar clientes:", error);
   }
@@ -534,110 +538,126 @@ export function deshabilitarSelect() {
   comboBox2.setAttribute("disabled", "disabled");
 }
 
-async function cargarOperaciones() {
-  $("#combo-box-asig").on("select2:select", async function () {
-    const idCli = this.value; // Obtiene el ID del cliente seleccionado
+export async function cargarOperaciones(idCli) {
+  const $selects = $(".combo-operacion");
 
-    if (!idCli) {
-      // Si no hay cliente seleccionado, limpia todos los combos de operación en la tabla
-      document.querySelectorAll(".combo-operacion").forEach((select) => {
-        select.innerHTML = '<option value="">Seleccione una Operacion</option>';
-      });
+  if (!idCli) {
+    $selects.empty().val(null).trigger("change.select2");
+    return;
+  }
+
+  try {
+    instance = await obtenerInstancia();
+
+    // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
+    const response = await instance.get(`/operacionesAsig`, {
+      withCredentials: true,
+      params: {
+        idCli,
+      },
+    });
+    const operaciones = await response.data;
+
+    $selects
+      .empty()
+      .append('<option value="">Cargando...</option>')
+      .trigger("change.select2");
+
+    // Si no hay operaciones, limpiar todos los selects
+    if (!operaciones?.length) {
+      $selects
+        .empty()
+        .append('<option value="">No hay operaciones</option>')
+        .val(null)
+        .trigger("change.select2");
       return;
     }
-    try {
-      const IP_LOCAL = await obtenerConfig();
 
-      // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
-      const response = await fetch(
-        `http://${IP_LOCAL}:3000/operacionesAsig?idCli=${idCli}`,
-        {
-          method: "GET",
-          credentials: "include", // Asegura que las cookies se envíen con la solicitud
-        },
-      );
-      const operaciones = await response.json();
+    const options = operaciones.map(
+      (op) => new Option(op.DESCRIPCION, op.ID, false, false),
+    );
 
-      // Si no hay operaciones, limpiar todos los selects
-      if (operaciones.length === 0) {
-        document.querySelectorAll(".combo-operacion").forEach((select) => {
-          select.innerHTML =
-            '<option value="">No hay operaciones disponibles</option>';
-        });
-        return;
-      }
+    $selects.each(function () {
+      const $this = $(this);
 
-      // Recorre todos los selects en las filas de la tabla y los llena con las operaciones disponibles
-      document.querySelectorAll(".combo-operacion").forEach((select) => {
-        select.innerHTML = '<option value="">Seleccione una operacion</option>'; // Opción por defecto
-        operaciones.forEach((operacion) => {
-          const option = document.createElement("option");
-          option.value = operacion.ID; // Valor del contrato
-          option.textContent = operacion.DESCRIPCION; // Descripción del contrato
-          select.appendChild(option);
-        });
+      $this.empty();
+
+      $this.append(new Option("Seleccione una operación", "", true, false));
+
+      options.forEach((option) => {
+        $this.append(option.cloneNode(true));
       });
-    } catch (error) {
-      console.error("Error al obtener las operaciones:", error);
-      toastr.warning(
-        "Error al obtener las operaciones. Inténtelo de nuevo más tarde.",
-        "Oops...",
-      );
-    }
-  });
+
+      $this.val(null).trigger("change.select2");
+    });
+  } catch (error) {
+    console.error(error?.response?.data || error);
+    toastr.warning(
+      error?.response?.data?.message || "Error al cargar operaciones",
+      "Oops...",
+    );
+  }
 }
 
-async function cargarContrato() {
-  $("#combo-box-asig").on("select2:select", async function () {
-    const idCli = this.value; // Obtiene el ID del cliente seleccionado
+export async function cargarContrato(idCli) {
+  const $selects = $(".combo-contrato");
 
-    if (!idCli) {
-      // Si no hay cliente seleccionado, limpia todos los combos de operación en la tabla
-      document.querySelectorAll(".combo-contrato").forEach((select) => {
-        select.innerHTML = '<option value="">Seleccione un contrato</option>';
-      });
+  if (!idCli) {
+    $selects.empty().val(null).trigger("change.select2");
+    return;
+  }
+
+  try {
+    instance = await obtenerInstancia();
+
+    // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
+    const response = await instance.get(`/contratosNroAdi`, {
+      withCredentials: true,
+      params: {
+        idCli,
+      },
+    });
+
+    const contratos = await response.data;
+
+    $selects
+      .empty()
+      .append('<option value="">Cargando...</option>')
+      .trigger("change.select2");
+
+    if (!contratos?.length) {
+      $selects
+        .empty()
+        .append('<option value="">No hay contratos</option>')
+        .val(null)
+        .trigger("change.select2");
       return;
     }
-    try {
-      const IP_LOCAL = await obtenerConfig();
 
-      // Realiza una solicitud al servidor para obtener las operaciones asignadas al cliente
-      const response = await fetch(
-        `http://${IP_LOCAL}:3000/contratosNroAdi?idCli=${idCli}`,
-        {
-          method: "GET",
-          credentials: "include", // Asegura que las cookies se envíen con la solicitud
-        },
-      );
-      const contratos = await response.json();
+    const options = contratos.map(
+      (op) => new Option(op.DESCRIPCION, op.ID, false, false),
+    );
 
-      // Si no hay operaciones, limpiar todos los selects
-      if (contratos.length === 0) {
-        document.querySelectorAll(".combo-contrato").forEach((select) => {
-          select.innerHTML =
-            '<option value="">No hay contratos disponibles</option>';
-        });
-        return;
-      }
+    $selects.each(function () {
+      const $this = $(this);
 
-      // Recorre todos los selects en las filas de la tabla y los llena con las operaciones disponibles
-      document.querySelectorAll(".combo-contrato").forEach((select) => {
-        select.innerHTML = '<option value="">Seleccione un contrato</option>'; // Opción por defecto
-        contratos.forEach((contrato) => {
-          const option = document.createElement("option");
-          option.value = contrato.ID; // Valor del contrato
-          option.textContent = contrato.DESCRIPCION; // Descripción del contrato
-          select.appendChild(option);
-        });
+      $this.empty();
+
+      $this.append(new Option("Seleccione un contrato", "", true, false));
+
+      options.forEach((option) => {
+        $this.append(option.cloneNode(true));
       });
-    } catch (error) {
-      console.error("Error al obtener las operaciones:", error);
-      toastr.warning(
-        "Error al obtener las operaciones. Inténtelo de nuevo más tarde.",
-        "Oops...",
-      );
-    }
-  });
+
+      $this.val(null).trigger("change.select2");
+    });
+  } catch (error) {
+    console.error("Error al obtener las operaciones:", error);
+    toastr.warning(
+      "Error al obtener las operaciones. Inténtelo de nuevo más tarde.",
+      "Oops...",
+    );
+  }
 }
 
 export async function guardaAsignacion() {

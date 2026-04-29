@@ -205,7 +205,7 @@ require '../templates/header.html';
           <input id="text-estado" name="estado" type="text" class="px-[10px] py-[11px] rounded-[5px] border-2 border-gray-300 bg-gray-50 text-gray-600" value="--" disabled>
         </div>
         <div class="text-form-col">
-          <label for="combo-box">Fecha Ini:</label>
+          <label for="combo-box">Fecha Firma:</label>
           <input id="text-inicio" name="inicio" type="text" class="px-[10px] py-[11px] rounded-[5px] border-2 border-gray-300 bg-gray-50 text-gray-600" value="--" disabled>
         </div>
         <div class="text-form-col">
@@ -215,22 +215,22 @@ require '../templates/header.html';
         <div class="text-form-col">
           <label for="combo-box tp-form">Tipo Terreno:</label>
           <div class="cuadradro">
-            <div id="view-sev" class="card terreno-form hover:shadow-md transition-shadow">
+            <div id="view-sev" class="tooltip-info card terreno-form hover:shadow-md transition-shadow" data-tooltip="Vehiculos de tipo Severo">
               <div class="tdh nom-tp">Sev.</div>
 
               <div class="tdh" id="txt-sev">0</div>
             </div>
-            <div id="view-soc" class="card terreno-form hover:shadow-md transition-shadow">
+            <div id="view-soc" class="tooltip-info card terreno-form hover:shadow-md transition-shadow" data-tooltip="Vehiculos de tipo Socavón">
               <div class="tdh nom-tp">Soc.</div>
 
               <div class="tdh" id="txt-soc">0</div>
             </div>
-            <div id="view-sup" class="card terreno-form hover:shadow-md transition-shadow">
+            <div id="view-sup" class="tooltip-info card terreno-form hover:shadow-md transition-shadow" data-tooltip="Vehiculos de tipo Superficie">
               <div class="tdh nom-tp">Sup.</div>
 
               <div class="tdh" id="txt-sup">0</div>
             </div>
-            <div id="view-ciu" class="card terreno-form hover:shadow-md transition-shadow">
+            <div id="view-ciu" class="tooltip-info card terreno-form hover:shadow-md transition-shadow" data-tooltip="Vehiculos de tipo Ciudad">
               <div class="tdh nom-tp">Ciu.</div>
 
               <div class="tdh" id="txt-ciu">0</div>
@@ -239,22 +239,22 @@ require '../templates/header.html';
         </div>
         <div class="text-form-col">
           <div class="cuadradro-form">
-            <div class="card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-doc">
+            <div class="tooltip-info card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-doc" data-tooltip="Total de documentos que pertenecen a los contratos o contrato seleccionado">
               <div class="tda tti-form nom-tp">N° Documentos</div>
 
               <div class="tda can-form"><i class="fa fa fa-sheet-plastic" style="color: #1e3a8a;"></i><span id="txt-aso">0</span></div>
             </div>
-            <div class="card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-lea">
+            <div class="tooltip-info card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-lea" data-tooltip="Total de leasings que pertenecen a los contratos o contrato seleccionado">
               <div class="tda tti-form nom-tp">N° leasing</div>
 
               <div class="tda can-form"><i class="fa fa fa-book" style="color: #1e3a8a;"></i><span id="txt-leas">0</span></div>
             </div>
-            <div class="card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-veh">
+            <div class="tooltip-info card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-veh" data-tooltip="Vehiculos en funcion al cuadro de operatividad inicialmente grabado">
               <div class="tda tti-form nom-tp">Veh. Activos</div>
 
               <div class="tda can-form"><i class="fa-solid fa-car" style="color: #1e3a8a;"></i><span id="txt-vehic">0</span></div>
             </div>
-            <div class="card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-assign">
+            <div class="tooltip-info card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-assign" data-tooltip="La sumatoria de vehiculos que viene desde el modulo asignar">
               <div class="tda tti-form nom-tp" id="cab-href-query-assign">Veh. Asignados</div>
 
               <div class="tda can-form"><i class="fa-solid fa-check" style="color: #1e3a8a;"></i><span id="txt-assign">0</span></div>
@@ -564,7 +564,7 @@ require '../templates/header.html';
                 <ul class="list-disc pl-5">
                   ${clientes.map((cli) => (
                     `<li class="text-sm">${cli}</li>`
-                  ))}
+                  )).join("")}
                 </ul>
               </div>
               <div class="btn-group">
@@ -2441,14 +2441,12 @@ require '../templates/header.html';
   const tooltip = document.getElementById("tooltip-global");
   const tooltipText = tooltip.querySelector(".tooltip-content");
 
-  // TOOLTIP PARA CANTIDAD DE VEHICULOS ACTIVOS
-  $("#href-query-veh").on("mouseenter", function() {
+  $(document).on("mouseenter", ".tooltip-info", function() {
+    const text = $(this).data("tooltip");
     const rect = this.getBoundingClientRect();
 
-    tooltipText.innerText = "Vehiculos en funcion al cuadro de operatividad inicialmente grabado";
-    tooltip.style.opacity = 1;
-
-    // 🔥 importante: esperar a que renderice
+    tooltipText.innerText = text;
+    tooltip.style.opacity = 1; // 🔥 importante: esperar a que renderice 
     requestAnimationFrame(() => {
       const tooltipWidth = tooltip.offsetWidth;
       const tooltipHeight = tooltip.offsetHeight;
@@ -2458,28 +2456,7 @@ require '../templates/header.html';
     });
   });
 
-  $("#href-query-veh").on("mouseleave", function() {
-    tooltip.style.opacity = 0;
-  });
-
-  // TOOLTIP PARA CANTIDAD DE VEHICULOS ASIGNADOS
-  $("#href-query-assign").on("mouseenter", function() {
-    const rect = this.getBoundingClientRect();
-
-    tooltipText.innerText = "La sumatoria de vehiculos que viene desde el modulo asignar";
-    tooltip.style.opacity = 1;
-
-    // 🔥 importante: esperar a que renderice
-    requestAnimationFrame(() => {
-      const tooltipWidth = tooltip.offsetWidth;
-      const tooltipHeight = tooltip.offsetHeight;
-
-      tooltip.style.top = (rect.top - tooltipHeight - 8) + "px";
-      tooltip.style.left = (rect.left + rect.width / 2 - tooltipWidth / 2) + "px";
-    });
-  });
-
-  $("#href-query-assign").on("mouseleave", function() {
+  $(document).on("mouseleave", ".tooltip-info", function() {
     tooltip.style.opacity = 0;
   });
 </script>

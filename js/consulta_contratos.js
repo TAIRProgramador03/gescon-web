@@ -225,6 +225,7 @@ async function cargarDatosContrato(clienteId, contratoId) {
 async function verificarContratosTemp() {
   try {
     const IP_LOCAL = await obtenerConfig();
+    
     const response = await fetch(
       `http://${IP_LOCAL}:3000/verificarContratosTemp`,
       {

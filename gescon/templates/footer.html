@@ -1,4 +1,15 @@
     
+    <div class="modal-glossary w-full h-screen fixed top-0 left-0 flex justify-center items-center opacity-0 -z-[9990] overflow-hidden">
+        <div class="modal-glossary-overlay w-full h-screen fixed top-0 left-0 bg-black/25 -z-10"></div>
+        <div class="modal-glossary-container w-full max-w-[40%] h-full max-h-1/2 rounded-lg relative flex flex-col gap-3 px-5 py-4 bg-white overflow-hidden">
+            <div class="w-full h-2 bg-teal-500 absolute top-0 left-0"></div>
+            <h2 class="text-3xl text-[#002141] font-semibold">Glosario de Términos</h2>
+            <ul class="w-full flex flex-col gap-2 overflow-auto">
+                <li class="text-sm text-gray-600"><span class="font-medium text-black">Jimena: </span>Termina el glosario</li>
+            </ul>
+        </div>
+    </div>
+
     </main>
     <!-- TOASTR -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -42,6 +53,39 @@
                 toastr("Sucedio un error desconocido en la solicitud", "Oops...")
             }
         });
+
+        $(".open-modal-glossary").on("click", function() {
+            $(".modal-glossary").addClass("opacity-100 z-[9990]").removeClass("opacity-0 -z-[9990]")
+
+            Motion.animate('.modal-glossary-overlay', {
+                opacity: [0, 1],
+            }, {
+                duration: 0.25,
+                easing: 'linear'
+            })
+
+            Motion.animate('.modal-glossary-container', {
+                opacity: [0, 1],
+                scale: [0.7, 1.05, 1]
+            }, {
+                duration: 0.45,
+                easing: 'ease-out'
+            })
+        })
+        
+        $(".modal-glossary-overlay").on("click", async function() {
+            const anim = Motion.animate('.modal-glossary-container', {
+                opacity: [1, 0],
+                scale: [1, 1.05, 0.7]
+            }, {
+                duration: 0.45,
+                easing: 'ease-in'
+            })
+
+            await anim.finished;
+
+            $(".modal-glossary").removeClass("opacity-100 z-[9990]").addClass("opacity-0 -z-[9990]")
+        })
     </script>
 </body>
 </html>

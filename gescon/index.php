@@ -1612,7 +1612,7 @@ require './templates/header.html';
     }
 
     const contractId = contratos[0] ? contratos[0].ID : null
-    const leasingId = contratos[0] ? contratos[0].ID : null;
+    const leasingId = leasings[0] ? leasings[0].id : null;
 
     if (contractId && leasingId) {
       const data = await obtenerDiasContratoLeasing(contractId, leasingId)

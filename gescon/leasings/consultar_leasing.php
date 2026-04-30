@@ -90,7 +90,7 @@ require '../templates/header.html';
             </label>
           </div>
         </div>
-        <div id="row-client" class="row-filter filter-hidden">
+        <div id="row-client" class="row-filter">
           <div class="flex flex-col w-full relative">
             <select id="filter-client" name="opciones" class="cbo-form-cliente tooltip-input" data-tooltip="Selecciona el cliente"></select>
 
@@ -269,70 +269,67 @@ require '../templates/header.html';
       width: "100%"
     });
 
-    const params = new URLSearchParams(window.location.search)
-    const bank = params.get("banco")
-    const clientId = params.get("clienteId")
-    const contractId = params.get("contratoId")
-    const documentId = params.get("documentoId")
+    const params = new URLSearchParams(window.location.search);
+
+    const bank = params.get("banco");
+    const clientId = params.get("clienteId");
+    const contractId = params.get("contratoId");
+    const documentId = params.get("documentoId");
 
     let leasings;
 
     if (bank) {
       $("#filter-bank").val(bank).trigger("change");
-      $("#row-client").removeClass("filter-hidden");
+    }
 
-      if (clientId) {
-        $("#filter-client").val(clientId).trigger("change")
+    if (clientId) {
+      $("#filter-client").val(clientId).trigger("change");
 
+      const contracts = await getContractsByClient(clientId);
 
-        const contracts = await getContractsByClient(clientId);
-        $('#filter-contract').append(new Option("Todos", 0, false, false)).trigger('change')
+      $("#filter-contract")
+        .empty()
+        .append(new Option("Todos", 0, false, false));
 
-        contracts.forEach((cont) => {
-          var newContract = {
-            id: cont.ID,
-            text: cont.DESCRIPCION
-          };
+      contracts.forEach((cont) => {
+        $("#filter-contract").append(
+          new Option(cont.DESCRIPCION, cont.ID, false, false)
+        );
+      });
 
-          var option = new Option(newContract.text, newContract.id, false, false);
-          $('#filter-contract').append(option).trigger('change');
-        })
+      $("#filter-contract").trigger("change");
+      $("#row-contract").removeClass("filter-hidden");
 
-        $("#row-contract").removeClass("filter-hidden");
+      if (contractId) {
+        $("#filter-contract").val(contractId).trigger("change");
 
-        if (contractId) {
-          $("#filter-contract").val(contractId).trigger("change")
+        const documents = await getDocumentsByContract(contractId, clientId);
 
-          const documents = await getDocumentsByContract(contractId, clientId);
-          $('#filter-document').append(new Option("Todos", 0, false, false)).trigger('change')
+        $("#filter-document")
+          .empty()
+          .append(new Option("Todos", 0, false, false));
 
-          documents.forEach((doc) => {
-            var newDocument = {
-              id: doc.id,
-              text: doc.nroDocumento
-            };
+        documents.forEach((doc) => {
+          $("#filter-document").append(
+            new Option(doc.nroDocumento, doc.id, false, false)
+          );
+        });
 
-            var option = new Option(newDocument.text, newDocument.id, false, false);
-            $('#filter-document').append(option).trigger('change');
-          })
+        $("#filter-document").trigger("change");
+        $("#row-document").removeClass("filter-hidden");
 
-          $("#row-document").removeClass("filter-hidden");
-
-          if (documentId) {
-            $("#filter-document").val(documentId).trigger("change")
-
-            leasings = await getLeasings(bank, clientId, documentId, 'H');
-          } else {
-            leasings = await getLeasings(bank, clientId, contractId, 'P');
-          }
-        } else {
-          leasings = await getLeasings(bank, clientId);
+        if (documentId) {
+          $("#filter-document").val(documentId).trigger("change");
         }
-      } else {
-        leasings = await getLeasings(bank);
       }
+    }
+
+    if (documentId) {
+      leasings = await getLeasings(bank, clientId, documentId, "H");
+    } else if (contractId) {
+      leasings = await getLeasings(bank, clientId, contractId, "P");
     } else {
-      leasings = await getLeasings();
+      leasings = await getLeasings(bank, clientId);
     }
 
     table = $("#listLeasing").DataTable({
@@ -419,7 +416,7 @@ require '../templates/header.html';
               return "Sin periodo";
             }
           },
-          width: "120px",
+          width: "150px",
         },
         {
           data: "cliente",
@@ -494,25 +491,22 @@ require '../templates/header.html';
       } else {
         leasings = await getLeasings(bank);
       }
-
-
-      $("#row-client").removeClass("filter-hidden");
     } else {
       params.delete("banco")
-      params.delete("clienteId")
-      params.delete("contratoId")
-      params.delete("documentoId")
 
-      leasings = await getLeasings();
-
-      $("#filter-client").val('0').trigger('change')
-
-      $("#filter-contract").val('0').trigger('change')
-      $("#filter-document").val('0').trigger('change')
-
-      $("#row-client").addClass("filter-hidden");
-      $("#row-contract").addClass("filter-hidden");
-      $("#row-document").addClass("filter-hidden");
+      if (clientId) {
+        if (contractId) {
+          if (documentId) {
+            leasings = await getLeasings(undefined, clientId, documentId, 'H');
+          } else {
+            leasings = await getLeasings(undefined, clientId, contractId, 'P');
+          }
+        } else {
+          leasings = await getLeasings(undefined, clientId);
+        }
+      } else {
+        leasings = await getLeasings();
+      }
     }
 
     const nuevaURL = `${window.location.pathname}?${params.toString()}`;
@@ -530,8 +524,12 @@ require '../templates/header.html';
 
     let leasings;
 
+    console.log(clientId);
+
     if (clientId != 0) {
       params.set("clienteId", clientId)
+
+      console.log("SI HAY CLIENTE");
 
       leasings = await getLeasings(bank, clientId);
 
@@ -560,6 +558,8 @@ require '../templates/header.html';
 
       $("#row-contract").addClass("filter-hidden");
     }
+
+    console.log(leasings);
 
     params.delete("contratoId")
     params.delete("documentoId")

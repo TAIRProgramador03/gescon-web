@@ -1,16 +1,55 @@
-const getLeasings = async (bank, clientId, contractId, typeContract) => {
+const obtenerInstancia = async () => {
   const IP_LOCAL = await obtenerConfig();
+  return axios.create({
+    baseURL: `http://${IP_LOCAL}:3000`,
+    timeout: 3000,
+  });
+};
 
-  const response = await fetch(
-    `http://${IP_LOCAL}:3000/leasingAll${bank ? `?bank=${bank}` : ""}${clientId ? `&clientId=${clientId}` : ""}${contractId ? `&contractId=${contractId}` : ""}${typeContract ? `&typeContract=${typeContract}` : ""}`,
+let instance;
+
+toastr.options = {
+  closeButton: false,
+  debug: false,
+  newestOnTop: false,
+  progressBar: false,
+  positionClass: "toast-top-right",
+  preventDuplicates: false,
+  onclick: null,
+  showDuration: "300",
+  hideDuration: "1000",
+  timeOut: "5000",
+  extendedTimeOut: "1000",
+  showEasing: "swing",
+  hideEasing: "linear",
+  showMethod: "fadeIn",
+  hideMethod: "fadeOut",
+};
+
+const getLeasings = async (bank, clientId, contractId, typeContract) => {
+  try {
+    instance = await obtenerInstancia();
+
+  const response = await instance.get(
+    `/leasingAll`,
     {
-      credentials: "include",
+      withCredentials: true,
+      params: {
+        bank,
+        clientId,
+        contractId,
+        typeContract
+      }
     },
   );
 
-  const data = await response.json();
+  const data = await response.data;
 
   return data;
+  } catch (error) {
+    console.log(error.response.data || error);
+    toastr.warning(error.response.data.message || "Error al listar leasings", "Oops...");
+  }
 };
 
 const getVehByLeasing = async (leasingId) => {

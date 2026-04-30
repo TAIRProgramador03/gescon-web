@@ -155,6 +155,21 @@ require '../templates/header.html';
             </label>
           </div>
 
+          <!-- OBSERVACION -->
+          <div class="input flex flex-col w-full relative -mt-2!">
+            <textarea
+              id="observacion"
+              name="observacion"
+              type="text"
+              placeholder="Ingrese la observación"
+              class="peer order-2 w-full h-24 resize-none border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" disabled></textarea>
+            <label
+              for="observacion"
+              class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500 peer-disabled:text-[#eee]">
+              Observación (Opcional)
+            </label>
+          </div>
+
           <!-- ARCHIVO -->
           <div id="contenedorArchivo" class="w-full h-[180px] rounded-lg border-2 border-dashed border-gray-300 relative mt-2!">
             <label
@@ -473,6 +488,7 @@ require '../templates/header.html';
         $("#cbo-condicion").prop("disabled", false)
         $("#tarifa").prop("disabled", false)
         $("#btn-guardar").prop("disabled", false)
+        $("#observacion").prop("disabled", false)
       }
     });
 
@@ -501,6 +517,7 @@ require '../templates/header.html';
 
         // limpiar input
         $("#acta").val("");
+        $("#observacion").val(null)
 
         // volver a estado inicial
         $("#nombreArchivo").text("");
@@ -524,6 +541,7 @@ require '../templates/header.html';
         $("#cbo-condicion").prop("disabled", true)
         $("#tarifa").prop("disabled", true)
         $("#btn-guardar").prop("disabled", true)
+        $("#observacion").prop("disabled", true)
       }
     });
 
@@ -724,6 +742,7 @@ require '../templates/header.html';
     const date = $("#fechaReasignacion").val();
     const contract = $("#cbo-contratos").val();
     const condition = $("#cbo-condicion").val();
+    const observation = $("#observacion").val();
     const tariff = $("#tarifa").val();
     const file = $("#acta")[0].files[0];
 
@@ -747,6 +766,7 @@ require '../templates/header.html';
       condition,
       tariff,
       date: dayjs(date, "DD/MM/YYYY").format("YYYY-MM-DD"),
+      observation,
       file: key
     };
 
@@ -771,6 +791,7 @@ require '../templates/header.html';
     $("#cbo-contratos").val(null).trigger("change")
     $("#cbo-condicion").val(null).trigger("change")
     $("#tarifa").val(null)
+    $("#observacion").val(null)
     fp.clear();
 
     archivoActual = null;
@@ -799,6 +820,7 @@ require '../templates/header.html';
     $("#cbo-condicion").prop("disabled", true)
     $("#tarifa").prop("disabled", true)
     $("#btn-guardar").prop("disabled", true)
+    $("#observacion").prop("disabled", true)
   }
 </script>
 

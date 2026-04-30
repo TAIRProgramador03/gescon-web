@@ -322,6 +322,20 @@ require '../templates/header.html';
             </div>
           </div>
         </div>
+        <!-- OBSERVACION -->
+        <div class="input flex flex-col w-full relative -mt-2!">
+          <textarea
+            id="observacion"
+            name="observacion"
+            type="text"
+            placeholder="Ingrese la observación"
+            class="peer order-2 w-full h-24 resize-none border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" readonly></textarea>
+          <label
+            for="observacion"
+            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500 peer-disabled:text-[#eee]">
+            Observación
+          </label>
+        </div>
       </div>
     </div>
   </div>
@@ -525,6 +539,7 @@ require '../templates/header.html';
     const findAssing = await getHistoryById(key);
 
     $(".fecha-info").text(`(${dayjs(convertirFecha(findAssing.fecha)).format("DD/MM/YYYY")})`);
+    $('textarea[name=observacion]').text(`${findAssing.observacion}`);
 
     $(".anterior-info").find(".operacion-info").text(findAssing.anterior.operacion)
     $(".anterior-info").find(".tarifa-info").text(findAssing.anterior.tarifa)
@@ -571,6 +586,7 @@ require '../templates/header.html';
 
   function clearItmReasing() {
     $(".fecha-info").empty();
+    $('textarea[name=observacion]').empty();
 
     $(".anterior-info").find(".operacion-info").text("--")
     $(".anterior-info").find(".tarifa-info").text("--")

@@ -691,7 +691,7 @@ export async function guardaAsignacion() {
     let modelo = $fila.find('input[name="modelo[]"]').val();
     let tarifa = $fila.find('input[name="tarifa[]"]').val();
 
-    if(esDecimalValido(tarifa)) {
+    if(!esDecimalValido(tarifa)) {
       throw new Error(`La tarifa no es un numero valido en la placa ${numpla}`);
     }
 

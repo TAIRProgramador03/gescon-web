@@ -211,7 +211,6 @@ export async function listaVehiculosAsignables(clientId) {
           url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
         },
         paging: false,
-        info: false, // "Mostrando 1 a 100..."
         lengthChange: false,
         emptyTable: "No hay vehículos disponibles",
         fixedHeader: true,
@@ -692,6 +691,10 @@ export async function guardaAsignacion() {
     let modelo = $fila.find('input[name="modelo[]"]').val();
     let tarifa = $fila.find('input[name="tarifa[]"]').val();
 
+    if(esDecimalValido(tarifa)) {
+      throw new Error(`La tarifa no es un numero valido en la placa ${numpla}`);
+    }
+
     let fechaIni = dayjs(
       $fila.find('input[name="fechaIni[]"]').val(),
       "DD/MM/YYYY",
@@ -941,4 +944,8 @@ export function isPermission(permission) {
   const permissions = JSON.parse(localStorage.getItem("permissions")) || [];
 
   return permissions.includes(permission);
+}
+
+function esDecimalValido(valor) {
+  return /^\d+(\.\d+)?$/.test(valor);
 }

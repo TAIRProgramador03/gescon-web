@@ -215,7 +215,7 @@ require '../templates/header.html';
     obtenerVehiculosReasignacion,
     isPermission,
     cargarOperaciones,
-    cargarContrato
+    cargarContrato,
   } from '/js/adiciona_vehiculo.js';
 
   import {
@@ -430,28 +430,31 @@ require '../templates/header.html';
     const input = this;
     const container = $(this).closest("div");
     const btnRemove = container.find(".remove-file");
+    const label = container.find("label");
+    const span = label.find("span");
 
     if (input.files && input.files.length > 0) {
+      const fileName = input.files[0].name;
+
+      // 🔥 mostrar nombre
+      span.text(fileName);
+
+      // 🔥 agregar tooltip
+      label.attr("title", fileName);
+
       btnRemove.removeClass("hidden").addClass("flex");
     } else {
-      const label = container.find("label");
-      const span = label.find("span");
       const icon = label.find("i");
 
-      // 🔹 limpiar input file
       input.value = "";
 
-      // 🔹 restaurar texto
       span.text("Subir archivo");
 
-      // 🔹 restaurar icono
+      // 🔥 quitar tooltip
+      label.removeAttr("title");
+
       icon.attr("class", "bi bi-file-earmark-arrow-up");
-
-      // 🔹 restaurar color
       label.removeClass("bg-green-600").addClass("bg-blue-800");
-
-      // 🔹 ocultar botón remove
-      $(this).addClass("hidden").removeClass("flex");
 
       btnRemove.addClass("hidden").removeClass("flex");
     }
@@ -473,6 +476,8 @@ require '../templates/header.html';
 
     // 🔹 restaurar icono
     icon.attr("class", "bi bi-file-earmark-arrow-up");
+
+    label.removeAttr("title");
 
     // 🔹 restaurar color
     label.removeClass("bg-green-600").addClass("bg-blue-800");
@@ -503,6 +508,21 @@ require '../templates/header.html';
     await cargarContrato(idCli);
 
     hideSkeleton();
+  });
+
+  $(document).on('input', 'input[name="tarifa[]"]', function() {
+    let value = this.value;
+
+    // 🔥 1. eliminar todo lo que no sea número o punto
+    value = value.replace(/[^0-9.]/g, '');
+
+    // 🔥 2. permitir solo un punto decimal
+    value = value.replace(/(\..*?)\..*/g, '$1');
+
+    // 🔥 3. opcional: limitar decimales (ej: 2)
+    value = value.replace(/^(\d+)(\.\d{0,2})?.*$/, '$1$2');
+
+    this.value = value;
   });
 </script>
 

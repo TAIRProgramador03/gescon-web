@@ -41,6 +41,9 @@ require './templates/header.html';
 <!-- MOTION -->
 <script src="https://cdn.jsdelivr.net/npm/motion@10/dist/motion.min.js"></script>
 
+<!-- APEX CHART -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 <!-- CSS DE LA VISTA DASHBOARD -->
 <style>
   <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/dashboard.css'; ?>
@@ -86,28 +89,32 @@ require './templates/header.html';
       </div>
 
       <div class="dashboard-cont-section">
-        <div class="link-contracts dashboard-item item-small">
+        <div class="link-contracts dashboard-item item-small relative overflow-hidden hover:-translate-y-1 transition-all hover:shadow-md! hover:shadow-blue-400!">
+          <div class="w-full h-1 bg-blue-700 top-0 left-0 absolute"></div>
           <div>
             <h3>Contratos</h3>
             <div class="data-value" id="con-Contra">0</div>
           </div>
           <img src="/public/img/icons/icon-total-contracts.webp" alt="Contratos">
         </div>
-        <div class="link-documents dashboard-item item-small">
+        <div class="link-documents dashboard-item item-small relative overflow-hidden hover:-translate-y-1 transition-all hover:shadow-md! hover:shadow-taupe-400!">
+          <div class="w-full h-1 bg-taupe-700 top-0 left-0 absolute"></div>
           <div>
             <h3>Documentos</h3>
             <div class="data-value" id="con-Adenda">0</div>
           </div>
           <img src="/public/img/icons/icon-total-documents.webp" alt="Documentos">
         </div>
-        <div class="link-leasings dashboard-item item-small">
+        <div class="link-leasings dashboard-item item-small relative overflow-hidden hover:-translate-y-1 transition-all hover:shadow-md! hover:shadow-cyan-400!">
+          <div class="w-full h-1 bg-cyan-700 top-0 left-0 absolute"></div>
           <div>
             <h3>Leasings</h3>
             <div class="data-value" id="con-Carta">0</div>
           </div>
           <img src="/public/img/icons/icon-total-leasings.webp" alt="Leasings">
         </div>
-        <div class="link-vehicles dashboard-item item-small">
+        <div class="link-vehicles dashboard-item item-small relative overflow-hidden hover:-translate-y-1 transition-all hover:shadow-md! hover:shadow-yellow-400!">
+          <div class="w-full h-1 bg-yellow-700 top-0 left-0 absolute"></div>
           <div>
             <h3>Vehiculos asignados</h3>
             <div class="data-value" id="con-OC">0</div>
@@ -117,12 +124,12 @@ require './templates/header.html';
       </div>
 
       <div class="dashboard-time-section">
-        <div class="dashboard-item item-large">
+        <div class="dashboard-item item-large bg-blue-50! border-blue-600!">
           <div class="flex items-center gap-1">
-            <h3>Linea de tiempo (Contrato - Leasing)</h3>
-            <i class="tooltip-info bi bi-exclamation-circle text-gray-400 text-sm" data-tooltip="Visualización gráfica de la diferencia de tiempo entre un Contrato y su Leasing."></i>
+            <h3 class="text-blue-500!">Linea de tiempo (Contrato - Leasing)</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-blue-500! text-sm" data-tooltip="Visualización gráfica de la diferencia de tiempo entre un Contrato y su Leasing."></i>
           </div>
-          <div id="data-value-comparation" class="data-value"></div>
+          <div id="data-value-comparation" class="data-value text-blue-800!"></div>
           <div class="row-cbo-comparation">
             <!-- CONTRATOS -->
             <div class="flex flex-col w-full relative">
@@ -130,7 +137,7 @@ require './templates/header.html';
 
               <label
                 for="cbo-contratos"
-                class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+                class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-blue-50 w-fit transition-colors">
                 Contratos
               </label>
             </div>
@@ -141,7 +148,7 @@ require './templates/header.html';
 
               <label
                 for="cbo-leasings"
-                class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+                class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-blue-50 w-fit transition-colors">
                 Leasings
               </label>
             </div>
@@ -149,19 +156,19 @@ require './templates/header.html';
           <canvas id="comparationChart" class="comparationChart !overflow-visible"></canvas>
         </div>
 
-        <div class="dashboard-item item-large">
+        <div class="dashboard-item item-large bg-yellow-50! border-yellow-600!">
           <div class="flex items-center gap-1">
-            <h3>Compra por modelo</h3>
-            <i class="tooltip-info bi bi-exclamation-circle text-gray-400 text-sm" data-tooltip="Reporte gráfico de las compras de vehiculos por modelo genérico."></i>
+            <h3 class="text-yellow-500!">Compra por modelo</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-yellow-500! text-sm" data-tooltip="Reporte gráfico de las compras de vehiculos por modelo genérico."></i>
           </div>
-          <div id="vehFleetDifference" class="data-value">0,00 PEN</div>
+          <div id="vehFleetDifference" class="data-value text-yellow-800!">0,00 PEN</div>
           <div class="filter-veh-fleet">
             <div class="flex flex-col w-full relative">
               <select id="cbo-models-gen" name="models"></select>
 
               <label
                 for="cbo-models-gen"
-                class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+                class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-yellow-50 w-fit transition-colors">
                 Modelos
               </label>
             </div>
@@ -171,7 +178,7 @@ require './templates/header.html';
 
                 <label
                   for="cbo-from-year"
-                  class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+                  class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-yellow-50 w-fit transition-colors">
                   Desde
                 </label>
               </div>
@@ -180,14 +187,14 @@ require './templates/header.html';
 
                 <label
                   for="cbo-to-year"
-                  class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
+                  class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-yellow-50 w-fit transition-colors">
                   Hasta
                 </label>
               </div>
             </div>
           </div>
           <div class="chart-veh-model-container">
-            <canvas id="barModelYear" class="can-barra"></canvas>
+            <div id="barModelYear" class="can-barra w-full h-full -translate-y-8"></div>
           </div>
         </div>
 
@@ -230,7 +237,7 @@ require './templates/header.html';
       </div>
 
       <div class="dashboard-doughnut-section">
-        <div class="dashboard-item item-large !bg-red-100 !border-red-600">
+        <div class="dashboard-item item-large !bg-red-50 !border-red-600">
           <div class="flex items-center gap-1">
             <h3 class="!text-red-500">Vehiculos con leasings Vencidos</h3>
             <i class="tooltip-info bi bi-exclamation-circle text-red-500 text-sm" data-tooltip="Reporte gráfico de vehiculos asignados a un Leasign que ha vencido."></i>
@@ -241,7 +248,7 @@ require './templates/header.html';
           </div>
         </div>
 
-        <div class="dashboard-item item-large !bg-green-100 !border-green-600">
+        <div class="dashboard-item item-large !bg-green-50 !border-green-600">
           <div class="flex items-center gap-1">
             <h3 class="!text-green-500">Vehiculos con leasings Por Vencer</h3>
             <i class="tooltip-info bi bi-exclamation-circle text-green-500 text-sm" data-tooltip="Reporte gráfico de vehiculos asignados a un Leasign apunto de vencer."></i>
@@ -303,6 +310,7 @@ require './templates/header.html';
   document.title = "Dashboard | Gescon";
 
   lucide.createIcons();
+
   // CHARGE SCREEN
   let onLoadWindow = 0;
 
@@ -609,59 +617,73 @@ require './templates/header.html';
   }
 
   const initBarModelYear = async (data) => {
-
-    const ctx = $("#barModelYear")
-
     const fullLabels = data.map(itm => itm.MODELO);
-    const shortLabels = fullLabels.map(label => label.slice(0, 10) + "...");
-
-    vehFleetChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: shortLabels,
-        datasets: [{
-          label: 'Modelos',
-          data: data.map((cli) => cli.T_PRECIO_VEH),
-          backgroundColor: data.map((cli) => {
-            return 'rgba(54, 162, 235, 0.2)'
-          }),
-          borderColor: data.map((cli) => {
-            return 'rgb(54, 162, 235)'
-          }),
-          borderWidth: 1,
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          tooltip: {
-            callbacks: {
-              title: function(context) {
-                const index = context[0].dataIndex;
-                return fullLabels[index]; // 👈 nombre completo
-              }
-            }
-          },
-          // zoom: {
-          //   pan: {
-          //     enabled: true,
-          //     mode: 'x'
-          //   },
-          //   zoom: {
-          //     wheel: {
-          //       enabled: true
-          //     },
-          //     pinch: {
-          //       enabled: true
-          //     },
-          //     mode: 'x'
-          //   }
-          // }
-        }
+    const shortLabels = fullLabels.map(label => {
+      if (label.length > 10) {
+        return label.slice(0, 10) + "...";
+      } else {
+        return label
       }
-    })
+    });
+
+    if (!vehFleetChart) {
+      var options = {
+        chart: {
+          type: 'bar',
+          height: '100%',
+          toolbar: {
+            show: false
+          }
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true
+          }
+        },
+        xaxis: {
+          categories: shortLabels
+        },
+        colors: ['rgb(240, 177, 0)'],
+        tooltip: {
+          y: {
+            formatter: function(val, opts) {
+              const index = opts.dataPointIndex;
+              return `${fullLabels[index]} | ${Number(val).toLocaleString('en-US')}`;
+            }
+          }
+        },
+        series: [{
+          name: 'Modelo',
+          data: data.map(cli => cli.T_PRECIO_VEH)
+        }],
+      };
+
+      vehFleetChart = new ApexCharts(
+        document.querySelector("#barModelYear"),
+        options
+      );
+
+      vehFleetChart.render();
+    } else {
+      vehFleetChart.updateOptions({
+        xaxis: {
+          categories: shortLabels
+        },
+        colors: ['rgb(240, 177, 0)'],
+        tooltip: {
+          y: {
+            formatter: function(val, opts) {
+              const index = opts.dataPointIndex;
+              return `${fullLabels[index]} | ${Number(val).toLocaleString('en-US')}`;
+            }
+          }
+        },
+        series: [{
+          name: 'Modelo',
+          data: data.map(cli => cli.T_PRECIO_VEH)
+        }],
+      });
+    }
   }
 
   const initDoughnutLeaA = async (data, clientId) => {
@@ -704,7 +726,19 @@ require './templates/header.html';
         plugins: {
           legend: {
             position: 'right', // Cambia de 'top' a 'right'
-            align: 'center' // Opcional: 'start', 'center' o 'end'
+            align: 'center', // Opcional: 'start', 'center' o 'end'
+            onClick: (e, legendItem, legend) => {
+              const chart = legend.chart;
+
+              const index = legendItem.index;
+              const label = chart.data.labels[index];
+
+              console.log("Click en:", label);
+
+              // ✅ comportamiento nativo seguro
+              chart.toggleDataVisibility(index);
+              chart.update();
+            }
           }
         },
         onClick: async (evento, elementosActivos) => {
@@ -897,7 +931,19 @@ require './templates/header.html';
         plugins: {
           legend: {
             position: 'right', // Cambia de 'top' a 'right'
-            align: 'center' // Opcional: 'start', 'center' o 'end'
+            align: 'center', // Opcional: 'start', 'center' o 'end'
+            onClick: (e, legendItem, legend) => {
+              const chart = legend.chart;
+
+              const index = legendItem.index;
+              const label = chart.data.labels[index];
+
+              console.log("Click en:", label);
+
+              // ✅ comportamiento nativo seguro
+              chart.toggleDataVisibility(index);
+              chart.update();
+            }
           }
         },
         onClick: async (evento, elementosActivos) => {
@@ -1408,11 +1454,11 @@ require './templates/header.html';
             data: 'diferenciaDias',
             render: (data) => {
               if (data > 0) {
-                return `<span class="w-fit px-3 py-1 rounded-md bg-green-400">Leasing vence antes (${Math.abs(data)} dias)</span>`;
+                return `<span class="w-fit px-3 py-1 rounded-md font-medium border border-green-500 bg-green-100 text-green-500">Leasing vence antes (${Math.abs(data)} dias)</span>`;
               } else if (data < 0) {
-                return `<span class="w-fit px-3 py-1 rounded-md bg-red-400">Contrato vence antes (${Math.abs(data)} dias)</span>`;
+                return `<span class="w-fit px-3 py-1 rounded-md font-medium border border-yellow-500 bg-yellow-100 text-yellow-500">Contrato vence antes (${Math.abs(data)} dias)</span>`;
               } else {
-                return `<span class="w-fit px-3 py-1 rounded-md bg-yellow-400">Vencen a la vez</span>`;
+                return `<span class="w-fit px-3 py-1 rounded-md font-medium border border-blue-500 bg-blue-100 text-blue-500">Vencen a la vez</span>`;
               }
             },
             width: "250px"
@@ -1421,9 +1467,9 @@ require './templates/header.html';
             data: null,
             render: (data, type, row) => {
               const status = row.idOpe == 109 ? "Vendido" : row.idOpe != row.secOpe ? "Inactivo" : "Activo";
-              const color = row.idOpe == 109 ? "bg-yellow-400" : row.idOpe != row.secOpe ? "bg-red-400" : "bg-green-400";
+              const color = row.idOpe == 109 ? "border-yellow-500 bg-yellow-100 text-yellow-500" : row.idOpe != row.secOpe ? "border-red-500 bg-red-100 text-red-500" : "border-green-500 bg-green-100 text-green-500";
 
-              return `<span class="w-fit px-3 py-1 rounded-md ${color}">${status}</span>`
+              return `<span class="w-fit px-3 py-1 rounded-md border font-medium ${color}">${status}</span>`
             }
           },
         ]
@@ -1614,7 +1660,7 @@ require './templates/header.html';
     const contractId = contratos[0] ? contratos[0].ID : null
     const leasingId = leasings[0] ? leasings[0].id : null;
 
-    if (contractId && leasingId) {
+    if (clientId != 0 && contractId && leasingId) {
       const data = await obtenerDiasContratoLeasing(contractId, leasingId)
 
       if (data.diferenciaDias > 0) {
@@ -1764,45 +1810,7 @@ require './templates/header.html';
             currency: 'PEN'
           })}`)
 
-    vehFleetChart.data.labels = shortLabels;
-    vehFleetChart.data.datasets = [{
-      label: 'Modelos',
-      data: data.LIST.map((cli) => cli.T_PRECIO_VEH),
-      fill: false,
-      backgroundColor: data.LIST.map((cli) => {
-        return 'rgba(54, 162, 235, 0.2)'
-      }),
-      borderColor: data.LIST.map((cli) => {
-        return 'rgb(54, 162, 235)'
-      }),
-      borderWidth: 1,
-    }]
-    vehFleetChart.options.plugins = {
-      tooltip: {
-        callbacks: {
-          title: function(context) {
-            const index = context[0].dataIndex;
-            return fullLabels[index];
-          }
-        }
-      },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x'
-        },
-        zoom: {
-          wheel: {
-            enabled: true
-          },
-          pinch: {
-            enabled: true
-          },
-          mode: 'x'
-        }
-      }
-    }
-    vehFleetChart.update();
+    await initBarModelYear(data.LIST);
   })
 
   $("#cbo-from-year").on("select2:select", async () => {
@@ -1833,45 +1841,7 @@ require './templates/header.html';
             currency: 'PEN'
           })}`)
 
-    vehFleetChart.data.labels = shortLabels;
-    vehFleetChart.data.datasets = [{
-      label: 'Modelos',
-      data: data.LIST.map((cli) => cli.T_PRECIO_VEH),
-      fill: false,
-      backgroundColor: data.LIST.map((cli) => {
-        return 'rgba(54, 162, 235, 0.2)'
-      }),
-      borderColor: data.LIST.map((cli) => {
-        return 'rgb(54, 162, 235)'
-      }),
-      borderWidth: 1,
-    }]
-    vehFleetChart.options.plugins = {
-      tooltip: {
-        callbacks: {
-          title: function(context) {
-            const index = context[0].dataIndex;
-            return fullLabels[index];
-          }
-        }
-      },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x'
-        },
-        zoom: {
-          wheel: {
-            enabled: true
-          },
-          pinch: {
-            enabled: true
-          },
-          mode: 'x'
-        }
-      }
-    }
-    vehFleetChart.update();
+    await initBarModelYear(data.LIST);
   })
 
   $("#cbo-to-year").on("select2:select", async () => {
@@ -1889,45 +1859,7 @@ require './templates/header.html';
             currency: 'PEN'
           })}`)
 
-    vehFleetChart.data.labels = shortLabels;
-    vehFleetChart.data.datasets = [{
-      label: 'Modelos',
-      data: data.LIST.map((cli) => cli.T_PRECIO_VEH),
-      fill: false,
-      backgroundColor: data.LIST.map((cli) => {
-        return 'rgba(54, 162, 235, 0.2)'
-      }),
-      borderColor: data.LIST.map((cli) => {
-        return 'rgb(54, 162, 235)'
-      }),
-      borderWidth: 1,
-    }]
-    vehFleetChart.options.plugins = {
-      tooltip: {
-        callbacks: {
-          title: function(context) {
-            const index = context[0].dataIndex;
-            return fullLabels[index];
-          }
-        }
-      },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x'
-        },
-        zoom: {
-          wheel: {
-            enabled: true
-          },
-          pinch: {
-            enabled: true
-          },
-          mode: 'x'
-        }
-      }
-    }
-    vehFleetChart.update();
+    await initBarModelYear(data.LIST);
   })
 
   $("#cbo-clients-multiple").on("change", async () => {

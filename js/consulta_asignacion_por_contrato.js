@@ -112,10 +112,10 @@ async function generarExcel(data, title) {
       return [
         i + 1,
         row.placa,
-        row.año,
-        row.color,
         row.marca,
         row.modelo,
+        row.año,
+        row.color,
         transformType(row.terreno, {
           0: "Superficie",
           1: "Socavón",
@@ -159,10 +159,10 @@ async function generarExcel(data, title) {
     columns: [
       { name: "Item", filterButton: true },
       { name: "Placa", filterButton: true },
-      { name: "Año", filterButton: true },
-      { name: "Color", filterButton: true },
       { name: "Marca", filterButton: true },
       { name: "Modelo", filterButton: true },
+      { name: "Año", filterButton: true },
+      { name: "Color", filterButton: true },
       { name: "Terreno", filterButton: true },
       { name: "Leasing", filterButton: true },
       { name: "Fecha Inicio de Leasing", filterButton: true },
@@ -220,10 +220,10 @@ async function generarExcel(data, title) {
   // Tamaño columnas
   ws.getColumn(1).width = 8; // Item
   ws.getColumn(2).width = 11; // Placa
-  ws.getColumn(3).width = 30; // Año
-  ws.getColumn(4).width = 40; // Color
-  ws.getColumn(5).width = 30; // Marca
-  ws.getColumn(6).width = 45; // Modelo
+  ws.getColumn(3).width = 30; // Marca
+  ws.getColumn(4).width = 45; // Modelo
+  ws.getColumn(5).width = 30; // Año
+  ws.getColumn(6).width = 40; // Color
   ws.getColumn(7).width = 27; // Terreno
   ws.getColumn(8).width = 27; // Leasing
   ws.getColumn(9).width = 30; // Fecha Ini Lea

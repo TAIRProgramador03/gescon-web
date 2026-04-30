@@ -294,7 +294,7 @@ i {
 
 .chart-veh-model-container {
   position: relative;
-  height: 300px; /* O el alto que desees */
+  height: 330px; /* O el alto que desees */
   width: 100%;
 }
 
@@ -840,6 +840,7 @@ div.dt-container.dt-empty-footer .dt-scroll-body {
 }
 
 .select2-container--default .select2-selection--single {
+  background: transparent !important;
   outline: none;
   border: 2px solid oklch(87.2% 0.01 258.338) !important;
   border-radius: 5px;

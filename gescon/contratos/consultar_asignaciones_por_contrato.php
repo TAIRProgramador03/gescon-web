@@ -83,10 +83,10 @@ require '../templates/header.html';
         <tr>
           <th class="bg-yellow-400 !text-white !font-medium">Item</th>
           <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
-          <th class="bg-yellow-400 !text-white !font-medium">Año</th>
-          <th class="bg-yellow-400 !text-white !font-medium">Color</th>
           <th class="bg-yellow-400 !text-white !font-medium">Marca</th>
           <th class="bg-yellow-400 !text-white !font-medium">Modelo</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Año</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Color</th>
           <th class="bg-yellow-400 !text-white !font-medium">Terreno</th>
           <th class="bg-green-400 !text-white !font-medium">Leasing</th>
           <th class="bg-green-400 !text-white !font-medium">Fecha Inicio de leasing</th>
@@ -271,19 +271,19 @@ require '../templates/header.html';
           width: "80px"
         },
         {
-          data: "año"
-        },
-        {
-          data: "color",
-          width: "100px"
-        },
-        {
           data: "marca",
           width: "80px"
         },
         {
           data: "modelo",
           width: "150px"
+        },
+        {
+          data: "año"
+        },
+        {
+          data: "color",
+          width: "100px"
         },
         {
           data: "terreno",

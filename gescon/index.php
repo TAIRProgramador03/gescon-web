@@ -260,6 +260,24 @@ require './templates/header.html';
         </div>
       </div>
 
+      <div class="col-span-full grid [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))] gap-5">
+        <div class="col-span-2 bg-white border border-gray-300 rounded-lg shadow-md p-5">
+          <div class="flex items-center gap-1">
+            <h3 class="!text-red-500 !text-xs !font-medium uppercase !mt-0">Deprecación de vehiculos de leasings vencidos</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-red-500 text-sm" data-tooltip="Reporte gráfico de la deprecación en los costos de los vehiculos de leasings vencidos."></i>
+          </div>
+          <div id="deprecatedLeaA"></div>
+        </div>
+
+        <div class="col-span-2 bg-white border border-gray-300 rounded-lg shadow-md p-5">
+          <div class="flex items-center gap-1">
+            <h3 class="!text-green-500 !text-xs !font-medium uppercase !mt-0">Deprecación de vehiculos de leasings por vencer</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-green-500 text-sm" data-tooltip="Reporte gráfico de la deprecación en los costos de los vehiculos de leasings por vencer."></i>
+          </div>
+          <div id="deprecatedLeaB"></div>
+        </div>
+      </div>
+
       <div class="dashboard-item item-large chart-vehicles-cli">
         <div class="flex items-center gap-1">
           <h3>Total vehiculos por clientes</h3>
@@ -370,6 +388,8 @@ require './templates/header.html';
   let vehFleetChart;
   let chartDoughnutLeaA;
   let chartDoughnutLeaB;
+  let chartDeprecatedLeaA;
+  let chartDeprecatedLeaB;
   let chartBarVehCli;
   let chartBarComparation;
 
@@ -691,6 +711,8 @@ require './templates/header.html';
 
     $("#data-value-veh-exp").text(`${data.menor30Dias + data.entre30Y45Dias + data.entre45Y60Dias + data.entre60Y90Dias + data.mayor90Dias} vehiculos`)
 
+    let activeIndex = null;
+
     chartDoughnutLeaA = new Chart(ctx, {
       type: 'doughnut',
       data: {
@@ -727,17 +749,53 @@ require './templates/header.html';
           legend: {
             position: 'right', // Cambia de 'top' a 'right'
             align: 'center', // Opcional: 'start', 'center' o 'end'
-            onClick: (e, legendItem, legend) => {
+            labels: {
+              generateLabels: function(chart) {
+                const original = Chart.overrides.doughnut.plugins.legend.labels.generateLabels;
+                const labels = original(chart);
+
+                labels.forEach((label, i) => {
+                  if (activeIndex !== null && i !== activeIndex) {
+                    label.fillStyle = 'rgba(200, 200, 200, 0.4)';
+                    label.strokeStyle = 'rgba(200, 200, 200, 0.4)';
+                    label.fontColor = 'rgba(200, 200, 200, 0.6)';
+                  }
+                });
+
+                return labels;
+              }
+            },
+            onClick: async (e, legendItem, legend) => {
               const chart = legend.chart;
-
               const index = legendItem.index;
-              const label = chart.data.labels[index];
+              let label = legendItem.text;
+              const meta = chart.getDatasetMeta(0);
 
-              console.log("Click en:", label);
+              if (activeIndex === index) {
+                // reset (mostrar todos)
+                meta.data.forEach(el => el.hidden = false);
+                activeIndex = null;
+                label = null;
+              } else {
+                // mostrar solo uno
+                meta.data.forEach((el, i) => {
+                  el.hidden = i !== index;
+                });
+                activeIndex = index;
+              }
 
-              // ✅ comportamiento nativo seguro
-              chart.toggleDataVisibility(index);
               chart.update();
+
+              // calcular total visible
+              const totalVisible = chart.data.datasets[0].data
+                .reduce((acc, val, i) => {
+                  const isVisible = meta.data[i].hidden !== true;
+                  return isVisible ? acc + Number(val) : acc;
+                }, 0);
+
+              $("#data-value-veh-exp").text(`${totalVisible} vehiculos`)
+
+              await initDeprecatedLeaA(label, clientId);
             }
           }
         },
@@ -896,6 +954,8 @@ require './templates/header.html';
 
     $("#data-value-veh-to-exp").text(`${data.menor30Dias + data.entre30Y45Dias + data.entre45Y60Dias + data.entre60Y90Dias + data.mayor90Dias} vehiculos`)
 
+    let activeIndex = null;
+
     chartDoughnutLeaB = new Chart(ctx, {
       type: 'doughnut',
       data: {
@@ -932,17 +992,49 @@ require './templates/header.html';
           legend: {
             position: 'right', // Cambia de 'top' a 'right'
             align: 'center', // Opcional: 'start', 'center' o 'end'
+            labels: {
+              generateLabels: function(chart) {
+                const original = Chart.overrides.doughnut.plugins.legend.labels.generateLabels;
+                const labels = original(chart);
+
+                labels.forEach((label, i) => {
+                  if (activeIndex !== null && i !== activeIndex) {
+                    label.fillStyle = 'rgba(200, 200, 200, 0.4)';
+                    label.strokeStyle = 'rgba(200, 200, 200, 0.4)';
+                    label.fontColor = 'rgba(200, 200, 200, 0.6)';
+                  }
+                });
+
+                return labels;
+              }
+            },
             onClick: (e, legendItem, legend) => {
               const chart = legend.chart;
-
               const index = legendItem.index;
-              const label = chart.data.labels[index];
+              const meta = chart.getDatasetMeta(0);
 
-              console.log("Click en:", label);
+              if (activeIndex === index) {
+                // 🔄 reset (mostrar todos)
+                meta.data.forEach(el => el.hidden = false);
+                activeIndex = null;
+              } else {
+                // 🔥 mostrar solo uno
+                meta.data.forEach((el, i) => {
+                  el.hidden = i !== index;
+                });
+                activeIndex = index;
+              }
 
-              // ✅ comportamiento nativo seguro
-              chart.toggleDataVisibility(index);
               chart.update();
+
+              // calcular total visible
+              const totalVisible = chart.data.datasets[0].data
+                .reduce((acc, val, i) => {
+                  const isVisible = meta.data[i].hidden !== true;
+                  return isVisible ? acc + Number(val) : acc;
+                }, 0);
+
+              $("#data-value-veh-to-exp").text(`${totalVisible} vehiculos`)
             }
           }
         },
@@ -1096,6 +1188,110 @@ require './templates/header.html';
     })
   }
 
+  const initDeprecatedLeaA = async (label, clienteId) => {
+    const data = await obtenerDepreciacionVehiculosExpirados(label, clienteId);
+
+    if (!chartDeprecatedLeaA) {
+      const options = {
+        series: [{
+          name: "Perdida",
+          data: data.map(veh => veh.perdidaAcumulada)
+        }],
+        chart: {
+          type: 'bar',
+          height: 350,
+          toolbar: {
+            show: false
+          }
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 4,
+            borderRadiusApplication: 'end',
+            horizontal: true,
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        xaxis: {
+          categories: data.map(veh => `${veh.anio}`),
+        },
+        tooltip: {
+          y: {
+            formatter: function(val) {
+              return Number(val).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                style: 'currency',
+                currency: 'USD',
+              });
+            }
+          }
+        },
+        colors: ['#fb2c36']
+      };
+
+      chartDeprecatedLeaA = new ApexCharts(document.querySelector("#deprecatedLeaA"), options);
+      chartDeprecatedLeaA.render();
+    } else {
+      chartDeprecatedLeaA.updateOptions({
+        xaxis: {
+          categories: data.map(veh => `${veh.anio}`),
+        },
+        series: [{
+          name: "Perdida",
+          data: data.map(veh => veh.perdidaAcumulada)
+        }],
+      });
+    }
+  }
+
+  const initDeprecatedLeaB = async (data) => {
+    if (!chartDeprecatedLeaB) {
+      const options = {
+        series: [{
+          name: "Posible perdida",
+          data: [400, 430, 448, 470, 540, 580, 690]
+        }],
+        chart: {
+          type: 'bar',
+          height: 350,
+          toolbar: {
+            show: false
+          }
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 4,
+            borderRadiusApplication: 'end',
+            horizontal: true,
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        xaxis: {
+          categories: ['2020', '2021', '2022', '2023', '2024', '2025', '2026'],
+        },
+        tooltip: {
+          y: {
+            formatter: function(val) {
+              return Number(val).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              });
+            }
+          }
+        },
+        colors: ['#00c951']
+      };
+
+      chartDeprecatedLeaB = new ApexCharts(document.querySelector("#deprecatedLeaB"), options);
+      chartDeprecatedLeaB.render();
+    }
+  }
+
   const initBarVehicleLea = async (data) => {
     const ctx = $("#barVehicleLea")
 
@@ -1186,6 +1382,8 @@ require './templates/header.html';
       initDoughnutLeaA(quantityVehLea.vencidos, clientId);
       initDoughnutLeaB(quantityVehLea.porVencer, clientId);
       initBarVehicleLea(firstTenResult);
+      initDeprecatedLeaA(null, clientId);
+      initDeprecatedLeaB();
 
       const client = await obtenerClientes();
 
@@ -1627,6 +1825,8 @@ require './templates/header.html';
 
     chartDoughnutLeaA.update();
     chartDoughnutLeaB.update();
+
+    await initDeprecatedLeaA(null, clientId);
 
     // CONT UPDATE
     cargarContContrato(clientId != 0 ? clientId : undefined);

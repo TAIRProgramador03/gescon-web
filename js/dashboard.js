@@ -188,20 +188,24 @@ async function obtenerVehiculosPorVencer(label, clienteId) {
     console.error(error.response.data.message);
     toastr.warning(error.response.data.message, "Oops...");
   }
+}
 
-  // const IP_LOCAL = await obtenerConfig()
+async function obtenerDepreciacionVehiculosExpirados(label, clienteId) {
+  try {
+    instance = await obtenerInstancia();
+    const response = await instance.get("/deprecatedVehicleExpire", {
+      withCredentials: true,
+      params: {
+        label,
+        clienteId,
+      },
+    });
 
-  // const response = await fetch(
-  //   `http://${IP_LOCAL}:3000/listVehicleToExpires?draw=${draw}&start=${currentPage}&length=${length}&label=${label}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
-  //   {
-  //     method: "GET",
-  //     credentials: "include",
-  //   },
-  // );
-
-  // const res = await response.json();
-
-  // return res;
+    return response.data;
+  } catch (error) {
+    console.error(error.response.data.message);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
 }
 
 async function obtenerTotalVehiculosPorCliente(clientsId) {
@@ -410,7 +414,7 @@ async function generarExcelLeasingsVeh(data) {
         row.añosLeasing,
         estadoTexto,
         tipoEstado,
-        status
+        status,
       ];
     }),
   });

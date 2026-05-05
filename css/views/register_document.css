@@ -298,18 +298,18 @@ td:nth-child(10) input {
   cursor: pointer;
 } */
 
-.tabla-form table::-webkit-scrollbar {
-  width: 15px;
+.table-container::-webkit-scrollbar {
+  width: 1px;
 }
 
-.tabla-form table::-webkit-scrollbar-track {
-  background: rgb(123, 152, 196);
-  border-radius: 50px;
+.table-container::-webkit-scrollbar-track {
+  background: rgb(253, 254, 255);
+  border-radius: 12px;
 }
 
-.tabla-form table::-webkit-scrollbar-thumb {
-  background: rgb(185, 185, 185);
-  border-radius: 50px;
+.table-container::-webkit-scrollbar-thumb {
+  background: rgb(212, 212, 212);
+  border-radius: 12px;
 }
 
 /* .table-detalle input {

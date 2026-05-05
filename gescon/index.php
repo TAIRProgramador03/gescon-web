@@ -1233,12 +1233,16 @@ require './templates/header.html';
             borderRadiusApplication: 'end',
             horizontal: true,
             dataLabels: {
-              position: 'center',
+              position: 'top',
             }
           }
         },
         dataLabels: {
           enabled: true,
+          style: {
+            colors: ['#333']
+          },
+          offsetX: 40,
           formatter: function(value) {
             return Number(value).toLocaleString('en-US', {
               minimumFractionDigits: 2,
@@ -1340,12 +1344,16 @@ require './templates/header.html';
             borderRadiusApplication: 'end',
             horizontal: true,
             dataLabels: {
-              position: 'center',
+              position: 'top'
             }
-          }
+          },
         },
         dataLabels: {
           enabled: true,
+          style: {
+            colors: ['#333']
+          },
+          offsetX: 40,
           formatter: function(value) {
             return Number(value).toLocaleString('en-US', {
               minimumFractionDigits: 2,

@@ -356,8 +356,8 @@ require '../templates/header.html';
               </label>
             </div>
           </div>
-          <div class="max-h-[400px] overflow-y-auto">
-            <table id="tabla-dinamica" class="w-full border-collapse table-fixed whitespace-nowrap text-black pb-2 !text-xs rounded-md !border-gray-200 overflow-hidden">
+          <div class="table-container pb-2 max-h-[400px] overflow-y-auto">
+            <table id="tabla-dinamica" class="w-full border-collapse table-fixed whitespace-nowrap text-black !text-xs rounded-md !border-gray-200 overflow-hidden">
               <thead>
                 <tr>
                   <th class="w-[60px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Item</th>
@@ -365,7 +365,7 @@ require '../templates/header.html';
                   <th class="w-[200px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Modelo</th>
                   <th class="w-[150px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Tipo terreno</th>
                   <th class="w-[72px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Tarifa</th>
-                  <th class="w-[72px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">CPK</th>
+                  <th class="w-[80px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">CPK</th>
                   <th class="w-[100px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">RM</th>
                   <th class="w-[72px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Cantidad</th>
                   <th class="w-[72px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">$ KM Adi.</th>

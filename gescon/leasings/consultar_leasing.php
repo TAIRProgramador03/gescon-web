@@ -127,17 +127,17 @@ require '../templates/header.html';
       <table id="listLeasing" class="display">
         <thead>
           <tr>
-            <th class="!font-medium text-gray-500">Item</th>
-            <th class="!font-medium text-gray-500">Nro Leasing</th>
-            <th class="!font-medium text-gray-500">Banco</th>
-            <th class="!font-medium text-gray-500">Cantidad</th>
-            <th class="!font-medium text-gray-500">Fecha Inicio</th>
-            <th class="!font-medium text-gray-500">Fecha Fin</th>
-            <th class="!font-medium text-gray-500">Periodo de gracia</th>
-            <th class="!font-medium text-gray-500">Cliente</th>
-            <th class="!font-medium text-gray-500">Cliente Origen</th>
-            <th class="!font-medium text-gray-500">Contrato/Adenda</th>
-            <th class="!font-medium text-gray-500">Acciones</th>
+            <th class="!bg-cyan-700 !font-medium text-white">Item</th>
+            <th class="!bg-cyan-700 !font-medium text-white">Nro Leasing</th>
+            <th class="!bg-cyan-700 !font-medium text-white">Banco</th>
+            <th class="!bg-cyan-700 !font-medium text-white">Cantidad</th>
+            <th class="!bg-cyan-700 !font-medium text-white">Fecha Inicio</th>
+            <th class="!bg-cyan-700 !font-medium text-white">Fecha Fin</th>
+            <th class="!bg-cyan-700 !font-medium text-white">Periodo de gracia</th>
+            <th class="!bg-cyan-700 !font-medium text-white">Cliente</th>
+            <th class="!bg-cyan-700 !font-medium text-white">Cliente Origen</th>
+            <th class="!bg-cyan-700 !font-medium text-white">Contrato/Adenda</th>
+            <th class="!bg-cyan-700 !font-medium text-white">Acciones</th>
           </tr>
         </thead>
         <tbody>

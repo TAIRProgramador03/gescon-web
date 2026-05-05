@@ -227,6 +227,7 @@ require './templates/header.html';
               <th class="!font-medium bg-green-400 text-white">Años Leasing</th>
               <th class="!font-medium bg-taupe-600 text-white">Estado (Diferencia)</th>
               <th class="!font-medium bg-taupe-600 text-white">Operatividad</th>
+              <th class="!font-medium bg-taupe-600 text-white">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -318,6 +319,19 @@ require './templates/header.html';
   </div>
 </div>
 
+<div id="chart-modal" class="w-full h-screen flex justify-center items-center fixed top-0 left-0 opacity-0 -z-[9990] overflow-hidden">
+  <div class="chart-modal-overlay w-full h-screen fixed top-0 left-0 bg-black/25 -z-10"></div>
+  <div class="chart-modal-container w-full max-w-[60%] h-[480px] bg-white rounded-lg px-6 py-7 overflow-hidden relative">
+    <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
+    <h3 class="text-xl! font-semibold! text-[#002141]!">Depreciación del vehiculo</h3>
+    <div id="chartVehicle"></div>
+    <div class="w-full flex items-center gap-2">
+      <i class="bi bi-exclamation-circle text-sm text-gray-500"></i>
+      <p class="text-sm text-gray-500">Nota: Se toma como base de descuento el 20% para la depreciación del vehiculo anualmente desde su año de fabricación</p>
+    </div>
+  </div>
+</div>
+
 <div id="tooltip-global" class="fixed z-[9999] opacity-0 pointer-events-none transition-opacity duration-200 flex justify-center items-center">
   <div class="tooltip-arrow w-2 h-2 bg-blue-700 rotate-45 mx-auto"></div>
   <div class="tooltip-content px-2 py-1 text-xs text-white bg-blue-700 rounded-md shadow-lg max-w-[280px] text-center -ml-1!"></div>
@@ -390,6 +404,7 @@ require './templates/header.html';
   let chartDoughnutLeaB;
   let chartDeprecatedLeaA;
   let chartDeprecatedLeaB;
+  let chartDeprecatedVeh;
   let chartBarVehCli;
   let chartBarComparation;
 
@@ -1420,11 +1435,11 @@ require './templates/header.html';
           data: data.map((cli) => cli.total),
           backgroundColor: data.map((cli) => {
             if (cli.total < 15) {
-              return 'rgba(255, 99, 132, 0.2)'
+              return 'rgba(255, 99, 132, 1)'
             } else if (cli.total < 30) {
-              return 'rgba(235, 232, 54, 0.2)'
+              return 'rgba(235, 232, 54, 1)'
             } else if (cli.total > 30) {
-              return 'rgba(54, 162, 235, 0.2)'
+              return 'rgba(54, 162, 235, 1)'
             }
           }),
           borderColor: data.map((cli) => {
@@ -1444,6 +1459,88 @@ require './templates/header.html';
         maintainAspectRatio: false,
       },
     })
+  }
+
+  const initDeprecatedVeh = async (id) => {
+    const data = await obtenerDepreciacionPorVehiculo(id);
+
+    if (data) {
+      if (!chartDeprecatedVeh) {
+        const options = {
+          series: [{
+            name: "Valorización",
+            data: data.map(veh => veh.total)
+          }],
+          chart: {
+            height: 350,
+            type: 'area',
+            zoom: {
+              enabled: false
+            },
+            toolbar: {
+              show: false
+            }
+          },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            curve: 'straight'
+          },
+          grid: {
+            row: {
+              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+              opacity: 0.5
+            },
+          },
+          markers: {
+            size: 4
+          },
+          xaxis: {
+            categories: data.map(veh => veh.anio),
+          },
+          yaxis: {
+            labels: {
+              formatter: function(value) {
+                return Number(value).toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                  style: 'currency',
+                  currency: 'USD',
+                });
+              }
+            },
+          },
+          tooltip: {
+            y: {
+              formatter: function(val) {
+                return Number(val).toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                  style: 'currency',
+                  currency: 'USD',
+                });
+              }
+            }
+          },
+          colors: ["#fb2c36"]
+        };
+
+        chartDeprecatedVeh = new ApexCharts(document.querySelector("#chartVehicle"), options);
+        chartDeprecatedVeh.render();
+      } else {
+        chartDeprecatedVeh.updateOptions({
+          series: [{
+            name: "Valorización",
+            data: data.map(veh => veh.total)
+          }],
+          xaxis: {
+            categories: data.map(veh => veh.anio)
+          }
+        })
+      }
+    }
+
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
@@ -1677,7 +1774,7 @@ require './templates/header.html';
           // Centrar contenido y cabecera en las columnas 0, 1 y 2
           {
             "className": "dt-center",
-            "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+            "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
           }
         ],
         columns: [{
@@ -1784,6 +1881,21 @@ require './templates/header.html';
               return `<span class="w-fit px-3 py-1 rounded-md border font-medium ${color}">${status}</span>`
             }
           },
+          {
+            data: null,
+            render: (data, type, row) => {
+              return `
+                <button 
+                  class="btn-chart w-fit flex justify-center items-center gap-1 px-3 py-1 bg-blue-100 border border-blue-600 text-blue-600 rounded-md cursor-pointer hover:bg-blue-600 hover:text-white transition-colors" 
+                  data-key="${row.id}"
+                >
+                  <i class="bi bi-graph-down text-xs"></i>
+                  Depreciación
+                </button>
+              `
+            },
+            width: "100px"
+          }
         ]
       })
 
@@ -1873,6 +1985,36 @@ require './templates/header.html';
     tableLea.clear();
     tableLea.rows.add(listVehLeasing);
     tableLea.draw();
+  })
+
+  $(document).on("click", ".btn-chart", async function() {
+    const id = $(this).data("key");
+
+    $("#chart-modal").removeClass("opacity-0 -z-[9990]").addClass("opacity-100 z-[9990]");
+
+    Motion.animate(".chart-modal-container", {
+      opacity: [0, 1],
+      scale: [0.7, 1.05, 1]
+    }, {
+      duration: 0.45,
+      easing: 'ease-out'
+    })
+
+    await initDeprecatedVeh(id)
+  })
+
+  $(".chart-modal-overlay").on("click", async function() {
+    const anim = Motion.animate(".chart-modal-container", {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.7]
+    }, {
+      duration: 0.45,
+      easing: 'ease-in'
+    })
+
+    await anim.finished;
+
+    $("#chart-modal").addClass("opacity-0 -z-[9990]").removeClass("opacity-100 z-[9990]");
   })
 
   $("#cbo-client").on("select2:select", async () => {
@@ -2188,11 +2330,11 @@ require './templates/header.html';
     chartBarVehCli.data.datasets[0].data = quantityVehCli.map((cli) => cli.total)
     chartBarVehCli.data.datasets[0].backgroundColor = quantityVehCli.map((cli) => {
       if (cli.total < 15) {
-        return 'rgba(255, 99, 132, 0.2)'
+        return 'rgba(255, 99, 132, 1)'
       } else if (cli.total < 30) {
-        return 'rgba(235, 232, 54, 0.2)'
+        return 'rgba(235, 232, 54, 1)'
       } else if (cli.total > 30) {
-        return 'rgba(54, 162, 235, 0.2)'
+        return 'rgba(54, 162, 235, 1)'
       }
     })
     chartBarVehCli.data.datasets[0].borderColor = quantityVehCli.map((cli) => {

@@ -357,28 +357,28 @@ require '../templates/header.html';
             </div>
           </div>
           <div class="max-h-[400px] overflow-y-auto">
-            <table id="tabla-dinamica" class="w-full border-collapse">
+            <table id="tabla-dinamica" class="w-full border-collapse table-fixed whitespace-nowrap text-black pb-2 !text-xs rounded-md !border-gray-200 overflow-hidden">
               <thead>
                 <tr>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Item</th>
+                  <th class="w-[60px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Item</th>
                   <th class="hidden sticky top-0 bg-white z-20 border px-2 py-2">Id</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Modelo</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Tipo terreno</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Tarifa</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">CPK</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">RM</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Cantidad</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">$ KM Adi.</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Duracion</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Compra Veh. ($)</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Venta Veh. ($)</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Condición</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Accion</th>
+                  <th class="w-[200px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Modelo</th>
+                  <th class="w-[150px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Tipo terreno</th>
+                  <th class="w-[72px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Tarifa</th>
+                  <th class="w-[72px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">CPK</th>
+                  <th class="w-[100px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">RM</th>
+                  <th class="w-[72px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Cantidad</th>
+                  <th class="w-[72px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">$ KM Adi.</th>
+                  <th class="w-[72px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Duracion</th>
+                  <th class="w-[120px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Compra Veh. ($)</th>
+                  <th class="w-[120px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Venta Veh. ($)</th>
+                  <th class="w-[150px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Condición</th>
+                  <th class="w-[80px] bg-taupe-700 text-white !font-medium z-20 border px-2 py-2">Accion</th>
                 </tr>
               </thead>
               <tbody id="contratos-tbody" class="table-detalle">
                 <tr>
-                  <td><input type="text" name="item[]" class="cursor-pointer disabled:bg-gray-100 w-8 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" readonly></td>
+                  <td><input type="text" name="item[]" class="cursor-pointer disabled:bg-gray-100 w-full text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" value="1" readonly></td>
                   <td class="hidden"><input type="text" name="id[]" class="disabled:bg-gray-100 text-center outline-none text-gray-500 border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px]" disabled></td>
                   <td>
                     <select id="tipoModelo" name="tipo_modelo[]" class="cbo-form-cliente modelo-select tooltip-input" style="width: 100%;" data-tooltip="Selecciona el modelo">
@@ -394,14 +394,14 @@ require '../templates/header.html';
                       <option value="3">Severo</option>
                     </select>
                   </td>
-                  <td><input type="text" name="tarifa[]" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
-                  <td><input type="text" name="cpk[]" class="w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
-                  <td><input type="number" name="rm[]" class="no-negative w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
-                  <td><input type="number" name="cantidad[]" class="no-negative w-14 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
-                  <td><input type="text" min="0" name="kmAdi[]" class="w-14 disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="$KM Adicional" disabled></td>
-                  <td><input type="text" name="duracion[]" class="w-14 disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Duracion contrato" disabled></td>
-                  <td><input type="text" name="compra_veh[]" class="w-18 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
-                  <td><input type="text" name="precio_veh[]" class="w-18 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
+                  <td><input type="text" name="tarifa[]" class="w-full text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Tarifa del contrato estipulado"></td>
+                  <td><input type="text" name="cpk[]" class="w-full text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Costo por kilometraje"></td>
+                  <td><input type="number" name="rm[]" class="no-negative w-full text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Recorrido mensual del vehiculo"></td>
+                  <td><input type="number" name="cantidad[]" class="no-negative w-full text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Cantidad de unidades"></td>
+                  <td><input type="text" min="0" name="kmAdi[]" class="w-full disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="$KM Adicional" disabled></td>
+                  <td><input type="text" name="duracion[]" class="w-full disabled:bg-gray-100 text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="0" data-tooltip="Duracion contrato" disabled></td>
+                  <td><input type="text" name="compra_veh[]" class="w-full text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la compra del vehiculo"></td>
+                  <td><input type="text" name="precio_veh[]" class="w-full text-center border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25 tooltip-input" value="" data-tooltip="Precio promedio de la venta del vehiculo"></td>
                   <td>
                     <select id="condicion" name="condicion[]" class="cbo-form-cliente condicion-select tooltip-input" style="width: 100%;" data-tooltip="Seleccione la condición">
                       <option value="4">Seleccione el tipo</option>
@@ -412,7 +412,9 @@ require '../templates/header.html';
                     </select>
                   </td>
                   <td>
-                    <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
+                    <div class="w-full flex justify-center items-center gap-2">
+                      <button class="btn btn-error btn-remove-vehicle"><i class="bi bi-trash"></i></button>
+                    </div>
                   </td>
                 </tr>
               </tbody>

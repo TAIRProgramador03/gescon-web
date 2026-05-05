@@ -343,22 +343,22 @@ require '../templates/header.html';
             </div>
           </div>
           <div class="max-h-[400px] overflow-y-auto">
-            <table id="tabla-dinamica" class="w-full border-collapse">
+            <table id="tabla-dinamica" class="w-full border-collapse table-fixed whitespace-nowrap text-black pb-2 !text-xs rounded-md !border-gray-200 overflow-hidden">
               <thead>
                 <tr>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Item</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Modelo</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Tipo terreno</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Tarifa</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">CPK</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">RM</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Cantidad</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">$ KM Adi.</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Duracion</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Compra Veh. ($)</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Venta Veh. ($)</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Condición</th>
-                  <th class="sticky top-0 bg-white z-20 border px-2 py-2">Accion</th>
+                  <th class="w-[60px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">Item</th>
+                  <th class="w-[200px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">Modelo</th>
+                  <th class="w-[150px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">Tipo terreno</th>
+                  <th class="w-[72px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">Tarifa</th>
+                  <th class="w-[72px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">CPK</th>
+                  <th class="w-[100px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">RM</th>
+                  <th class="w-[72px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">Cantidad</th>
+                  <th class="w-[72px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">$ KM Adi.</th>
+                  <th class="w-[72px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">Duracion</th>
+                  <th class="w-[120px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">Compra Veh. ($)</th>
+                  <th class="w-[120px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">Venta Veh. ($)</th>
+                  <th class="w-[150px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">Condición</th>
+                  <th class="w-[80px] bg-blue-700 text-white !font-medium z-20 border px-2 py-2">Accion</th>
                 </tr>
               </thead>
               <tbody id="contratos-tbody" class="table-detalle">

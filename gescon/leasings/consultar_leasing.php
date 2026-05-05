@@ -383,23 +383,27 @@ require '../templates/header.html';
         },
         {
           data: "fechaIni",
-          render: (data) => {
-            if (data) {
-              return dayjs(convertirFecha(data.toString())).format("DD/MM/YYYY")
-            } else {
-              return "--";
+          render: (data, type) => {
+            if (!data) return type === 'sort' ? 0 : "Sin fecha";
+
+            if (type === 'sort' || type === 'type') {
+              return dayjs(convertirFecha(data.toString())).format("YYYYMMDD");
             }
+
+            return dayjs(convertirFecha(data.toString())).format("DD/MM/YYYY");
           },
           width: "120px",
         },
         {
           data: "fechaFin",
-          render: (data) => {
-            if (data) {
-              return dayjs(convertirFecha(data.toString())).format("DD/MM/YYYY")
-            } else {
-              return "--";
+          render: (data, type) => {
+            if (!data) return type === 'sort' ? 0 : "Sin fecha";
+
+            if (type === 'sort' || type === 'type') {
+              return dayjs(convertirFecha(data.toString())).format("YYYYMMDD");
             }
+
+            return dayjs(convertirFecha(data.toString())).format("DD/MM/YYYY");
           },
           width: "120px",
         },

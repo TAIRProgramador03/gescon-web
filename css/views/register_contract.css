@@ -200,45 +200,41 @@ body {
   padding: 10px 10px;
 }
 
-table {
+/* table {
   border-collapse: collapse;
   width: 100%;
   display: block;
-  /* overflow-x: auto; */
   white-space: nowrap;
   color: #000;
   padding-bottom: 8px;
 }
-
+*/ 
 th,
 td {
-  border: 1px solid #8d8d8d;
+  border: 1px solid #e5e7eb;
   padding: 8px 12px;
   text-align: center;
 }
-
+/*
 th {
   background-color: #0e2e67;
   color: white;
   font-optical-sizing: auto;
   font-size: 12px;
-  /* font-weight: <weight>; */
   font-style: normal;
   font-weight: 500;
-  /* width: 100%; */
 }
 
 td {
   font-optical-sizing: auto;
   font-size: 12px;
-  /* font-weight: <weight>; */
   font-style: normal;
 }
 
 .tdh {
   padding: 5px 0;
   font-size: 12px;
-}
+} */
 
 /* th:nth-child(1),
 td:nth-child(1) {
@@ -333,16 +329,16 @@ td:nth-child(10) input {
   cursor: pointer;
 } */
 
-.tabla-form table::-webkit-scrollbar {
+table::-webkit-scrollbar {
   width: 15px;
 }
 
-.tabla-form table::-webkit-scrollbar-track {
+table::-webkit-scrollbar-track {
   background: rgb(123, 152, 196);
   border-radius: 50px;
 }
 
-.tabla-form table::-webkit-scrollbar-thumb {
+table::-webkit-scrollbar-thumb {
   background: rgb(185, 185, 185);
   border-radius: 50px;
 }

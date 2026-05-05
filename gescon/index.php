@@ -327,7 +327,7 @@ require './templates/header.html';
     <div id="chartVehicle"></div>
     <div class="w-full flex items-center gap-2">
       <i class="bi bi-exclamation-circle text-sm text-gray-500"></i>
-      <p class="text-sm text-gray-500">Nota: Se toma como base de descuento el 20% para la depreciación del vehiculo anualmente desde su año de fabricación</p>
+      <p class="text-sm text-gray-500 italic">Nota: La depreciación del vehículo se calcula aplicando una reducción del 20% anual sobre su valor vigente, considerando como inicio el año de fabricación.</p>
     </div>
   </div>
 </div>
@@ -810,7 +810,9 @@ require './templates/header.html';
 
               $("#data-value-veh-exp").text(`${totalVisible} vehiculos`)
 
-              await initDeprecatedLeaA(label, clientId);
+              const params = new URLSearchParams(window.location.search)
+              const clienteId = params.get("clienteId");
+              await initDeprecatedLeaA(label, clienteId);
             }
           }
         },
@@ -1053,7 +1055,9 @@ require './templates/header.html';
 
               $("#data-value-veh-to-exp").text(`${totalVisible} vehiculos`)
 
-              await initDeprecatedLeaB(label, clientId);
+              const params = new URLSearchParams(window.location.search)
+              const clienteId = params.get("clienteId");
+              await initDeprecatedLeaB(label, clienteId);
             }
           }
         },
@@ -1435,20 +1439,20 @@ require './templates/header.html';
           data: data.map((cli) => cli.total),
           backgroundColor: data.map((cli) => {
             if (cli.total < 15) {
-              return 'rgba(255, 99, 132, 1)'
+              return 'rgb(251, 44, 54)'
             } else if (cli.total < 30) {
               return 'rgba(235, 232, 54, 1)'
             } else if (cli.total > 30) {
-              return 'rgba(54, 162, 235, 1)'
+              return 'rgb(43, 127, 255)'
             }
           }),
           borderColor: data.map((cli) => {
             if (cli.total < 15) {
-              return 'rgb(255, 99, 132)'
-            } else if (cli.total > 15 && cli.total <= 30) {
-              return 'rgb(232, 235, 54)'
+              return 'rgb(251, 44, 54)'
+            } else if (cli.total < 30) {
+              return 'rgba(235, 232, 54, 1)'
             } else if (cli.total > 30) {
-              return 'rgb(54, 162, 235)'
+              return 'rgb(43, 127, 255)'
             }
           }),
           borderWidth: 1,
@@ -1760,15 +1764,6 @@ require './templates/header.html';
         scrollY: '364px',
         scrollX: true,
         scrollCollapse: true,
-        // rowCallback: function(row, data) {
-        //   if (data.diferenciaDias < 0) {
-        //     $($(row).find("td")[13]).css("background-color", "#E60026").css("color", "#fff");
-        //   } else if (data.diferenciaDias > 0) {
-        //     $($(row).find("td")[13]).css("background-color", "#259e01").css("color", "#fff");
-        //   } else {
-        //     $($(row).find("td")[13]).css("background-color", "#006be6").css("color", "#fff");
-        //   }
-        // },
         data: listVehLeasing,
         "columnDefs": [
           // Centrar contenido y cabecera en las columnas 0, 1 y 2
@@ -1794,15 +1789,27 @@ require './templates/header.html';
           },
           {
             data: 'fechaIniActa',
-            render: (data) => {
-              return data == "" ? "Sin fecha" : dayjs(data).format("DD/MM/YYYY")
+            render: (data, type) => {
+              if (!data) return type === 'sort' ? 0 : "Sin fecha";
+
+              if (type === 'sort' || type === 'type') {
+                return dayjs(data).format("YYYYMMDD");
+              }
+
+              return dayjs(data).format("DD/MM/YYYY");
             },
             width: "150px"
           },
           {
             data: 'fechaFinActa',
-            render: (data) => {
-              return data == "" ? "Sin fecha" : dayjs(data).format("DD/MM/YYYY")
+            render: (data, type) => {
+              if (!data) return type === 'sort' ? 0 : "Sin fecha";
+
+              if (type === 'sort' || type === 'type') {
+                return dayjs(data).format("YYYYMMDD");
+              }
+
+              return dayjs(data).format("DD/MM/YYYY");
             },
             width: "150px"
           },
@@ -1815,15 +1822,27 @@ require './templates/header.html';
           },
           {
             data: 'fechaIniCont',
-            render: (data) => {
-              return data == "" ? "Sin fecha" : dayjs(data).format("DD/MM/YYYY")
+            render: (data, type) => {
+              if (!data) return type === 'sort' ? 0 : "Sin fecha";
+
+              if (type === 'sort' || type === 'type') {
+                return dayjs(data).format("YYYYMMDD");
+              }
+
+              return dayjs(data).format("DD/MM/YYYY");
             },
             width: "150px"
           },
           {
             data: 'fechaFinCont',
-            render: (data) => {
-              return data == "" ? "Sin fecha" : dayjs(data).format("DD/MM/YYYY")
+            render: (data, type) => {
+              if (!data) return type === 'sort' ? 0 : "Sin fecha";
+
+              if (type === 'sort' || type === 'type') {
+                return dayjs(data).format("YYYYMMDD");
+              }
+
+              return dayjs(data).format("DD/MM/YYYY");
             },
             width: "150px"
           },
@@ -1840,15 +1859,21 @@ require './templates/header.html';
           },
           {
             data: 'fechaIniLea',
-            render: (data) => {
-              return dayjs(data).format("DD/MM/YYYY")
+            render: (data, type) => {
+              if (type === 'sort' || type === 'type') {
+                return dayjs(data).format("YYYYMMDD");
+              }
+              return dayjs(data).format("DD/MM/YYYY");
             },
             width: "150px"
           },
           {
             data: 'fechaFinLea',
-            render: (data) => {
-              return dayjs(data).format("DD/MM/YYYY")
+            render: (data, type) => {
+              if (type === 'sort' || type === 'type') {
+                return dayjs(data).format("YYYYMMDD");
+              }
+              return dayjs(data).format("DD/MM/YYYY");
             },
             width: "150px"
           },
@@ -2082,8 +2107,8 @@ require './templates/header.html';
     chartDoughnutLeaA.update();
     chartDoughnutLeaB.update();
 
-    await initDeprecatedLeaA(null, clientId);
-    await initDeprecatedLeaB(null, clientId)
+    await initDeprecatedLeaA(null, clientId != 0 ? clientId : undefined);
+    await initDeprecatedLeaB(null, clientId != 0 ? clientId : undefined)
 
     // CONT UPDATE
     cargarContContrato(clientId != 0 ? clientId : undefined);
@@ -2330,20 +2355,20 @@ require './templates/header.html';
     chartBarVehCli.data.datasets[0].data = quantityVehCli.map((cli) => cli.total)
     chartBarVehCli.data.datasets[0].backgroundColor = quantityVehCli.map((cli) => {
       if (cli.total < 15) {
-        return 'rgba(255, 99, 132, 1)'
+        return 'rgb(251, 44, 54)'
       } else if (cli.total < 30) {
         return 'rgba(235, 232, 54, 1)'
       } else if (cli.total > 30) {
-        return 'rgba(54, 162, 235, 1)'
+        return 'rgb(43, 127, 255)'
       }
     })
     chartBarVehCli.data.datasets[0].borderColor = quantityVehCli.map((cli) => {
         if (cli.total < 15) {
-          return 'rgb(255, 99, 132)'
-        } else if (cli.total > 15 && cli.total <= 30) {
-          return 'rgb(232, 235, 54)'
+          return 'rgb(251, 44, 54)'
+        } else if (cli.total < 30) {
+          return 'rgba(235, 232, 54, 1)'
         } else if (cli.total > 30) {
-          return 'rgb(54, 162, 235)'
+          return 'rgb(43, 127, 255)'
         }
       }),
       chartBarVehCli.update();

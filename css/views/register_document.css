@@ -173,29 +173,28 @@ body {
   padding: 10px 10px;
 }
 
-table {
+/* table {
   border-collapse: collapse;
   width: 100%;
   display: block;
-  /* overflow-x: auto; */
   white-space: nowrap;
   color: #000;
   padding-bottom: 8px;
 }
-
+*/
 th,
 td {
-  border: 1px solid #8d8d8d;
+  border: 1px solid #e5e7eb;
   padding: 8px 12px;
   text-align: center;
 }
 
+/*
 th {
   background-color: #473C39;
   color: white;
   font-optical-sizing: auto;
   font-size: 12px;
-  /* font-weight: <weight>; */
   font-style: normal;
   font-weight: 500;
 }
@@ -203,14 +202,13 @@ th {
 td {
   font-optical-sizing: auto;
   font-size: 12px;
-  /* font-weight: <weight>; */
   font-style: normal;
 }
 
 .tdh {
   padding: 5px 0;
   font-size: 12px;
-}
+} */
 
 /* th:nth-child(1),
 td:nth-child(1) {

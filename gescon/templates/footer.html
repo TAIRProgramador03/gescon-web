@@ -2,11 +2,40 @@
     <div class="modal-glossary w-full h-screen fixed top-0 left-0 flex justify-center items-center opacity-0 -z-[9990] overflow-hidden">
         <div class="modal-glossary-overlay w-full h-screen fixed top-0 left-0 bg-black/25 -z-10"></div>
         <div class="modal-glossary-container w-full max-w-[40%] h-full max-h-1/2 rounded-lg relative flex flex-col gap-3 px-5 py-4 bg-white overflow-hidden">
-            <div class="w-full h-2 bg-teal-500 absolute top-0 left-0"></div>
+            <div class="w-full h-2 bg-blue-700 absolute top-0 left-0"></div>
             <h2 class="text-3xl text-[#002141] font-semibold">Glosario de Términos</h2>
-            <ul class="w-full flex flex-col gap-2 overflow-auto">
-                <li class="text-sm text-gray-600"><span class="font-medium text-black">Jimena: </span>Termina el glosario</li>
-            </ul>
+            <div class="w-full flex gap-3">
+                <div class="w-full max-w-56 h-full rounded-md overflow-hidden">
+                    <ul class="w-full flex flex-col ">
+                        <li>
+                            <button class="w-full px-2 py-3 bg-blue-800 font-medium text-white flex items-center justify-between glosary-sup outline-none">
+                                <span class="cursor-pointer flex gap-2 items-center">
+                                    <i
+                                        class="bi bi-table"
+                                        style="font-size: 16px; padding-left: 2px"
+                                    ></i>
+                                    Adm. Contratos
+                                </span>
+                                <i class="bi bi-chevron-down cursor-pointer text-sm! p-1"></i>
+                            </button>
+                            <ul class="h-0 overflow-hidden transition-all duration-300 glosary-item">
+                                <li>
+                                    <button class="w-full pl-6 py-3 bg-blue-700 font-medium text-white flex items-center cursor-pointer outline-none">Veh. Activos</button>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <button class="w-full px-2 py-3 bg-blue-800 font-medium text-white flex items-center glosary-sup cursor-pointer outline-none">
+                                Leasing
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <ul class="w-full flex flex-col gap-2 overflow-auto">
+                    <li class="text-sm text-gray-600"><span class="font-medium text-black">Jimena: </span>Termina el glosario</li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -86,6 +115,26 @@
 
             $(".modal-glossary").removeClass("opacity-100 z-[9990]").addClass("opacity-0 -z-[9990]")
         })
+        
+        $(document).on("click", ".glosary-sup i", function (e) {
+            e.stopPropagation();
+
+            const $btn = $(this).closest(".glosary-sup");
+            const $parent = $btn.closest("li");
+            const $submenu = $parent.find(".glosary-item").first();
+
+            $(".glosary-item").not($submenu).css("height", 0);
+
+            // toggle
+            if ($submenu.height() === 0) {
+                const scrollHeight = $submenu.prop("scrollHeight");
+                $submenu.css("height", scrollHeight + "px");
+                $(this).css("transform", "rotate(180deg)");
+            } else {
+                $submenu.css("height", 0);
+                $(this).css("transform", "rotate(0deg)");
+            }
+        });
     </script>
 </body>
 </html>

@@ -263,16 +263,16 @@ require './templates/header.html';
       <div class="col-span-full grid [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))] gap-5">
         <div class="col-span-2 bg-white border border-gray-300 rounded-lg shadow-md p-5">
           <div class="flex items-center gap-1">
-            <h3 class="!text-red-500 !text-xs !font-medium uppercase !mt-0">Deprecación de vehiculos de leasings vencidos</h3>
-            <i class="tooltip-info bi bi-exclamation-circle text-red-500 text-sm" data-tooltip="Reporte gráfico de la deprecación en los costos de los vehiculos de leasings vencidos."></i>
+            <h3 class="!text-red-500 !text-xs !font-medium uppercase !mt-0">Depreciación de vehiculos de leasings vencidos</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-red-500 text-sm" data-tooltip="Reporte gráfico de la deprecación en el valor de los vehiculos de leasings vencidos."></i>
           </div>
           <div id="deprecatedLeaA"></div>
         </div>
 
         <div class="col-span-2 bg-white border border-gray-300 rounded-lg shadow-md p-5">
           <div class="flex items-center gap-1">
-            <h3 class="!text-green-500 !text-xs !font-medium uppercase !mt-0">Deprecación de vehiculos de leasings por vencer</h3>
-            <i class="tooltip-info bi bi-exclamation-circle text-green-500 text-sm" data-tooltip="Reporte gráfico de la deprecación en los costos de los vehiculos de leasings por vencer."></i>
+            <h3 class="!text-green-500 !text-xs !font-medium uppercase !mt-0">Depreciación de vehiculos de leasings por vencer</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-green-500 text-sm" data-tooltip="Reporte gráfico de la deprecación en el valor de los vehiculos de leasings por vencer."></i>
           </div>
           <div id="deprecatedLeaB"></div>
         </div>
@@ -1008,17 +1008,19 @@ require './templates/header.html';
                 return labels;
               }
             },
-            onClick: (e, legendItem, legend) => {
+            onClick: async (e, legendItem, legend) => {
               const chart = legend.chart;
               const index = legendItem.index;
+              let label = legendItem.text;
               const meta = chart.getDatasetMeta(0);
 
               if (activeIndex === index) {
-                // 🔄 reset (mostrar todos)
+                // reset (mostrar todos)
                 meta.data.forEach(el => el.hidden = false);
                 activeIndex = null;
+                label = null;
               } else {
-                // 🔥 mostrar solo uno
+                // mostrar solo uno
                 meta.data.forEach((el, i) => {
                   el.hidden = i !== index;
                 });
@@ -1035,6 +1037,8 @@ require './templates/header.html';
                 }, 0);
 
               $("#data-value-veh-to-exp").text(`${totalVisible} vehiculos`)
+
+              await initDeprecatedLeaB(label, clientId);
             }
           }
         },
@@ -1194,7 +1198,7 @@ require './templates/header.html';
     if (!chartDeprecatedLeaA) {
       const options = {
         series: [{
-          name: "Perdida",
+          name: "Monto depreciado",
           data: data.map(veh => veh.perdidaAcumulada)
         }],
         chart: {
@@ -1209,15 +1213,52 @@ require './templates/header.html';
             borderRadius: 4,
             borderRadiusApplication: 'end',
             horizontal: true,
+            dataLabels: {
+              position: 'center',
+            }
           }
         },
         dataLabels: {
-          enabled: false
+          enabled: true,
+          formatter: function(value) {
+            return Number(value).toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              style: 'currency',
+              currency: 'USD',
+            });
+          }
         },
         xaxis: {
           categories: data.map(veh => `${veh.anio}`),
+          labels: {
+            formatter: function(value) {
+              return Number(value).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                style: 'currency',
+                currency: 'USD',
+              });
+            }
+          },
+        },
+        yaxis: {
+          labels: {
+            formatter: function(value) {
+              return "Año " + value
+            }
+          },
         },
         tooltip: {
+          x: {
+            formatter: function(value, {
+              dataPointIndex
+            }) {
+              const extradata = data.map(veh => `Vehiculos del año ${veh.anio}`);
+
+              return extradata[dataPointIndex];
+            }
+          },
           y: {
             formatter: function(val) {
               return Number(val).toLocaleString('en-US', {
@@ -1240,19 +1281,32 @@ require './templates/header.html';
           categories: data.map(veh => `${veh.anio}`),
         },
         series: [{
-          name: "Perdida",
+          name: "Monto depreciado",
           data: data.map(veh => veh.perdidaAcumulada)
         }],
+        tooltip: {
+          x: {
+            formatter: function(value, {
+              dataPointIndex
+            }) {
+              const extradata = data.map(veh => `Vehiculos del año ${veh.anio}`);
+
+              return extradata[dataPointIndex];
+            }
+          },
+        }
       });
     }
   }
 
-  const initDeprecatedLeaB = async (data) => {
+  const initDeprecatedLeaB = async (label, clienteId) => {
+    const data = await obtenerDepreciacionVehiculosPorExpirar(label, clienteId);
+
     if (!chartDeprecatedLeaB) {
       const options = {
         series: [{
-          name: "Posible perdida",
-          data: [400, 430, 448, 470, 540, 580, 690]
+          name: "Monto depreciado",
+          data: data.map(veh => veh.perdidaAcumulada)
         }],
         chart: {
           type: 'bar',
@@ -1266,20 +1320,59 @@ require './templates/header.html';
             borderRadius: 4,
             borderRadiusApplication: 'end',
             horizontal: true,
+            dataLabels: {
+              position: 'center',
+            }
           }
         },
         dataLabels: {
-          enabled: false
+          enabled: true,
+          formatter: function(value) {
+            return Number(value).toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              style: 'currency',
+              currency: 'USD',
+            });
+          }
         },
         xaxis: {
-          categories: ['2020', '2021', '2022', '2023', '2024', '2025', '2026'],
+          categories: data.map(veh => `${veh.anio}`),
+          labels: {
+            formatter: function(value) {
+              return Number(value).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                style: 'currency',
+                currency: 'USD',
+              });
+            }
+          },
+        },
+        yaxis: {
+          labels: {
+            formatter: function(value) {
+              return "Año " + value
+            }
+          },
         },
         tooltip: {
+          x: {
+            formatter: function(value, {
+              dataPointIndex
+            }) {
+              const extradata = data.map(veh => `Vehiculos del año ${veh.anio}`);
+
+              return extradata[dataPointIndex];
+            }
+          },
           y: {
             formatter: function(val) {
               return Number(val).toLocaleString('en-US', {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
+                style: 'currency',
+                currency: 'USD',
               });
             }
           }
@@ -1289,6 +1382,27 @@ require './templates/header.html';
 
       chartDeprecatedLeaB = new ApexCharts(document.querySelector("#deprecatedLeaB"), options);
       chartDeprecatedLeaB.render();
+    } else {
+      chartDeprecatedLeaB.updateOptions({
+        xaxis: {
+          categories: data.map(veh => `${veh.anio}`),
+        },
+        series: [{
+          name: "Monto depreciado",
+          data: data.map(veh => veh.perdidaAcumulada)
+        }],
+        tooltip: {
+          x: {
+            formatter: function(value, {
+              dataPointIndex
+            }) {
+              const extradata = data.map(veh => `Vehiculos del año ${veh.anio}`);
+
+              return extradata[dataPointIndex];
+            }
+          },
+        }
+      });
     }
   }
 
@@ -1383,7 +1497,7 @@ require './templates/header.html';
       initDoughnutLeaB(quantityVehLea.porVencer, clientId);
       initBarVehicleLea(firstTenResult);
       initDeprecatedLeaA(null, clientId);
-      initDeprecatedLeaB();
+      initDeprecatedLeaB(null, clientId);
 
       const client = await obtenerClientes();
 
@@ -1827,6 +1941,7 @@ require './templates/header.html';
     chartDoughnutLeaB.update();
 
     await initDeprecatedLeaA(null, clientId);
+    await initDeprecatedLeaB(null, clientId)
 
     // CONT UPDATE
     cargarContContrato(clientId != 0 ? clientId : undefined);

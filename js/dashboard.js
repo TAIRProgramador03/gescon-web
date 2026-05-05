@@ -208,6 +208,24 @@ async function obtenerDepreciacionVehiculosExpirados(label, clienteId) {
   }
 }
 
+async function obtenerDepreciacionVehiculosPorExpirar(label, clienteId) {
+  try {
+    instance = await obtenerInstancia();
+    const response = await instance.get("/deprecatedVehicleToExpire", {
+      withCredentials: true,
+      params: {
+        label,
+        clienteId,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error.response.data.message);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+}
+
 async function obtenerTotalVehiculosPorCliente(clientsId) {
   const query = clientsId.map((cli) => `clientesId=${cli}`).join("&");
 

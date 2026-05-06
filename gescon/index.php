@@ -44,6 +44,9 @@ require './templates/header.html';
 <!-- APEX CHART -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <!-- CSS DE LA VISTA DASHBOARD -->
 <style>
   <?php include $_SERVER['DOCUMENT_ROOT'] . '/css/views/dashboard.css'; ?>
@@ -292,6 +295,16 @@ require './templates/header.html';
           <div class="chart-container">
             <canvas id="barVehicleLea"></canvas>
           </div>
+        </div>
+      </div>
+
+      <div class="col-span-full grid [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))] gap-5">
+        <div class="col-span-2 bg-white border border-gray-300 rounded-lg shadow-md p-5">
+          <div class="flex items-center gap-1">
+            <h3 class="!text-gray-400 !text-xs !font-medium uppercase !mt-0">Mapa de flota</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-gray-400 text-sm" data-tooltip="Reporte en mapa sobre la cantidad de vehiculos dividido por departamentos"></i>
+          </div>
+          <div id="map" style="height: 500px;"></div>
         </div>
       </div>
     </section>
@@ -838,7 +851,9 @@ require './templates/header.html';
             const label = chartDoughnutLeaA.data.labels[indice];
             const valor = chartDoughnutLeaA.data.datasets[0].data[indice];
 
-            const listVehicles = await obtenerVehiculosVencidos(label, clientId);
+            const params = new URLSearchParams(window.location.search)
+            const clienteId = params.get("clienteId");
+            const listVehicles = await obtenerVehiculosVencidos(label, clienteId);
 
             $("#modal-body-info").append(`
               <table id="listVehExpires" class="display">
@@ -1083,7 +1098,9 @@ require './templates/header.html';
             const label = chartDoughnutLeaB.data.labels[indice];
             const valor = chartDoughnutLeaB.data.datasets[0].data[indice];
 
-            const listVehicle = await obtenerVehiculosPorVencer(label, clientId);
+            const params = new URLSearchParams(window.location.search)
+            const clienteId = params.get("clienteId");
+            const listVehicle = await obtenerVehiculosPorVencer(label, clienteId);
 
             $("#modal-body-info").append(`
               <table id="listVehToExpires" class="display">
@@ -1983,11 +2000,93 @@ require './templates/header.html';
       // if(viewDocument) $('.link-documents').addClass("cursor-pointer");
       if (viewLeasing) $('.link-leasings').addClass("cursor-pointer");
       if (viewVehicle) $('.link-vehicles').addClass("cursor-pointer");
+
+
+
+
+      const map = L.map('map').setView([-9.19, -75.015], 5);
+
+      const bounds = [
+        [-18.5, -82], // suroeste
+        [0.5, -68] // noreste
+      ];
+
+      map.setMaxBounds(bounds);
+      map.fitBounds(bounds);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+      // Tus datos
+      const data = {
+        "Lima": 120,
+        "Cusco": 45,
+        "Arequipa": 80
+      };
+
+      // escala de colores (tipo GA)
+      function getColor(d) {
+        return d > 100 ? '#0b3c8c' :
+          d > 50 ? '#2563eb' :
+          d > 20 ? '#60a5fa' :
+          d > 0 ? '#bfdbfe' :
+          '#D6D6D6';
+      }
+
+      fetch('/public/peru_departamentos.json')
+        .then(res => res.json())
+        .then(geojson => {
+
+          console.log(geojson);
+
+          L.geoJSON(geojson, {
+            style: function(feature) {
+              const name = feature.properties.NAME_1;
+              const value = data[name] || 0;
+
+              return {
+                fillColor: getColor(value),
+                weight: 2,
+                color: '#FFF',
+                fillOpacity: 1
+              };
+            },
+
+            onEachFeature: function(feature, layer) {
+              const name = feature.properties.NAME_1;
+              const value = data[name] || 0;
+
+              layer.on({
+                mouseover: (e) => {
+                  const l = e.target;
+
+                  l.setStyle({
+                    weight: 2,
+                    color: '#474747'
+                  });
+
+                  l.bringToFront();
+                },
+                mouseout: (e) => {
+                  e.target.setStyle({
+                    weight: 2,
+                    color: '#FFF'
+                  });
+                }
+              });
+
+              layer.bindTooltip(`
+                <strong>${name}</strong><br/>
+                Vehículos: ${value}
+              `);
+            }
+
+          }).addTo(map);
+
+        });
     } catch (err) {
       console.error(err);
       toastr.error(err.message, "Oops...")
     }
-
 
     hideLoaderWindow();
   });

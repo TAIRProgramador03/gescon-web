@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 #preloader-mini {
-  position: fixed;
+  /* position: fixed;
   top: 0;
   left: 280px;
   width: calc(100% - 280px);
@@ -10,7 +10,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  z-index: 1000;
+  z-index: 1000; */
 }
 
 .gif-container {

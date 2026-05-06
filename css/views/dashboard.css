@@ -959,3 +959,15 @@ div.dt-container.dt-empty-footer .dt-scroll-body {
 #alert-modal .btn-group .btn-dark:hover {
   background-color: #464646;
 }
+
+#map:focus {
+  outline: none;
+}
+
+#map .leaflet-interactive:focus {
+  outline: none;
+}
+
+#map .leaflet-interactive {
+  outline: none;
+}

@@ -44,6 +44,24 @@ export const getVehiclesPending = async (idCli, idOpe) => {
   }
 };
 
+export const getVehiclesNoPending = async (idCli, idOpe) => {
+  try {
+    instance = await obtenerInstancia();
+    const response = await instance.get("/vehiculosReasginar", {
+      withCredentials: true,
+      params: {
+        idCli,
+        idOpe,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error.response.data.message);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+};
+
 export const getClients = async () => {
   try {
     instance = await obtenerInstancia();
@@ -64,8 +82,36 @@ export const getContracts = async (idCli) => {
     const response = await instance.get("/contratosNroAdi", {
       withCredentials: true,
       params: {
-        idCli
-      }
+        idCli,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error.response.data.message);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+};
+
+export const getContractId = async (id) => {
+  try {
+    instance = await obtenerInstancia();
+    const response = await instance.get(`/contratoPorId/${id}`, {
+      withCredentials: true,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error.response.data.message);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+};
+
+export const getDocumentId = async (id) => {
+  try {
+    instance = await obtenerInstancia();
+    const response = await instance.get(`/obtenerDocumentoPorId/${id}`, {
+      withCredentials: true,
     });
 
     return response.data;
@@ -131,9 +177,9 @@ export async function saveOperation(id, data) {
 
     return result;
   } catch (error) {
-    $("#btn-guardar").find(".spinner").addClass("hidden")
-    $("#btn-guardar").prop("disabled", false)
-    
+    $("#btn-guardar").find(".spinner").addClass("hidden");
+    $("#btn-guardar").prop("disabled", false);
+
     console.error(error.response.data);
     toastr.warning(error.response.data.message, "Oops...");
   }

@@ -259,82 +259,92 @@ require '../templates/header.html';
           <h3 class="text-2xl text-[#002141] font-semibold">Información</h3>
           <p class="text-lg text-[#002141] font-semibold fecha-info"></p>
         </div>
-        <div class="w-full flex flex-col gap-3 border border-gray-100 rounded-md px-4 py-2 relative overflow-hidden">
-          <div class="w-2 h-full bg-red-400 absolute top-0 left-0"></div>
-          <h3 class="text-lg text-[#002141] font-semibold">Anterior</h3>
+        <div class="w-full flex flex-col gap-3">
+          <div class="w-full flex flex-col gap-3 border border-gray-100 rounded-md px-4 py-2 relative overflow-hidden">
+            <div class="w-2 h-full bg-red-400 absolute top-0 left-0"></div>
+            <h3 class="text-lg text-[#002141] font-semibold">Anterior</h3>
 
-          <div class="w-full grid grid-cols-3 gap-3 anterior-info">
-            <p class="w-full flex flex-col gap-2">
-              Operación:
-              <span class="operacion-info text-sm text-gray-600">--</span>
-            </p>
-            <p class="w-full flex flex-col gap-2">
-              Tarifa:
-              <span class="tarifa-info text-sm text-gray-600">--</span>
-            </p>
-            <p class="w-full flex flex-col gap-2">
-              Nro Contrato:
-              <span class="nro-info text-sm text-gray-600">--</span>
-            </p>
-            <p class="w-full flex flex-col gap-2">
-              Tipo:
-              <span class="tipo-info text-sm text-gray-600">--</span>
-            </p>
-            <p class="w-full flex flex-col gap-2">
-              Condicion:
-              <span class="condicion-info text-sm text-gray-600">--</span>
-            </p>
-            <div class="w-full flex flex-col gap-2">
-              Archivo:
-              <div class="archivo-info text-sm text-gray-600">--</div>
+            <div class="w-full grid grid-cols-3 gap-3 anterior-info">
+              <p class="w-full flex flex-col gap-2">
+                Operación:
+                <span class="operacion-info text-sm text-gray-600">--</span>
+              </p>
+              <p class="w-full flex flex-col gap-2">
+                Tarifa:
+                <span class="tarifa-info text-sm text-gray-600">--</span>
+              </p>
+              <p class="w-full flex flex-col gap-2">
+                Nro Contrato:
+                <span class="nro-info text-sm text-gray-600">--</span>
+              </p>
+              <p class="w-full flex flex-col gap-2">
+                Tipo:
+                <span class="tipo-info text-sm text-gray-600">--</span>
+              </p>
+              <p class="w-full flex flex-col gap-2">
+                Condicion:
+                <span class="condicion-info text-sm text-gray-600">--</span>
+              </p>
+              <p class="w-full flex flex-col gap-2">
+                Terreno:
+                <span class="terreno-info text-sm text-gray-600">--</span>
+              </p>
+              <div class="w-full flex flex-col gap-2">
+                Archivo:
+                <div class="archivo-info text-sm text-gray-600">--</div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="w-full flex justify-center items-center"><i class="bi bi-arrow-down-circle-fill text-blue-600 text-2xl animate-bounce"></i></div>
-        <div class="w-full flex flex-col gap-3 border border-gray-100 rounded-md px-4 py-2 relative overflow-hidden">
-          <div class="w-2 h-full bg-green-400 absolute top-0 left-0"></div>
-          <h3 class="text-lg text-[#002141] font-semibold">Nueva</h3>
+          <div class="w-full flex justify-center items-center"><i class="bi bi-arrow-down-circle-fill text-blue-600 text-2xl animate-bounce"></i></div>
+          <div class="w-full flex flex-col gap-3 border border-gray-100 rounded-md px-4 py-2 relative overflow-hidden">
+            <div class="w-2 h-full bg-green-400 absolute top-0 left-0"></div>
+            <h3 class="text-lg text-[#002141] font-semibold">Nueva</h3>
 
-          <div class="w-full grid grid-cols-3 gap-3 nuevo-info">
-            <p class="w-full flex flex-col gap-2">
-              Operación:
-              <span class="operacion-info text-sm text-gray-600">--</span>
-            </p>
-            <p class="w-full flex flex-col gap-2">
-              Tarifa:
-              <span class="tarifa-info text-sm text-gray-600">--</span>
-            </p>
-            <p class="w-full flex flex-col gap-2">
-              Nro Contrato:
-              <span class="nro-info text-sm text-gray-600">--</span>
-            </p>
-            <p class="w-full flex flex-col gap-2">
-              Tipo:
-              <span class="tipo-info text-sm text-gray-600">--</span>
-            </p>
-            <p class="w-full flex flex-col gap-2">
-              Condicion:
-              <span class="condicion-info text-sm text-gray-600">--</span>
-            </p>
-            <div class="w-full flex flex-col gap-2">
-              Archivo:
-              <div class="archivo-info text-sm text-gray-600">--</div>
+            <div class="w-full grid grid-cols-3 gap-3 nuevo-info">
+              <p class="w-full flex flex-col gap-2">
+                Operación:
+                <span class="operacion-info text-sm text-gray-600">--</span>
+              </p>
+              <p class="w-full flex flex-col gap-2">
+                Tarifa:
+                <span class="tarifa-info text-sm text-gray-600">--</span>
+              </p>
+              <p class="w-full flex flex-col gap-2">
+                Nro Contrato:
+                <span class="nro-info text-sm text-gray-600">--</span>
+              </p>
+              <p class="w-full flex flex-col gap-2">
+                Tipo:
+                <span class="tipo-info text-sm text-gray-600">--</span>
+              </p>
+              <p class="w-full flex flex-col gap-2">
+                Condicion:
+                <span class="condicion-info text-sm text-gray-600">--</span>
+              </p>
+              <p class="w-full flex flex-col gap-2">
+                Terreno:
+                <span class="terreno-info text-sm text-gray-600">--</span>
+              </p>
+              <div class="w-full flex flex-col gap-2">
+                Archivo:
+                <div class="archivo-info text-sm text-gray-600">--</div>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- OBSERVACION -->
-        <div class="input flex flex-col w-full relative -mt-2!">
-          <textarea
-            id="observacion"
-            name="observacion"
-            type="text"
-            placeholder="Ingrese la observación"
-            class="peer order-2 w-full h-24 resize-none border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" readonly></textarea>
-          <label
-            for="observacion"
-            class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500 peer-disabled:text-[#eee]">
-            Observación
-          </label>
+          <!-- OBSERVACION -->
+          <div class="input flex flex-col w-full relative -mt-2!">
+            <textarea
+              id="observacion"
+              name="observacion"
+              type="text"
+              placeholder="Ingrese la observación"
+              class="peer order-2 w-full h-24 resize-none border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" readonly></textarea>
+            <label
+              for="observacion"
+              class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500 peer-disabled:text-[#eee]">
+              Observación
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -546,6 +556,7 @@ require '../templates/header.html';
     $(".anterior-info").find(".nro-info").text(findAssing.anterior.contrato)
     $(".anterior-info").find(".tipo-info").text(findAssing.anterior.tipo == 'P' ? "Contrato" : "Documento")
     $(".anterior-info").find(".condicion-info").text(findAssing.anterior.condicion)
+    $(".anterior-info").find(".terreno-info").text(findAssing.anterior.terreno)
 
     // MOSTRAR ARCHIVO ANTERIOR
     $(".anterior-info").find(".archivo-info").empty();
@@ -561,6 +572,7 @@ require '../templates/header.html';
     $(".nuevo-info").find(".nro-info").text(findAssing.nuevo.contrato)
     $(".nuevo-info").find(".tipo-info").text(findAssing.nuevo.tipo == 'P' ? "Contrato" : "Documento")
     $(".nuevo-info").find(".condicion-info").text(findAssing.nuevo.condicion);
+    $(".nuevo-info").find(".terreno-info").text(findAssing.nuevo.terreno);
 
     // MOSTRAR ARCHIVO NUEVO
     $(".nuevo-info").find(".archivo-info").empty();
@@ -593,6 +605,7 @@ require '../templates/header.html';
     $(".anterior-info").find(".nro-info").text("--")
     $(".anterior-info").find(".tipo-info").text("--")
     $(".anterior-info").find(".condicion-info").text("--")
+    $(".anterior-info").find(".terreno-info").text("--")
     $(".anterior-info").find(".archivo-info").text("--")
 
     $(".nuevo-info").find(".operacion-info").text("--")
@@ -600,6 +613,7 @@ require '../templates/header.html';
     $(".nuevo-info").find(".nro-info").text("--")
     $(".nuevo-info").find(".tipo-info").text("--")
     $(".nuevo-info").find(".condicion-info").text("--")
+    $(".nuevo-info").find(".terreno-info").text("--")
     $(".nuevo-info").find(".archivo-info").text("--")
   }
 

@@ -44,8 +44,12 @@ require './templates/header.html';
 <!-- APEX CHART -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+<!-- MAP LEAFLET -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- HTML TO IMAGE -->
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
 
 <!-- CSS DE LA VISTA DASHBOARD -->
 <style>
@@ -81,7 +85,7 @@ require './templates/header.html';
       <div class="loading-bar"></div>
     </div>
   </div>
-  <main class="dashboard-main">
+  <main id="report-container" class="dashboard-main">
     <section class="dashboard-section">
       <div class="dashboard-header">
         <h1>Dashboard</h1>
@@ -310,6 +314,14 @@ require './templates/header.html';
     </section>
   </main>
 </div>
+
+
+<!-- BOTON CAPTURAR REPORTE -->
+<button id="btnCapture" class="fixed bottom-4 right-4 size-12 px-2 py-2 flex justify-center items-center gap-1 bg-violet-100 border-2 border-violet-700 text-violet-700 hover:bg-violet-700 hover:text-white rounded-[55%] transition-colors cursor-pointer z-[1000]">
+  <i class="bi bi-camera text-xl"></i>
+  <div
+    class="spinner hidden w-4 h-4 border-2 border-t-violet-700 border-violet-300 rounded-full animate-spin"></div>
+</button>
 
 <!-- MODAL DE DONAS -->
 <div id="modal-leasing" data-route-permission="ver_dashboard">
@@ -1667,7 +1679,7 @@ require './templates/header.html';
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
       // dom: '<"superior"<f"checkbox-view"><"leyendas-lea">B>rt<"inferior"i<"derecha-inferior"lp>>',
-      dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      dom: '<"superior"f<"leyendas-map">B>rt<"inferior"i<"derecha-inferior"lp>>',
       buttons: [{
         text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
         titleAttr: 'Excel',
@@ -1680,7 +1692,7 @@ require './templates/header.html';
         }
       }],
       initComplete: function() {
-        $(".leyendas-lea").html(`
+        $(".leyendas-map").html(`
             <div class="w-full flex justify-center items-center gap-4">
               <div class="flex justify-center items-center gap-1">
                 <span class="size-5 bg-yellow-400"></span>
@@ -2995,6 +3007,28 @@ require './templates/header.html';
     if (perm) {
       window.location.href = `/gescon/vehiculos/consultar_trazabilidad_placa${clientId ? `?clienteId=${clientId}` : ``}`;
     }
+  })
+
+  $("#btnCapture").on("click", async function() {
+    $(".spinner").removeClass("hidden")
+    $(".bi-camera").addClass("hidden")
+    $("#btnCapture").addClass("bg-violet-700").removeClass("bg-violet-100")
+
+    const node = document.getElementById("report-container");
+
+    const dataUrl = await htmlToImage.toPng(node);
+
+    const link = document.createElement("a");
+
+    link.download = "reporte.png";
+
+    link.href = dataUrl;
+
+    link.click();
+
+    $(".spinner").addClass("hidden")
+    $(".bi-camera").removeClass("hidden")
+    $("#btnCapture").removeClass("bg-violet-700").addClass("bg-violet-100")
   })
 </script>
 

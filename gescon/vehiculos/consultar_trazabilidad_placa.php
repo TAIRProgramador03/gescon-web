@@ -245,16 +245,16 @@ require '../templates/header.html';
 <!-- MODAL HISTORIAL DE MOVIMIENTOS -->
 <div id="modal-history" class="w-full h-screen fixed top-0 left-0 flex justify-center items-center opacity-0 -z-[9990] overflow-hidden">
   <div class="modal-overlay-hist w-full h-screen fixed top-0 left-0 bg-black/25 -z-10 overflow-hidden"></div>
-  <div class="modal-container-hist w-[80%] h-[90%] flex flex-col gap-3 bg-white rounded-md overflow-auto relative px-4 py-5">
+  <div class="modal-container-hist w-[80%] h-[90%] flex flex-col gap-3 bg-white rounded-md overflow-hidden relative px-4 py-5">
     <div class="w-full h-2 bg-yellow-400 absolute top-0 left-0"></div>
     <div class="w-full flex flex-col justify-center gap-1">
       <h3 class="text-2xl text-[#002141] font-semibold">Historial de movimientos</h3>
       <p class="!m-0 text-base font-normal text-gray-500">Visualice todas las reasignaciones que se realizaron para este vehiculo.</p>
     </div>
-    <div class="w-full h-full grid grid-cols-2 gap-3">
+    <div class="w-full h-full grid grid-cols-2 gap-3 overflow-hidden">
       <ul class="list-history w-full h-full flex flex-col gap-3 border border-gray-100 rounded-md p-3 overflow-auto">
       </ul>
-      <div class="w-full h-full flex flex-col gap-3 border border-gray-100 rounded-md p-3">
+      <div class="w-full h-full flex flex-col gap-3 border border-gray-100 rounded-md p-3 overflow-auto">
         <div class="w-full flex justify-between items-center">
           <h3 class="text-2xl text-[#002141] font-semibold">Información</h3>
           <p class="text-lg text-[#002141] font-semibold fecha-info"></p>

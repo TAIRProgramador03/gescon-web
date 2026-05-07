@@ -1,18 +1,18 @@
     
     <div class="modal-glossary w-full h-screen fixed top-0 left-0 flex justify-center items-center opacity-0 -z-[9990] overflow-hidden">
         <div class="modal-glossary-overlay w-full h-screen fixed top-0 left-0 bg-black/25 -z-10"></div>
-        <div class="modal-glossary-container w-full max-w-[40%] h-full max-h-1/2 rounded-lg relative flex flex-col gap-3 px-5 py-4 bg-white overflow-hidden">
+        <div class="modal-glossary-container w-full max-w-[70%] h-[600px] rounded-lg relative flex flex-col gap-3 px-5 py-6 bg-white overflow-hidden">
             <div class="w-full h-2 bg-blue-700 absolute top-0 left-0"></div>
-            <h2 class="text-3xl text-[#002141] font-semibold">Glosario de Términos</h2>
-            <div class="w-full flex gap-3">
-                <div class="w-full max-w-56 h-full rounded-md overflow-hidden">
+            
+            <div class="w-full h-full grid grid-cols-3 gap-3">
+                <div class="w-full h-fit rounded-md overflow-hidden">
                     <ul class="w-full flex flex-col ">
                         <li>
                             <button class="w-full px-2 py-3 bg-blue-800 font-medium text-white flex items-center justify-between glosary-sup outline-none">
                                 <span class="cursor-pointer flex gap-2 items-center">
                                     <i
                                         class="bi bi-table"
-                                        style="font-size: 16px; padding-left: 2px"
+                                        style="font-size: 16px;"
                                     ></i>
                                     Adm. Contratos
                                 </span>
@@ -26,15 +26,115 @@
                         </li>
                         <li>
                             <button class="w-full px-2 py-3 bg-blue-800 font-medium text-white flex items-center glosary-sup cursor-pointer outline-none">
-                                Leasing
+                                <span class="cursor-pointer flex gap-2 items-center">
+                                    <i
+                                        class="bi bi-file-earmark-spreadsheet-fill"
+                                        style="font-size: 16px;"
+                                    ></i>
+                                    Leasing
+                                </span>
                             </button>
                         </li>
                     </ul>
                 </div>
+                
+                <div class="col-span-2 w-full h-full flex flex-col gap-3 overflow-hidden">
+                    <h2 class="text-3xl text-[#002141] font-semibold">Glosario de Términos</h2>
+                    <div class="w-full h-full overflow-auto">
+                        <ul class=" w-full h-full flex flex-col gap-4">
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                VEHÍCULOS ACTIVOS: </span>Es el total de unidades de la flota que se encuentran con OPERACTIVIDAD ACTIVA y se encuentran disponibles para su uso en su operación diaria; cumpliendo con las condiciones técnicas y administrativas requeridas.
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                VEHÍCULOS ASIGNADOS: </span>Es el total histórico de unidades que han sido vinculadas al cliente desde su asignación inicial. No implica necesariamente que el vehículo se encuentre en operación activa, ya que puede estar inactivo por mantenimiento, en espera o incluso haber sido vendido.
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                VEHÍCULOS PENDIENTES: </span>Son las unidades provenientes del leasing asociado al cliente que aún no han sido asignadas formalmente a su operación, por lo que permanecen como PENDIENTES dentro de la flota, a la espera de su asignación.
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                FECHA FIRMA DE CONTRATO: </span>Es la fecha de inicio del vínculo contractual. Esta NO es igual al inicio de operación del vehículo (valorización).
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                FECHA DE ACTA DE ENTREGA: </span>Fecha en la que el vehículo ha sido entregado formalmente al cliente e inicia su operación con el periodo correspondiente a su contrato. A partir de la misma, comienza su valorización.
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                PLAZO CONTRACTUAL: </span>Es el tiempo durante el cual el vehículo debe estar en servicio según lo establecido en su contrato. Este periodo comienza desde la fecha del Acta de Entrega, que es cuando el vehículo se entrega al cliente e inicia su operación, y se extiende hasta la fecha de término acordado.
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                FECHA DE DEVOLUCIÓN DEL VEHÍCULO: </span>Es la entrega del vehículo por parte del cliente al finalizar el plazo contractual o cuando el contrato termina (ya sea en la fecha prevista o de forma anticipada).<br/>
+                                Con la devolución, el vehículo deja de operar para ese cliente y puede pasar a otra operación, quedar disponible en la flota o salir definitivamente, por ejemplo, la venta de este.
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                CLIENTE ORIGEN DE LEASING: </span>Identifica al cliente por el cual se adquirió originalmente la Operación Leasing.
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                FECHA INICIO DE LEASING: </span>Fecha a partir de la cual se inicia la obligación financiera del vehículo, correspondiente a la primera cuota del cronograma de leasing. <br/>
+                                Puede no coincidir con la fecha firma de contrato ni con la fecha de acta de entrega, debido a condiciones como periodos de gracia u otros acuerdos financieros.
 
-                <ul class="w-full flex flex-col gap-2 overflow-auto">
-                    <li class="text-sm text-gray-600"><span class="font-medium text-black">Jimena: </span>Termina el glosario</li>
-                </ul>
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                FECHA FIN DE LEASING: </span>Señala el término de la obligación financiera del vehículo. A partir de la fecha, se toma decisiones estratégicas, como renovación de flota, venta del vehículo o extensión de su vida útil operativa.
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                CONDICIÓN DEL VEHÍCULO: </span>Describe el rol que cumple el vehículo dentro de la operación. No indica si está activo o inactivo, sino para qué está destinado dentro del servicio. <br/>
+                                Permite entender la estructura operativa de la flota de la siguiente manera: <br/>
+                                <ul class="!list-disc pl-4">
+                                    <li>
+                                        Titular: Unidad principal que cumple directamente con el servicio contratado.
+                                    </li>
+                                    <li>
+                                        Retén: Unidad asignada de respaldo que se le añade por cada 10 vehículos dentro de la flota del contrato.
+                                    </li>
+                                    <li>
+                                        Logística: Unidad de apoyo (traslado, abastecimiento, soporte).
+                                    </li>
+                                    <li>
+                                        Pendiente: Unidad con rol oficialmente no definida.
+                                    </li>
+                                </ul>
+
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                TIPO DE TERRENO: </span>Define el entorno físico donde opera el vehículo, lo que influye directamente en su desgaste, mantenimiento y desempeño. No es solo una clasificación geográfica, sino una variable operativa crítica para análisis de costos, vida útil y productividad. <br/>
+                                Se clasifican como: <br/>
+                                <ul class="!list-disc pl-4">
+                                    <li>
+                                        Ciudad: Uso en zonas urbanas, con vías pavimentadas.
+                                    </li>
+                                    <li>
+                                        Superficie: Trabajo en operaciones a cielo abierto (como minería superficial).
+                                    </li>
+                                    <li>
+                                        Socavón: Operación en interior mina (subterráneo).
+                                    </li>
+                                    <li>
+                                        Severo: Uso en condiciones difíciles o exigentes, como terrenos irregulares o de alto desgaste.
+                                    </li>
+                                </ul>
+
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                % DE CONTRATO: </span>Indicador que representa el ciclo de vida contractual en función al plazo desde la fecha del Acta de Entrega. Este permite anticipar renovaciones, planificar reemplazos de flota y gestionar riesgos de término de contrato.
+                            </li>
+                            <li class="text-sm text-gray-600"><span class="font-medium text-black">
+                                OPERATIVIDAD (CONDICIÓN OPERATIVA): </span>Indica si el vehículo está operando actualmente y su situación dentro de la flota, tomando como referencia la información de los sistemas (GESOPER/GESCON). <br/>
+                                Se visualiza de la siguiente manera: <br/>
+                                <ul class="!list-disc pl-4">
+                                    <li>
+                                        Activo: El vehículo está en operación y su información coincide entre los dos sistemas GESOPER y GESCON.
+                                    </li>
+                                    <li>
+                                        Inactivo: El vehículo no está operando o presenta diferencias entre los sistemas; por ejemplo, se reubicó a otra operación en el sistema GESOPER, por lo que se debe actualizar en el nuevo sistema GESCON.
+                                    </li>
+                                    <li>
+                                        Vendido: El vehículo ya no pertenece a la flota.
+                                    </li>
+                                </ul>
+
+                            </li>   
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

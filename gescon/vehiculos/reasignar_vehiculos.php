@@ -468,7 +468,7 @@ require '../templates/header.html';
       },
       // paging: false,
       lengthChange: false,
-      pageLength: 50,
+      pageLength: 100,
       emptyTable: "No hay vehículos disponibles",
       dom: '<"superior flex justify-between items-center"<"left flex items-center gap-2"f<"checkbox-view">><"leyendas">>rt<"inferior"i<"derecha-inferior"lp>>',
       scrollCollapse: true,

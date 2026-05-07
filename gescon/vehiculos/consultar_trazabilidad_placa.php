@@ -1305,11 +1305,11 @@ require '../templates/header.html';
     fp2.jumpToDate(dateObj2);
     fp2.setDate(dateObj2, true);
 
-    if (data.terreno == "4") {
-      $('#cbo-terreno-upd').prop("disabled", false)
-    } else {
-      $('#cbo-terreno-upd').prop("disabled", true)
-    }
+    // if (data.terreno == "4") {
+    //   $('#cbo-terreno-upd').prop("disabled", false)
+    // } else {
+    //   $('#cbo-terreno-upd').prop("disabled", true)
+    // }
 
     if (data.condicion == "3") {
       $('#cbo-condicion-upd').prop("disabled", false)

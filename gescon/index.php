@@ -311,6 +311,7 @@ require './templates/header.html';
   </main>
 </div>
 
+<!-- MODAL DE DONAS -->
 <div id="modal-leasing" data-route-permission="ver_dashboard">
   <div class="modal-container">
     <div class="modal-header">
@@ -326,12 +327,46 @@ require './templates/header.html';
   </div>
 </div>
 
+<!-- MODAL DE MAPA -->
+<div id="modal-vehicle" class="w-full h-full flex justify-center items-center inset-0 fixed opacity-0 -z-[9990] overflow-hidden" data-route-permission="ver_dashboard">
+  <div class="modal-vehicle-overlay w-full h-full inset-0 fixed bg-black/25 -z-10"></div>
+  <div class="modal-vehicle-container w-full max-w-[80%] h-fit max-h-[650px] bg-white rounded-lg flex flex-col overflow-hidden">
+    <div class="w-full h-fit bg-blue-700 !text-white !font-medium p-2 flex items-center gap-2">
+      <i class="bi bi-exclamation-circle text-xl"></i>
+      <h3 class="!text-lg !text-white !font-medium uppercase title-modal-veh"></h3>
+    </div>
+    <div class="modal-vehicle-body w-full h-full p-2">
+      <table id="tableVehRegion" class="display w-full">
+        <thead>
+          <th class="bg-yellow-400 !text-white !font-medium">Item</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Placa</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Marca</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Modelo</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Terreno</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Condición</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Año</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Fecha de Entrega</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Fecha de Devolución</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Operación</th>
+          <th class="bg-yellow-400 !text-white !font-medium">Cliente</th>
+        </thead>
+      </table>
+      <tbody></tbody>
+    </div>
+    <div class="w-full h-fit border-t border-t-blue-700 p-2 flex justify-end items-center">
+      <button id="btnCloseModalMap" class="bg-blue-100 border border-blue-700 text-blue-700 text-sm font-medium px-3 py-1 rounded hover:bg-blue-700 hover:text-white transition-colors cursor-pointer">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ALERTAS -->
 <div id="alert-modal">
   <div class="alert-bg"></div>
   <div class="alert-container">
   </div>
 </div>
 
+<!-- MODAL DE TABLA | DEPRECIACION -->
 <div id="chart-modal" class="w-full h-screen flex justify-center items-center fixed top-0 left-0 opacity-0 -z-[9990] overflow-hidden">
   <div class="chart-modal-overlay w-full h-screen fixed top-0 left-0 bg-black/25 -z-10"></div>
   <div class="chart-modal-container w-full max-w-[60%] h-[480px] bg-white rounded-lg px-6 py-7 overflow-hidden relative">
@@ -423,6 +458,13 @@ require './templates/header.html';
 
   // TABLES
   let tableLea;
+  let tableMap;
+
+  // MAPA
+  let map;
+  let geoLayer;
+  let geojsonData;
+  let currentRegion = "";
 
   function getMidPoint(data) {
     if (!data[0].x || !data[1].x) {
@@ -1572,6 +1614,267 @@ require './templates/header.html';
 
   }
 
+  function getPercentage(value, max) {
+    return max === 0 ?
+      0 :
+      (value / max) * 100;
+  }
+
+  function getColor(value, max) {
+
+    const percent = getPercentage(value, max);
+
+    return percent >= 30 ? '#0b3c8c' :
+      percent >= 20 ? '#2563eb' :
+      percent >= 10 ? '#60a5fa' :
+      percent > 0 ? '#bfdbfe' :
+      '#D6D6D6';
+
+    // return d > 100 ? '#0b3c8c' :
+    //   d > 50 ? '#2563eb' :
+    //   d > 20 ? '#60a5fa' :
+    //   d > 0 ? '#bfdbfe' :
+    //   '#D6D6D6';
+  }
+
+  async function initMap() {
+
+    map = L.map('map', {
+      minZoom: 5,
+      maxZoom: 10
+    }).setView([-9.19, -75.015], 5);
+
+    const bounds = [
+      [-18.5, -82],
+      [0.5, -68]
+    ];
+
+    map.setMaxBounds(bounds);
+    map.fitBounds(bounds);
+
+    L.tileLayer(
+      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+    ).addTo(map);
+
+    // cargar geojson UNA sola vez
+    const res = await fetch('/public/peru_departamentos2.json');
+    geojsonData = await res.json();
+
+
+    // INCIALIZACION DE TABLA MODAL
+    tableMap = $("#tableVehRegion").DataTable({
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
+      },
+      // dom: '<"superior"<f"checkbox-view"><"leyendas-lea">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      dom: '<"superior"f<"leyendas">B>rt<"inferior"i<"derecha-inferior"lp>>',
+      buttons: [{
+        text: '<span>Exportar</span><i class="bi bi-file-earmark-excel"></i>',
+        titleAttr: 'Excel',
+        className: 'btn-excel',
+        action: async function(e, dt, button, config) {
+          const dataRow = dt.rows({
+            search: 'applied'
+          }).data().toArray();
+          await generarExcelVehiclesRegion(dataRow, `Reporte de Vehiculos de ${currentRegion}`, currentRegion);
+        }
+      }],
+      initComplete: function() {
+        $(".leyendas-lea").html(`
+            <div class="w-full flex justify-center items-center gap-4">
+              <div class="flex justify-center items-center gap-1">
+                <span class="size-5 bg-yellow-400"></span>
+                <p class="text-xs !m-0">Unidad</p>
+              </div>
+            </div>
+          `);
+      },
+      scrollY: '364px',
+      scrollX: true,
+      scrollCollapse: true,
+      data: [],
+      "columnDefs": [
+        // Centrar contenido y cabecera en las columnas 0, 1 y 2
+        {
+          "className": "dt-center",
+          "targets": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        }
+      ],
+      columns: [{
+          data: null,
+          render: function(data, type, row, meta) {
+            return meta.row + 1;
+          },
+          width: "50px",
+        },
+        {
+          data: 'placa',
+          width: "100px",
+        },
+        {
+          data: 'marca',
+          width: "100px"
+        },
+        {
+          data: 'modelo',
+          width: "200px"
+        },
+        {
+          data: 'terreno',
+          width: "100px"
+        },
+        {
+          data: 'condicion',
+          width: "100px"
+        },
+        {
+          data: 'anio',
+          width: "80px"
+        },
+        {
+          data: 'fechaIni',
+          render: (data, type) => {
+            if (type === 'sort' || type === 'type') {
+              return dayjs(convertirFecha(data)).format("YYYYMMDD");
+            }
+
+            return dayjs(convertirFecha(data)).format("DD/MM/YYYY");
+          },
+          width: "150px"
+        },
+        {
+          data: 'fechaFin',
+          render: (data, type) => {
+            if (type === 'sort' || type === 'type') {
+              return dayjs(convertirFecha(data)).format("YYYYMMDD");
+            }
+
+            return dayjs(convertirFecha(data)).format("DD/MM/YYYY");
+          },
+          width: "150px"
+        },
+        {
+          data: 'operacion',
+          width: "250px"
+        },
+        {
+          data: 'cliente',
+          width: "250px"
+        },
+      ]
+    })
+  }
+
+  async function updateMap(clientId = null) {
+
+    const data = await obtenerTotalVehiculosPorDepartamento(clientId);
+
+    // eliminar capa anterior
+    if (geoLayer) {
+      geoLayer.remove();
+    }
+
+    geoLayer = L.geoJSON(geojsonData, {
+
+      style: function(feature) {
+
+        const name = feature.properties.NOMBDEP;
+
+        const info = data[name] || {
+          vehiculos: 0,
+          operaciones: 0
+        };
+
+        const totalVehiculos = Object.values(data)
+          .reduce((acc, item) => acc + item.vehiculos, 0);
+
+        return {
+          fillColor: getColor(info.vehiculos, totalVehiculos),
+          weight: 2,
+          color: '#FFF',
+          fillOpacity: 1
+        };
+      },
+
+      onEachFeature: function(feature, layer) {
+
+        const name = feature.properties.NOMBDEP;
+
+        const info = data[name] || {
+          vehiculos: 0,
+          operaciones: 0
+        };
+
+        const totalVehiculos = Object.values(data)
+          .reduce((acc, item) => acc + item.vehiculos, 0);
+
+        layer.on({
+
+          click: async (e) => {
+
+            const name = feature.properties.NOMBDEP;
+
+            if (info.vehiculos > 0) {
+              currentRegion = name;
+
+              $(".title-modal-veh").text(`Vehiculos del departamento de ${currentRegion}`);
+              const vehicles = await obtenerVehiculosPorDepartamento(name, clientId);
+
+              tableMap.clear();
+              tableMap.rows.add(vehicles);
+              tableMap.draw();
+
+              $("#modal-vehicle").removeClass("opacity-0 -z-[9990]").addClass("opacity-100 z-[9990]");
+
+              Motion.animate(".modal-vehicle-container", {
+                opacity: [0, 1],
+                scale: [0.7, 1.05, 1]
+              }, {
+                duration: 0.45,
+                easing: 'ease-out'
+              })
+            }
+
+            // cambiar estilo visual
+            e.target.setStyle({
+              weight: 3,
+              color: '#000'
+            });
+          },
+
+          mouseover: (e) => {
+
+            const l = e.target;
+
+            l.setStyle({
+              weight: 2,
+              color: '#474747'
+            });
+
+            l.bringToFront();
+          },
+
+          mouseout: (e) => {
+
+            e.target.setStyle({
+              weight: 2,
+              color: '#FFF'
+            });
+          }
+        });
+
+        const tooltipContent = `
+          <strong>${name} (${getPercentage(info.vehiculos, totalVehiculos).toFixed(2)}%)</strong><br/>
+          Operaciones: ${info.operaciones}<br/>
+          Vehículos: ${info.vehiculos}
+        `;
+
+        layer.bindTooltip(tooltipContent);
+      }
+
+    }).addTo(map);
+  }
+
   document.addEventListener('DOMContentLoaded', async () => {
     showLoaderWindow();
     try {
@@ -2003,86 +2306,9 @@ require './templates/header.html';
 
 
 
-
-      const map = L.map('map').setView([-9.19, -75.015], 5);
-
-      const bounds = [
-        [-18.5, -82], // suroeste
-        [0.5, -68] // noreste
-      ];
-
-      map.setMaxBounds(bounds);
-      map.fitBounds(bounds);
-
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
-
-      // Tus datos
-      const data = {
-        "Lima": 120,
-        "Cusco": 45,
-        "Arequipa": 80
-      };
-
-      // escala de colores (tipo GA)
-      function getColor(d) {
-        return d > 100 ? '#0b3c8c' :
-          d > 50 ? '#2563eb' :
-          d > 20 ? '#60a5fa' :
-          d > 0 ? '#bfdbfe' :
-          '#D6D6D6';
-      }
-
-      fetch('/public/peru_departamentos.json')
-        .then(res => res.json())
-        .then(geojson => {
-
-          console.log(geojson);
-
-          L.geoJSON(geojson, {
-            style: function(feature) {
-              const name = feature.properties.NAME_1;
-              const value = data[name] || 0;
-
-              return {
-                fillColor: getColor(value),
-                weight: 2,
-                color: '#FFF',
-                fillOpacity: 1
-              };
-            },
-
-            onEachFeature: function(feature, layer) {
-              const name = feature.properties.NAME_1;
-              const value = data[name] || 0;
-
-              layer.on({
-                mouseover: (e) => {
-                  const l = e.target;
-
-                  l.setStyle({
-                    weight: 2,
-                    color: '#474747'
-                  });
-
-                  l.bringToFront();
-                },
-                mouseout: (e) => {
-                  e.target.setStyle({
-                    weight: 2,
-                    color: '#FFF'
-                  });
-                }
-              });
-
-              layer.bindTooltip(`
-                <strong>${name}</strong><br/>
-                Vehículos: ${value}
-              `);
-            }
-
-          }).addTo(map);
-
-        });
+      // INICIALIZACION DEL MAPA
+      await initMap();
+      await updateMap(clientId);
     } catch (err) {
       console.error(err);
       toastr.error(err.message, "Oops...")
@@ -2147,6 +2373,26 @@ require './templates/header.html';
     await anim.finished;
 
     $("#chart-modal").addClass("opacity-0 -z-[9990]").removeClass("opacity-100 z-[9990]");
+  })
+
+  $("#btnCloseModalMap").on("click", async function() {
+    const anim = Motion.animate(".modal-vehicle-container", {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.7]
+    }, {
+      duration: 0.45,
+      easing: 'ease-in'
+    })
+
+    await anim.finished;
+
+    tableMap.clear();
+    tableMap.search('').draw();
+    tableMap.order([]).draw();
+    tableMap.page('first').draw('page');
+    tableMap.page.len(10).draw();
+
+    $("#modal-vehicle").addClass("opacity-0 -z-[9990]").removeClass("opacity-100 z-[9990]");
   })
 
   $("#cbo-client").on("select2:select", async () => {
@@ -2355,6 +2601,9 @@ require './templates/header.html';
     tableLea.clear();
     tableLea.rows.add(listVehLeasing);
     tableLea.draw();
+
+    // ACTUALIZA MAPA
+    await updateMap(clientId == 0 ? null : clientId);
 
     setTimeout(() => {
       hideLoader();

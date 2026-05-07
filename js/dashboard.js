@@ -365,6 +365,41 @@ async function obtenerVehiculosReasignacion() {
   }
 }
 
+async function obtenerTotalVehiculosPorDepartamento(clienteId) {
+  try {
+    instance = await obtenerInstancia();
+    const response = await instance.get("/contTotalVehicleMap", {
+      withCredentials: true,
+      params: {
+        clienteId,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error.response.data);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+}
+
+async function obtenerVehiculosPorDepartamento(region, clienteId) {
+  try {
+    instance = await obtenerInstancia();
+    const response = await instance.get("/vehiculosPorRegion", {
+      withCredentials: true,
+      params: {
+        region,
+        clienteId,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error.response.data);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+}
+
 async function generarExcelLeasingsVeh(data) {
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet("Vehiculos");
@@ -746,6 +781,127 @@ async function generarExcelVehiclesDonut(data, title) {
   link.click();
 }
 
+async function generarExcelVehiclesRegion(data, title, region) {
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet("Vehiculos");
+
+  ws.mergeCells("A1:K1");
+  const titleCell = ws.getCell("A1");
+
+  titleCell.value = `Gescon: ${title}`.toUpperCase();
+  titleCell.font = { bold: true, color: { argb: "FFFFFF" } };
+  titleCell.alignment = { vertical: "middle", horizontal: "center" };
+  titleCell.fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "007595" },
+  };
+  ws.getRow(1).height = 15;
+
+  ws.addTable({
+    name: "TablaVehiculos",
+    ref: "A2",
+    headerRow: true,
+    style: {
+      theme: "TableStyleMedium2",
+      showRowStripes: true,
+    },
+    columns: [
+      { name: "Item", filterButton: true },
+      { name: "Placa", filterButton: true },
+      { name: "Marca", filterButton: true },
+      { name: "Modelo", filterButton: true },
+      { name: "Terreno", filterButton: true },
+      { name: "Condición", filterButton: true },
+      { name: "Año", filterButton: true },
+      { name: "Fecha Entrega", filterButton: true },
+      { name: "Fecha Devolución", filterButton: true },
+      { name: "Operación", filterButton: true },
+      { name: "Cliente", filterButton: true },
+    ],
+    rows: data.map((row, i) => {
+      const fechaIni = dayjs(convertirFecha(row.fechaIni)).toDate();
+      const fechaFin = dayjs(convertirFecha(row.fechaFin)).toDate();
+
+      return [
+        i + 1,
+        row.placa,
+        row.marca,
+        row.modelo,
+        row.terreno,
+        row.condicion,
+        row.anio,
+        fechaIni,
+        fechaFin,
+        row.operacion,
+        row.cliente,
+      ];
+    }),
+  });
+
+  ws.getTable("TablaVehiculos").commit();
+
+  const headerRow = ws.getRow(2);
+
+  headerRow.eachCell((cell) => {
+    cell.font = { bold: true, color: { argb: "FFFFFF" } };
+
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "002141" },
+    };
+
+    cell.alignment = { horizontal: "center", vertical: "middle" };
+
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+  });
+
+  ws.getColumn(8).numFmt = "dd/mm/yyyy";
+  ws.getColumn(9).numFmt = "dd/mm/yyyy";
+
+  // Tamaño columnas
+  ws.getColumn(1).width = 8; // Item
+  ws.getColumn(2).width = 11; // Placa
+  ws.getColumn(3).width = 30; // Marca
+  ws.getColumn(4).width = 40; // Modelo
+  ws.getColumn(5).width = 16; // Terreno
+  ws.getColumn(6).width = 18; // Condición
+  ws.getColumn(7).width = 13; // Año
+  ws.getColumn(8).width = 27; // Fecha Entrega
+  ws.getColumn(9).width = 27; // Fecha Devolucion
+  ws.getColumn(10).width = 30; // Operación
+  ws.getColumn(11).width = 48; // Cliente
+
+  ws.views = [{ state: "frozen", ySplit: 2 }];
+
+  ws.eachRow((row, rowNumber) => {
+    row.eachCell((cell) => {
+      cell.alignment = {
+        vertical: "middle",
+        horizontal: "center",
+        wrapText: true,
+      };
+    });
+  });
+
+  const buffer = await wb.xlsx.writeBuffer();
+
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `Gescon_Reporte_Placas_${region ? `De_${region.toUpperCase()}_` : ''}${new Date().toLocaleDateString()}.xlsx`;
+  link.click();
+}
+
 function calcularPorcentaje(fechaIni, fechaFinal) {
   const fechaInicio = new Date(fechaIni);
   const fechaFin = new Date(fechaFinal);
@@ -769,6 +925,14 @@ function calcularPorcentaje(fechaIni, fechaFinal) {
   porcentaje = Math.min(Math.max(porcentaje, 0), 100);
 
   return porcentaje;
+}
+
+function convertirFecha(date) {
+  const fecha = `${date}`;
+  const anio = fecha.substring(0, 4);
+  const mes = fecha.substring(4, 6);
+  const dia = fecha.substring(6, 8);
+  return `${anio}-${mes}-${dia}`;
 }
 
 function isPermission(permission) {

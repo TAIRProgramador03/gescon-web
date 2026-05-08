@@ -839,14 +839,14 @@ require '../templates/header.html';
         {
           data: "fechaIni",
           render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
+            return dayjs(convertirFecha(data)).format("DD/MM/YYYY")
           },
           width: "120px"
         },
         {
           data: "fechaFin",
           render: (data) => {
-            return dayjs(data).format("DD/MM/YYYY")
+            return dayjs(convertirFecha(data)).format("DD/MM/YYYY")
           },
           width: "120px"
         },
@@ -879,7 +879,7 @@ require '../templates/header.html';
               return `
                 <div class="contenedor-barra">
                   <div class="progreso-relleno ${color}" style="width: ${result}%;"></div>
-                  <span class="numero-porcentaje ${colorText}">${result}%</span>
+                  <span class="numero-porcentaje ${colorText}">${result.toFixed(2)}%</span>
                 </div>
               `
             }
@@ -889,10 +889,13 @@ require '../templates/header.html';
         {
           data: null,
           render: (data, type, row) => {
-            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
-            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+            const dateFinish = dayjs(convertirFecha(row.fechaFin))
+            const isGreater = dateFinish.isAfter(dayjs()); // VERIFICAMOS SI ESTA VENCIDO O NO
 
-            return `<span class="tag-estado ${color}">${status}</span>`
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? isGreater ? "Por Reasignar" : "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "bg-yellow-100 border-yellow-500 text-yellow-500" : row.idOpe != row.idOpeActual ? isGreater ? "bg-orange-100 border-orange-500 text-orange-500" : "bg-red-100 border-red-500 text-red-500" : "bg-green-100 border-green-500 text-green-500";
+
+            return `<div class="w-full rounded font-medium px-2 py-1 border ${color}"><span>${status}</span></div>`
           }
         },
         {
@@ -918,7 +921,7 @@ require '../templates/header.html';
             if (data) {
               return `
               <div class="w-full flex justify-center items-center">
-                <button class="btn-view-history w-full flex justify-center items-center gap-1 bg-yellow-100 text-yellow-700 border border-yellow-700 rounded outline-none px-4 py-2 cursor-pointer" data-key="${data}">
+                <button class="btn-view-history w-full flex justify-center items-center gap-1 bg-blue-100 text-blue-700 border border-blue-700 rounded outline-none px-4 py-2 cursor-pointer" data-key="${data}">
                   <i class="bi bi-card-list"></i>
                   <span>Movimientos</span>
                 </button>
@@ -1034,6 +1037,10 @@ require '../templates/header.html';
         {
           id: "I",
           text: "Inactivos"
+        },
+        {
+          id: "P",
+          text: "Por Reasignar"
         },
         {
           id: "V",

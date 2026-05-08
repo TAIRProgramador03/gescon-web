@@ -132,9 +132,15 @@ require './templates/header.html';
 
       <div class="dashboard-time-section">
         <div class="dashboard-item item-large bg-blue-50! border-blue-600!">
-          <div class="flex items-center gap-1">
-            <h3 class="text-blue-500!">Linea de tiempo (Contrato - Leasing)</h3>
-            <i class="tooltip-info bi bi-exclamation-circle text-blue-500! text-sm" data-tooltip="Visualización gráfica de la diferencia de tiempo entre un Contrato y su Leasing."></i>
+          <div class="w-full flex justify-between items-center">
+            <div class="flex items-center gap-1">
+              <h3 class="text-blue-500!">Linea de tiempo (Contrato - Leasing)</h3>
+              <i class="tooltip-info bi bi-exclamation-circle text-blue-500! text-sm" data-tooltip="Visualización gráfica de la diferencia de tiempo entre un Contrato y su Leasing."></i>
+            </div>
+            <button id="exportDiference" class="w-fit flex justify-center items-center px-2 py-0.5 rounded bg-green-800 text-white text-sm font-light gap-2 cursor-pointer">
+              Excel
+              <i class="bi bi-file-earmark-excel"></i>
+            </button>
           </div>
           <div id="data-value-comparation" class="data-value text-blue-800!"></div>
           <div class="row-cbo-comparation">
@@ -372,11 +378,11 @@ require './templates/header.html';
 </div>
 
 <!-- ALERTAS -->
-<div id="alert-modal">
+<!-- <div id="alert-modal">
   <div class="alert-bg"></div>
   <div class="alert-container">
   </div>
-</div>
+</div> -->
 
 <!-- MODAL DE TABLA | DEPRECIACION -->
 <div id="chart-modal" class="w-full h-screen flex justify-center items-center fixed top-0 left-0 opacity-0 -z-[9990] overflow-hidden">
@@ -1289,7 +1295,7 @@ require './templates/header.html';
       const options = {
         series: [{
           name: "Monto depreciado",
-          data: data.map(veh => veh.perdidaAcumulada)
+          data: data.map(veh => veh.ventaProyectada)
         }],
         chart: {
           type: 'bar',
@@ -1376,7 +1382,7 @@ require './templates/header.html';
         },
         series: [{
           name: "Monto depreciado",
-          data: data.map(veh => veh.perdidaAcumulada)
+          data: data.map(veh => veh.ventaProyectada)
         }],
         tooltip: {
           x: {
@@ -1400,7 +1406,7 @@ require './templates/header.html';
       const options = {
         series: [{
           name: "Monto depreciado",
-          data: data.map(veh => veh.perdidaAcumulada)
+          data: data.map(veh => veh.ventaProyectada)
         }],
         chart: {
           type: 'bar',
@@ -1487,7 +1493,7 @@ require './templates/header.html';
         },
         series: [{
           name: "Monto depreciado",
-          data: data.map(veh => veh.perdidaAcumulada)
+          data: data.map(veh => veh.ventaProyectada)
         }],
         tooltip: {
           x: {
@@ -2275,36 +2281,36 @@ require './templates/header.html';
       $("#cbo-models-gen").val(null).trigger("change");
 
 
-      const listVehiclesPending = await obtenerVehiculosReasignacion();
+      // const listVehiclesPending = await obtenerVehiculosReasignacion();
 
-      if (listVehiclesPending.length > 0) {
-        const perm = isPermission('insertar_reasignacion')
-        if (perm) {
-          Motion.animate(".alert-container", {
-            opacity: [0, 1],
-            scale: [0.7, 1.05, 1]
-          }, {
-            duration: 0.45,
-            easing: "ease-out"
-          });
+      // if (listVehiclesPending.length > 0) {
+      //   const perm = isPermission('insertar_reasignacion')
+      //   if (perm) {
+      //     Motion.animate(".alert-container", {
+      //       opacity: [0, 1],
+      //       scale: [0.7, 1.05, 1]
+      //     }, {
+      //       duration: 0.45,
+      //       easing: "ease-out"
+      //     });
 
-          $("#alert-modal").css("display", "flex");
+      //     $("#alert-modal").css("display", "flex");
 
-          $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
+      //     $("#alert-modal .alert-container").css("background-color", "#ffeab0").css("border", "2px solid #ffbb00")
 
-          $("#alert-modal .alert-container").html(
-            `
-              <h2>¡Aviso de unidades pendientes!</h2>
-              <p style="color: black !important">El sistema ha detectado que se cuenta con <b>${listVehiclesPending.length}</b> vehiculo(s) que han sido traspasados a otras operaciones.</p>
-              <p style="color: black !important">¿Deseas reasignarlos ahora?</p>
-              <div class="btn-group">
-                <a href="/gescon/vehiculos/reasignar_vehiculos" class="btn btn-info btn-assign">Si, quiero reasignarlos</a>
-                <button id="btn-close-alert" class="btn btn-dark">Ignorar alerta</button>
-              </div>
-            `
-          )
-        }
-      }
+      //     $("#alert-modal .alert-container").html(
+      //       `
+      //         <h2>¡Aviso de unidades pendientes!</h2>
+      //         <p style="color: black !important">El sistema ha detectado que se cuenta con <b>${listVehiclesPending.length}</b> vehiculo(s) que han sido traspasados a otras operaciones.</p>
+      //         <p style="color: black !important">¿Deseas reasignarlos ahora?</p>
+      //         <div class="btn-group">
+      //           <a href="/gescon/vehiculos/reasignar_vehiculos" class="btn btn-info btn-assign">Si, quiero reasignarlos</a>
+      //           <button id="btn-close-alert" class="btn btn-dark">Ignorar alerta</button>
+      //         </div>
+      //       `
+      //     )
+      //   }
+      // }
 
       const viewContract = isPermission('ver_contratos');
       // const viewDocument = isPermission('ver_documentos');
@@ -2329,22 +2335,22 @@ require './templates/header.html';
     hideLoaderWindow();
   });
 
-  $(document).on("click", "#btn-close-alert", async () => {
-    const anim = Motion.animate(".alert-container", {
-      opacity: [1, 0],
-      scale: [1, 1.05, 0.7]
-    }, {
-      duration: 0.45,
-      easing: "ease-in"
-    });
+  // $(document).on("click", "#btn-close-alert", async () => {
+  //   const anim = Motion.animate(".alert-container", {
+  //     opacity: [1, 0],
+  //     scale: [1, 1.05, 0.7]
+  //   }, {
+  //     duration: 0.45,
+  //     easing: "ease-in"
+  //   });
 
-    await anim.finished;
+  //   await anim.finished;
 
-    const modal = document.getElementById("alert-modal");
-    modal.style.display = "none";
+  //   const modal = document.getElementById("alert-modal");
+  //   modal.style.display = "none";
 
-    $("#alert-modal .alert-container").empty();
-  })
+  //   $("#alert-modal .alert-container").empty();
+  // })
 
   $(document).on("click", ".check-table", async function() {
     const all = $(this).prop("checked");
@@ -3029,6 +3035,13 @@ require './templates/header.html';
     $(".spinner").addClass("hidden")
     $(".bi-camera").removeClass("hidden")
     $("#btnCapture").removeClass("bg-violet-700").addClass("bg-violet-100")
+  })
+
+  $("#exportDiference").on("click", async function() {
+    const params = new URLSearchParams(window.location.search)
+    const clienteId = params.get("clienteId");
+
+    await generarExcelDiferenceContractLeasing(clienteId);
   })
 </script>
 

@@ -902,6 +902,138 @@ async function generarExcelVehiclesRegion(data, title, region) {
   link.click();
 }
 
+async function generarExcelDiferenceContractLeasing(clienteId) {
+  let data = [];
+  try {
+    instance = await obtenerInstancia();
+    const response = await instance.get("/diferenceContractLeasing", {
+      withCredentials: true,
+      params: {
+        clienteId
+      }
+    });
+
+    data = response.data;
+  } catch (error) {
+    console.error(error.response.data);
+    toastr.warning(error.response.data.message, "Oops...");
+  }
+
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet("Vehiculos");
+
+  ws.mergeCells("A1:H1");
+  const titleCell = ws.getCell("A1");
+
+  titleCell.value = `Gescon: Diferencia entre Contratos y sus Leasings`.toUpperCase();
+  titleCell.font = { bold: true, color: { argb: "FFFFFF" } };
+  titleCell.alignment = { vertical: "middle", horizontal: "center" };
+  titleCell.fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "007595" },
+  };
+  ws.getRow(1).height = 15;
+
+  ws.addTable({
+    name: "TablaContratosLeasing",
+    ref: "A2",
+    headerRow: true,
+    style: {
+      theme: "TableStyleMedium2",
+      showRowStripes: true,
+    },
+    columns: [
+      { name: "N° Contrato", filterButton: true },
+      { name: "Fecha Firma", filterButton: true },
+      { name: "Fecha Fin Contrato", filterButton: true },
+      { name: "Años Contrato", filterButton: true },
+      { name: "N° Leasing", filterButton: true },
+      { name: "Fecha Inicio Leasing", filterButton: true },
+      { name: "Fecha Fin Leasing", filterButton: true },
+      { name: "Años Leasing", filterButton: true }
+    ],
+    rows: data.map((row, i) => {
+      const fechaFirma = dayjs(row.fechaFirma).toDate();
+      const fechaFinCont = dayjs(row.fechaFinContrato).toDate();
+      const fechaIniLea = dayjs(row.fechaIniLeasing).toDate();
+      const fechaFinLea = dayjs(row.fechaFinLeasing).toDate();
+
+      return [
+        row.nroContrato,
+        fechaFirma,
+        fechaFinCont,
+        row.aniosContrato,
+        row.nroLeasing,
+        fechaIniLea,
+        fechaFinLea,
+        row.aniosLeasing
+      ];
+    }),
+  });
+
+  ws.getTable("TablaContratosLeasing").commit();
+
+  const headerRow = ws.getRow(2);
+
+  headerRow.eachCell((cell) => {
+    cell.font = { bold: true, color: { argb: "FFFFFF" } };
+
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "002141" },
+    };
+
+    cell.alignment = { horizontal: "center", vertical: "middle" };
+
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+  });
+
+  ws.getColumn(2).numFmt = "dd/mm/yyyy";
+  ws.getColumn(3).numFmt = "dd/mm/yyyy";
+  ws.getColumn(6).numFmt = "dd/mm/yyyy";
+  ws.getColumn(7).numFmt = "dd/mm/yyyy";
+
+  // Tamaño columnas
+  ws.getColumn(1).width = 35; // N° Contrato
+  ws.getColumn(2).width = 27; // Fecha Firma
+  ws.getColumn(3).width = 27; // Fecha Fin Contrato
+  ws.getColumn(4).width = 15; // Años Contrato
+  ws.getColumn(5).width = 20; // N° Leasing
+  ws.getColumn(6).width = 27; // Fecha Inicio Leasing
+  ws.getColumn(7).width = 27; // Fecha Fin Leasing
+  ws.getColumn(8).width = 13; // Años Leasing
+
+  ws.views = [{ state: "frozen", ySplit: 2 }];
+
+  ws.eachRow((row, rowNumber) => {
+    row.eachCell((cell) => {
+      cell.alignment = {
+        vertical: "middle",
+        horizontal: "center",
+        wrapText: true,
+      };
+    });
+  });
+
+  const buffer = await wb.xlsx.writeBuffer();
+
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `Gescon_Reporte_Diferencia_Contrato_Lesaing_${new Date().toLocaleDateString()}.xlsx`;
+  link.click();
+}
+
 function calcularPorcentaje(fechaIni, fechaFinal) {
   const fechaInicio = new Date(fechaIni);
   const fechaFin = new Date(fechaFinal);

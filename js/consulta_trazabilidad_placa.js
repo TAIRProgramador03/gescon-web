@@ -505,7 +505,7 @@ export function calcularPorcentaje(fechaIni, fechaFinal) {
   // para obtener cuánto "camino" queda por recorrer.
   const tiempoRestante = fechaFin - fechaActual;
 
-  let porcentaje = Math.round((tiempoRestante / tiempoTotal) * 100);
+  let porcentaje = (tiempoRestante / tiempoTotal) * 100;
 
   // Aseguramos que no baje de 0 ni suba de 100
   porcentaje = Math.min(Math.max(porcentaje, 0), 100);

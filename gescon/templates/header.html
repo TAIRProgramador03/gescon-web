@@ -323,7 +323,23 @@
     </nav>
 
     <main class="container-principal relative">
-      <header class="header-info">
+      <header class="header-info gap-4">
+        <div class="w-fit relative">
+          <button id="openDropDownNotification" class="w-fit cursor-pointer hover:bg-gray-50 active:bg-gray-100 p-2 !rounded relative transition-colors outline-none">
+            <div class="size-2 !rounded-[55%] bg-red-500 absolute top-0 right-0 flag-alter-not hidden">
+              <div class="size-2 !rounded-[55%] bg-red-500 animate-ping"></div>
+            </div>
+            <i class="bi bi-bell"></i>
+          </button>
+          <div id="dropDownNotification" class="absolute w-96 top-[calc(100%-4px)] right-0 -z-[200] hidden">
+            <div class="drop-down-notification-container w-full flex flex-col gap-4 p-3 bg-white shadow !rounded-lg">
+              <h2 class="text-black font-medium text-sm uppercase">Notificaciones</h2>
+              <div class="w-full flex flex-col gap-3 list-notifications">
+                <span class="text-center text-gray-500 text-sm">Sin notificaciones</span>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="user-info">
           <figure>
             <img
@@ -332,15 +348,16 @@
               id="dropdown-menu-btn"
             />
           </figure>
-        </div>
-        <div class="dropdown-menu">
-          <div>
-            <h3 id="user-role"></h3>
-            <span id="user-data"></span>
+          <div class="dropdown-menu">
+            <div>
+              <h3 id="user-role"></h3>
+              <span id="user-data"></span>
+            </div>
+            <button id="log_out">
+              <i class="bi bi-door-closed"></i>
+              <span>Salir</span>
+            </button>
           </div>
-          <button id="log_out">
-            <i class="bi bi-door-closed"></i>
-            <span>Salir</span>
-          </button>
         </div>
+        
       </header>

@@ -33,6 +33,19 @@ const obtenerConfig = async () => {
   return config.IP_LOCAL;
 };
 
+async function listarNotificaciones() {
+  const IP_LOCAL = await obtenerConfig();
+
+  const response = await fetch(`http://${IP_LOCAL}:3000/notifications`, {
+    method: "GET",
+    credentials: "include", // Asegura que las cookies se envíen con la solicitud
+  });
+
+  const data = response.json();
+
+  return data;
+}
+
 async function authenticateValid() {
   const IP_LOCAL = await obtenerConfig();
 
@@ -63,6 +76,65 @@ $(document).on("DOMContentLoaded", async () => {
 
   aplicarPermisos();
   protegerRutas();
+
+  const notifitions = await listarNotificaciones();
+
+  const tContratos = notifitions.totalContratos;
+  const tDocumentos = notifitions.totalDocumentos;
+  const tReasignacion = notifitions.totalReasignaciones;
+  
+  if(tContratos > 0 || tDocumentos > 0 || tReasignacion > 0) {
+    $(".list-notifications").empty();
+    $(".flag-alter-not").removeClass("hidden");
+  }
+
+  if (tContratos > 0) {
+    $(".list-notifications").append(`
+      <div class="w-full flex items-center gap-3">
+        <div class="size-12 flex justify-center items-center bg-blue-200 rounded-lg p-2">
+          <i
+          class="bi bi-file-earmark-fill text-xl text-blue-600"
+          ></i>
+        </div>
+        <div class="w-full flex flex-col gap-1">
+          <h3 class="!text-base !font-medium !m-0">Contratos</h3>
+          <p class="text-sm text-gray-500 !m-0">Existen <b>${tContratos}</b> contratos pendientes que se deben completar.</p>
+        </div>
+      </div>
+    `);
+  }
+
+  if(tDocumentos > 0) {
+    $(".list-notifications").append(`
+      <div class="w-full flex items-center gap-3">
+        <div class="size-12 flex justify-center items-center bg-taupe-200 rounded-lg p-2">
+          <i
+          class="bi bi-filetype-doc text-xl text-taupe-600"
+          ></i>
+        </div>
+        <div class="w-full flex flex-col gap-1">
+          <h3 class="!text-base !font-medium !m-0">Documentos</h3>
+          <p class="text-sm text-gray-500 !m-0">Existen <b>${tDocumentos}</b> documentos pendientes que se deben completar.</p>
+        </div>
+      </div>
+    `);
+  }
+
+  if(tReasignacion > 0) {
+    $(".list-notifications").append(`
+      <div class="w-full flex items-center gap-3">
+        <div class="size-12 flex justify-center items-center bg-yellow-200 rounded-lg p-2">
+          <i
+          class="fa-solid fa-rotate text-xl text-yellow-600"
+          ></i>
+        </div>
+        <div class="w-full flex flex-col gap-1">
+          <h3 class="!text-base !font-medium !m-0">Reasignaciones</h3>
+          <p class="text-sm text-gray-500 !m-0">Se han detectado <b>${tReasignacion}</b> vehiculos pendientes que se deben reasignar.</p>
+        </div>
+      </div>
+    `);
+  }
 });
 
 window.addEventListener("pageshow", async function () {
@@ -74,6 +146,22 @@ $("#dropdown-menu-btn").on("click", () => {
   const isOpen = menu.classList.contains("show");
 
   if (!isOpen) {
+    Motion.animate(
+      ".drop-down-notification-container",
+      {
+        opacity: [1, 0],
+        transform: ["translateY(0px)", "translateY(-10px)"],
+      },
+      {
+        duration: 0.2,
+        easing: "ease-in",
+      },
+    ).finished.then(() => {
+      $("#dropDownNotification")
+        .addClass("-z-[200] hidden")
+        .removeClass("z-[200] flex");
+    });
+
     // 🔓 ABRIR
     menu.classList.add("show");
 

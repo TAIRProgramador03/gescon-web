@@ -235,6 +235,66 @@
                 $(this).css("transform", "rotate(0deg)");
             }
         });
+
+        $("#openDropDownNotification").on("click", function () {
+            const dropdown = $(".drop-down-notification-container");
+
+            const isOpen = $("#dropDownNotification").hasClass("z-[200]");
+
+            if (!isOpen) {
+
+                Motion.animate(
+                    document.querySelector(".dropdown-menu"),
+                    {
+                        opacity: [1, 0],
+                        transform: ["translateY(0px)", "translateY(-10px)"],
+                    },
+                    {
+                        duration: 0.2,
+                        easing: "ease-in",
+                    },
+                    ).finished.then(() => {
+                    document.querySelector(".dropdown-menu").classList.remove("show");
+                });
+
+                $("#dropDownNotification")
+                    .removeClass("-z-[200] hidden")
+                    .addClass("z-[200] flex");
+
+                Motion.animate(
+                    ".drop-down-notification-container",
+                    {
+                        opacity: [0, 1],
+                        transform: ["translateY(-10px)", "translateY(0px)"],
+                    },
+                    {
+                        duration: 0.25,
+                        easing: "ease-out",
+                    }
+                );
+
+            } else {
+
+                Motion.animate(
+                    ".drop-down-notification-container",
+                    {
+                        opacity: [1, 0],
+                        transform: ["translateY(0px)", "translateY(-10px)"],
+                    },
+                    {
+                        duration: 0.2,
+                        easing: "ease-in",
+                    }
+                ).finished.then(() => {
+
+                    $("#dropDownNotification")
+                        .addClass("-z-[200] hidden")
+                        .removeClass("z-[200] flex");
+
+                });
+
+            }
+        })
     </script>
 </body>
 </html>

@@ -77,13 +77,15 @@ $(document).on("DOMContentLoaded", async () => {
   aplicarPermisos();
   protegerRutas();
 
-  const notifitions = await listarNotificaciones();
+  const notifications = await listarNotificaciones();
 
-  const tContratos = notifitions.totalContratos;
-  const tDocumentos = notifitions.totalDocumentos;
-  const tReasignacion = notifitions.totalReasignaciones;
-  
-  if(tContratos > 0 || tDocumentos > 0 || tReasignacion > 0) {
+  const tContratos = notifications.totalContratos;
+  const tDocumentos = notifications.totalDocumentos;
+  const tReasignacion = notifications.totalReasignaciones;
+
+  const getNotif = JSON.parse(sessionStorage.getItem("isNotification"));
+
+  if (tContratos > 0 || tDocumentos > 0 || tReasignacion > 0) {
     $(".list-notifications").empty();
     $(".flag-alter-not").removeClass("hidden");
   }
@@ -102,9 +104,27 @@ $(document).on("DOMContentLoaded", async () => {
         </div>
       </div>
     `);
+
+    if (!getNotif) {
+      if (Notification.permission === "granted") {
+        new Notification("Nuevo mensaje", {
+          body: `Tienes ${tContratos} contratos pendientes por completar`,
+          icon: "/public/img/tair.webp",
+        });
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            new Notification("Nuevo mensaje", {
+              body: `Tienes ${tContratos} contratos pendientes por completar`,
+              icon: "/public/img/tair.webp",
+            });
+          }
+        });
+      }
+    }
   }
 
-  if(tDocumentos > 0) {
+  if (tDocumentos > 0) {
     $(".list-notifications").append(`
       <div class="w-full flex items-center gap-3">
         <div class="size-12 flex justify-center items-center bg-taupe-200 rounded-lg p-2">
@@ -118,9 +138,27 @@ $(document).on("DOMContentLoaded", async () => {
         </div>
       </div>
     `);
+
+    if (!getNotif) {
+      if (Notification.permission === "granted") {
+        new Notification("Nuevo mensaje", {
+          body: `Tienes ${tDocumentos} documentos pendientes por completar`,
+          icon: "/public/img/tair.webp",
+        });
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            new Notification("Nuevo mensaje", {
+              body: `Tienes ${tDocumentos} documentos pendientes por completar`,
+              icon: "/public/img/tair.webp",
+            });
+          }
+        });
+      }
+    }
   }
 
-  if(tReasignacion > 0) {
+  if (tReasignacion > 0) {
     $(".list-notifications").append(`
       <div class="w-full flex items-center gap-3">
         <div class="size-12 flex justify-center items-center bg-yellow-200 rounded-lg p-2">
@@ -134,14 +172,36 @@ $(document).on("DOMContentLoaded", async () => {
         </div>
       </div>
     `);
+
+    if (!getNotif) {
+      if (Notification.permission === "granted") {
+        new Notification("Nuevo mensaje", {
+          body: `Tienes ${tReasignacion} reasingaciones pendientes por completar`,
+          icon: "/public/img/tair.webp",
+        });
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            new Notification("Nuevo mensaje", {
+              body: `Tienes ${tReasignacion} reasingaciones pendientes por completar`,
+              icon: "/public/img/tair.webp",
+            });
+          }
+        });
+      }
+    }
   }
+
+  sessionStorage.setItem("isNotification", true);
 });
 
 window.addEventListener("pageshow", async function () {
   await authenticateValid();
 });
 
-$("#dropdown-menu-btn").on("click", () => {
+$("#dropdown-menu-btn").on("click", function (e) {
+  e.stopPropagation();
+
   const menu = document.querySelector(".dropdown-menu");
   const isOpen = menu.classList.contains("show");
 

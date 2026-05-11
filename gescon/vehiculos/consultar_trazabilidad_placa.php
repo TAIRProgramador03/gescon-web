@@ -138,7 +138,7 @@ require '../templates/header.html';
             <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
             <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
             <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
-            <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+            <th class="bg-taupe-600 text-white !font-medium">Situación Actual</th>
             <th class="bg-taupe-600 text-white !font-medium">Acta</th>
             <th class="bg-taupe-600 text-white !font-medium">Acciones</th>
           </tr>
@@ -896,7 +896,8 @@ require '../templates/header.html';
             const color = row.idOpeActual == 109 ? "bg-yellow-100 border-yellow-500 text-yellow-500" : row.idOpe != row.idOpeActual ? isGreater ? "bg-orange-100 border-orange-500 text-orange-500" : "bg-red-100 border-red-500 text-red-500" : "bg-green-100 border-green-500 text-green-500";
 
             return `<div class="w-full rounded font-medium px-2 py-1 border ${color}"><span>${status}</span></div>`
-          }
+          },
+          width: "120px"
         },
         {
           data: "archivoPdf",

@@ -137,8 +137,8 @@ require './templates/header.html';
               <h3 class="text-blue-500!">Linea de tiempo (Contrato - Leasing)</h3>
               <i class="tooltip-info bi bi-exclamation-circle text-blue-500! text-sm" data-tooltip="Visualización gráfica de la diferencia de tiempo entre un Contrato y su Leasing."></i>
             </div>
-            <button id="exportDiference" class="w-fit flex justify-center items-center px-2 py-0.5 rounded bg-green-800 text-white text-sm font-light gap-2 cursor-pointer">
-              Excel
+            <button id="exportDiference" class="w-fit flex justify-center items-center px-2 py-1 rounded bg-green-800 text-white text-xs font-light gap-2 cursor-pointer">
+              Exportar
               <i class="bi bi-file-earmark-excel"></i>
             </button>
           </div>
@@ -277,16 +277,16 @@ require './templates/header.html';
       <div class="col-span-full grid [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))] gap-5">
         <div class="col-span-2 bg-white border border-gray-300 rounded-lg shadow-md p-5">
           <div class="flex items-center gap-1">
-            <h3 class="!text-red-500 !text-xs !font-medium uppercase !mt-0">Depreciación de vehiculos de leasings vencidos</h3>
-            <i class="tooltip-info bi bi-exclamation-circle text-red-500 text-sm" data-tooltip="Reporte gráfico de la deprecación en el valor de los vehiculos de leasings vencidos."></i>
+            <h3 class="!text-red-500 !text-xs !font-medium uppercase !mt-0">Venta proyectada de vehiculos de leasings vencidos</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-red-500 text-sm" data-tooltip="Reporte gráfico de los montos aproximados a una venta proyectada de los vehiculos de leasings vencidos."></i>
           </div>
           <div id="deprecatedLeaA"></div>
         </div>
 
         <div class="col-span-2 bg-white border border-gray-300 rounded-lg shadow-md p-5">
           <div class="flex items-center gap-1">
-            <h3 class="!text-green-500 !text-xs !font-medium uppercase !mt-0">Depreciación de vehiculos de leasings por vencer</h3>
-            <i class="tooltip-info bi bi-exclamation-circle text-green-500 text-sm" data-tooltip="Reporte gráfico de la deprecación en el valor de los vehiculos de leasings por vencer."></i>
+            <h3 class="!text-green-500 !text-xs !font-medium uppercase !mt-0">Venta proyectada de vehiculos de leasings por vencer</h3>
+            <i class="tooltip-info bi bi-exclamation-circle text-green-500 text-sm" data-tooltip="Reporte gráfico de los montos aproximados a una venta proyectada de los vehiculos de leasings por vencer."></i>
           </div>
           <div id="deprecatedLeaB"></div>
         </div>
@@ -1294,7 +1294,7 @@ require './templates/header.html';
     if (!chartDeprecatedLeaA) {
       const options = {
         series: [{
-          name: "Monto depreciado",
+          name: "Venta proyectada",
           data: data.map(veh => veh.ventaProyectada)
         }],
         chart: {
@@ -1381,7 +1381,7 @@ require './templates/header.html';
           categories: data.map(veh => `${veh.anio}`),
         },
         series: [{
-          name: "Monto depreciado",
+          name: "Venta proyectada",
           data: data.map(veh => veh.ventaProyectada)
         }],
         tooltip: {
@@ -1405,7 +1405,7 @@ require './templates/header.html';
     if (!chartDeprecatedLeaB) {
       const options = {
         series: [{
-          name: "Monto depreciado",
+          name: "Venta proyectada",
           data: data.map(veh => veh.ventaProyectada)
         }],
         chart: {
@@ -1492,7 +1492,7 @@ require './templates/header.html';
           categories: data.map(veh => `${veh.anio}`),
         },
         series: [{
-          name: "Monto depreciado",
+          name: "Venta proyectada",
           data: data.map(veh => veh.ventaProyectada)
         }],
         tooltip: {

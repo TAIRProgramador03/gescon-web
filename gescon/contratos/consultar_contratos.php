@@ -249,7 +249,7 @@ require '../templates/header.html';
 
               <div class="tda can-form"><i class="fa fa fa-book" style="color: #1e3a8a;"></i><span id="txt-leas">0</span></div>
             </div>
-            <div class="tooltip-info card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-veh" data-tooltip="Vehiculos en funcion al cuadro de operatividad inicialmente grabado">
+            <div class="tooltip-info card terreno-form doc-form hover:shadow-md transition-shadow" id="href-query-veh" data-tooltip="Vehiculos en funcion al cuadro de operación inicialmente grabado">
               <div class="tda tti-form nom-tp">Veh. Activos</div>
 
               <div class="tda can-form"><i class="fa-solid fa-car" style="color: #1e3a8a;"></i><span id="txt-vehic">0</span></div>
@@ -409,7 +409,6 @@ require '../templates/header.html';
       language: {
         url: "https://cdn.datatables.net/plug-ins/2.3.7/i18n/es-ES.json",
       },
-      // ordering: false,
       searching: false,
       scrollY: "500px",
       scrollCollapse: true,
@@ -935,7 +934,7 @@ require '../templates/header.html';
           <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
           <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
           <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
-          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+          <th class="bg-taupe-600 text-white !font-medium">Situación Actual</th>
           <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
@@ -981,7 +980,6 @@ require '../templates/header.html';
           </div>
         `);
       },
-      ordering: false,
       scrollX: true,
       scrollY: '300px',
       scrollCollapse: true,
@@ -1144,11 +1142,15 @@ require '../templates/header.html';
         {
           data: null,
           render: (data, type, row) => {
-            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
-            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+            const dateFinish = dayjs(convertirFecha(row.fechaFin))
+            const isGreater = dateFinish.isAfter(dayjs()); // VERIFICAMOS SI ESTA VENCIDO O NO
 
-            return `<span class="tag-estado ${color}">${status}</span>`
-          }
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? isGreater ? "Por Reasignar" : "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "bg-yellow-100 border-yellow-500 text-yellow-500" : row.idOpe != row.idOpeActual ? isGreater ? "bg-orange-100 border-orange-500 text-orange-500" : "bg-red-100 border-red-500 text-red-500" : "bg-green-100 border-green-500 text-green-500";
+
+            return `<div class="w-full rounded font-medium px-2 py-1 border ${color}"><span>${status}</span></div>`
+          },
+          width: "120px"
         },
         {
           data: "archivoPdf",
@@ -1263,7 +1265,7 @@ require '../templates/header.html';
           <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
           <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
           <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
-          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+          <th class="bg-taupe-600 text-white !font-medium">Situación Actual</th>
           <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
@@ -1309,7 +1311,6 @@ require '../templates/header.html';
           </div>
         `);
       },
-      ordering: false,
       scrollX: true,
       scrollY: '300px',
       scrollCollapse: true,
@@ -1469,14 +1470,18 @@ require '../templates/header.html';
           },
           width: "160px"
         },
-        {
+{
           data: null,
           render: (data, type, row) => {
-            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
-            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+            const dateFinish = dayjs(convertirFecha(row.fechaFin))
+            const isGreater = dateFinish.isAfter(dayjs()); // VERIFICAMOS SI ESTA VENCIDO O NO
 
-            return `<span class="tag-estado ${color}">${status}</span>`
-          }
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? isGreater ? "Por Reasignar" : "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "bg-yellow-100 border-yellow-500 text-yellow-500" : row.idOpe != row.idOpeActual ? isGreater ? "bg-orange-100 border-orange-500 text-orange-500" : "bg-red-100 border-red-500 text-red-500" : "bg-green-100 border-green-500 text-green-500";
+
+            return `<div class="w-full rounded font-medium px-2 py-1 border ${color}"><span>${status}</span></div>`
+          },
+          width: "120px"
         },
         {
           data: "archivoPdf",
@@ -1564,7 +1569,7 @@ require '../templates/header.html';
           <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
           <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
           <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
-          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+          <th class="bg-taupe-600 text-white !font-medium">Situación Actual</th>
           <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
@@ -1610,7 +1615,6 @@ require '../templates/header.html';
           </div>
         `);
       },
-      ordering: false,
       scrollX: true,
       scrollY: '300px',
       scrollCollapse: true,
@@ -1773,11 +1777,15 @@ require '../templates/header.html';
         {
           data: null,
           render: (data, type, row) => {
-            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
-            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+            const dateFinish = dayjs(convertirFecha(row.fechaFin))
+            const isGreater = dateFinish.isAfter(dayjs()); // VERIFICAMOS SI ESTA VENCIDO O NO
 
-            return `<span class="tag-estado ${color}">${status}</span>`
-          }
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? isGreater ? "Por Reasignar" : "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "bg-yellow-100 border-yellow-500 text-yellow-500" : row.idOpe != row.idOpeActual ? isGreater ? "bg-orange-100 border-orange-500 text-orange-500" : "bg-red-100 border-red-500 text-red-500" : "bg-green-100 border-green-500 text-green-500";
+
+            return `<div class="w-full rounded font-medium px-2 py-1 border ${color}"><span>${status}</span></div>`
+          },
+          width: "120px"
         },
         {
           data: "archivoPdf",
@@ -1865,7 +1873,7 @@ require '../templates/header.html';
           <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
           <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
           <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
-          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+          <th class="bg-taupe-600 text-white !font-medium">Situación Actual</th>
           <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
@@ -1911,7 +1919,6 @@ require '../templates/header.html';
           </div>
         `);
       },
-      ordering: false,
       scrollX: true,
       scrollY: '300px',
       scrollCollapse: true,
@@ -2074,11 +2081,15 @@ require '../templates/header.html';
         {
           data: null,
           render: (data, type, row) => {
-            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
-            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+            const dateFinish = dayjs(convertirFecha(row.fechaFin))
+            const isGreater = dateFinish.isAfter(dayjs()); // VERIFICAMOS SI ESTA VENCIDO O NO
 
-            return `<span class="tag-estado ${color}">${status}</span>`
-          }
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? isGreater ? "Por Reasignar" : "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "bg-yellow-100 border-yellow-500 text-yellow-500" : row.idOpe != row.idOpeActual ? isGreater ? "bg-orange-100 border-orange-500 text-orange-500" : "bg-red-100 border-red-500 text-red-500" : "bg-green-100 border-green-500 text-green-500";
+
+            return `<div class="w-full rounded font-medium px-2 py-1 border ${color}"><span>${status}</span></div>`
+          },
+          width: "120px"
         },
         {
           data: "archivoPdf",
@@ -2166,7 +2177,7 @@ require '../templates/header.html';
           <th class="bg-taupe-600 text-white !font-medium">Fecha Devolucion</th>
           <th class="bg-taupe-600 text-white !font-medium">Condicion</th>
           <th class="bg-taupe-600 text-white !font-medium">% de contrato</th>
-          <th class="bg-taupe-600 text-white !font-medium">Operatividad</th>
+          <th class="bg-taupe-600 text-white !font-medium">Situación Actual</th>
           <th class="bg-taupe-600 text-white !font-medium">Acta</th>
         </tr>
       </thead>
@@ -2212,7 +2223,6 @@ require '../templates/header.html';
           </div>
         `);
       },
-      ordering: false,
       scrollX: true,
       scrollY: '300px',
       scrollCollapse: true,
@@ -2375,11 +2385,15 @@ require '../templates/header.html';
         {
           data: null,
           render: (data, type, row) => {
-            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? "Inactivo" : "Activo";
-            const color = row.idOpeActual == 109 ? "tag-yellow" : row.idOpe != row.idOpeActual ? "tag-red" : "tag-green";
+            const dateFinish = dayjs(convertirFecha(row.fechaFin))
+            const isGreater = dateFinish.isAfter(dayjs()); // VERIFICAMOS SI ESTA VENCIDO O NO
 
-            return `<span class="tag-estado ${color}">${status}</span>`
-          }
+            const status = row.idOpeActual == 109 ? "Vendido" : row.idOpe != row.idOpeActual ? isGreater ? "Por Reasignar" : "Inactivo" : "Activo";
+            const color = row.idOpeActual == 109 ? "bg-yellow-100 border-yellow-500 text-yellow-500" : row.idOpe != row.idOpeActual ? isGreater ? "bg-orange-100 border-orange-500 text-orange-500" : "bg-red-100 border-red-500 text-red-500" : "bg-green-100 border-green-500 text-green-500";
+
+            return `<div class="w-full rounded font-medium px-2 py-1 border ${color}"><span>${status}</span></div>`
+          },
+          width: "120px"
         },
         {
           data: "archivoPdf",

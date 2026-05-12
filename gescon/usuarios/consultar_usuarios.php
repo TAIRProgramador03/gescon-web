@@ -92,6 +92,65 @@ require '../templates/header.html';
   </div>
 </div>
 
+<div id="modal-upd-pass" class="fixed w-full h-screen top-0 left-0 flex justify-center items-center opacity-0 -z-50">
+  <div class="modal-pass-overlay fixed top-0 left-0 w-full h-screen bg-black/25 -z-10"></div>
+  <div class="modal-pass-container w-full max-w-xs bg-white rounded-lg border-gray-300 flex flex-col gap-2 px-4 py-3">
+    <h2 class="text-2xl font-semibold">Actualizar contraseña</h2>
+    <!-- CONTRASEÑA ANTIGUA -->
+    <div class="input flex flex-col w-full relative">
+      <input
+        name="oldPassword"
+        type="text"
+        placeholder="Ingrese su contraseña actual"
+        required
+        class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" />
+      <label
+        class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+        Contraseña actual
+      </label>
+    </div>
+
+    <!-- NUEVA CONTRASEÑA -->
+    <div class="input flex flex-col w-full relative">
+      <input
+        name="password"
+        type="text"
+        placeholder="Ingrese un nombre de usuario"
+        required
+        class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" />
+      <label
+        class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+        Nueva contraseña
+      </label>
+    </div>
+
+    <!-- CONFIRMAR CONTRASEÑA -->
+    <div class="input flex flex-col w-full relative">
+      <input
+        name="confirm"
+        type="text"
+        placeholder="Ingrese un nombre de usuario"
+        required
+        class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" />
+      <label
+        class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500">
+        Confirmar contraseña
+      </label>
+    </div>
+
+    <div class="w-full flex justify-center items-center gap-2 pt-2">
+      <button id="btn-save-pass" class="w-full px-4 py-2 flex justify-center items-center gap-1 rounded cursor-pointer font-medium bg-green-100 border border-green-800 text-green-800 hover:bg-green-800 hover:text-white transition-colors">
+        <i class="bi bi-floppy-fill"></i>
+        <span>Guardar</span>
+      </button>
+      <button id="btn-cancel-pass" class="w-full px-4 py-2 flex justify-center items-center gap-1 rounded cursor-pointer font-medium bg-red-100 border border-red-800 text-red-800 hover:bg-red-800 hover:text-white transition-colors">
+        <i class="bi bi-x"></i>
+        <span>Cancelar</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <script type="module" src="/js/consulta_usuario.js"></script>
 
 <script type="module">
@@ -99,7 +158,8 @@ require '../templates/header.html';
     getTableUsers,
     getRoles,
     getUserById,
-    updateRoleUser
+    updateRoleUser,
+    updatePasswordUser
   } from "/js/consulta_usuario.js"
 
   import {
@@ -153,6 +213,7 @@ require '../templates/header.html';
     hideLoader();
   })
 
+  // MODAL ACTUALIZAR ROL
   $(document).on("click", ".open-modal", async function() {
     const id = $(this).data("id");
 
@@ -191,7 +252,7 @@ require '../templates/header.html';
 
       table.row(rowIndex).data(rowData).draw(false);
     }
-    
+
     const anim = animate(".modal-container", {
       opacity: [1, 0],
       scale: [1, 1.05, 0.7]
@@ -221,6 +282,84 @@ require '../templates/header.html';
     $("#modal-upd")
       .removeClass("opacity-100 z-50")
       .addClass("opacity-0 -z-50");
+  });
+
+  // MODAL ACTUALIZAR CONTRASEÑA
+  $(document).on("click", ".open-modal-pass", async function() {
+    const id = $(this).data("id");
+
+    currentId = Number(id);
+
+    animate(".modal-pass-container", {
+      opacity: [0, 1],
+      scale: [0.7, 1.05, 1]
+    }, {
+      duration: 0.45,
+      easing: "ease-out"
+    })
+
+    $("#modal-upd-pass")
+      .removeClass("opacity-0 -z-50")
+      .addClass("opacity-100 z-50");
+  })
+
+  $("#btn-save-pass").on("click", async function() {
+    const oldPassword = $('input[name="oldPassword"]').val();
+    const password = $('input[name="password"]').val();
+    const confirm = $('input[name="confirm"]').val();
+
+    if (!oldPassword || !password || !confirm) {
+      toastr.info("Debes completar todos los campos", "Aviso");
+      return;
+    }
+
+    const body = {
+      oldPassword,
+      password,
+      confirm
+    }
+
+    const response = await updatePasswordUser(currentId, body);
+
+    if (response) {
+      const anim = animate(".modal-pass-container", {
+        opacity: [1, 0],
+        scale: [1, 1.05, 0.7]
+      }, {
+        duration: 0.45,
+        easing: "ease-in"
+      })
+
+      await anim.finished;
+
+      $("#modal-upd-pass")
+        .removeClass("opacity-100 z-50")
+        .addClass("opacity-0 -z-50");
+
+      $('input[name="oldPassword"]').val(null);
+      $('input[name="password"]').val(null);
+      $('input[name="confirm"]').val(null);
+    }
+  })
+
+  $("#btn-cancel-pass").on("click", async function() {
+    const anim = animate(".modal-pass-container", {
+      opacity: [1, 0],
+      scale: [1, 1.05, 0.7]
+    }, {
+      duration: 0.45,
+      easing: "ease-in"
+    })
+
+    await anim.finished;
+
+    $("#modal-upd-pass")
+      .removeClass("opacity-100 z-50")
+      .addClass("opacity-0 -z-50");
+
+    $('input[name="oldPassword"]').val(null);
+    $('input[name="password"]').val(null);
+    $('input[name="confirm"]').val(null);
   });
 </script>
 

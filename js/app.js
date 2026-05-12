@@ -33,6 +33,12 @@ const obtenerConfig = async () => {
   return config.IP_LOCAL;
 };
 
+function isGetPermission(permission) {
+  const permissions = JSON.parse(localStorage.getItem("permissions")) || [];
+
+  return permissions.includes(permission);
+}
+
 async function listarNotificaciones() {
   const IP_LOCAL = await obtenerConfig();
 
@@ -83,14 +89,18 @@ $(document).on("DOMContentLoaded", async () => {
   const tDocumentos = notifications.totalDocumentos;
   const tReasignacion = notifications.totalReasignaciones;
 
+  const perm1 = isGetPermission('ver_contratos');
+  const perm2 = isGetPermission('ver_documentos')
+  const perm3 = isGetPermission('insertar_reasignacion')
+
   const getNotif = JSON.parse(sessionStorage.getItem("isNotification"));
 
-  if (tContratos > 0 || tDocumentos > 0 || tReasignacion > 0) {
+  if ((tContratos > 0 && perm1) || (tDocumentos > 0 && perm2) || (tReasignacion > 0 && perm3)) {
     $(".list-notifications").empty();
     $(".flag-alter-not").removeClass("hidden");
   }
 
-  if (tContratos > 0) {
+  if (tContratos > 0 && perm1) {
     $(".list-notifications").append(`
       <div class="w-full flex items-center gap-3">
         <div class="size-12 flex justify-center items-center bg-blue-200 rounded-lg p-2">
@@ -124,7 +134,7 @@ $(document).on("DOMContentLoaded", async () => {
     }
   }
 
-  if (tDocumentos > 0) {
+  if (tDocumentos > 0 && perm2) {
     $(".list-notifications").append(`
       <div class="w-full flex items-center gap-3">
         <div class="size-12 flex justify-center items-center bg-taupe-200 rounded-lg p-2">
@@ -158,7 +168,7 @@ $(document).on("DOMContentLoaded", async () => {
     }
   }
 
-  if (tReasignacion > 0) {
+  if (tReasignacion > 0 && perm3) {
     $(".list-notifications").append(`
       <div class="w-full flex items-center gap-3">
         <div class="size-12 flex justify-center items-center bg-yellow-200 rounded-lg p-2">

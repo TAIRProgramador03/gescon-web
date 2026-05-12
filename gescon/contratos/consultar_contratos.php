@@ -131,7 +131,7 @@ require '../templates/header.html';
           Descripción
         </label>
       </div>
-      <div class="salio-form"> <!--text-form-col-->
+      <div class="w-full grid grid-cols-3 gap-3"> <!--text-form-col-->
         <button
           type="button"
           id="btnNewDoc"

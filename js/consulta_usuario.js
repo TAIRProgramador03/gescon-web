@@ -76,7 +76,7 @@ export const getTableUsers = async () => {
           data: null,
           render: function (data, type, row) {
             return `
-              <div class="w-full flex justify-center items-center gap-2">
+              <div class="w-full flex flex-wrap justify-center items-center gap-2">
                 <button 
                   class="open-modal cursor-pointer flex justify-center items-center gap-1 px-3 py-2 rounded bg-lime-100 border border-lime-500 text-lime-500 hover:bg-lime-500 hover:text-white transition-colors"
                   data-id="${row.id}"
@@ -88,6 +88,13 @@ export const getTableUsers = async () => {
                   <i class="bi bi-person-lines-fill"></i>
                   Permisos
                 </a>
+                <button 
+                  class="open-modal-pass cursor-pointer flex justify-center items-center gap-1 px-3 py-2 rounded bg-violet-100 border border-violet-500 text-violet-500 hover:bg-violet-500 hover:text-white transition-colors"
+                  data-id="${row.id}"
+                  >
+                    <i class="bi bi-asterisk"></i>
+                  Actualizar contraseña
+                </button>
               </div>
             `;
           },
@@ -157,5 +164,29 @@ export const updateRoleUser = async (id, roleId) => {
   } catch (error) {
     console.error(error.response.data.message)
     toastr.error(error.response.data.message, "Oops...")
+  }
+}
+
+export const updatePasswordUser = async (id, body) => {
+  try {
+    instance = await obtenerInstancia();
+
+    const response = await instance.put(`/actualizarClave/${id}`, body, {
+      withCredentials: true
+    })
+
+    const data = response.data;
+
+    if(data.success) {
+      toastr.success("Contraseña actualizada correctamente", "¡Éxito!");
+      return true;
+    } else {
+      toastr.warning(data.message, "Oops...");
+      return false;
+    }
+  } catch (error) {
+    console.error(error.response.data)
+    toastr.error(error.response.data.message, "Oops...")
+    return false;
   }
 }

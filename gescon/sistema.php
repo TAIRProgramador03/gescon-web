@@ -84,7 +84,7 @@ require './templates/header.html';
     const IP_LOCAL = await obtenerConfig();
     return axios.create({
       baseURL: `${IP_LOCAL}`,
-      timeout: 3000,
+      timeout: 10000,
     });
   };
 

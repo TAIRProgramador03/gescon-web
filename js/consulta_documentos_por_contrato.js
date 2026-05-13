@@ -4,7 +4,7 @@ const getDocuments = async (contratoId, clienteId) => {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/documentoPorContrato?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
+    `${IP_LOCAL}/documentoPorContrato?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
     {
       method: "GET",
       credentials: "include",
@@ -20,7 +20,7 @@ const getDetailDocument = async (documentoId) => {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/detalleDocumento?documentoId=${documentoId.toString()}`,
+    `${IP_LOCAL}/detalleDocumento?documentoId=${documentoId.toString()}`,
     {
       method: "GET",
       credentials: "include",
@@ -36,7 +36,7 @@ const getVehByDocument = async (documentoId, tipoTerr) => {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/placasPorDocumento?documentoId=${documentoId.toString()}&tipoTerr=${tipoTerr}`,
+    `${IP_LOCAL}/placasPorDocumento?documentoId=${documentoId.toString()}&tipoTerr=${tipoTerr}`,
     {
       method: "GET",
       credentials: "include",
@@ -74,7 +74,7 @@ const getFile = async (key) => {
   try {
     const IP_LOCAL = await obtenerConfig();
     const viewPDF = await fetch(
-      `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
+      `${IP_LOCAL}/previsualizarArchivo?key=${key}`,
       {
         credentials: "include",
       },

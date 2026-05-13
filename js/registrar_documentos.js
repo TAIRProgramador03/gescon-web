@@ -21,7 +21,7 @@ toastr.options = {
 const obtenerInstancia = async () => {
   const IP_LOCAL = await obtenerConfig();
   return axios.create({
-    baseURL: `http://${IP_LOCAL}:3000`,
+    baseURL: `${IP_LOCAL}`,
     timeout: 3000,
   });
 };
@@ -455,7 +455,7 @@ async function cargarClientes() {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+    const response = await fetch(`${IP_LOCAL}/clientes`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     }); // Ruta relativa al servidor
@@ -491,7 +491,7 @@ async function cargarModelos() {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
+    const response = await fetch(`${IP_LOCAL}/modelos`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     }); // Ruta del servidor
@@ -527,7 +527,7 @@ async function cargarModelosFila(selectElement) {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
+    const response = await fetch(`${IP_LOCAL}/modelos`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     }); // Ruta del servidor
@@ -564,7 +564,7 @@ async function cargarContrato(idCli) {
 
     // Realiza una solicitud al servidor para obtener los contratos del cliente
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/contratosNro?idCli=${idCli}`,
+      `${IP_LOCAL}/contratosNro?idCli=${idCli}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -968,7 +968,7 @@ async function guardarDocumento() {
       const data = { ...contratoData, archivoPdf: nombreArchivo };
       const IP_LOCAL = await obtenerConfig();
       const response = await fetch(
-        `http://${IP_LOCAL}:3000/insertarDocumento`,
+        `${IP_LOCAL}/insertarDocumento`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1005,7 +1005,7 @@ async function guardarDocumento() {
       const data = { ...contratoData, archivoPdf: nameFile };
       const IP_LOCAL = await obtenerConfig();
       const response = await fetch(
-        `http://${IP_LOCAL}:3000/actualizarDocumento/${documentId}`,
+        `${IP_LOCAL}/actualizarDocumento/${documentId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -1303,7 +1303,7 @@ async function subirArchivo(archivo) {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
+    const response = await fetch(`${IP_LOCAL}/subirArchivo`, {
       method: "POST",
       enctype: "multipart/form-data",
       body: formData,
@@ -1327,7 +1327,7 @@ async function validarArchivo(nombreArchivo) {
     const IP_LOCAL = await obtenerConfig();
 
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/validarArchivo?nombre=documents/${nombreArchivo.trim()}`,
+      `${IP_LOCAL}/validarArchivo?nombre=documents/${nombreArchivo.trim()}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud

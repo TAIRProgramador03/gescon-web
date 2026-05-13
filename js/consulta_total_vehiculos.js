@@ -4,7 +4,7 @@ const getVehicles = async (contratoId, clienteId) => {
   const IP_LOCAL = await obtenerConfig()
   
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/vehiculosPorContrato?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
+    `${IP_LOCAL}/vehiculosPorContrato?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
     {
       method: "GET",
       credentials: "include",
@@ -18,7 +18,7 @@ const getVehicles = async (contratoId, clienteId) => {
 
 // const getDetailDocument = async (documentoId) => {
 //   const response = await fetch(
-//     `http://${IP_LOCAL}:3000/detalleDocumento?documentoId=${documentoId.toString()}`,
+//     `${IP_LOCAL}/detalleDocumento?documentoId=${documentoId.toString()}`,
 //     {
 //       method: "GET",
 //       credentials: "include",

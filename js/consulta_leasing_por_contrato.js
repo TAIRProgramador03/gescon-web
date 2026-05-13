@@ -20,7 +20,7 @@ const getLeasings = async (contratoId, clienteId) => {
   const IP_LOCAL = await obtenerConfig()
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/leasingByContract?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
+    `${IP_LOCAL}/leasingByContract?contratoId=${contratoId.toString()}&clienteId=${clienteId.toString()}`,
     {
       method: "GET",
       credentials: "include",
@@ -92,7 +92,7 @@ const getDetailLeasing = async (
   const IP_LOCAL = await obtenerConfig()
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/detailLeasing?leasingId=${leasingId.toString()}&nroLeasing=${nroLeasing.trim()}&clienteId=${clienteId.toString()}&contratoId=${contratoId.toString()}&tipoCont=P`,
+    `${IP_LOCAL}/detailLeasing?leasingId=${leasingId.toString()}&nroLeasing=${nroLeasing.trim()}&clienteId=${clienteId.toString()}&contratoId=${contratoId.toString()}&tipoCont=P`,
     {
       method: "GET",
       credentials: "include",
@@ -112,7 +112,7 @@ const getVehByLeasing = async (leasingId) => {
   const IP_LOCAL = await obtenerConfig()
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/vehiclesByLeasing?leasingId=${leasingId.toString()}`,
+    `${IP_LOCAL}/vehiclesByLeasing?leasingId=${leasingId.toString()}`,
     {
       method: "GET",
       credentials: "include",
@@ -128,7 +128,7 @@ const getAssignByLeasing = async (nroLeasing, clienteId, contratoId) => {
   const IP_LOCAL = await obtenerConfig()
   
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/assignByLeasing?nroLeasing=${nroLeasing}&clienteId=${clienteId}&contratoId=${contratoId}&tipoCont=P`,
+    `${IP_LOCAL}/assignByLeasing?nroLeasing=${nroLeasing}&clienteId=${clienteId}&contratoId=${contratoId}&tipoCont=P`,
     {
       method: "GET",
       credentials: "include",
@@ -144,7 +144,7 @@ const getFile = async (key) => {
   try {
     const IP_LOCAL = await obtenerConfig();
     const viewPDF = await fetch(
-      `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
+      `${IP_LOCAL}/previsualizarArchivo?key=${key}`,
       {
         credentials: "include",
       },

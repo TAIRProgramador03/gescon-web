@@ -3,7 +3,7 @@ import { animate } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 const obtenerInstancia = async () => {
   const IP_LOCAL = await obtenerConfig();
   return axios.create({
-    baseURL: `http://${IP_LOCAL}:3000`,
+    baseURL: `${IP_LOCAL}`,
     timeout: 3000,
   });
 };
@@ -48,7 +48,7 @@ export async function cargarClientes() {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+    const response = await fetch(`${IP_LOCAL}/clientes`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     }); // Ruta relativa al servidor
@@ -91,7 +91,7 @@ export async function cargarLeasingOfClient(idCli) {
     const IP_LOCAL = await obtenerConfig();
 
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/leasingOfClient?idCli=${idCli}`,
+      `${IP_LOCAL}/leasingOfClient?idCli=${idCli}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -140,7 +140,7 @@ async function cargarLeasing() {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/leasing`, {
+    const response = await fetch(`${IP_LOCAL}/leasing`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     }); // Ruta relativa al servidor
@@ -189,7 +189,7 @@ export async function listaVehiculosAsignables(clientId) {
       const IP_LOCAL = await obtenerConfig();
 
       const response = await fetch(
-        `http://${IP_LOCAL}:3000/consultaVehiculoLeasing?idCli=${idCli}&nroLeasing=${idLea}`,
+        `${IP_LOCAL}/consultaVehiculoLeasing?idCli=${idCli}&nroLeasing=${idLea}`,
         {
           method: "GET",
           credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -472,7 +472,7 @@ export async function cargarClientesAsig() {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+    const response = await fetch(`${IP_LOCAL}/clientes`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     }); // Ruta relativa al servidor
@@ -871,7 +871,7 @@ const registrar = async (asignacionData) => {
         const formData = new FormData();
         formData.append("archivoPdf", detalle.archivoPdf);
         formData.append("documentType", "acta");
-        const res = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
+        const res = await fetch(`${IP_LOCAL}/subirArchivo`, {
           method: "POST",
           body: formData,
           credentials: "include",
@@ -880,7 +880,7 @@ const registrar = async (asignacionData) => {
         detalle.archivoPdf = data.key;
       }),
     );
-    const response = await fetch(`http://${IP_LOCAL}:3000/insertaAsignacion`, {
+    const response = await fetch(`${IP_LOCAL}/insertaAsignacion`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(asignacionData),
@@ -907,7 +907,7 @@ const validarAsignacion = async (detalles) => {
   const IP_LOCAL = await obtenerConfig();
 
   const validacionResponse = await fetch(
-    `http://${IP_LOCAL}:3000/validaContratoCantidad`,
+    `${IP_LOCAL}/validaContratoCantidad`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -150,7 +150,7 @@
 
                 const IP_LOCAL = config.IP_LOCAL;
 
-                const response = await fetch(`http://${IP_LOCAL}:3000/logout`, {
+                const response = await fetch(`${IP_LOCAL}/logout`, {
                 method: "POST",
                 credentials: "include",
                 });

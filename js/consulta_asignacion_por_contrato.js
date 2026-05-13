@@ -8,7 +8,7 @@ const getAssigns = async (clienteId, contratoId, leasingId, tipoTerr) => {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/asignacionPorContrato?idCliente=${clienteId.toString()}${contratoId ? `&idContrato=${contratoId.toString()}` : ""}${leasingId ? `&idLeasing=${leasingId}` : ""}${tipoTerr ? `&tipoTerr=${tipoTerr}` : ""}`,
+    `${IP_LOCAL}/asignacionPorContrato?idCliente=${clienteId.toString()}${contratoId ? `&idContrato=${contratoId.toString()}` : ""}${leasingId ? `&idLeasing=${leasingId}` : ""}${tipoTerr ? `&tipoTerr=${tipoTerr}` : ""}`,
     {
       method: "GET",
       credentials: "include",
@@ -24,7 +24,7 @@ const getLeasings = async (clienteId, contratoId) => {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/leasingByContract?clienteId=${clienteId.toString()}${contratoId ? `&contratoId=${contratoId.toString()}` : ""}`,
+    `${IP_LOCAL}/leasingByContract?clienteId=${clienteId.toString()}${contratoId ? `&contratoId=${contratoId.toString()}` : ""}`,
     {
       method: "GET",
       credentials: "include",
@@ -41,7 +41,7 @@ const getFile = async (key) => {
 
   try {
     const viewPDF = await fetch(
-      `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
+      `${IP_LOCAL}/previsualizarArchivo?key=${key}`,
       {
         credentials: "include",
       },

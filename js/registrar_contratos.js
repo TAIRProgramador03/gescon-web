@@ -3,7 +3,7 @@ import { animate } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 const obtenerInstancia = async () => {
   const IP_LOCAL = await obtenerConfig();
   return axios.create({
-    baseURL: `http://${IP_LOCAL}:3000`,
+    baseURL: `${IP_LOCAL}`,
     timeout: 3000,
   });
 };
@@ -486,7 +486,7 @@ async function cargarCampoPDF(key) {
     const IP_LOCAL = await obtenerConfig();
 
     const viewPDF = await axios.get(
-      `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
+      `${IP_LOCAL}/previsualizarArchivo?key=${key}`,
       {
         withCredentials: true,
       },
@@ -531,7 +531,7 @@ async function cargarClientes(id) {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+    const response = await fetch(`${IP_LOCAL}/clientes`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     }); // Ruta relativa al servidor
@@ -571,7 +571,7 @@ async function cargarModelos() {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
+    const response = await fetch(`${IP_LOCAL}/modelos`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     }); // Ruta del servidor
@@ -606,7 +606,7 @@ async function cargarModelos() {
 async function obtenerTodosModelos() {
   const IP_LOCAL = await obtenerConfig();
 
-  const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
+  const response = await fetch(`${IP_LOCAL}/modelos`, {
     method: "GET",
     credentials: "include", // Asegura que las cookies se envíen con la solicitud
   }); // Ruta del servidor
@@ -623,7 +623,7 @@ async function cargarModelosFila(selectElement) {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/modelos`, {
+    const response = await fetch(`${IP_LOCAL}/modelos`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     }); // Ruta del servidor
@@ -944,7 +944,7 @@ async function guardarContrato() {
     try {
       const IP_LOCAL = await obtenerConfig();
 
-      const response = await fetch(`http://${IP_LOCAL}:3000/insertarContrato`, {
+      const response = await fetch(`${IP_LOCAL}/insertarContrato`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -979,7 +979,7 @@ async function guardarContrato() {
       const IP_LOCAL = await obtenerConfig();
 
       const response = await fetch(
-        `http://${IP_LOCAL}:3000/actualizarContrato/${contractId}`,
+        `${IP_LOCAL}/actualizarContrato/${contractId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -1229,7 +1229,7 @@ async function subirArchivo(archivo) {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
+    const response = await fetch(`${IP_LOCAL}/subirArchivo`, {
       enctype: "multipart/form-data",
       method: "POST",
       body: formData,
@@ -1253,7 +1253,7 @@ async function validarArchivo(nombreArchivo) {
     const IP_LOCAL = await obtenerConfig();
 
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/validarArchivo?nombre=contracts/${nombreArchivo.trim()}`,
+      `${IP_LOCAL}/validarArchivo?nombre=contracts/${nombreArchivo.trim()}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud

@@ -20,7 +20,7 @@ async function cargarClientes() {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+    const response = await fetch(`${IP_LOCAL}/clientes`, {
       method: "GET",
       credentials: "include", // Asegura que las cookies se envíen con la solicitud
     }); // Ruta relativa al servidor
@@ -62,7 +62,7 @@ async function cargarContrato(idCli) {
     const IP_LOCAL = await obtenerConfig();
     // Realiza una solicitud al servidor para obtener los contratos del cliente
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/contratosNro?idCli=${idCli}`,
+      `${IP_LOCAL}/contratosNro?idCli=${idCli}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -103,7 +103,7 @@ const getContracts = async (idCli) => {
   try {
     const IP_LOCAL = await obtenerConfig();
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/tablaCliente?idCli=${idCli}`,
+      `${IP_LOCAL}/tablaCliente?idCli=${idCli}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -129,7 +129,7 @@ async function cargarTablacontrato(id) {
   try {
     const IP_LOCAL = await obtenerConfig();
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/tablaContrato?idCli=${idCli}&id=${id}`,
+      `${IP_LOCAL}/tablaContrato?idCli=${idCli}&id=${id}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -153,7 +153,7 @@ async function cargarDatosContrato(clienteId, contratoId) {
   try {
     const IP_LOCAL = await obtenerConfig();
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/contratoDetalle?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`,
+      `${IP_LOCAL}/contratoDetalle?clienteId=${clienteId}${contratoId ? `&contratoId=${contratoId}` : ""}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -227,7 +227,7 @@ async function verificarContratosTemp() {
     const IP_LOCAL = await obtenerConfig();
     
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/verificarContratosTemp`,
+      `${IP_LOCAL}/verificarContratosTemp`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -245,7 +245,7 @@ const getFile = async (key) => {
   try {
     const IP_LOCAL = await obtenerConfig();
     const viewPDF = await fetch(
-      `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
+      `${IP_LOCAL}/previsualizarArchivo?key=${key}`,
       {
         credentials: "include",
       },
@@ -326,7 +326,7 @@ function limpiarCampos() {
 const getVehByContract = async (contratoId, tipoTerr) => {
   const IP_LOCAL = await obtenerConfig();
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/placasPorContrato?contratoId=${contratoId.toString()}${tipoTerr ? `&tipoTerr=${tipoTerr}` : ""}`,
+    `${IP_LOCAL}/placasPorContrato?contratoId=${contratoId.toString()}${tipoTerr ? `&tipoTerr=${tipoTerr}` : ""}`,
     {
       method: "GET",
       credentials: "include",
@@ -345,7 +345,7 @@ const getVehByContract = async (contratoId, tipoTerr) => {
 const getAssignVehActive = async (clienteId, contratoId, status, tipTerr) => {
   const IP_LOCAL = await obtenerConfig();
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/asignacionPorContrato?idCliente=${clienteId.toString()}${contratoId ? `&idContrato=${contratoId.toString()}` : ""}${status ? `&status=${status}` : ""}${tipTerr == 0 || tipTerr ? `&tipoTerr=${tipTerr}` : ""}`,
+    `${IP_LOCAL}/asignacionPorContrato?idCliente=${clienteId.toString()}${contratoId ? `&idContrato=${contratoId.toString()}` : ""}${status ? `&status=${status}` : ""}${tipTerr == 0 || tipTerr ? `&tipoTerr=${tipTerr}` : ""}`,
     {
       method: "GET",
       credentials: "include",
@@ -365,7 +365,7 @@ const getPendingVeh = async (clienteId) => {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/consultaVehiculoLeasing?idCli=${clienteId.toString()}&nroLeasing=all`,
+    `${IP_LOCAL}/consultaVehiculoLeasing?idCli=${clienteId.toString()}&nroLeasing=all`,
     {
       method: "GET",
       credentials: "include",

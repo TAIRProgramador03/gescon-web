@@ -4,7 +4,7 @@ import { animate } from "https://cdn.jsdelivr.net/npm/motion@10/+esm";
 const obtenerInstancia = async () => {
   const IP_LOCAL = await obtenerConfig();
   return axios.create({
-    baseURL: `http://${IP_LOCAL}:3000`,
+    baseURL: `${IP_LOCAL}`,
     timeout: 3000,
   });
 };
@@ -99,7 +99,7 @@ const getFile = async (key) => {
     const IP_LOCAL = await obtenerConfig();
 
     const viewPDF = await fetch(
-      `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
+      `${IP_LOCAL}/previsualizarArchivo?key=${key}`,
       {
         credentials: "include",
       },
@@ -132,7 +132,7 @@ export async function subirArchivo(archivo) {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
+    const response = await fetch(`${IP_LOCAL}/subirArchivo`, {
       enctype: "multipart/form-data",
       method: "POST",
       body: formData,

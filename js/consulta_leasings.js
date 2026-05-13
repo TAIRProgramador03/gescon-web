@@ -1,7 +1,7 @@
 const obtenerInstancia = async () => {
   const IP_LOCAL = await obtenerConfig();
   return axios.create({
-    baseURL: `http://${IP_LOCAL}:3000`,
+    baseURL: `${IP_LOCAL}`,
     timeout: 3000,
   });
 };
@@ -56,7 +56,7 @@ const getVehByLeasing = async (leasingId) => {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/vehiclesByLeasing?leasingId=${leasingId.toString()}`,
+    `${IP_LOCAL}/vehiclesByLeasing?leasingId=${leasingId.toString()}`,
     {
       method: "GET",
       credentials: "include",
@@ -71,7 +71,7 @@ const getVehByLeasing = async (leasingId) => {
 const getClients = async () => {
   const IP_LOCAL = await obtenerConfig();
 
-  const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+  const response = await fetch(`${IP_LOCAL}/clientes`, {
     credentials: "include",
   });
 
@@ -84,7 +84,7 @@ const getContractsByClient = async (clientId) => {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/contratosNro?idCli=${clientId}`,
+    `${IP_LOCAL}/contratosNro?idCli=${clientId}`,
     {
       credentials: "include",
     },
@@ -99,7 +99,7 @@ const getDocumentsByContract = async (contractId, clientId) => {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/documentoPorContrato?contratoId=${contractId}&clienteId=${clientId}`,
+    `${IP_LOCAL}/documentoPorContrato?contratoId=${contractId}&clienteId=${clientId}`,
     {
       credentials: "include",
     },
@@ -114,7 +114,7 @@ const getFile = async (key) => {
   try {
     const IP_LOCAL = await obtenerConfig();
     const viewPDF = await fetch(
-      `http://${IP_LOCAL}:3000/previsualizarArchivo?key=${key}`,
+      `${IP_LOCAL}/previsualizarArchivo?key=${key}`,
       {
         credentials: "include",
       },

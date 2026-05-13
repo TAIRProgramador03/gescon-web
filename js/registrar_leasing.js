@@ -206,7 +206,7 @@ async function cargartablaClienteLeas() {
         const IP_LOCAL = await obtenerConfig();
 
         const response = await fetch(
-          `http://${IP_LOCAL}:3000/tablaClienteLeas`,
+          `${IP_LOCAL}/tablaClienteLeas`,
           {
             method: "GET",
             credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -254,7 +254,7 @@ async function cargartablaClienteLeasAsoc() {
     try {
       const IP_LOCAL = await obtenerConfig();
 
-      const response = await fetch(`http://${IP_LOCAL}:3000/tablaClienteLeas`, {
+      const response = await fetch(`${IP_LOCAL}/tablaClienteLeas`, {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
       });
@@ -463,7 +463,7 @@ async function cargartablaVehiculo() {
         const IP_LOCAL = await obtenerConfig();
 
         // Realiza una solicitud al servidor para obtener los contratos del cliente
-        const response = await fetch(`http://${IP_LOCAL}:3000/tablaVehiculo`, {
+        const response = await fetch(`${IP_LOCAL}/tablaVehiculo`, {
           method: "GET",
           credentials: "include", // Asegura que las cookies se envíen con la solicitud
         });
@@ -858,7 +858,7 @@ async function guardaLeasing() {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/insertaLeasing`, {
+    const response = await fetch(`${IP_LOCAL}/insertaLeasing`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(contratoData),
@@ -897,7 +897,7 @@ async function subirArchivo(archivo) {
   try {
     const IP_LOCAL = await obtenerConfig();
 
-    const response = await fetch(`http://${IP_LOCAL}:3000/subirArchivo`, {
+    const response = await fetch(`${IP_LOCAL}/subirArchivo`, {
       method: "POST",
       enctype: "multipart/form-data",
       body: formData,
@@ -924,7 +924,7 @@ async function validarArchivo(nombreArchivo) {
     const IP_LOCAL = await obtenerConfig();
 
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/validarArchivo?nombre=${nombreArchivo}`,
+      `${IP_LOCAL}/validarArchivo?nombre=${nombreArchivo}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
@@ -1012,7 +1012,7 @@ async function cargarContratosPorCliente(idCli) {
     const IP_LOCAL = await obtenerConfig();
 
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/contratosNroAdi?idCli=${idCli}`,
+      `${IP_LOCAL}/contratosNroAdi?idCli=${idCli}`,
       {
         method: "GET",
         credentials: "include", // Asegura que las cookies se envíen con la solicitud

@@ -42,7 +42,7 @@ function isGetPermission(permission) {
 async function listarNotificaciones() {
   const IP_LOCAL = await obtenerConfig();
 
-  const response = await fetch(`http://${IP_LOCAL}:3000/notifications`, {
+  const response = await fetch(`${IP_LOCAL}/notifications`, {
     method: "GET",
     credentials: "include", // Asegura que las cookies se envíen con la solicitud
   });
@@ -55,7 +55,7 @@ async function listarNotificaciones() {
 async function authenticateValid() {
   const IP_LOCAL = await obtenerConfig();
 
-  const response = await fetch(`http://${IP_LOCAL}:3000/verify`, {
+  const response = await fetch(`${IP_LOCAL}/verify`, {
     method: "GET",
     credentials: "include", // Asegura que las cookies se envíen con la solicitud
   });

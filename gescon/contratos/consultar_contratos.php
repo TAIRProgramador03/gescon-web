@@ -726,7 +726,7 @@ require '../templates/header.html';
         // Realizar la solicitud AJAX al backend para obtener los detalles del contrato
         try {
           const response = await fetch(
-            `http://${IP_LOCAL}:3000/contratoDetalle?contratoId=${contratoId}&clienteId=${clienteId}`, {
+            `${IP_LOCAL}/contratoDetalle?contratoId=${contratoId}&clienteId=${clienteId}`, {
               method: "GET",
               credentials: "include", // Asegura que las cookies se envíen con la solicitud
             },

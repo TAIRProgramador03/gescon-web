@@ -1,7 +1,7 @@
 const obtenerInstancia = async () => {
   const IP_LOCAL = await obtenerConfig();
   return axios.create({
-    baseURL: `http://${IP_LOCAL}:3000`,
+    baseURL: `${IP_LOCAL}`,
     timeout: 3000,
   });
 };
@@ -31,7 +31,7 @@ async function cargarContContrato(clientId) {
     const IP_LOCAL = await obtenerConfig();
 
     const response = await fetch(
-      `http://${IP_LOCAL}:3000/contContrato${clientId ? `?clienteId=${clientId}` : ""}`,
+      `${IP_LOCAL}/contContrato${clientId ? `?clienteId=${clientId}` : ""}`,
       {
         credentials: "include", // Asegura que las cookies se envíen con la solicitud
       },
@@ -67,7 +67,7 @@ async function obtenerFlotaVehicular(status, clientId) {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/contVehicleFleet${paramsString}`,
+    `${IP_LOCAL}/contVehicleFleet${paramsString}`,
     {
       credentials: "include",
     },
@@ -81,7 +81,7 @@ async function obtenerFlotaVehicular(status, clientId) {
 async function obtenerClientes() {
   const IP_LOCAL = await obtenerConfig();
 
-  const response = await fetch(`http://${IP_LOCAL}:3000/clientes`, {
+  const response = await fetch(`${IP_LOCAL}/clientes`, {
     credentials: "include",
   });
 
@@ -110,7 +110,7 @@ async function obtenerLeasings(clienteId, all) {
   // const IP_LOCAL = await obtenerConfig()
 
   // const response = await fetch(
-  //   `http://${IP_LOCAL}:3000/contVehicleLeasing?draw=${draw}&start=${currentPage}&length=${length}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
+  //   `${IP_LOCAL}/contVehicleLeasing?draw=${draw}&start=${currentPage}&length=${length}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
   //   {
   //     method: "GET",
   //     credentials: "include",
@@ -160,7 +160,7 @@ async function obtenerVehiculosVencidos(label, clienteId) {
   // const IP_LOCAL = await obtenerConfig()
 
   // const response = await fetch(
-  //   `http://${IP_LOCAL}:3000/listVehicleExpires?draw=${draw}&start=${currentPage}&length=${length}&label=${label}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
+  //   `${IP_LOCAL}/listVehicleExpires?draw=${draw}&start=${currentPage}&length=${length}&label=${label}&search=${search}${clientId ? `&clienteId=${clientId}` : ""}`,
   //   {
   //     method: "GET",
   //     credentials: "include",
@@ -246,7 +246,7 @@ async function obtenerTotalVehiculosPorCliente(clientsId) {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/contVehicleByClient?${query}`,
+    `${IP_LOCAL}/contVehicleByClient?${query}`,
     {
       method: "GET",
       credentials: "include",
@@ -262,7 +262,7 @@ async function obtenerContratos(clientId) {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/contratosNro${clientId ? `?idCli=${clientId}` : ""}`,
+    `${IP_LOCAL}/contratosNro${clientId ? `?idCli=${clientId}` : ""}`,
     {
       method: "GET",
       credentials: "include",
@@ -278,7 +278,7 @@ async function obtenerLeasingsPorContrato(contractId) {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/leasingByContract${contractId ? `?contratoId=${contractId}` : ""}`,
+    `${IP_LOCAL}/leasingByContract${contractId ? `?contratoId=${contractId}` : ""}`,
     {
       method: "GET",
       credentials: "include",
@@ -294,7 +294,7 @@ async function obtenerDiasContratoLeasing(contractId, leasingId) {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/contComparationDays?contractId=${contractId}&leasingId=${leasingId}`,
+    `${IP_LOCAL}/contComparationDays?contractId=${contractId}&leasingId=${leasingId}`,
     {
       method: "GET",
       credentials: "include",
@@ -309,7 +309,7 @@ async function obtenerDiasContratoLeasing(contractId, leasingId) {
 async function obtenerModelosGenericos() {
   const IP_LOCAL = await obtenerConfig();
 
-  const response = await fetch(`http://${IP_LOCAL}:3000/modedosGenericos`, {
+  const response = await fetch(`${IP_LOCAL}/modedosGenericos`, {
     method: "GET",
     credentials: "include",
   });
@@ -323,7 +323,7 @@ async function obtenerAñosPorModelo(modelId) {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/aniosPorModelo?modelId=${modelId}`,
+    `${IP_LOCAL}/aniosPorModelo?modelId=${modelId}`,
     {
       method: "GET",
       credentials: "include",
@@ -339,7 +339,7 @@ async function obtenerTotalCostoPorModelo(modelId, fromYear, toYear) {
   const IP_LOCAL = await obtenerConfig();
 
   const response = await fetch(
-    `http://${IP_LOCAL}:3000/contTotalPriceModel?modelId=${modelId}&fromYear=${fromYear}${toYear ? `&toYear=${toYear}` : ""}`,
+    `${IP_LOCAL}/contTotalPriceModel?modelId=${modelId}&fromYear=${fromYear}${toYear ? `&toYear=${toYear}` : ""}`,
     {
       method: "GET",
       credentials: "include",

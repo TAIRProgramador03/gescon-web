@@ -89,13 +89,17 @@ $(document).on("DOMContentLoaded", async () => {
   const tDocumentos = notifications.totalDocumentos;
   const tReasignacion = notifications.totalReasignaciones;
 
-  const perm1 = isGetPermission('ver_contratos');
-  const perm2 = isGetPermission('ver_documentos')
-  const perm3 = isGetPermission('insertar_reasignacion')
+  const perm1 = isGetPermission("ver_contratos");
+  const perm2 = isGetPermission("ver_documentos");
+  const perm3 = isGetPermission("insertar_reasignacion");
 
   const getNotif = JSON.parse(sessionStorage.getItem("isNotification"));
 
-  if ((tContratos > 0 && perm1) || (tDocumentos > 0 && perm2) || (tReasignacion > 0 && perm3)) {
+  if (
+    (tContratos > 0 && perm1) ||
+    (tDocumentos > 0 && perm2) ||
+    (tReasignacion > 0 && perm3)
+  ) {
     $(".list-notifications").empty();
     $(".flag-alter-not").removeClass("hidden");
   }
@@ -203,6 +207,28 @@ $(document).on("DOMContentLoaded", async () => {
   }
 
   sessionStorage.setItem("isNotification", true);
+
+  const permReg1 = isGetPermission("insertar_documentos");
+  const permReg2 = isGetPermission("insertar_leasing");
+  const permReg3 = isGetPermission("insertar_asignacion");
+  const permReg4 = isGetPermission("insertar_usuarios");
+  const permReg5 = isGetPermission("insertar_reasignacion");
+
+  if (!permReg1 && !permReg2 && !permReg3 && !permReg4 && !permReg5) {
+    $("#dropDownRegister").addClass("!hidden")
+  }
+
+  const permCons1 = isGetPermission("ver_contratos");
+  const permCons2 = isGetPermission("ver_leasing");
+  const permCons3 = isGetPermission("ver_placas");
+
+  if (!permCons1 && !permCons2 && !permCons3) {
+    $("#dropDownQuery").addClass("!hidden")
+  }
+
+  if (!permCons1 && !permCons3) {
+    $("#dropDownContract").addClass("!hidden")
+  }
 });
 
 window.addEventListener("pageshow", async function () {

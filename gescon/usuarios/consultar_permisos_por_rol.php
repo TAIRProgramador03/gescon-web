@@ -168,6 +168,28 @@ require '../templates/header.html';
               </div>
             </label>
           </li>
+          <li class="w-full flex justify-between items-center">
+            <span class="text-medium text-gray-500">Visualizar archivos</span>
+            <label class="relative inline-flex w-fit items-center cursor-pointer">
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="ver_pdf_contratos" name="ver_pdf_contratos" data-id="16" disabled>
+
+              <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
+              bg-red-300 
+              peer-checked:bg-blue-300
+              peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500
+              
+              after:content-['No'] after:absolute after:outline-none after:rounded-[50%] 
+              after:h-8 after:w-8 after:bg-white after:top-1 after:left-1 
+              after:flex after:justify-center after:items-center  
+              after:text-red-800 after:font-bold
+              
+              peer-checked:after:translate-x-6 
+              peer-checked:after:content-['Si'] 
+              peer-checked:after:text-sky-800
+              peer-checked:after:border-white">
+              </div>
+            </label>
+          </li>
         </ul>
       </div>
 
@@ -242,6 +264,28 @@ require '../templates/header.html';
               </div>
             </label>
           </li>
+          <li class="w-full flex justify-between items-center">
+            <span class="text-medium text-gray-500">Visualizar archivos</span>
+            <label class="relative inline-flex w-fit items-center cursor-pointer">
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="ver_pdf_documentos" name="ver_pdf_documentos" data-id="17" disabled>
+
+              <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
+              bg-red-300 
+              peer-checked:bg-blue-300
+              peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500
+              
+              after:content-['No'] after:absolute after:outline-none after:rounded-[50%] 
+              after:h-8 after:w-8 after:bg-white after:top-1 after:left-1 
+              after:flex after:justify-center after:items-center  
+              after:text-red-800 after:font-bold
+              
+              peer-checked:after:translate-x-6 
+              peer-checked:after:content-['Si'] 
+              peer-checked:after:text-sky-800
+              peer-checked:after:border-white">
+              </div>
+            </label>
+          </li>
         </ul>
       </div>
 
@@ -276,6 +320,28 @@ require '../templates/header.html';
             <span class="text-medium text-gray-500">Registrar lesaings</span>
             <label class="relative inline-flex w-fit items-center cursor-pointer">
               <input class="sr-only peer permission-checkbox" type="checkbox" id="insertar_leasing" name="insertar_leasing" data-id="9" disabled>
+
+              <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
+              bg-red-300 
+              peer-checked:bg-blue-300
+              peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500
+              
+              after:content-['No'] after:absolute after:outline-none after:rounded-[50%] 
+              after:h-8 after:w-8 after:bg-white after:top-1 after:left-1 
+              after:flex after:justify-center after:items-center  
+              after:text-red-800 after:font-bold
+              
+              peer-checked:after:translate-x-6 
+              peer-checked:after:content-['Si'] 
+              peer-checked:after:text-sky-800
+              peer-checked:after:border-white">
+              </div>
+            </label>
+          </li>
+          <li class="w-full flex justify-between items-center">
+            <span class="text-medium text-gray-500">Visualizar archivos</span>
+            <label class="relative inline-flex w-fit items-center cursor-pointer">
+              <input class="sr-only peer permission-checkbox" type="checkbox" id="ver_pdf_leasings" name="ver_pdf_leasings" data-id="18" disabled>
 
               <div class="peer rounded-4xl outline-none duration-100 after:duration-500 w-16 h-10 
               bg-red-300 

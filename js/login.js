@@ -44,6 +44,8 @@ async function authenticateValid() {
     credentials: "include", // Asegura que las cookies se envíen con la solicitud
   });
 
+  const data = response.json();
+
   if (response.ok) {
     if (data.permissions.includes("ver_dashboard")) {
       window.location.href = "./gescon/";

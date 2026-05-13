@@ -214,6 +214,7 @@ require '../templates/header.html';
         <button
           type="button"
           id="btn-document"
+          data-permissions="ver_pdf_documentos"
           class="cursor-pointer bg-red-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
           <div
             class="bg-red-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
@@ -480,7 +481,10 @@ require '../templates/header.html';
 
       // ABRIR EL PDF
       $("#btn-document").off("click").on("click", () => {
-        verPdf(detailDocument.archivoPdf);
+        const perm = isPermission("ver_pdf_documentos");
+        if (perm) {
+          verPdf(detailDocument.archivoPdf);
+        }
       })
 
       hideSkeleton();
@@ -514,7 +518,7 @@ require '../templates/header.html';
 
     if (!documentoId) return;
 
-    const vehicles = await getVehByDocument(documentoId, "SUPERFICIE");
+    const vehicles = await getVehByDocument(documentoId, 0);
 
     if (!Array.isArray(vehicles)) return;
 
@@ -666,7 +670,7 @@ require '../templates/header.html';
 
     if (!documentoId) return;
 
-    const vehicles = await getVehByDocument(documentoId, "SEVERO");
+    const vehicles = await getVehByDocument(documentoId, 3);
 
     if (!Array.isArray(vehicles)) return;
 
@@ -791,7 +795,7 @@ require '../templates/header.html';
         }
       ],
     })
-    
+
     Motion.animate(
       ".modal-container", {
         opacity: [0, 1],
@@ -818,7 +822,7 @@ require '../templates/header.html';
 
     if (!documentoId) return;
 
-    const vehicles = await getVehByDocument(documentoId, "SOCAVON");
+    const vehicles = await getVehByDocument(documentoId, 1);
 
     if (!Array.isArray(vehicles)) return;
 
@@ -970,7 +974,7 @@ require '../templates/header.html';
 
     if (!documentoId) return;
 
-    const vehicles = await getVehByDocument(documentoId, "CIUDAD");
+    const vehicles = await getVehByDocument(documentoId, 2);
 
     if (!Array.isArray(vehicles)) return;
 

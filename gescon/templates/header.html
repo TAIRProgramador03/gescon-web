@@ -141,7 +141,7 @@
 
         <!-- REGISTRAR -->
         <li>
-          <button onclick="toggleSubMenu(this)" class="dropdown-btn">
+          <button onclick="toggleSubMenu(this)" class="dropdown-btn" id="dropDownRegister">
             <i
               class="fa-solid fa-pencil"
               style="font-size: 19px; padding-left: 2px"
@@ -221,7 +221,7 @@
 
         <!-- CONSULTAR -->
         <li>
-          <button onclick="toggleSubMenu(this)" class="dropdown-btn">
+          <button onclick="toggleSubMenu(this)" class="dropdown-btn" id="dropDownQuery">
             <i
               class="fa-solid fa-book-open"
               style="font-size: 19px; padding-left: 2px"
@@ -242,8 +242,8 @@
           <ul class="sub-menu">
             <div>
               <!-- CONTRATOS CONSULTAR -->
-              <li data-permissions="ver_contratos">
-                <button onclick="toggleSubMenuSec(this)" class="dropdown-btn">
+              <li>
+                <button onclick="toggleSubMenuSec(this)" class="dropdown-btn" id="dropDownContract">
                   <i
                     class="bi bi-file-earmark-fill"
                     style="font-size: 19px; padding-left: 2px"
@@ -263,7 +263,7 @@
                 </button>
                 <ul class="sub-menu-sec">
                   <div>
-                    <a href="/gescon/contratos/consultar_contratos">
+                    <a href="/gescon/contratos/consultar_contratos" data-permissions="ver_contratos">
                       <i
                         class="bi bi-table"
                         style="font-size: 19px; padding-left: 2px"

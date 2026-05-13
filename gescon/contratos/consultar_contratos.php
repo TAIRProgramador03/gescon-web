@@ -276,7 +276,7 @@ require '../templates/header.html';
           <button
             type="button"
             id="btn-file"
-            data-permissions="ver_contratos"
+            data-permissions="ver_pdf_contratos"
             class="cursor-pointer bg-red-800 text-center w-full rounded-2xl h-16 relative text-xl hidden justify-center items-center font-semibold border-4 border-white group">
             <div
               class="bg-red-950 text-white rounded-xl h-14 w-1/4 grid place-items-center absolute left-0 top-0 group-hover:w-full z-10 duration-500">
@@ -1470,7 +1470,7 @@ require '../templates/header.html';
           },
           width: "160px"
         },
-{
+        {
           data: null,
           render: (data, type, row) => {
             const dateFinish = dayjs(convertirFecha(row.fechaFin))
@@ -2430,7 +2430,11 @@ require '../templates/header.html';
   })
 
   $("#btn-file").on("click", function() {
-    verPdf(currentKey);
+    const perm = isPermission('ver_pdf_contratos');
+
+    if (perm) {
+      verPdf(currentKey);
+    }
   })
 
   $("#btn-close").on("click", async function() {

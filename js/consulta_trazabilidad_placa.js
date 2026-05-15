@@ -341,7 +341,7 @@ export async function generarExcel(data, title) {
       { name: "Fecha Devolución", filterButton: true },
       { name: "Condición", filterButton: true },
       { name: "% de Contrato", filterButton: true },
-      { name: "Operatividad", filterButton: true },
+      { name: "Situación Actual", filterButton: true },
       // { name: "Acta", filterButton: true },
     ],
     rows,
@@ -402,7 +402,7 @@ export async function generarExcel(data, title) {
   ws.getColumn(20).width = 25; // Fecha Devolucion
   ws.getColumn(21).width = 25; // Condicion
   ws.getColumn(22).width = 25; // Porcentaje
-  ws.getColumn(23).width = 25; // Operatividad
+  ws.getColumn(23).width = 25; // Situación Actual
   // ws.getColumn(24).width = 25; // Acta
 
   ws.views = [{ state: "frozen", ySplit: 2 }];

@@ -106,7 +106,7 @@ require '../templates/header.html';
         <label
           for="cbo-estado"
           class="label-select z-[1] order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors">
-          Estado
+          Situación Actual
         </label>
       </div>
     </div>
@@ -1437,10 +1437,12 @@ require '../templates/header.html';
     const rect = this.getBoundingClientRect();
 
     tooltipText.innerHTML = `
-      <div class="flex flex-col gap-1">
-        <div><span class="font-medium">Activo:</span> Unidad en la misma operación que fue asignada.</div>
-        <div><span class="font-medium">Inactivo:</span> Unidad diferente a la operación donde inicialmente se asignó.</div>
-        <div><span class="font-medium">Vendido:</span> Unidad actualmente en la operación Tair Vendidas.</div>
+      <div class="flex flex-col gap-2 text-justify!">
+        <div><span class="font-medium uppercase">Activo:</span> Unidades operativas en el mismo cliente donde fue asignado inicialmente (GESCON / GESOPER).</div>
+        <div><span class="font-medium uppercase">Inactivo:</span> Unidades que están operando en el mismo cliente con el contrato vencido (GESCON).</div>
+        <div><span class="font-medium uppercase">Por Reasignar:</span> Unidades que se cambiaron de cliente y continuan pendientes por asignar (GESOPER/GESCON).</div>
+        <div><span class="font-medium uppercase">Por Actualizar:</span> Unidades que se cambiaron de operación dentro del mismo cliente (GESOPER/GESCON).</div>
+        <div><span class="font-medium uppercase">Vendido:</span> Unidad actualmente fuera de flota, Tair Vendidas (GESOPER).</div>
       </div>
     `;
     tooltip.style.opacity = 1;

@@ -150,22 +150,23 @@ require '../templates/header.html';
             </div>
           </div>
 
-          <!-- FECHA -->
-          <div class="input flex flex-col w-full relative -mt-2!">
-            <input
-              id="fechaReasignacion"
-              name="fechaReasignacion"
-              type="text"
-              placeholder="Ingrese una fecha"
-              class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" disabled />
-            <label
-              for="fechaReasignacion"
-              class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500 peer-disabled:text-[#eee]">
-              Fecha Reasignación(*)
-            </label>
-          </div>
+          <div class="w-full grid-cols-3 gap-3 grid inputs-plate">
 
-          <div class="w-full grid-cols-2 gap-3 hidden inputs-plate">
+            <!-- FECHA INICIO -->
+            <div class="input flex flex-col w-full relative -mt-2!">
+              <input
+                id="fechaInicio"
+                name="fechaInicio"
+                type="text"
+                placeholder="Ingrese una fecha"
+                class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" disabled />
+              <label
+                for="fechaInicio"
+                class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500 peer-disabled:text-[#eee]">
+                Fecha Inicio(*)
+              </label>
+            </div>
+
             <!-- PLAZO -->
             <div class="input flex flex-col w-full relative -mt-2!">
               <input
@@ -195,6 +196,21 @@ require '../templates/header.html';
                 Fecha Fin(*)
               </label>
             </div>
+          </div>
+
+          <!-- FECHA -->
+          <div class="input input-reasignacion flex flex-col w-full relative -mt-2!">
+            <input
+              id="fechaReasignacion"
+              name="fechaReasignacion"
+              type="text"
+              placeholder="Ingrese una fecha"
+              class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" disabled />
+            <label
+              for="fechaReasignacion"
+              class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500 peer-disabled:text-[#eee]">
+              Fecha Reasignación(*)
+            </label>
           </div>
 
           <!-- OBSERVACION -->
@@ -566,6 +582,13 @@ require '../templates/header.html';
       clickOpens: true,
     });
 
+    fpInit = flatpickr("#fechaInicio", {
+      dateFormat: "d/m/Y",
+      locale: "es",
+      allowInput: true,
+      clickOpens: true,
+    });
+
     fpFinish = flatpickr("#fechaFin", {
       dateFormat: "d/m/Y",
       locale: "es",
@@ -609,24 +632,21 @@ require '../templates/header.html';
 
         const isChecked = $(".check-table").prop("checked")
 
-        // CARGAR LOS CAMPOS EXTRAS DEL MODO CAMBIO
-        if (isChecked) {
-          const dateInit = dayjs(convertirFecha(data.fechaFin)).add(1, "day")
-          const timeLimit = Number(data.plazoContrato);
+        // CARGAR LOS CAMPOS EXTRAS DEL MODO ACTUALIZACION
+        const dateInit = dayjs(convertirFecha(data.fechaInicio))
+        const timeLimit = Number(data.plazoContrato);
 
-          $("#fechaReasignacion").val(dateInit.format("DD/MM/YYYY"))
+        $("#fechaInicio").val(dateInit.format("DD/MM/YYYY"))
+        fpInit.setDate(dateInit.format("DD/MM/YYYY"), true);
+        fpInit.jumpToDate(dateInit.toDate());
 
-          fp.setDate(dateInit.format("DD/MM/YYYY"), true);
-          fp.jumpToDate(dateInit.toDate());
+        $("#plazo").val(timeLimit);
 
-          $("#plazo").val(timeLimit);
+        const dateFinish = dayjs(convertirFecha(data.fechaFin));
 
-          const dateFinish = dayjs(convertirFecha(data.fechaFin)).add(timeLimit, "month");
-
-          $("#fechaFin").val(dateFinish.format("DD/MM/YYYY"))
-          fpFinish.setDate(dateFinish.format("DD/MM/YYYY"), true);
-          fpFinish.jumpToDate(dateFinish.toDate());
-        }
+        $("#fechaFin").val(dateFinish.format("DD/MM/YYYY"))
+        fpFinish.setDate(dateFinish.format("DD/MM/YYYY"), true);
+        fpFinish.jumpToDate(dateFinish.toDate());
 
         // FIJAMOS LA FECHA EN LA MINIMA
         const minDate = dayjs(convertirFecha(data.fechaRef))
@@ -644,6 +664,7 @@ require '../templates/header.html';
         // HABILITAMOS LOS CAMPOS
         $("#acta").prop("disabled", false)
         $("#fechaReasignacion").prop("disabled", false)
+        $("#fechaInicio").prop("disabled", false)
         $("#fechaFin").prop("disabled", false)
         $("#plazo").prop("disabled", false)
         $("#cbo-contratos").prop("disabled", false)
@@ -675,6 +696,8 @@ require '../templates/header.html';
         $("#plazo").val(null);
         fp.clear();
         fp.set("minDate", null);
+        fpInit.clear();
+        fpInit.set("minDate", null)
         fpFinish.clear();
         fpFinish.set("minDate", null);
 
@@ -704,6 +727,7 @@ require '../templates/header.html';
         // DESHABILITAR CAMPOS
         $("#acta").prop("disabled", true)
         $("#fechaReasignacion").prop("disabled", true)
+        $("#fechaInicio").prop("disabled", true)
         $("#fechaFin").prop("disabled", true)
         $("#plazo").prop("disabled", true)
         $("#cbo-contratos").prop("disabled", true)
@@ -743,9 +767,11 @@ require '../templates/header.html';
     $("#cbo-operaciones").val(null).trigger("change");
 
     if ($(this).prop("checked")) {
-      $(".inputs-plate").removeClass("hidden").addClass("grid");
+      // $(".inputs-plate").removeClass("hidden").addClass("grid");
+      // $('label[for="fechaReasignacion"]').text("Fecha Inicio(*)")
+
       $("#contenedorArchivo").addClass("hidden").removeClass("block")
-      $('label[for="fechaReasignacion"]').text("Fecha Inicio(*)")
+      $('.input-reasignacion').addClass("hidden").removeClass("flex")
 
       const listVehicle = await getVehiclesNoPending();
 
@@ -753,9 +779,11 @@ require '../templates/header.html';
       table.rows.add(listVehicle);
       table.draw();
     } else {
-      $(".inputs-plate").addClass("hidden").removeClass("grid");
+      // $(".inputs-plate").addClass("hidden").removeClass("grid");
+      // $('label[for="fechaReasignacion"]').text("Fecha Reasignación(*)")
+
       $("#contenedorArchivo").removeClass("hidden").addClass("block")
-      $('label[for="fechaReasignacion"]').text("Fecha Reasignación(*)")
+      $('.input-reasignacion').addClass("flex").removeClass("hidden")
 
       const listVehicle = await getVehiclesPending();
 
@@ -841,61 +869,57 @@ require '../templates/header.html';
     const isChecked = $(".check-table").prop("checked")
     const contractId = $(this).val();
 
-    if (isChecked) {
-      let contract = null;
-      const id = contractId.split("_")[1]
-      const type = contractId.split("_")[0]
+    let contract = null;
+    const id = contractId.split("_")[1]
+    const type = contractId.split("_")[0]
 
-      if (type == "P") {
-        contract = await getContractId(id);
-      } else if (type == "H") {
-        contract = await getDocumentId(id);
-      }
-
-      // REALIZA EL CALCULO DE LA FECHA FINAL
-      const dateInit = dayjs($("#fechaReasignacion").val(), "DD/MM/YYYY")
-      const timeLimit = Number(contract.duracion);
-
-      $("#plazo").val(timeLimit);
-
-      const dateFinish = dateInit.add(timeLimit, "month").subtract(1, "day");
-
-      $("#fechaFin").val(dateFinish.format("DD/MM/YYYY"))
-      fpFinish.setDate(dateFinish.format("DD/MM/YYYY"), true);
-      fpFinish.jumpToDate(dateFinish.toDate());
+    if (type == "P") {
+      contract = await getContractId(id);
+    } else if (type == "H") {
+      contract = await getDocumentId(id);
     }
+
+    // REALIZA EL CALCULO DE LA FECHA FINAL
+    const dateInit = dayjs($("#fechaInicio").val(), "DD/MM/YYYY")
+    const timeLimit = Number(contract.duracion);
+
+    $("#fechaInicio").val(dateInit.format("DD/MM/YYYY"));
+    fpInit.setDate(dateInit.format("DD/MM/YYYY"));
+    fpInit.jumpToDate(dateInit.toDate());
+
+    $("#plazo").val(timeLimit);
+
+    const dateFinish = dateInit.add(timeLimit, "month").subtract(1, "day");
+
+    $("#fechaFin").val(dateFinish.format("DD/MM/YYYY"))
+    fpFinish.setDate(dateFinish.format("DD/MM/YYYY"), true);
+    fpFinish.jumpToDate(dateFinish.toDate());
   })
 
-  $("#fechaReasignacion").on("input", async function() {
+  $("#fechaInicio").on("input", async function() {
     const isChecked = $(".check-table").prop("checked")
     const dateInit = dayjs($(this).val(), "DD/MM/YYYY")
 
-    if (isChecked) {
-      // REALIZA EL CALCULO DE LA FECHA FINAL
-      const timeLimit = Number($("#plazo").val());
+    const timeLimit = Number($("#plazo").val());
 
-      const dateFinish = dateInit.add(timeLimit, "month").subtract(1, "day");
+    const dateFinish = dateInit.add(timeLimit, "month").subtract(1, "day");
 
-      $("#fechaFin").val(dateFinish.format("DD/MM/YYYY"))
-      fpFinish.setDate(dateFinish.format("DD/MM/YYYY"), true);
-      fpFinish.jumpToDate(dateFinish.toDate());
-    }
+    $("#fechaFin").val(dateFinish.format("DD/MM/YYYY"))
+    fpFinish.setDate(dateFinish.format("DD/MM/YYYY"), true);
+    fpFinish.jumpToDate(dateFinish.toDate());
   })
 
   $("#plazo").on("input", async function() {
     const isChecked = $(".check-table").prop("checked")
     const timeLimit = Number($(this).val());
 
-    if (isChecked) {
-      // REALIZA EL CALCULO DE LA FECHA FINAL
-      const dateInit = dayjs($("#fechaReasignacion").val(), "DD/MM/YYYY")
+    const dateInit = dayjs($("#fechaInicio").val(), "DD/MM/YYYY")
 
-      const dateFinish = dateInit.add(timeLimit, "month").subtract(1, "day");
+    const dateFinish = dateInit.add(timeLimit, "month").subtract(1, "day");
 
-      $("#fechaFin").val(dateFinish.format("DD/MM/YYYY"))
-      fpFinish.setDate(dateFinish.format("DD/MM/YYYY"), true);
-      fpFinish.jumpToDate(dateFinish.toDate());
-    }
+    $("#fechaFin").val(dateFinish.format("DD/MM/YYYY"))
+    fpFinish.setDate(dateFinish.format("DD/MM/YYYY"), true);
+    fpFinish.jumpToDate(dateFinish.toDate());
   })
 
   // DRAG AND DROP
@@ -1040,7 +1064,7 @@ require '../templates/header.html';
 
     // CAMPOS - REASIGNACION TIPICA
     const idAssign = rowData.idAsign;
-    const date = $("#fechaReasignacion").val(); // SE REUTILIZA PAR AMBOS CASOS (FECHA REASIGNACION | FECHA INICIO)
+    const date = $("#fechaReasignacion").val();
     const contract = $("#cbo-contratos").val();
     const condition = $("#cbo-condicion").val();
     const terrain = $("#cbo-terreno").val();
@@ -1050,30 +1074,31 @@ require '../templates/header.html';
 
     // CAMPOS EXTRAS - REASIGNACION POCO COMÚN
     const timeLine = $("#plazo").val();
+    const dateInit = $("#fechaInicio").val();
     const dateFinish = $("#fechaFin").val();
     const isChecked = $(".check-table").prop("checked")
 
 
     if (isChecked) {
-      if (!date || !tariff || !contract || !condition || !terrain || !timeLine || !dateFinish) {
+      if (!tariff || !contract || !condition || !terrain || !timeLine || !dateInit || !dateFinish) {
         hideSpinner(this);
         toastr.info("Debes completar todos los campos", "Aviso");
-        return;
-      }
-
-      const validDate = dayjs(date, "DD/MM/YYYY").add(Number(timeLine), 'month').isSame(dayjs(dateFinish, "DD/MM/YYYY"));
-
-      if (!validDate) {
-        hideSpinner(this);
-        toastr.info("El calculo de la fecha fin no es el correcto", "Aviso");
         return;
       }
     } else {
-      if (!date || !tariff || !contract || !condition || !terrain) {
+      if (!date || !tariff || !contract || !condition || !terrain || !timeLine || !dateInit || !dateFinish) {
         hideSpinner(this);
         toastr.info("Debes completar todos los campos", "Aviso");
         return;
       }
+    }
+
+    const validDate = dayjs(dateInit, "DD/MM/YYYY").add(Number(timeLine), 'month').subtract(1, "day").isSame(dayjs(dateFinish, "DD/MM/YYYY"), "day");
+
+    if (!validDate) {
+      hideSpinner(this);
+      toastr.info("El calculo de la fecha fin no es el correcto", "Aviso");
+      return;
     }
 
     let key = null;
@@ -1090,7 +1115,8 @@ require '../templates/header.html';
       condition,
       terrain,
       tariff,
-      date: dayjs(date, "DD/MM/YYYY").format("YYYY-MM-DD"),
+      date: isChecked ? dayjs(dateInit, "DD/MM/YYYY").format("YYYY-MM-DD") : dayjs(date, "DD/MM/YYYY").format("YYYY-MM-DD"),
+      dateInit: dateInit ? dayjs(dateInit, "DD/MM/YYYY").format("YYYY-MM-DD") : null,
       dateFinish: dateFinish ? dayjs(dateFinish, "DD/MM/YYYY").format("YYYY-MM-DD") : null,
       timeLine: timeLine != "" ? timeLine : null,
       observation,
@@ -1101,7 +1127,7 @@ require '../templates/header.html';
     const result = await saveOperation(idAssign, data);
 
     if (result.success) {
-      if(isChecked) {
+      if (isChecked) {
         row.deselect();
       } else {
         row.remove().draw(false);
@@ -1138,6 +1164,10 @@ require '../templates/header.html';
     $("#observacion").val(null)
     fp.clear();
     fp.set("minDate", null);
+    fpInit.clear();
+    fpInit.set("minDate", null);
+    fpFinish.clear();
+    fpFinish.set("minDate", null);
 
     archivoActual = null;
 
@@ -1161,6 +1191,7 @@ require '../templates/header.html';
 
     $("#acta").prop("disabled", true)
     $("#fechaReasignacion").prop("disabled", true)
+    $("#fechaInicio").prop("disabled", true)
     $("#fechaFin").prop("disabled", true)
     $("#plazo").prop("disabled", true)
     $("#cbo-contratos").prop("disabled", true)

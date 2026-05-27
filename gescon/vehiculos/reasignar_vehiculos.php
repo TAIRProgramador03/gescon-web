@@ -149,6 +149,21 @@ require '../templates/header.html';
               </label>
             </div>
           </div>
+          
+          <!-- FECHA -->
+          <div class="input input-reasignacion flex flex-col w-full relative -mt-2!">
+            <input
+              id="fechaReasignacion"
+              name="fechaReasignacion"
+              type="text"
+              placeholder="Ingrese una fecha"
+              class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" disabled />
+            <label
+              for="fechaReasignacion"
+              class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500 peer-disabled:text-[#eee]">
+              Fecha Reasignación(*)
+            </label>
+          </div>
 
           <div class="w-full grid-cols-3 gap-3 grid inputs-plate">
 
@@ -196,21 +211,6 @@ require '../templates/header.html';
                 Fecha Fin(*)
               </label>
             </div>
-          </div>
-
-          <!-- FECHA -->
-          <div class="input input-reasignacion flex flex-col w-full relative -mt-2!">
-            <input
-              id="fechaReasignacion"
-              name="fechaReasignacion"
-              type="text"
-              placeholder="Ingrese una fecha"
-              class="peer order-2 w-full border-gray-300 px-[10px] py-[11px] text-xs bg-white border-2 rounded-[5px] focus:outline-none focus:border-blue-500 placeholder:text-black/25" disabled />
-            <label
-              for="fechaReasignacion"
-              class="order-1 text-gray-500 text-xs font-semibold relative top-2 ml-[7px] px-[3px] bg-white w-fit transition-colors peer-focus:text-blue-500 peer-disabled:text-[#eee]">
-              Fecha Reasignación(*)
-            </label>
           </div>
 
           <!-- OBSERVACION -->
@@ -751,6 +751,10 @@ require '../templates/header.html';
   });
 
   document.getElementById("fechaReasignacion").addEventListener("input", function(e) {
+    validInputDate(e);
+  });
+
+  document.getElementById("fechaInicio").addEventListener("input", function(e) {
     validInputDate(e);
   });
 
